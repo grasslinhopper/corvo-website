@@ -1,0 +1,48 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "header": {
+      "type": "header",
+      "custom_css": [],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "enable_sticky": true,
+        "hide_on_scroll": true,
+        "show_separation_border": true,
+        "reduce_padding": true,
+        "logo": "shopify://shop_images/CorvoPreto.png",
+        "logo_max_width": 155,
+        "logo_mobile_max_width": 80,
+        "menu": "main-menu",
+        "sidebar_menu": "main-menu",
+        "menu_open_trigger": "hover",
+        "menu_text_font": "body",
+        "enable_search": true,
+        "sidebar_color_scheme": "scheme-1",
+        "sidebar_text_font": "body",
+        "sidebar_show_dividers": false,
+        "sidebar_open_second_level_menus": false,
+        "layout": "drawer",
+        "show_icons": true,
+        "show_country_selector": false,
+        "show_country_name": true,
+        "show_country_flag": false,
+        "show_locale_selector": false,
+        "transparent_header_text_color": "#1c1c1c"
+      }
+    }
+  },
+  "order": [
+    "header"
+  ]
+}

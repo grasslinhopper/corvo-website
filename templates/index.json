@@ -1,0 +1,604 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "slideshow": {
+      "type": "slideshow",
+      "blocks": {
+        "slide-1": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/RamiroRelvas_Pintura1.jpg",
+            "subheading": "New collection",
+            "title": "from ink to thread",
+            "mobile_text_position": "place-self-center text-center",
+            "desktop_text_position": "sm:place-self-center sm:text-center",
+            "content_max_width": 740,
+            "button_1_text": "Discover More",
+            "button_1_link": "shopify://collections/from-ink-to-thread",
+            "button_1_style": "link",
+            "button_1_background": "#ffffff",
+            "button_1_text_color": "#1c1c1c",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "solid",
+            "button_2_background": "#1c1c1c",
+            "button_2_text_color": "#ffffff",
+            "background": "",
+            "background_opacity": 50,
+            "text_color": "#ffffff",
+            "border_color": "",
+            "gradient_overlay": "linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0) 100%)"
+          }
+        },
+        "slide-2": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "subheading": "Our bag",
+            "title": "Elegant & Timeless",
+            "mobile_text_position": "place-self-center text-center",
+            "desktop_text_position": "sm:place-self-center sm:text-center",
+            "content_max_width": 400,
+            "button_1_text": "View collection",
+            "button_1_link": "",
+            "button_1_style": "solid",
+            "button_1_background": "#ffffff",
+            "button_1_text_color": "#000000",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "button_2_background": "#ffffff",
+            "button_2_text_color": "#000000",
+            "background": "",
+            "background_opacity": 50,
+            "text_color": "#ffffff",
+            "border_color": "#ffffff",
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.1), rgba(4, 4, 4, 0.45) 100%)"
+          }
+        }
+      },
+      "block_order": [
+        "slide-1",
+        "slide-2"
+      ],
+      "settings": {
+        "allow_transparent_header": true,
+        "show_next_section_button": true,
+        "media_size": "fill",
+        "show_initial_transition": true,
+        "autoplay": true,
+        "autoplay_pause_on_video": true,
+        "cycle_speed": 5,
+        "background": "#000000",
+        "controls_color": "#ffffff"
+      }
+    },
+    "multiple-media-with-text": {
+      "type": "multiple-media-with-text",
+      "blocks": {
+        "image-1": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp_Image_2025-11-20_at_14.44.57_3.jpg",
+            "rotation": 0
+          }
+        },
+        "image-2": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp_Image_2025-07-11_at_15.49.04_2.jpg",
+            "rotation": 0
+          }
+        }
+      },
+      "block_order": [
+        "image-1",
+        "image-2"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "reveal_on_scroll": true,
+        "separate_section_with_border": true,
+        "media_position_desktop": "after_text",
+        "media_position_mobile": "before_text",
+        "media_layout": "overlap",
+        "media_alignment": "end",
+        "media_alignment_offset": 86,
+        "media_mobile_alignment_offset": 40,
+        "text_alignment": "center",
+        "subheading": "",
+        "title": "Refined Luxury and Craftsmanship",
+        "content": "<p>Beyond mere textiles, our rugs are living legacies of Portugal's artistic and sustainable soul. Handcrafted by skilled artisans, every Corvo rug harmonizes tradition with innovation.</p><p>Our dedication to eco-friendly practices ensures that each piece not only enriches your space with luxury but also champions the preservation of our planet.</p>",
+        "button_1_text": "Bespoke Services",
+        "button_1_link": "shopify://pages/bespoke",
+        "button_1_style": "link",
+        "button_2_text": "",
+        "button_2_link": "",
+        "button_2_style": "link"
+      }
+    },
+    "media-grid": {
+      "type": "media-grid",
+      "blocks": {
+        "image-1": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/PARSON_100_THINWOOL_-2_1.png",
+            "column_count": "8",
+            "row_count": 2,
+            "title": "parson",
+            "heading_tag": "h2",
+            "content": "",
+            "link_text": "Get inspired",
+            "link_url": "shopify://products/parson-rug",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
+          }
+        },
+        "image-2": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/SHIMMER-2.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "Shimmer",
+            "heading_tag": "h3",
+            "content": "",
+            "link_text": "Get Inspired",
+            "link_url": "shopify://products/shimmer-rug",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
+          }
+        },
+        "image-3": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/RAYURES-descarregar_5.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "Rayures",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Get inspired",
+            "link_url": "shopify://products/rayures-rug",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
+          }
+        }
+      },
+      "block_order": [
+        "image-1",
+        "image-2",
+        "image-3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "desktop_row_height": 340,
+        "mobile_row_height": 180,
+        "section_width": "lg",
+        "spacing": "xs",
+        "subheading": "",
+        "title": "best sellers",
+        "content": "<p>Enjoy the elegance of custom-crafted rugs from our exclusive collection at Corvo.</p>"
+      }
+    },
+    "images-with-text-scroll": {
+      "type": "images-with-text-scroll",
+      "blocks": {
+        "image-with-text-1": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/DSCF8626_copy.jpg",
+            "subheading": "",
+            "title": "materials",
+            "content": "<p>In the world of high-end luxury rugs, the difference between good and extraordinary begins with material. At Corvo, we take time with this choice. Every fiber is selected for how it feels, how it wears over time, and how it lives in a space, not just how it looks.</p><p>We work with a wide range of exceptional fibers, from soft silks and refined plant-based yarns to natural wools chosen for their strength and comfort. Each rug is built as a balanced composition, where texture, weight, and light come together naturally. </p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link"
+          }
+        },
+        "image-with-text-2": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp_Image_2026-01-05_at_20.18.57_4.jpg",
+            "subheading": "",
+            "title": "Design",
+            "content": "<p>Every product is imagined and developed in our studio, with a focus on both form and function. Design begins with proportion, texture, and purpose, ensuring each piece feels intentional rather than decorative.</p><p>We consider how a rug will be used, how it will age, and how it will sit within a space. From the first sketch to the final weave, every decision is guided by balance, durability, and comfort underfoot.</p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link"
+          }
+        },
+        "image_with_text_TEk6dP": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/IMG_5756.jpg",
+            "subheading": "",
+            "title": "Know-How",
+            "content": "<p>Since the beginning of our production, morE than 50 years ago, responsibility has been a core value. It defines how we design, how we source our materials, and how we think about the longevity of our products, rather than trends.</p><p>We work with trusted partners and choose materials deliberately, aiming to reduce waste while maintaining the highest standards of quality </p><p>The result is a collection of pieces designed to live well in your space, today and for years to come.</p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link"
+          }
+        }
+      },
+      "block_order": [
+        "image-with-text-1",
+        "image-with-text-2",
+        "image_with_text_TEk6dP"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "image_position": "end",
+        "text_alignment": "start",
+        "heading_tag": "h3",
+        "overlay_color": "#1c1c1c",
+        "overlay_opacity": 20
+      }
+    },
+    "1768065729940e4efa": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_6e74ad8_HbkBhM": {
+          "type": "ai_gen_block_6e74ad8",
+          "settings": {
+            "image": "shopify://shop_images/4.jpg",
+            "image_border_radius": 0,
+            "title": "BESPOKE SERVICE",
+            "subheading": "We believe that each rug should be as unique as the space it adorns. Our process starts with a personalized design consultation, where our expert team collaborates with you to select fibers, structure, pile height, colors, and shapes.",
+            "link_text": "Tailor your rug",
+            "link_url": "shopify://pages/bespoke",
+            "show_link_arrow": true,
+            "heading_font": "instrument_sans_n4",
+            "title_size": 20,
+            "subheading_font": "nunito_n4",
+            "subheading_size": 14,
+            "link_font": "nunito_n4",
+            "link_size": 14,
+            "link_underline": "none",
+            "accordion_title_font": "nunito_n4",
+            "accordion_title_size": 14,
+            "accordion_content_font": "nunito_n4",
+            "accordion_content_size": 14,
+            "accordion_1_title": "Yarn Concepts",
+            "accordion_1_content": "<p>The fibers you choose set the foundation for your rug’s character. At Corvo, we offer a selection of premium materials, including Lyocell, New Zealand wool, natural wool, and jute. Each material brings its own unique texture and quality.</p>",
+            "accordion_2_title": "Structure",
+            "accordion_2_content": "<p>The structure of your rug influences its texture and overall feel. Cut pile rugs provide a plush, soft surface, ideal for creating a luxurious, comfortable feel underfoot, while loop pile rugs feature uncut loops that add durability and texture, perfect for introducing depth and visual interest. You can also combine both styles to create a unique blend tailored to your space.</p>",
+            "accordion_3_title": "Pile Height",
+            "accordion_3_content": "<p>Pile height, or the thickness of the rug’s surface, plays a key role in its comfort and appearance. A low pile rug offers a sleek, modern look and is easy to maintain, while a high pile rug provides a deeper, more sumptuous texture underfoot. Whether you prefer a subtle or more pronounced texture, pile height can be tailored to suit your space.</p>",
+            "accordion_4_title": "Size & Shape",
+            "accordion_4_content": "<p>At Corvo, every rug can be made to measure. Shapes can be regular or irregular, subtle or expressive, with no limitations on size, form, or proportion.</p>",
+            "accordion_5_title": "Infinite Colors",
+            "accordion_5_content": "<p>With our Infinite color service, you are able to create an exclusive and unique rug. Designed and produced to ensure a perfect harmony between design and space. </p>",
+            "text_color": "#1c1c1c",
+            "link_color": "#1c1c1c",
+            "divider_color": "#e0e0e0"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_6e74ad8_HbkBhM"
+      ],
+      "name": "Tailor your rug step by step",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": true,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": false
+      }
+    },
+    "image-with-text-block": {
+      "type": "image-with-text-block",
+      "blocks": {
+        "subheading-1": {
+          "type": "subheading",
+          "settings": {
+            "text": "new hand-drawn collection"
+          }
+        },
+        "richtext-1": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>All of our new collection was drawn by hand and inspired by the works of our master and founder - Ramiro Relvas. </p>"
+          }
+        },
+        "link-1": {
+          "type": "link",
+          "settings": {
+            "text": "Discover more",
+            "url": "shopify://collections/from-ink-to-thread"
+          }
+        }
+      },
+      "block_order": [
+        "subheading-1",
+        "richtext-1",
+        "link-1"
+      ],
+      "name": "hand-drawn collection",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "image_size": "fill",
+        "image": "shopify://shop_images/81.jpg",
+        "mobile_image": "shopify://shop_images/22.jpg",
+        "content_width": "lg",
+        "enable_parallax": false,
+        "remove_vertical_spacing": true
+      }
+    },
+    "blog-posts": {
+      "type": "blog-posts",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": true,
+        "blog": "news",
+        "posts_count": 9,
+        "stack_on_mobile": false,
+        "show_category": false,
+        "show_date": false,
+        "show_excerpt": true,
+        "show_read_more": false,
+        "subheading": "",
+        "title": "",
+        "content": "",
+        "button_link": "shopify://blogs/news",
+        "button_text": ""
+      }
+    },
+    "featured-product": {
+      "type": "featured-product",
+      "blocks": {
+        "badges-1": {
+          "type": "badges",
+          "settings": {}
+        },
+        "title-1": {
+          "type": "title",
+          "settings": {
+            "heading_tag": "h3"
+          }
+        },
+        "price-1": {
+          "type": "price",
+          "settings": {
+            "show_taxes_notice": false
+          }
+        },
+        "payment-terms-1": {
+          "type": "payment_terms",
+          "settings": {}
+        },
+        "separator-1": {
+          "type": "separator",
+          "settings": {}
+        },
+        "description-1": {
+          "type": "description",
+          "settings": {
+            "collapse_content": false
+          }
+        },
+        "variant-picker-1": {
+          "type": "variant_picker",
+          "settings": {
+            "hide_sold_out_variants": false,
+            "selector_style": "block",
+            "swatch_selector_style": "swatch",
+            "variant_image_options": "",
+            "size_chart_page": ""
+          }
+        },
+        "quantity-selector-1": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy-buttons-1": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_payment_button": false,
+            "show_gift_card_recipient": false,
+            "atc_button_background": "",
+            "atc_button_text_color": "",
+            "payment_button_background": "",
+            "payment_button_text_color": ""
+          }
+        },
+        "pickup-availability-1": {
+          "type": "pickup_availability",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "badges-1",
+        "title-1",
+        "price-1",
+        "payment-terms-1",
+        "separator-1",
+        "description-1",
+        "variant-picker-1",
+        "quantity-selector-1",
+        "buy-buttons-1",
+        "pickup-availability-1"
+      ],
+      "disabled": true,
+      "settings": {
+        "color_scheme": "scheme-1",
+        "product": "ramiro",
+        "separate_section_with_border": true,
+        "container_size": "xl",
+        "product_info_size": 45,
+        "center_basic_info": true,
+        "desktop_media_layout": "grid_2x_highlighted",
+        "desktop_media_grid_gap": 30,
+        "mobile_controls": "dots",
+        "enable_media_autoplay": true,
+        "enable_video_looping": true,
+        "enable_image_zoom": false,
+        "max_image_zoom_level": 3,
+        "subheading": "from ink to thread",
+        "title": "hand-drawn porducts",
+        "content": "<p>All of our new colleciton, from ink to thread was drawn by hand and inspired by the works of our master aond founder - Ramiro Relvas. </p>"
+      }
+    },
+    "shop-the-look": {
+      "type": "shop-the-look",
+      "blocks": {
+        "look_GGg9Ez": {
+          "type": "look",
+          "settings": {
+            "hot_spots_background": "#ffffff",
+            "product_1": "",
+            "product_1_horizontal_position": 55,
+            "product_1_vertical_position": 30,
+            "product_2": "",
+            "product_2_horizontal_position": 25,
+            "product_2_vertical_position": 40,
+            "product_3": "",
+            "product_3_horizontal_position": 65,
+            "product_3_vertical_position": 60,
+            "product_4": "",
+            "product_4_horizontal_position": 85,
+            "product_4_vertical_position": 85
+          }
+        },
+        "look_EtDwmd": {
+          "type": "look",
+          "settings": {
+            "hot_spots_background": "#ffffff",
+            "product_1": "",
+            "product_1_horizontal_position": 55,
+            "product_1_vertical_position": 30,
+            "product_2": "",
+            "product_2_horizontal_position": 25,
+            "product_2_vertical_position": 40,
+            "product_3": "",
+            "product_3_horizontal_position": 65,
+            "product_3_vertical_position": 60,
+            "product_4": "",
+            "product_4_horizontal_position": 85,
+            "product_4_vertical_position": 85
+          }
+        },
+        "look-1": {
+          "type": "look",
+          "settings": {
+            "image": "shopify://shop_images/2.png",
+            "hot_spots_background": "#ffffff",
+            "product_1": "",
+            "product_1_horizontal_position": 24,
+            "product_1_vertical_position": 35,
+            "product_2": "",
+            "product_2_horizontal_position": 67,
+            "product_2_vertical_position": 51,
+            "product_3": "",
+            "product_3_horizontal_position": 30,
+            "product_3_vertical_position": 65,
+            "product_4": "",
+            "product_4_horizontal_position": 85,
+            "product_4_vertical_position": 85
+          }
+        }
+      },
+      "block_order": [
+        "look_GGg9Ez",
+        "look_EtDwmd",
+        "look-1"
+      ],
+      "disabled": true,
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "subheading": "take a look",
+        "title": "inspirations",
+        "content": "<p>This is a guide for inspirations. Crafted by our design and architecture team with care.</p>",
+        "popover_title": "Shop the look"
+      }
+    },
+    "rich-text": {
+      "type": "rich-text",
+      "blocks": {
+        "heading-1": {
+          "type": "heading",
+          "settings": {
+            "text": "Our aim: offer elegant, timeless & functional products",
+            "heading_tag": "h1"
+          }
+        },
+        "link-1": {
+          "type": "link",
+          "settings": {
+            "text": "Our story",
+            "url": ""
+          }
+        },
+        "link-2": {
+          "type": "link",
+          "settings": {
+            "text": "Commitments",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "heading-1",
+        "link-1",
+        "link-2"
+      ],
+      "disabled": true,
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": true,
+        "content_width": "xs",
+        "text_position": "center",
+        "remove_vertical_spacing": false
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": true,
+        "image_size": "md",
+        "subheading": "Keep me updated",
+        "title": "Newsletter",
+        "content": "<p>Subscribe to get notified about product launches, special offers and company news.</p>",
+        "button_text": "Subscribe",
+        "overlay_color": "#000000",
+        "overlay_opacity": 30
+      }
+    }
+  },
+  "order": [
+    "slideshow",
+    "multiple-media-with-text",
+    "media-grid",
+    "images-with-text-scroll",
+    "1768065729940e4efa",
+    "image-with-text-block",
+    "blog-posts",
+    "featured-product",
+    "shop-the-look",
+    "rich-text",
+    "newsletter"
+  ]
+}

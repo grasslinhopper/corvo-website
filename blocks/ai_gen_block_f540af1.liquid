@@ -1,0 +1,654 @@
+{% doc %}
+  @prompt
+    This is a product detail page layout with a split-screen design:
+    
+    Left Side (Image Gallery):
+    
+        Vertical thumbnail strip on the far left showing 5 product images
+        Large main product image area displaying the selected photo
+        The main image shows a model in an orange dress sitting on a yellow chair, wearing the black crossbody bag
+        Thumbnails include: close-up of bag hardware, black bag alone, bag being worn, model photo, and detail shot
+    
+    Right Side (Product Information):
+    
+        Product title "LE SAC BAGUETTE BLACK LIÉGÉ" in uppercase, spaced letters
+        Price "$310.00" displayed prominently
+        Star rating (4.5 stars with 4.7 score) aligned to the right of the price
+        Horizontal divider line
+        Color selector labeled "Color: Black Liégé" with 5 color swatches in a row (black selected, olive green, gray, textured black, and terracotta)
+        Product description text: "Elegant bag with extended format. Ideal for a weekend outing, day or night. Adjustable shoulder strap. Brass clasp. Fully lined in leather."
+        Notice text about demo store with "Leo & Violette" link
+        Two full-width buttons stacked vertically:
+            "ADD TO CART" (white background)
+            "BUY IT NOW" (black background)
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-product-split-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-product-split__container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .ai-product-split__gallery-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+  }
+
+  .ai-product-split__thumbnails-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 80px;
+    flex-shrink: 0;
+  }
+
+  .ai-product-split__thumbnail-{{ ai_gen_id }} {
+    width: 80px;
+    height: 80px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    overflow: hidden;
+    background-color: #f4f4f4;
+  }
+
+  .ai-product-split__thumbnail-{{ ai_gen_id }}.active {
+    border-color: {{ block.settings.accent_color }};
+  }
+
+  .ai-product-split__thumbnail-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-product-split__main-image-{{ ai_gen_id }} {
+    flex-grow: 1;
+    position: relative;
+    background-color: #f4f4f4;
+    min-height: 500px;
+  }
+
+  .ai-product-split__main-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-product-split__info-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .ai-product-split__header-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-product-split__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin: 0;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-product-split__price-rating-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ai-product-split__price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-product-split__rating-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ai-product-split__stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 2px;
+    color: {{ block.settings.star_color }};
+  }
+
+  .ai-product-split__rating-score-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-product-split__divider-{{ ai_gen_id }} {
+    height: 1px;
+    background-color: {{ block.settings.divider_color }};
+    margin: 8px 0;
+  }
+
+  .ai-product-split__color-selector-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-product-split__color-label-{{ ai_gen_id }} {
+    font-size: 14px;
+    font-weight: 500;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-product-split__color-swatches-{{ ai_gen_id }} {
+    display: flex;
+    gap: 12px;
+  }
+
+  .ai-product-split__color-swatch-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+  }
+
+  .ai-product-split__color-swatch-{{ ai_gen_id }}.active {
+    border-color: {{ block.settings.accent_color }};
+  }
+
+  .ai-product-split__description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    line-height: 1.6;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-product-split__notice-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.8;
+  }
+
+  .ai-product-split__notice-{{ ai_gen_id }} a {
+    color: {{ block.settings.accent_color }};
+    text-decoration: underline;
+  }
+
+  .ai-product-split__buttons-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-product-split__button-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+  }
+
+  .ai-product-split__button--primary-{{ ai_gen_id }} {
+    background-color: {{ block.settings.primary_button_bg }};
+    color: {{ block.settings.primary_button_text }};
+    border: 2px solid {{ block.settings.primary_button_bg }};
+  }
+
+  .ai-product-split__button--primary-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.primary_button_hover_bg }};
+    border-color: {{ block.settings.primary_button_hover_bg }};
+  }
+
+  .ai-product-split__button--secondary-{{ ai_gen_id }} {
+    background-color: {{ block.settings.secondary_button_bg }};
+    color: {{ block.settings.secondary_button_text }};
+    border: 2px solid {{ block.settings.secondary_button_bg }};
+  }
+
+  .ai-product-split__button--secondary-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.secondary_button_hover_bg }};
+    border-color: {{ block.settings.secondary_button_hover_bg }};
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-product-split__container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .ai-product-split__thumbnails-{{ ai_gen_id }} {
+      flex-direction: row;
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .ai-product-split__gallery-{{ ai_gen_id }} {
+      flex-direction: column-reverse;
+    }
+  }
+{% endstyle %}
+
+<product-split-{{ ai_gen_id }} class="ai-product-split-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-product-split__container-{{ ai_gen_id }}">
+    <div class="ai-product-split__gallery-{{ ai_gen_id }}">
+      <div class="ai-product-split__thumbnails-{{ ai_gen_id }}">
+        {% if product.images.size > 0 %}
+          {% for image in product.images limit: 5 %}
+            <div class="ai-product-split__thumbnail-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}" data-image-index="{{ forloop.index0 }}">
+              <img src="{{ image | image_url: width: 160 }}" alt="{{ image.alt | escape }}" loading="lazy">
+            </div>
+          {% endfor %}
+        {% else %}
+          {% for i in (1..5) %}
+            <div class="ai-product-split__thumbnail-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}">
+              {{ 'product-1' | placeholder_svg_tag }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <div class="ai-product-split__main-image-{{ ai_gen_id }}">
+        {% if product.featured_image %}
+          <img src="{{ product.featured_image | image_url: width: 1200 }}" alt="{{ product.featured_image.alt | escape }}" loading="eager" data-main-image>
+        {% else %}
+          {{ 'product-1' | placeholder_svg_tag }}
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="ai-product-split__info-{{ ai_gen_id }}">
+      <div class="ai-product-split__header-{{ ai_gen_id }}">
+        <h1 class="ai-product-split__title-{{ ai_gen_id }}">
+          {% if product.title != blank %}
+            {{ product.title }}
+          {% else %}
+            {{ block.settings.placeholder_title }}
+          {% endif %}
+        </h1>
+
+        <div class="ai-product-split__price-rating-{{ ai_gen_id }}">
+          <div class="ai-product-split__price-{{ ai_gen_id }}">
+            {% if product.price %}
+              {{ product.price | money }}
+            {% else %}
+              {{ block.settings.placeholder_price }}
+            {% endif %}
+          </div>
+
+          {% if block.settings.show_rating %}
+            <div class="ai-product-split__rating-{{ ai_gen_id }}">
+              <div class="ai-product-split__stars-{{ ai_gen_id }}">
+                {% for i in (1..5) %}
+                  {% if i <= block.settings.rating_value %}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  {% else %}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  {% endif %}
+                {% endfor %}
+              </div>
+              <span class="ai-product-split__rating-score-{{ ai_gen_id }}">{{ block.settings.rating_score }}</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="ai-product-split__divider-{{ ai_gen_id }}"></div>
+
+      {% if block.settings.show_color_selector %}
+        <div class="ai-product-split__color-selector-{{ ai_gen_id }}">
+          <div class="ai-product-split__color-label-{{ ai_gen_id }}">
+            {{ block.settings.color_label }}
+          </div>
+          <div class="ai-product-split__color-swatches-{{ ai_gen_id }}">
+            <div class="ai-product-split__color-swatch-{{ ai_gen_id }} active" style="background-color: {{ block.settings.color_1 }};"></div>
+            <div class="ai-product-split__color-swatch-{{ ai_gen_id }}" style="background-color: {{ block.settings.color_2 }};"></div>
+            <div class="ai-product-split__color-swatch-{{ ai_gen_id }}" style="background-color: {{ block.settings.color_3 }};"></div>
+            <div class="ai-product-split__color-swatch-{{ ai_gen_id }}" style="background-color: {{ block.settings.color_4 }};"></div>
+            <div class="ai-product-split__color-swatch-{{ ai_gen_id }}" style="background-color: {{ block.settings.color_5 }};"></div>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="ai-product-split__description-{{ ai_gen_id }}">
+        {% if product.description != blank %}
+          {{ product.description }}
+        {% else %}
+          {{ block.settings.placeholder_description }}
+        {% endif %}
+      </div>
+
+      {% if block.settings.notice_text != blank %}
+        <div class="ai-product-split__notice-{{ ai_gen_id }}">
+          {{ block.settings.notice_text }}
+        </div>
+      {% endif %}
+
+      <div class="ai-product-split__buttons-{{ ai_gen_id }}">
+        {% if product %}
+          {%- form 'product', product -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <button type="submit" class="ai-product-split__button-{{ ai_gen_id }} ai-product-split__button--primary-{{ ai_gen_id }}">
+              {{ block.settings.add_to_cart_text }}
+            </button>
+          {%- endform -%}
+        {% else %}
+          <button type="button" class="ai-product-split__button-{{ ai_gen_id }} ai-product-split__button--primary-{{ ai_gen_id }}">
+            {{ block.settings.add_to_cart_text }}
+          </button>
+        {% endif %}
+
+        <a href="{{ block.settings.buy_now_link }}" class="ai-product-split__button-{{ ai_gen_id }} ai-product-split__button--secondary-{{ ai_gen_id }}">
+          {{ block.settings.buy_now_text }}
+        </a>
+      </div>
+    </div>
+  </div>
+</product-split-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ProductSplit{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.thumbnails = this.querySelectorAll('.ai-product-split__thumbnail-{{ ai_gen_id }}');
+        this.mainImage = this.querySelector('[data-main-image]');
+        this.colorSwatches = this.querySelectorAll('.ai-product-split__color-swatch-{{ ai_gen_id }}');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.thumbnails.forEach((thumbnail) => {
+          thumbnail.addEventListener('click', () => {
+            const imageIndex = thumbnail.getAttribute('data-image-index');
+            const productImages = {{ product.images | json }};
+            
+            if (productImages && productImages[imageIndex]) {
+              const newImageUrl = productImages[imageIndex].src.replace(/\.(jpg|jpeg|png|gif|webp)/, '_1200x.$1');
+              if (this.mainImage) {
+                this.mainImage.src = newImageUrl;
+                this.mainImage.alt = productImages[imageIndex].alt || '';
+              }
+            }
+
+            this.thumbnails.forEach(t => t.classList.remove('active'));
+            thumbnail.classList.add('active');
+          });
+        });
+
+        this.colorSwatches.forEach((swatch) => {
+          swatch.addEventListener('click', () => {
+            this.colorSwatches.forEach(s => s.classList.remove('active'));
+            swatch.classList.add('active');
+          });
+        });
+      }
+    }
+
+    customElements.define('product-split-{{ ai_gen_id }}', ProductSplit{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product split screen",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product information"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_title",
+      "label": "Placeholder title",
+      "default": "LE SAC BAGUETTE BLACK LIÉGÉ"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_price",
+      "label": "Placeholder price",
+      "default": "$310.00"
+    },
+    {
+      "type": "textarea",
+      "id": "placeholder_description",
+      "label": "Placeholder description",
+      "default": "Elegant bag with extended format. Ideal for a weekend outing, day or night. Adjustable shoulder strap. Brass clasp. Fully lined in leather."
+    },
+    {
+      "type": "header",
+      "content": "Rating"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show rating",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "rating_value",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "label": "Rating stars",
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "rating_score",
+      "label": "Rating score",
+      "default": "4.7"
+    },
+    {
+      "type": "header",
+      "content": "Color selector"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_color_selector",
+      "label": "Show color selector",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "color_label",
+      "label": "Color label",
+      "default": "Color: Black Liégé"
+    },
+    {
+      "type": "color",
+      "id": "color_1",
+      "label": "Color 1",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "color_2",
+      "label": "Color 2",
+      "default": "#556B2F"
+    },
+    {
+      "type": "color",
+      "id": "color_3",
+      "label": "Color 3",
+      "default": "#808080"
+    },
+    {
+      "type": "color",
+      "id": "color_4",
+      "label": "Color 4",
+      "default": "#2F2F2F"
+    },
+    {
+      "type": "color",
+      "id": "color_5",
+      "label": "Color 5",
+      "default": "#CD5C5C"
+    },
+    {
+      "type": "header",
+      "content": "Notice"
+    },
+    {
+      "type": "richtext",
+      "id": "notice_text",
+      "label": "Notice text",
+      "default": "<p>This is a demo store. <a href=\"#\">Leo & Violette</a></p>"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_text",
+      "label": "Add to cart text",
+      "default": "ADD TO CART"
+    },
+    {
+      "type": "text",
+      "id": "buy_now_text",
+      "label": "Buy now text",
+      "default": "BUY IT NOW"
+    },
+    {
+      "type": "url",
+      "id": "buy_now_link",
+      "label": "Buy now link"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "label": "Price size",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star rating",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_bg",
+      "label": "Primary button background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_text",
+      "label": "Primary button text",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_hover_bg",
+      "label": "Primary button hover background",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_bg",
+      "label": "Secondary button background",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_text",
+      "label": "Secondary button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_hover_bg",
+      "label": "Secondary button hover background",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product split screen"
+    }
+  ]
+}
+{% endschema %}

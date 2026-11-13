@@ -1,0 +1,637 @@
+{% doc %}
+  @prompt
+    Create a product information specifications section below the product details with the following:
+    Section Header:
+    
+    Title: 'Informação do Produto' (or 'Product Information')
+    Thin horizontal line divider below the title
+    Dark text on light gray/off-white background
+    
+    Specifications Table:
+    
+    Two-column layout with labels on the left and values on the right
+    Left column: bold/medium weight labels, left-aligned
+    Right column: regular weight values, right-aligned, gray text
+    Thin divider lines between each row
+    
+    Specification Rows (label | value):
+    
+    'Tipo de Produto' | 'Hand-Tufted'
+    'Técnica' | 'Pelo Cortado'
+    'Altura do Pêlo' | '14-25mm'
+    'Materiais' | 'Bamboo, Botanical Silk'
+    'Dimensões' | '2X3m'
+    'Utilização' | 'Hotelaria, Residencial'
+    'Gama de Preços' | '4'
+    'Tamanhos Recomendados' | '2X3m'
+    'Cores' | 'Mix'
+    
+    Footer Notes:
+    
+    Small text in muted color below the table
+    Line 1: '*Outras cores, formas e tamanhos a pedido'
+    Line 2: Longer disclaimer text about color accuracy (in Portuguese)
+    
+    Style Guidelines:
+    
+    Clean, minimal design with generous spacing
+    Professional typography
+    Mobile responsive: may need to adjust alignment on smaller screens
+    Consistent padding throughout
+    Match the overall page aesthetic
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-product-specs-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.section_padding }}px 20px;
+  }
+
+  .ai-product-specs__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-product-specs__header-{{ ai_gen_id }} {
+    margin-bottom: {{ block.settings.header_spacing }}px;
+  }
+
+  .ai-product-specs__title-{{ ai_gen_id }} {
+    font-family: {{ block.settings.title_font.family }}, {{ block.settings.title_font.fallback_families }};
+    font-weight: {{ block.settings.title_font.weight }};
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.title_color }};
+    margin: 0 0 {{ block.settings.divider_spacing }}px 0;
+    text-transform: {{ block.settings.title_transform }};
+    letter-spacing: 0.05em;
+  }
+
+  .ai-product-specs__divider-{{ ai_gen_id }} {
+    height: 1px;
+    background-color: {{ block.settings.divider_color }};
+    border: none;
+    margin: 0;
+  }
+
+  .ai-product-specs__table-{{ ai_gen_id }} {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: {{ block.settings.table_spacing }}px;
+  }
+
+  .ai-product-specs__row-{{ ai_gen_id }} {
+    border-bottom: 1px solid {{ block.settings.row_divider_color }};
+  }
+
+  .ai-product-specs__row-{{ ai_gen_id }}:last-child {
+    border-bottom: none;
+  }
+
+  .ai-product-specs__label-{{ ai_gen_id }},
+  .ai-product-specs__value-{{ ai_gen_id }} {
+    padding: {{ block.settings.row_padding }}px 0;
+    font-size: {{ block.settings.text_size }}px;
+    line-height: 1.6;
+  }
+
+  .ai-product-specs__label-{{ ai_gen_id }} {
+    font-weight: {{ block.settings.label_weight }};
+    color: {{ block.settings.label_color }};
+    text-align: left;
+    width: {{ block.settings.label_width }}%;
+    padding-right: 20px;
+  }
+
+  .ai-product-specs__value-{{ ai_gen_id }} {
+    font-weight: 400;
+    color: {{ block.settings.value_color }};
+    text-align: right;
+  }
+
+  .ai-product-specs__footer-{{ ai_gen_id }} {
+    margin-top: {{ block.settings.footer_spacing }}px;
+  }
+
+  .ai-product-specs__note-{{ ai_gen_id }} {
+    font-size: {{ block.settings.note_size }}px;
+    color: {{ block.settings.note_color }};
+    line-height: 1.5;
+    margin: 8px 0 0 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-specs__title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.85);
+    }
+
+    .ai-product-specs__label-{{ ai_gen_id }},
+    .ai-product-specs__value-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.text_size }}px * 0.9);
+      padding: {{ block.settings.row_padding | times: 0.8 }}px 0;
+    }
+
+    .ai-product-specs__label-{{ ai_gen_id }} {
+      width: 50%;
+      padding-right: 12px;
+    }
+
+    .ai-product-specs__note-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.note_size }}px * 0.9);
+    }
+  }
+{% endstyle %}
+
+<div class="ai-product-specs-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-product-specs__container-{{ ai_gen_id }}">
+    <div class="ai-product-specs__header-{{ ai_gen_id }}">
+      <h2 class="ai-product-specs__title-{{ ai_gen_id }}">{{ block.settings.section_title }}</h2>
+      <hr class="ai-product-specs__divider-{{ ai_gen_id }}">
+    </div>
+
+    <table class="ai-product-specs__table-{{ ai_gen_id }}">
+      {% if block.settings.show_spec_1 %}
+        <tr class="ai-product-specs__row-{{ ai_gen_id }}">
+          <td class="ai-product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_1_label }}</td>
+          <td class="ai-product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_1_value }}</td>
+        </tr>
+      {% endif %}
+
+      {% if block.settings.show_spec_2 %}
+        <tr class="ai-product-specs__row-{{ ai_gen_id }}">
+          <td class="ai-product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_2_label }}</td>
+          <td class="ai-product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_2_value }}</td>
+        </tr>
+      {% endif %}
+
+      {% if block.settings.show_spec_3 %}
+        <tr class="ai-product-specs__row-{{ ai_gen_id }}">
+          <td class="ai-product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_3_label }}</td>
+          <td class="ai-product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_3_value }}</td>
+        </tr>
+      {% endif %}
+
+      {% if block.settings.show_spec_4 %}
+        <tr class="ai-product-specs__row-{{ ai_gen_id }}">
+          <td class="ai-product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_4_label }}</td>
+          <td class="ai-product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_4_value }}</td>
+        </tr>
+      {% endif %}
+
+      {% if block.settings.show_spec_5 %}
+        <tr class="ai-product-specs__row-{{ ai_gen_id }}">
+          <td class="ai-product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_5_label }}</td>
+          <td class="ai-product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_5_value }}</td>
+        </tr>
+      {% endif %}
+
+      {% if block.settings.show_spec_6 %}
+        <tr class="ai-product-specs__row-{{ ai_gen_id }}">
+          <td class="ai-product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_6_label }}</td>
+          <td class="ai-product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_6_value }}</td>
+        </tr>
+      {% endif %}
+
+      {% if block.settings.show_spec_7 %}
+        <tr class="ai-product-specs__row-{{ ai_gen_id }}">
+          <td class="ai-product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_7_label }}</td>
+          <td class="ai-product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_7_value }}</td>
+        </tr>
+      {% endif %}
+
+      {% if block.settings.show_spec_8 %}
+        <tr class="ai-product-specs__row-{{ ai_gen_id }}">
+          <td class="ai-product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_8_label }}</td>
+          <td class="ai-product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_8_value }}</td>
+        </tr>
+      {% endif %}
+
+      {% if block.settings.show_spec_9 %}
+        <tr class="ai-product-specs__row-{{ ai_gen_id }}">
+          <td class="ai-product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_9_label }}</td>
+          <td class="ai-product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_9_value }}</td>
+        </tr>
+      {% endif %}
+    </table>
+
+    {% if block.settings.show_footer_notes %}
+      <div class="ai-product-specs__footer-{{ ai_gen_id }}">
+        {% if block.settings.note_1 != blank %}
+          <p class="ai-product-specs__note-{{ ai_gen_id }}">{{ block.settings.note_1 }}</p>
+        {% endif %}
+        {% if block.settings.note_2 != blank %}
+          <p class="ai-product-specs__note-{{ ai_gen_id }}">{{ block.settings.note_2 }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product specifications",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section header"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Title",
+      "default": "Informação do Produto"
+    },
+    {
+      "type": "font_picker",
+      "id": "title_font",
+      "label": "Title font",
+      "default": "instrument_sans_n4"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "title_transform",
+      "label": "Title casing",
+      "options": [
+        {
+          "value": "none",
+          "label": "Normal"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "lowercase",
+          "label": "Lowercase"
+        }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "header",
+      "content": "Specifications"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_spec_1",
+      "label": "Show specification 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "spec_1_label",
+      "label": "Specification 1 label",
+      "default": "Tipo de Produto"
+    },
+    {
+      "type": "text",
+      "id": "spec_1_value",
+      "label": "Specification 1 value",
+      "default": "Hand-Tufted"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_spec_2",
+      "label": "Show specification 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "spec_2_label",
+      "label": "Specification 2 label",
+      "default": "Técnica"
+    },
+    {
+      "type": "text",
+      "id": "spec_2_value",
+      "label": "Specification 2 value",
+      "default": "Pelo Cortado"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_spec_3",
+      "label": "Show specification 3",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "spec_3_label",
+      "label": "Specification 3 label",
+      "default": "Altura do Pêlo"
+    },
+    {
+      "type": "text",
+      "id": "spec_3_value",
+      "label": "Specification 3 value",
+      "default": "14-25mm"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_spec_4",
+      "label": "Show specification 4",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "spec_4_label",
+      "label": "Specification 4 label",
+      "default": "Materiais"
+    },
+    {
+      "type": "text",
+      "id": "spec_4_value",
+      "label": "Specification 4 value",
+      "default": "Bamboo, Botanical Silk"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_spec_5",
+      "label": "Show specification 5",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "spec_5_label",
+      "label": "Specification 5 label",
+      "default": "Dimensões"
+    },
+    {
+      "type": "text",
+      "id": "spec_5_value",
+      "label": "Specification 5 value",
+      "default": "2X3m"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_spec_6",
+      "label": "Show specification 6",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "spec_6_label",
+      "label": "Specification 6 label",
+      "default": "Utilização"
+    },
+    {
+      "type": "text",
+      "id": "spec_6_value",
+      "label": "Specification 6 value",
+      "default": "Hotelaria, Residencial"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_spec_7",
+      "label": "Show specification 7",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "spec_7_label",
+      "label": "Specification 7 label",
+      "default": "Gama de Preços"
+    },
+    {
+      "type": "text",
+      "id": "spec_7_value",
+      "label": "Specification 7 value",
+      "default": "4"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_spec_8",
+      "label": "Show specification 8",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "spec_8_label",
+      "label": "Specification 8 label",
+      "default": "Tamanhos Recomendados"
+    },
+    {
+      "type": "text",
+      "id": "spec_8_value",
+      "label": "Specification 8 value",
+      "default": "2X3m"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_spec_9",
+      "label": "Show specification 9",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "spec_9_label",
+      "label": "Specification 9 label",
+      "default": "Cores"
+    },
+    {
+      "type": "text",
+      "id": "spec_9_value",
+      "label": "Specification 9 value",
+      "default": "Mix"
+    },
+    {
+      "type": "header",
+      "content": "Footer notes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_footer_notes",
+      "label": "Show footer notes",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "note_1",
+      "label": "Note 1",
+      "default": "*Outras cores, formas e tamanhos a pedido"
+    },
+    {
+      "type": "textarea",
+      "id": "note_2",
+      "label": "Note 2",
+      "default": "As cores apresentadas são meramente indicativas. Devido às características dos materiais naturais e processos artesanais, podem existir variações de cor e textura."
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "value_color",
+      "label": "Value color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Header divider color",
+      "default": "#d0d0d0"
+    },
+    {
+      "type": "color",
+      "id": "row_divider_color",
+      "label": "Row divider color",
+      "default": "#e8e8e8"
+    },
+    {
+      "type": "color",
+      "id": "note_color",
+      "label": "Note color",
+      "default": "#999999"
+    },
+    {
+      "type": "range",
+      "id": "label_weight",
+      "min": 400,
+      "max": 700,
+      "step": 100,
+      "label": "Label weight",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "note_size",
+      "min": 10,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "label": "Note size",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 600,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "min": 15,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Header spacing",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "divider_spacing",
+      "min": 10,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Divider spacing",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "table_spacing",
+      "min": 15,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Table spacing",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "row_padding",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Row padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "label_width",
+      "min": 30,
+      "max": 60,
+      "step": 5,
+      "unit": "%",
+      "label": "Label column width",
+      "default": 45
+    },
+    {
+      "type": "range",
+      "id": "footer_spacing",
+      "min": 15,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Footer spacing",
+      "default": 25
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product specifications"
+    }
+  ]
+}
+{% endschema %}

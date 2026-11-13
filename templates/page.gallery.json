@@ -1,0 +1,1142 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "",
+        "show_title": false,
+        "page_width": "xs"
+      }
+    },
+    "image_with_text_block_X9rBB9": {
+      "type": "image-with-text-block",
+      "blocks": {
+        "subheading_FbpkrT": {
+          "type": "subheading",
+          "settings": {
+            "text": "Gallery"
+          }
+        },
+        "richtext_UGbgq3": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Get inspired by our curated gallery of designs.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_FbpkrT",
+        "richtext_UGbgq3"
+      ],
+      "name": "t:sections.image_with_text_block.presets.image_with_text_block.name",
+      "settings": {
+        "color_scheme": "",
+        "image_size": "lg",
+        "image": "shopify://shop_images/Dubuffet_1_Simulation.webp",
+        "content_width": "md",
+        "enable_parallax": true,
+        "remove_vertical_spacing": true
+      }
+    },
+    "media_grid_k3tD7B": {
+      "type": "media-grid",
+      "blocks": {
+        "image_zM4EUe": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "image": "shopify://shop_images/Picture7.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Floral",
+            "link_url": "shopify://pages/floral",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_UqP6JH": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "image": "shopify://shop_images/Picture8.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Geometric",
+            "link_url": "shopify://pages/geometric",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_gUrNMF": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "image": "shopify://shop_images/Picture9.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Organic",
+            "link_url": "shopify://pages/organic",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_dhYpJE": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "image": "shopify://shop_images/Picture1_93443358-8850-44a3-96f6-3eba0aab7c8b.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "3D",
+            "link_url": "shopify://pages/3d",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_CMYeDw": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "image": "shopify://shop_images/Picture2.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Classic",
+            "link_url": "shopify://pages/classic",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_HnrypX": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "image": "shopify://shop_images/Picture5.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Cut & Loop",
+            "link_url": "shopify://pages/cut-loop",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_dnaA6n": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "image": "shopify://shop_images/Picture6.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Ethnic",
+            "link_url": "shopify://pages/ethnic",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        }
+      },
+      "block_order": [
+        "image_zM4EUe",
+        "image_UqP6JH",
+        "image_gUrNMF",
+        "image_dhYpJE",
+        "image_CMYeDw",
+        "image_HnrypX",
+        "image_dnaA6n"
+      ],
+      "disabled": true,
+      "name": "t:sections.media_grid.presets.media_grid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "desktop_row_height": 290,
+        "mobile_row_height": 230,
+        "section_width": "lg",
+        "spacing": "md",
+        "subheading": "",
+        "title": "Gallery",
+        "content": ""
+      }
+    },
+    "media_grid_hCja8M": {
+      "type": "media-grid",
+      "blocks": {
+        "image_F3XFUz": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Haouz_2_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Haouz",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_NYQ3tF": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Schubert_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Schubert",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_VkRKhJ": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Valley_1_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Valley",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_99YrY9": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Wilma_1_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Wilma",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        }
+      },
+      "block_order": [
+        "image_F3XFUz",
+        "image_NYQ3tF",
+        "image_VkRKhJ",
+        "image_99YrY9"
+      ],
+      "name": "t:sections.media_grid.presets.media_grid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "desktop_row_height": 290,
+        "mobile_row_height": 230,
+        "section_width": "full",
+        "spacing": "xs",
+        "subheading": "",
+        "title": "Ethnic",
+        "content": ""
+      }
+    },
+    "media_grid_Dnwg7f": {
+      "type": "media-grid",
+      "blocks": {
+        "image_NdeYwH": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Andes.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Andes",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_xCJUyP": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Azymuth_1_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Azymuth",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_H88DKz": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Caucasus.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Caucasus",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_KTJakt": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Kunlun.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Kunlun",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_NrxqFT": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/MOONLIT_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Moonlit",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 20
+          }
+        },
+        "image_j3AiTa": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Niedere.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Niedere",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_3dffex": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Oresund.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Oresund",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_gUYmyx": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Pyrenees.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Pyrenees",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_6yTwaR": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/SALTA_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Salta",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 20
+          }
+        },
+        "image_wKPAAB": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/TRIBE_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Tribe",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_r7Jwwj": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/WEZAL_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Wezal",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        }
+      },
+      "block_order": [
+        "image_NdeYwH",
+        "image_xCJUyP",
+        "image_H88DKz",
+        "image_KTJakt",
+        "image_NrxqFT",
+        "image_j3AiTa",
+        "image_3dffex",
+        "image_gUYmyx",
+        "image_6yTwaR",
+        "image_wKPAAB",
+        "image_r7Jwwj"
+      ],
+      "name": "t:sections.media_grid.presets.media_grid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "desktop_row_height": 290,
+        "mobile_row_height": 230,
+        "section_width": "lg",
+        "spacing": "md",
+        "subheading": "",
+        "title": "Relief",
+        "content": ""
+      }
+    },
+    "media_grid_NUxFpP": {
+      "type": "media-grid",
+      "blocks": {
+        "image_JmEXt3": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Classic_A_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Sintra sand",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_jR9ABz": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Classic_C_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Sintra Mist",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_NJqXjm": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Classic_D_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Mafra Amber",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_PAb9L7": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Classic_H_170_redondo_Simulation.png",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Monserrate Fern",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        }
+      },
+      "block_order": [
+        "image_JmEXt3",
+        "image_jR9ABz",
+        "image_NJqXjm",
+        "image_PAb9L7"
+      ],
+      "name": "t:sections.media_grid.presets.media_grid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "desktop_row_height": 250,
+        "mobile_row_height": 230,
+        "section_width": "lg",
+        "spacing": "md",
+        "subheading": "",
+        "title": "Classic",
+        "content": ""
+      }
+    },
+    "media_grid_XCV9eL": {
+      "type": "media-grid",
+      "blocks": {
+        "image_KnL7KJ": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Cut_Loop_Border_fade_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Border Fade",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_nkp9jq": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Gianna_1_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Gianna",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_ETmgp3": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Lines_140x200_Stone_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Lines Stone",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_7Tm8nP": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Spin_Cut_Loop_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Spin Cut",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_X3fwdL": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Strada_1_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Strada",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_8WXU3G": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Wind_Blow_1_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Wind Blow",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        }
+      },
+      "block_order": [
+        "image_KnL7KJ",
+        "image_nkp9jq",
+        "image_ETmgp3",
+        "image_7Tm8nP",
+        "image_X3fwdL",
+        "image_8WXU3G"
+      ],
+      "name": "t:sections.media_grid.presets.media_grid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "desktop_row_height": 290,
+        "mobile_row_height": 230,
+        "section_width": "lg",
+        "spacing": "md",
+        "subheading": "",
+        "title": "Cut Loop",
+        "content": ""
+      }
+    },
+    "media_grid_9mWkcw": {
+      "type": "media-grid",
+      "blocks": {
+        "image_3nRRTm": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Aurora_2_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Aurora",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_9kULmg": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Esquisso_Floral_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Esquisso",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_6GBRzi": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Hibiscus_1_Simulation.png",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Hibiscus",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_R4mUNQ": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Lily_1_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Lily",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_dGVc3g": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Suave_C_3_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Suave",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        }
+      },
+      "block_order": [
+        "image_3nRRTm",
+        "image_9kULmg",
+        "image_6GBRzi",
+        "image_R4mUNQ",
+        "image_dGVc3g"
+      ],
+      "name": "t:sections.media_grid.presets.media_grid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "desktop_row_height": 290,
+        "mobile_row_height": 230,
+        "section_width": "lg",
+        "spacing": "md",
+        "subheading": "",
+        "title": "Floral",
+        "content": ""
+      }
+    },
+    "media_grid_wHEQ3G": {
+      "type": "media-grid",
+      "blocks": {
+        "image_HbRjBA": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Bach_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Bach",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_brzyzi": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Beethoven_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Beethoven",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_VPnzVd": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Cannes_140x200_anthracite_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Cannes",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_rNME49": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/City_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "City",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_aJrQE7": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Garnier_1_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Garnier",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_Y7dWkV": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Laces_1_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Laces",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_EVUtp8": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Mozart_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Mozart",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_tCJxxw": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Shift_1_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Shift",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_7iA9xJ": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Verdi_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Verdi",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "image_BGfyGf": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/Vivaldi_140x200_Simulation.webp",
+            "column_count": "3",
+            "row_count": 1,
+            "title": "Vivaldi",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        }
+      },
+      "block_order": [
+        "image_HbRjBA",
+        "image_brzyzi",
+        "image_VPnzVd",
+        "image_rNME49",
+        "image_aJrQE7",
+        "image_Y7dWkV",
+        "image_EVUtp8",
+        "image_tCJxxw",
+        "image_7iA9xJ",
+        "image_BGfyGf"
+      ],
+      "name": "t:sections.media_grid.presets.media_grid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "desktop_row_height": 290,
+        "mobile_row_height": 230,
+        "section_width": "lg",
+        "spacing": "md",
+        "subheading": "",
+        "title": "Geometric",
+        "content": ""
+      }
+    },
+    "image_with_text_wPjVLT": {
+      "type": "image-with-text",
+      "blocks": {
+        "subheading_MWRB8V": {
+          "type": "subheading",
+          "settings": {
+            "text": ""
+          }
+        },
+        "heading_HBtpPF": {
+          "type": "heading",
+          "settings": {
+            "text": "Looking for some help?",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_axagKe": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Our designers are happy to assist you in creating your own design.</p>"
+          }
+        },
+        "button_kBdeAi": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "Book an appointment",
+            "url": "shopify://pages/contact",
+            "background": "",
+            "text_color": ""
+          }
+        }
+      },
+      "block_order": [
+        "subheading_MWRB8V",
+        "heading_HBtpPF",
+        "richtext_axagKe",
+        "button_kBdeAi"
+      ],
+      "disabled": true,
+      "name": "t:sections.image_with_text.presets.image_with_text.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": true,
+        "image": "shopify://shop_images/CORVO_FINAL-72.jpg",
+        "reveal_on_scroll": true,
+        "image_position": "end",
+        "content_width": "sm",
+        "remove_vertical_spacing": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "image_with_text_block_X9rBB9",
+    "media_grid_k3tD7B",
+    "media_grid_hCja8M",
+    "media_grid_Dnwg7f",
+    "media_grid_NUxFpP",
+    "media_grid_XCV9eL",
+    "media_grid_9mWkcw",
+    "media_grid_wHEQ3G",
+    "image_with_text_wPjVLT"
+  ]
+}

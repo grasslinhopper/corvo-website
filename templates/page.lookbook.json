@@ -1,0 +1,247 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "",
+        "show_title": false,
+        "page_width": "xs"
+      }
+    },
+    "image_with_text_block_fgx6tA": {
+      "type": "image-with-text-block",
+      "blocks": {
+        "subheading_KDVjWf": {
+          "type": "subheading",
+          "settings": {
+            "text": "lookbook"
+          }
+        },
+        "richtext_pfGg6n": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Our lookbook sets the tone for how Corvo rugs live within thoughtfully composed interiors.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_KDVjWf",
+        "richtext_pfGg6n"
+      ],
+      "name": "t:sections.image_with_text_block.presets.image_with_text_block.name",
+      "settings": {
+        "color_scheme": "",
+        "image_size": "lg",
+        "image": "shopify://shop_images/Hiver_Grey_1_Simulation.webp",
+        "content_width": "lg",
+        "enable_parallax": true,
+        "remove_vertical_spacing": true
+      }
+    },
+    "media_grid_dzhq3Q": {
+      "type": "media-grid",
+      "blocks": {
+        "image_JjLcWn": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "image": "shopify://shop_images/EVELYN_-_3.png",
+            "column_count": "8",
+            "row_count": 2,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Evelyn",
+            "link_url": "shopify://products/evelyn-rug",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_fQGcG3": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "image": "shopify://shop_images/EMMA_-_1.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Emma",
+            "link_url": "shopify://products/emma-rug",
+            "link_style": "link",
+            "text_position": "place-self-end text-end",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_B4Vmiz": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "image": "shopify://shop_images/IMPERIAL_-_4.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Imperial",
+            "link_url": "shopify://products/imperial-rug",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_TgNUF3": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "image": "shopify://shop_images/PARSON_100_THIN_WOOL_-_3.jpg",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Parson",
+            "link_url": "shopify://products/parson-rug",
+            "link_style": "link",
+            "text_position": "place-self-end-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_qHe4Bt": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "image": "shopify://shop_images/CLASSICO_100_LYOCELL_-_transferir_8.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Classico",
+            "link_url": "shopify://products/classico-rug",
+            "link_style": "link",
+            "text_position": "place-self-end-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_TttxgY": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "image": "shopify://shop_images/2_a1c00aca-481f-418a-a872-1456d9207ab7.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Tender",
+            "link_url": "shopify://products/tender-rug",
+            "link_style": "link",
+            "text_position": "place-self-end-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_6EnXAN": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "image": "shopify://shop_images/RELIANCE_-_1.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Reliance",
+            "link_url": "shopify://products/reliance-rug",
+            "link_style": "link",
+            "text_position": "place-self-end text-end",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_9JQp4A": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "image": "shopify://shop_images/CLASSIC_B_-_transferir_4.png",
+            "column_count": "8",
+            "row_count": 2,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Majestic",
+            "link_url": "shopify://products/classic-b",
+            "link_style": "link",
+            "text_position": "place-self-end-start text-start",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "image_n6Pn9w": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "image": "shopify://shop_images/RAMIRO_-_4.png",
+            "column_count": "4",
+            "row_count": 1,
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "Ramiro",
+            "link_url": "shopify://products/ramiro-rug",
+            "link_style": "link",
+            "text_position": "place-self-end text-end",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        }
+      },
+      "block_order": [
+        "image_JjLcWn",
+        "image_fQGcG3",
+        "image_B4Vmiz",
+        "image_TgNUF3",
+        "image_qHe4Bt",
+        "image_TttxgY",
+        "image_6EnXAN",
+        "image_9JQp4A",
+        "image_n6Pn9w"
+      ],
+      "name": "t:sections.media_grid.presets.media_grid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": true,
+        "desktop_row_height": 290,
+        "mobile_row_height": 180,
+        "section_width": "lg",
+        "spacing": "md",
+        "subheading": "",
+        "title": "Lookbook",
+        "content": "<p>Curated spaces featuring the Corvo collection.</p>"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "image_with_text_block_fgx6tA",
+    "media_grid_dzhq3Q"
+  ]
+}

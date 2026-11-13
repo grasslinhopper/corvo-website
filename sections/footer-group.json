@@ -1,0 +1,251 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "contact_ca7PKz": {
+      "type": "contact",
+      "blocks": {
+        "text_6AifC9": {
+          "type": "text",
+          "settings": {
+            "title": "Phone",
+            "use_long_text": false,
+            "required": false
+          }
+        }
+      },
+      "block_order": [
+        "text_6AifC9"
+      ],
+      "name": "t:sections.contact.presets.contact_form.name",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "subheading": "",
+        "title": "Bespoke services",
+        "content": "<p>Describe your bespoke request and a design concierge will promptly get in touch. </p>"
+      }
+    },
+    "faq_MU4Kqr": {
+      "type": "faq",
+      "blocks": {
+        "category_A7VB6N": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "icon": "none",
+            "icon_width": 16
+          }
+        },
+        "question_6LzP4R": {
+          "type": "question",
+          "settings": {
+            "question": "Do you ship internationally?",
+            "answer": "<p>Yes. Corvo ships worldwide, working with trusted logistics partners experienced in handling bespoke, made-to-order rugs. Each piece is carefully packed and shipped from Portugal to ensure it arrives in perfect condition, wherever your project is located.</p>"
+          }
+        },
+        "question_QknVLQ": {
+          "type": "question",
+          "settings": {
+            "question": "Are Corvo rugs made to order?",
+            "answer": "<p>All Corvo rugs are made to order. Each piece is produced specifically for the client, allowing full customization in size, shape, colour, and material. This approach ensures exclusivity, precision, and a final result that is perfectly aligned with the intended space.</p>"
+          }
+        },
+        "question_DRX9LV": {
+          "type": "question",
+          "name": "Custom shape & colours",
+          "settings": {
+            "question": "Can I customize the size, shape, and colours?",
+            "answer": "<p>Yes. Every Corvo rug can be fully customized. Clients may choose from our Open Palette or develop bespoke tones through Infinite Colors. Sizes and shapes are tailored to each project, including non-standard and architectural formats.</p>"
+          }
+        },
+        "question_9BARnX": {
+          "type": "question",
+          "settings": {
+            "question": "How long does production and delivery take?",
+            "answer": "<p>As a bespoke atelier, Corvo rugs require production time to ensure craftsmanship and material quality. Lead times typically range from 4 to 6 weeks depending on design complexity, materials, and destination. Estimated timelines are confirmed at the time of order.</p>"
+          }
+        },
+        "question_MN6GAe": {
+          "type": "question",
+          "settings": {
+            "question": "What materials do you use?",
+            "answer": "<p>Corvo works exclusively with carefully selected yarn concepts, including fine wools, internally developed silks, and refined blends. Each material is chosen for its tactile qualities, durability, and visual depth, allowing every rug to achieve both aesthetic refinement and long-term performance.</p>"
+          }
+        },
+        "question_CgENWk": {
+          "type": "question",
+          "settings": {
+            "question": "Do you work with interior designers and architects?",
+            "answer": "<p>Yes. Corvo collaborates closely with interior designers, architects, and studios worldwide. Our trade program offers technical support, sampling, bespoke development, and detailed specifications to support residential, hospitality, and commercial projects.</p>"
+          }
+        },
+        "question_Jjwtim": {
+          "type": "question",
+          "settings": {
+            "question": "How can I start a bespoke rug project with Corvo?",
+            "answer": "<p>To begin a bespoke project, simply contact us through our website. Our team will guide you through the process, from initial concept and material selection to colour development and final production, ensuring a seamless and highly personalized experience.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "category_A7VB6N",
+        "question_6LzP4R",
+        "question_QknVLQ",
+        "question_DRX9LV",
+        "question_9BARnX",
+        "question_MN6GAe",
+        "question_CgENWk",
+        "question_Jjwtim"
+      ],
+      "name": "t:sections.faq.presets.faq.name",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "show_categories": false,
+        "subheading": "Take a step inside",
+        "title": "get to know corvo",
+        "content": ""
+      }
+    },
+    "176806788516abfdc8": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_0b28f38_jY6RpT": {
+          "type": "ai_gen_block_0b28f38",
+          "settings": {
+            "max_width": 1400,
+            "padding_top": 80,
+            "padding_bottom": 80,
+            "background_color": "#1c1c1c",
+            "text_color": "#ffffff",
+            "divider_color": "#ffffff",
+            "heading_size": 12,
+            "heading_letter_spacing": 2,
+            "heading_transform": "uppercase",
+            "link_size": 13,
+            "link_letter_spacing": 0.5,
+            "copyright_size": 11,
+            "divider_thickness": 1,
+            "divider_spacing": 50,
+            "show_column_1": true,
+            "column_1_heading": "collections",
+            "column_1_link_1_text": "All collections",
+            "column_1_link_1_url": "shopify://collections",
+            "column_1_link_2_text": "Ink to Thread",
+            "column_1_link_2_url": "shopify://collections/from-ink-to-thread",
+            "column_1_link_3_text": "Priming",
+            "column_1_link_3_url": "shopify://collections/colecao-ultra-fixe",
+            "column_1_link_4_text": "Contour",
+            "column_1_link_4_url": "shopify://collections/contour",
+            "show_column_2": true,
+            "column_2_heading": "corvo world",
+            "column_2_link_1_text": "Raw Materials",
+            "column_2_link_1_url": "shopify://blogs/news/the-art-of-material-selection-excellence-in-every-fiber",
+            "column_2_link_2_text": "Rug Selection",
+            "column_2_link_2_url": "shopify://blogs/news/how-to-choose-the-perfect-rug-elevate-every-space-in-your-home",
+            "column_2_link_3_text": "Maintenance Guide",
+            "column_2_link_3_url": "shopify://blogs/news/rug-maintenance-guide",
+            "column_2_link_4_text": "Contact",
+            "column_2_link_4_url": "shopify://pages/contact",
+            "show_column_3": true,
+            "column_3_heading": "About Us",
+            "column_3_link_1_text": "Shipping",
+            "column_3_link_1_url": "shopify://pages/about-us",
+            "column_3_link_2_text": "Returns",
+            "column_3_link_2_url": "",
+            "column_3_link_3_text": "Care guide",
+            "column_3_link_3_url": "shopify://blogs/news/rug-maintenance-guide",
+            "column_3_link_4_text": "",
+            "column_3_link_4_url": "",
+            "show_newsletter": true,
+            "newsletter_heading": "Newsletter",
+            "newsletter_text": "Subscribe to receive updates and exclusive offers.",
+            "newsletter_placeholder": "Your email",
+            "newsletter_button_text": "Subscribe",
+            "newsletter_success_message": "Thank you for subscribing.",
+            "copyright_text": "© 2026 CORVO RUGS. All rights reserved.",
+            "show_social": true,
+            "social_instagram": "https://www.instagram.com/corvorugs/",
+            "social_facebook": "",
+            "social_twitter": "",
+            "social_pinterest": ""
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_0b28f38_jY6RpT"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": false
+      }
+    },
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "newsletter": {
+          "type": "newsletter",
+          "settings": {
+            "title": "Newsletter",
+            "content": "",
+            "button_background": "",
+            "button_text_color": ""
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "title": "<a href=\"/pages/about-us\" title=\"About Us\">About Us</a>",
+            "content": "<p>Meticulously crafted in Portugal, Corvo blends heritage techniques with modern innovation. We create sustainable, bespoke rugs designed to anchor your space in timeless luxury.</p>",
+            "enable_follow_on_shop": true
+          }
+        },
+        "image_rXLggt": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PRR_5ab2072d-44f8-414c-97d0-f43010e9aeea.png",
+            "image_width": 100,
+            "link": "https://www.dropbox.com/scl/fi/l4901c6ljq5n6icn7kezz/SIQualifica-o-Ficha-de-projeto-2021.pdf?rlkey=4rml1bcnm3zh1nupbeg0l93mu&e=1&dl=0"
+          }
+        }
+      },
+      "block_order": [
+        "newsletter",
+        "text",
+        "image_rXLggt"
+      ],
+      "disabled": true,
+      "custom_css": [],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": true,
+        "show_social_media": false,
+        "show_payment_icons": false,
+        "show_powered_by_shopify": false,
+        "show_country_selector": false,
+        "show_country_name": false,
+        "show_country_flag": false,
+        "show_locale_selector": false
+      }
+    }
+  },
+  "order": [
+    "contact_ca7PKz",
+    "faq_MU4Kqr",
+    "176806788516abfdc8",
+    "footer"
+  ]
+}

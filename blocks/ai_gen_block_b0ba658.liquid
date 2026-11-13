@@ -1,0 +1,690 @@
+{% doc %}
+  @prompt
+    I want an image where I can pin point some locations inside the image. It then gives me my sotre locations underneath the image.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-store-locator-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-store-locator-container-{{ ai_gen_id }} {
+    width: 100%;
+  }
+
+  .ai-store-locator-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    margin-bottom: {{ block.settings.spacing_below_image }}px;
+  }
+
+  .ai-store-locator-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-store-locator-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 400px;
+  }
+
+  .ai-store-locator-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 600px;
+    max-height: 400px;
+  }
+
+  .ai-store-locator-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-store-pin-{{ ai_gen_id }} {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    cursor: pointer;
+    z-index: 2;
+    transition: transform 0.2s ease;
+  }
+
+  .ai-store-pin-{{ ai_gen_id }}:hover {
+    transform: translate(-50%, -100%) scale(1.1);
+  }
+
+  .ai-store-pin-icon-{{ ai_gen_id }} {
+    width: {{ block.settings.pin_size }}px;
+    height: {{ block.settings.pin_size }}px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+
+  .ai-store-locations-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: {{ block.settings.location_card_gap }}px;
+    margin-top: {{ block.settings.spacing_below_image }}px;
+  }
+
+  .ai-store-location-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    padding: {{ block.settings.card_padding }}px;
+    border-radius: {{ block.settings.card_border_radius }}px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .ai-store-location-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-store-location-card-{{ ai_gen_id }}.active {
+    border: 2px solid {{ block.settings.active_card_border }};
+  }
+
+  .ai-store-location-name-{{ ai_gen_id }} {
+    font-size: {{ block.settings.location_name_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 8px 0;
+    font-family: {{ block.settings.heading_font.family }}, {{ block.settings.heading_font.fallback_families }};
+  }
+
+  .ai-store-location-address-{{ ai_gen_id }} {
+    font-size: {{ block.settings.location_text_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 8px 0;
+    line-height: 1.5;
+  }
+
+  .ai-store-location-phone-{{ ai_gen_id }} {
+    font-size: {{ block.settings.location_text_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 8px 0;
+  }
+
+  .ai-store-location-hours-{{ ai_gen_id }} {
+    font-size: {{ block.settings.location_text_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .ai-store-location-empty-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: #999;
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-store-pin-icon-{{ ai_gen_id }} {
+      width: {{ block.settings.pin_size | times: 0.8 }}px;
+      height: {{ block.settings.pin_size | times: 0.8 }}px;
+    }
+
+    .ai-store-locations-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstyle %}
+
+<store-locator-{{ ai_gen_id }} class="ai-store-locator-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-store-locator-container-{{ ai_gen_id }}">
+    <div class="ai-store-locator-image-wrapper-{{ ai_gen_id }}">
+      {% if block.settings.map_image %}
+        <img
+          src="{{ block.settings.map_image | image_url: width: 2000 }}"
+          alt="{{ block.settings.map_image.alt | escape }}"
+          loading="lazy"
+          width="{{ block.settings.map_image.width }}"
+          height="{{ block.settings.map_image.height }}"
+          class="ai-store-locator-image-{{ ai_gen_id }}"
+        >
+      {% else %}
+        <div class="ai-store-locator-placeholder-{{ ai_gen_id }}">
+          {{ 'image' | placeholder_svg_tag }}
+          <div class="ai-store-locator-empty-state-{{ ai_gen_id }}">
+            Add a map image to show your store locations
+          </div>
+        </div>
+      {% endif %}
+
+      {% for i in (1..5) %}
+        {% liquid
+          assign location_enabled_key = 'location_' | append: i | append: '_enabled'
+          assign location_x_key = 'location_' | append: i | append: '_x'
+          assign location_y_key = 'location_' | append: i | append: '_y'
+          assign location_name_key = 'location_' | append: i | append: '_name'
+
+          assign location_enabled = block.settings[location_enabled_key]
+          assign location_x = block.settings[location_x_key]
+          assign location_y = block.settings[location_y_key]
+          assign location_name = block.settings[location_name_key]
+        %}
+
+        {% if location_enabled %}
+          <div
+            class="ai-store-pin-{{ ai_gen_id }}"
+            style="left: {{ location_x }}%; top: {{ location_y }}%;"
+            data-location-id="{{ i }}"
+            role="button"
+            tabindex="0"
+            aria-label="View {{ location_name }} details"
+          >
+            <svg class="ai-store-pin-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ block.settings.pin_color }}">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="ai-store-locations-{{ ai_gen_id }}">
+      {% assign has_locations = false %}
+      {% for i in (1..5) %}
+        {% liquid
+          assign location_enabled_key = 'location_' | append: i | append: '_enabled'
+          assign location_name_key = 'location_' | append: i | append: '_name'
+          assign location_address_key = 'location_' | append: i | append: '_address'
+          assign location_phone_key = 'location_' | append: i | append: '_phone'
+          assign location_hours_key = 'location_' | append: i | append: '_hours'
+
+          assign location_enabled = block.settings[location_enabled_key]
+          assign location_name = block.settings[location_name_key]
+          assign location_address = block.settings[location_address_key]
+          assign location_phone = block.settings[location_phone_key]
+          assign location_hours = block.settings[location_hours_key]
+        %}
+
+        {% if location_enabled %}
+          {% assign has_locations = true %}
+          <div class="ai-store-location-card-{{ ai_gen_id }}" data-location-id="{{ i }}">
+            {% if location_name != blank %}
+              <h3 class="ai-store-location-name-{{ ai_gen_id }}">{{ location_name }}</h3>
+            {% endif %}
+
+            {% if location_address != blank %}
+              <div class="ai-store-location-address-{{ ai_gen_id }}">{{ location_address }}</div>
+            {% endif %}
+
+            {% if location_phone != blank %}
+              <div class="ai-store-location-phone-{{ ai_gen_id }}">{{ location_phone }}</div>
+            {% endif %}
+
+            {% if location_hours != blank %}
+              <div class="ai-store-location-hours-{{ ai_gen_id }}">{{ location_hours }}</div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      {% unless has_locations %}
+        <div class="ai-store-location-empty-{{ ai_gen_id }}">
+          Enable and configure store locations in the block settings
+        </div>
+      {% endunless %}
+    </div>
+  </div>
+</store-locator-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StoreLocator{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.pins = this.querySelectorAll('.ai-store-pin-{{ ai_gen_id }}');
+        this.cards = this.querySelectorAll('.ai-store-location-card-{{ ai_gen_id }}');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.pins.forEach((pin) => {
+          pin.addEventListener('click', () => this.handlePinClick(pin));
+          pin.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              this.handlePinClick(pin);
+            }
+          });
+        });
+
+        this.cards.forEach((card) => {
+          card.addEventListener('click', () => this.handleCardClick(card));
+        });
+      }
+
+      handlePinClick(pin) {
+        const locationId = pin.getAttribute('data-location-id');
+        this.highlightLocation(locationId);
+        this.scrollToCard(locationId);
+      }
+
+      handleCardClick(card) {
+        const locationId = card.getAttribute('data-location-id');
+        this.highlightLocation(locationId);
+      }
+
+      highlightLocation(locationId) {
+        this.cards.forEach((card) => {
+          if (card.getAttribute('data-location-id') === locationId) {
+            card.classList.add('active');
+          } else {
+            card.classList.remove('active');
+          }
+        });
+      }
+
+      scrollToCard(locationId) {
+        const card = this.querySelector(`.ai-store-location-card-{{ ai_gen_id }}[data-location-id="${locationId}"]`);
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    }
+
+    customElements.define('store-locator-{{ ai_gen_id }}', StoreLocator{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Store locator",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Map image"
+    },
+    {
+      "type": "image_picker",
+      "id": "map_image",
+      "label": "Map image"
+    },
+    {
+      "type": "range",
+      "id": "spacing_below_image",
+      "label": "Space below image",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Pin style"
+    },
+    {
+      "type": "range",
+      "id": "pin_size",
+      "label": "Pin size",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "pin_color",
+      "label": "Pin color",
+      "default": "#e32c2b"
+    },
+    {
+      "type": "header",
+      "content": "Location cards"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Heading font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "range",
+      "id": "location_name_size",
+      "label": "Location name size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "location_text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "active_card_border",
+      "label": "Active card border",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 12,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "location_card_gap",
+      "label": "Gap between cards",
+      "min": 12,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Location 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "location_1_enabled",
+      "label": "Enable location 1",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "location_1_x",
+      "label": "Pin horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "location_1_y",
+      "label": "Pin vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "text",
+      "id": "location_1_name",
+      "label": "Store name",
+      "default": "Lisbon Showroom"
+    },
+    {
+      "type": "textarea",
+      "id": "location_1_address",
+      "label": "Address",
+      "default": "Rua Example 123\n1000-001 Lisboa, Portugal"
+    },
+    {
+      "type": "text",
+      "id": "location_1_phone",
+      "label": "Phone"
+    },
+    {
+      "type": "textarea",
+      "id": "location_1_hours",
+      "label": "Opening hours",
+      "default": "Mon-Fri: 10:00-18:00\nSat: 10:00-14:00"
+    },
+    {
+      "type": "header",
+      "content": "Location 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "location_2_enabled",
+      "label": "Enable location 2",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "location_2_x",
+      "label": "Pin horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "location_2_y",
+      "label": "Pin vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "text",
+      "id": "location_2_name",
+      "label": "Store name"
+    },
+    {
+      "type": "textarea",
+      "id": "location_2_address",
+      "label": "Address"
+    },
+    {
+      "type": "text",
+      "id": "location_2_phone",
+      "label": "Phone"
+    },
+    {
+      "type": "textarea",
+      "id": "location_2_hours",
+      "label": "Opening hours"
+    },
+    {
+      "type": "header",
+      "content": "Location 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "location_3_enabled",
+      "label": "Enable location 3",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "location_3_x",
+      "label": "Pin horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "location_3_y",
+      "label": "Pin vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 70
+    },
+    {
+      "type": "text",
+      "id": "location_3_name",
+      "label": "Store name"
+    },
+    {
+      "type": "textarea",
+      "id": "location_3_address",
+      "label": "Address"
+    },
+    {
+      "type": "text",
+      "id": "location_3_phone",
+      "label": "Phone"
+    },
+    {
+      "type": "textarea",
+      "id": "location_3_hours",
+      "label": "Opening hours"
+    },
+    {
+      "type": "header",
+      "content": "Location 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "location_4_enabled",
+      "label": "Enable location 4",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "location_4_x",
+      "label": "Pin horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 35
+    },
+    {
+      "type": "range",
+      "id": "location_4_y",
+      "label": "Pin vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 65
+    },
+    {
+      "type": "text",
+      "id": "location_4_name",
+      "label": "Store name"
+    },
+    {
+      "type": "textarea",
+      "id": "location_4_address",
+      "label": "Address"
+    },
+    {
+      "type": "text",
+      "id": "location_4_phone",
+      "label": "Phone"
+    },
+    {
+      "type": "textarea",
+      "id": "location_4_hours",
+      "label": "Opening hours"
+    },
+    {
+      "type": "header",
+      "content": "Location 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "location_5_enabled",
+      "label": "Enable location 5",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "location_5_x",
+      "label": "Pin horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 65
+    },
+    {
+      "type": "range",
+      "id": "location_5_y",
+      "label": "Pin vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 40
+    },
+    {
+      "type": "text",
+      "id": "location_5_name",
+      "label": "Store name"
+    },
+    {
+      "type": "textarea",
+      "id": "location_5_address",
+      "label": "Address"
+    },
+    {
+      "type": "text",
+      "id": "location_5_phone",
+      "label": "Phone"
+    },
+    {
+      "type": "textarea",
+      "id": "location_5_hours",
+      "label": "Opening hours"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Store locator"
+    }
+  ]
+}
+{% endschema %}

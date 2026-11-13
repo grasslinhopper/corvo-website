@@ -1,0 +1,526 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "custom_css": [],
+      "settings": {
+        "color_scheme": "",
+        "show_title": true,
+        "page_width": "sm"
+      }
+    },
+    "image_with_text_block_kGx3f6": {
+      "type": "image-with-text-block",
+      "blocks": {
+        "subheading_hkNUzP": {
+          "type": "subheading",
+          "settings": {
+            "text": "Tailor Your Rug"
+          }
+        },
+        "richtext_e6jDTy": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>We believe that each rug should be as unique as the space it adorns.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_hkNUzP",
+        "richtext_e6jDTy"
+      ],
+      "name": "t:sections.image_with_text_block.presets.image_with_text_block.name",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "image_size": "lg",
+        "image": "shopify://shop_images/CORVO_14.jpg",
+        "content_width": "md",
+        "enable_parallax": true,
+        "remove_vertical_spacing": true
+      }
+    },
+    "images_with_text_scroll_dpdKE8": {
+      "type": "images-with-text-scroll",
+      "blocks": {
+        "image_with_text_AbzyFi": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_FINAL-28.jpg",
+            "subheading": "#1",
+            "title": "Personalized consultation",
+            "content": "<p>Every bespoke project begins with a <strong>personalized design consultation</strong>, where we explore your vision in detail. Together, we discuss design, material selection, pile height, and every subtle detail to ensure the rug perfectly suits your space and purpose. Each conversation is an opportunity to turn your idea into something truly unique.</p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "solid"
+          }
+        },
+        "image_with_text_MwKbWK": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_FINAL-72.jpg",
+            "subheading": "#2",
+            "title": "we design your idea",
+            "content": "<p>Your vision is our starting point. Our design team transforms your ideas into tangible proposals, sending exclusive artworks for approval, ensuring every detail aligns with your expectations before we move to production.</p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "solid"
+          }
+        },
+        "image_with_text_CHyjFY": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/33b7eb5d-4259-47a0-a077-bfc466503dcb-removebg-preview.png",
+            "subheading": "#3",
+            "title": "Sampling process",
+            "content": "<p>Before final production, we offer a meticulous sampling process. You can approve the design, texture, and colors, making certain that every element perfectly reflects the rug you envisioned. This ensures the final piece is exactly as imagined.</p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "solid"
+          }
+        },
+        "image_with_text_pgckTY": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_FINAL-66.jpg",
+            "subheading": "#4",
+            "title": "Rug Production",
+            "content": "<p>Every rug is crafted with utmost care and attention to detail, using only the finest materials. The result is a luxurious, durable, and sophisticated piece that blends artisanal excellence with timeless elegance.</p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "solid"
+          }
+        },
+        "image_with_text_ewY68f": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/avi-richards-pdrckQDTxWY-unsplash.jpg",
+            "subheading": "#5",
+            "title": "Delivery & Shipment",
+            "content": "<p>We work with a network of trusted local partners around the world, ensuring each shipment and delivery is handled with care and adapted to the specific needs of every project.</p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "solid"
+          }
+        }
+      },
+      "block_order": [
+        "image_with_text_AbzyFi",
+        "image_with_text_MwKbWK",
+        "image_with_text_CHyjFY",
+        "image_with_text_pgckTY",
+        "image_with_text_ewY68f"
+      ],
+      "name": "t:sections.images_with_text_scroll.presets.images_with_text_scroll.name",
+      "settings": {
+        "color_scheme": "",
+        "image_position": "start",
+        "text_alignment": "start",
+        "heading_tag": "h3",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0
+      }
+    },
+    "rich_text_7ABDAE": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_gYNkHW": {
+          "type": "heading",
+          "settings": {
+            "text": "TAILOR YOUR RUG",
+            "heading_tag": "h1"
+          }
+        },
+        "subheading_r8WWyC": {
+          "type": "subheading",
+          "settings": {
+            "text": "STEP BY STEP"
+          }
+        },
+        "richtext_hXFMb7": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>We believe that each rug should be as unique as the space it adorns. Our process starts  with a personalized design consultation,  where our expert team collaborates with you  to select fibers, structure, pile height, colors,  and shapes — whether regular or irregular.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_gYNkHW",
+        "subheading_r8WWyC",
+        "richtext_hXFMb7"
+      ],
+      "disabled": true,
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": false
+      }
+    },
+    "multiple_media_with_text_DmWJGn": {
+      "type": "multiple-media-with-text",
+      "blocks": {
+        "image_yfyqHQ": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_FINAL-57.jpg",
+            "rotation": 0
+          }
+        },
+        "image_Ba7rUQ": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_FINAL-19.jpg",
+            "rotation": 0
+          }
+        }
+      },
+      "block_order": [
+        "image_yfyqHQ",
+        "image_Ba7rUQ"
+      ],
+      "disabled": true,
+      "name": "t:sections.multiple_media_with_text.presets.multiple_media_with_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "reveal_on_scroll": true,
+        "separate_section_with_border": true,
+        "media_position_desktop": "after_text",
+        "media_position_mobile": "after_text",
+        "media_layout": "overlap",
+        "media_alignment": "center",
+        "media_alignment_offset": 0,
+        "media_mobile_alignment_offset": 0,
+        "text_alignment": "center",
+        "subheading": "",
+        "title": "Personalized designconsultation",
+        "content": "<p>Every bespoke project begins with a <strong>personalized design consultation</strong>, where we explore your vision in detail. Together, we discuss design, material selection, pile height, and every subtle detail to ensure the rug perfectly suits your space and purpose. Each conversation is an opportunity to turn your idea into something truly unique.</p>",
+        "button_1_text": "",
+        "button_1_link": "",
+        "button_1_style": "solid",
+        "button_2_text": "",
+        "button_2_link": "",
+        "button_2_style": "solid"
+      }
+    },
+    "multiple_media_with_text_99iphw": {
+      "type": "multiple-media-with-text",
+      "blocks": {
+        "image_Rf9B3t": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_FINAL-72.jpg",
+            "rotation": 0
+          }
+        },
+        "image_h7fqhf": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/2_562b56cf-d5a3-4e41-9238-8af2b5beee36.png",
+            "rotation": 0
+          }
+        }
+      },
+      "block_order": [
+        "image_Rf9B3t",
+        "image_h7fqhf"
+      ],
+      "disabled": true,
+      "name": "t:sections.multiple_media_with_text.presets.multiple_media_with_text.name",
+      "settings": {
+        "color_scheme": "",
+        "reveal_on_scroll": true,
+        "separate_section_with_border": false,
+        "media_position_desktop": "before_text",
+        "media_position_mobile": "before_text",
+        "media_layout": "overlap",
+        "media_alignment": "center",
+        "media_alignment_offset": 0,
+        "media_mobile_alignment_offset": 0,
+        "text_alignment": "center",
+        "subheading": "",
+        "title": "We design your idea",
+        "content": "<p>Your vision is our starting point. Our design team transforms your ideas into tangible proposals, sending exclusive artworks for approval, ensuring every detail aligns with your expectations before we move to production.<br/><br/></p>",
+        "button_1_text": "",
+        "button_1_link": "",
+        "button_1_style": "solid",
+        "button_2_text": "",
+        "button_2_link": "",
+        "button_2_style": "solid"
+      }
+    },
+    "multiple_media_with_text_CKaUER": {
+      "type": "multiple-media-with-text",
+      "blocks": {
+        "image_EKwtX9": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_FINAL-66.jpg",
+            "rotation": 0
+          }
+        },
+        "image_J9i3kW": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/33b7eb5d-4259-47a0-a077-bfc466503dcb.png",
+            "rotation": 0
+          }
+        }
+      },
+      "block_order": [
+        "image_EKwtX9",
+        "image_J9i3kW"
+      ],
+      "disabled": true,
+      "name": "t:sections.multiple_media_with_text.presets.multiple_media_with_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "reveal_on_scroll": true,
+        "separate_section_with_border": true,
+        "media_position_desktop": "after_text",
+        "media_position_mobile": "after_text",
+        "media_layout": "overlap",
+        "media_alignment": "center",
+        "media_alignment_offset": 0,
+        "media_mobile_alignment_offset": 0,
+        "text_alignment": "center",
+        "subheading": "",
+        "title": "Sampling process",
+        "content": "<p>Before final production, we offer a meticulous sampling process. You can approve the design, texture, and colors, making certain that every element perfectly reflects the rug you envisioned. This ensures the final piece is exactly as imagined.<br/><br/></p>",
+        "button_1_text": "",
+        "button_1_link": "",
+        "button_1_style": "solid",
+        "button_2_text": "",
+        "button_2_link": "",
+        "button_2_style": "solid"
+      }
+    },
+    "multiple_media_with_text_aHTxcd": {
+      "type": "multiple-media-with-text",
+      "blocks": {
+        "image_aXi3De": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_FINAL-74_9a38db87-a11e-4abf-a2bb-34fa329a1d73.jpg",
+            "rotation": 0
+          }
+        },
+        "image_RKMUGV": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp_Image_2025-11-20_at_14.42.32_2.jpg",
+            "rotation": 0
+          }
+        }
+      },
+      "block_order": [
+        "image_aXi3De",
+        "image_RKMUGV"
+      ],
+      "disabled": true,
+      "name": "t:sections.multiple_media_with_text.presets.multiple_media_with_text.name",
+      "settings": {
+        "color_scheme": "",
+        "reveal_on_scroll": true,
+        "separate_section_with_border": true,
+        "media_position_desktop": "before_text",
+        "media_position_mobile": "before_text",
+        "media_layout": "overlap",
+        "media_alignment": "center",
+        "media_alignment_offset": 0,
+        "media_mobile_alignment_offset": 0,
+        "text_alignment": "center",
+        "subheading": "",
+        "title": "Rug Production",
+        "content": "<p>Every rug is crafted with utmost care and attention to detail, using only the finest materials. The result is a luxurious, durable, and sophisticated piece that blends artisanal excellence with timeless elegance.<br/><br/></p>",
+        "button_1_text": "",
+        "button_1_link": "",
+        "button_1_style": "solid",
+        "button_2_text": "",
+        "button_2_link": "",
+        "button_2_style": "solid"
+      }
+    },
+    "images_with_text_scroll_AXWGDc": {
+      "type": "images-with-text-scroll",
+      "blocks": {
+        "image_with_text_PF9tym": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_FINAL-77_af487f7e-2c52-4406-ab5d-ccba813b13ff.jpg",
+            "subheading": "",
+            "title": "Dyeing",
+            "content": "<p>Embrace vibrant hues crafted through precision dyeing techniques.</p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "solid"
+          }
+        },
+        "image_with_text_7GD8Bw": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_14.jpg",
+            "subheading": "",
+            "title": "Yarn",
+            "content": "<p>Experience unmatched quality and luxury in every stitch with our superior yarn selection.</p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "solid"
+          }
+        },
+        "image_with_text_kFjEg6": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_FINAL-44.jpg",
+            "subheading": "",
+            "title": "Tufting",
+            "content": "<p>Achieve uncompromised quality in every rug with our advanced tufting technology.</p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "solid"
+          }
+        },
+        "image_with_text_n4ya7Q": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_FINAL-69.jpg",
+            "subheading": "",
+            "title": "Adhesive Coating",
+            "content": "<p>bla bla bla</p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "solid"
+          }
+        },
+        "image_with_text_pFMM7c": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/IMG_4631_copy_GS.jpg",
+            "subheading": "",
+            "title": "Finishing Touches",
+            "content": "<p>bla bla bla</p>",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "solid"
+          }
+        }
+      },
+      "block_order": [
+        "image_with_text_PF9tym",
+        "image_with_text_7GD8Bw",
+        "image_with_text_kFjEg6",
+        "image_with_text_n4ya7Q",
+        "image_with_text_pFMM7c"
+      ],
+      "disabled": true,
+      "name": "t:sections.images_with_text_scroll.presets.images_with_text_scroll.name",
+      "settings": {
+        "color_scheme": "",
+        "image_position": "start",
+        "text_alignment": "center",
+        "heading_tag": "h3",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0
+      }
+    },
+    "image_with_text_overlay_F3Jghh": {
+      "type": "image-with-text-overlay",
+      "blocks": {
+        "heading_RJVtXX": {
+          "type": "heading",
+          "settings": {
+            "text": "Turn your ideas into reality",
+            "heading_tag": "h4"
+          }
+        },
+        "richtext_eVT9cD": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>The perfect rug for every space<br/><br/></p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_RJVtXX",
+        "richtext_eVT9cD"
+      ],
+      "name": "t:sections.image_with_text_overlay.presets.image_with_text_overlay.name",
+      "settings": {
+        "color_scheme": "",
+        "image_size": "fill",
+        "image": "shopify://shop_images/CORVO_11.jpg",
+        "allow_transparent_header": false,
+        "reveal_on_scroll": true,
+        "remove_vertical_spacing": true,
+        "content_width": "xl",
+        "mobile_text_position": "place-self-center text-center",
+        "desktop_text_position": "sm:place-self-center sm:text-center",
+        "overlay_color": "#000000",
+        "overlay_opacity": 30
+      }
+    },
+    "image_with_text_JAWKb8": {
+      "type": "image-with-text",
+      "blocks": {
+        "subheading_tyDwQR": {
+          "type": "subheading",
+          "settings": {
+            "text": "What it means to produce"
+          }
+        },
+        "heading_q96Ra8": {
+          "type": "heading",
+          "settings": {
+            "text": "Bespoke",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_KqUPki": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Blah blah blah</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_tyDwQR",
+        "heading_q96Ra8",
+        "richtext_KqUPki"
+      ],
+      "disabled": true,
+      "name": "t:sections.image_with_text.presets.image_with_text.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": true,
+        "reveal_on_scroll": true,
+        "image_position": "start",
+        "content_width": "sm",
+        "remove_vertical_spacing": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "image_with_text_block_kGx3f6",
+    "images_with_text_scroll_dpdKE8",
+    "rich_text_7ABDAE",
+    "multiple_media_with_text_DmWJGn",
+    "multiple_media_with_text_99iphw",
+    "multiple_media_with_text_CKaUER",
+    "multiple_media_with_text_aHTxcd",
+    "images_with_text_scroll_AXWGDc",
+    "image_with_text_overlay_F3Jghh",
+    "image_with_text_JAWKb8"
+  ]
+}
