@@ -1,0 +1,501 @@
+{%- comment -%}
+  Collection showcase
+  A split, full-width hero (two images, title overlaid) followed by the collection's rugs.
+  Used on the "Home 2" page — one section per collection.
+{%- endcomment -%}
+
+{%- liquid
+  assign collection = section.settings.collection
+  assign title_font = section.settings.title_font
+
+  assign image_left = section.settings.image_left
+  if image_left == blank
+    assign image_left = collection.image
+  endif
+
+  assign image_right = section.settings.image_right
+  if image_right == blank
+    assign image_right = collection.products.first.featured_image
+  endif
+
+  assign title = section.settings.title | default: collection.title
+-%}
+
+<style>
+  {{ title_font | font_face: font_display: 'swap' }}
+
+  #shopify-section-{{ section.id }} {
+    --cshow-title-font: {{ title_font.family }}, {{ title_font.fallback_families }};
+    --cshow-title-weight: {{ title_font.weight }};
+    --cshow-title-style: {{ title_font.style }};
+    --cshow-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --cshow-cols: {{ section.settings.columns }};
+    --cshow-left-pos: 50% {{ section.settings.image_left_position }}%;
+    --cshow-right-pos: 50% {{ section.settings.image_right_position }}%;
+  }
+</style>
+
+{%- if collection != blank -%}
+  <div class="cshow cshow--{{ section.settings.hero_height }}">
+    {%- if section.index == 1 and request.page_type == 'page' -%}
+      <h1 class="sr-only">{{ page.title | escape }}</h1>
+    {%- endif -%}
+
+    <a href="{{ collection.url }}" class="cshow__hero" aria-label="{{ title | escape }}">
+      <div class="cshow__hero-media">
+        {%- if image_left != blank -%}
+          <div class="cshow__hero-image cshow__hero-image--left">
+            {{- image_left | image_url: width: 2000 | image_tag: sizes: '50vw', widths: '400,600,800,1000,1200,1600,2000', alt: '', loading: 'lazy' -}}
+          </div>
+        {%- endif -%}
+
+        {%- if image_right != blank -%}
+          <div class="cshow__hero-image cshow__hero-image--right">
+            {{- image_right | image_url: width: 2000 | image_tag: sizes: '50vw', widths: '400,600,800,1000,1200,1600,2000', alt: '', loading: 'lazy' -}}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="cshow__hero-content">
+        {%- if section.settings.subheading != blank -%}
+          <p class="cshow__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+
+        <h2 class="cshow__title">{{ title | escape }}</h2>
+      </div>
+    </a>
+
+    <div class="cshow__body">
+      {%- if section.settings.show_description and collection.description != blank -%}
+        <p class="cshow__description">{{ collection.description | strip_html | strip }}</p>
+      {%- endif -%}
+
+      <ul class="cshow__grid" role="list">
+        {%- for product in collection.products limit: section.settings.products_limit -%}
+          <li class="cshow__item">
+            <a href="{{ product.url | within: collection }}" class="cshow__card">
+              <div class="cshow__card-media">
+                {%- if product.featured_media != blank -%}
+                  {{- product.featured_media | image_url: width: 1200 | image_tag: sizes: '(max-width: 699px) 50vw, (max-width: 999px) 33vw, 25vw', widths: '300,400,500,600,800,1000,1200', alt: product.featured_media.alt, loading: 'lazy', class: 'cshow__card-image' -}}
+
+                  {%- if product.media.size > 1 -%}
+                    {%- assign secondary_media = product.media[1] -%}
+                    {{- secondary_media | image_url: width: 1200 | image_tag: sizes: '(max-width: 699px) 50vw, (max-width: 999px) 33vw, 25vw', widths: '300,400,500,600,800,1000,1200', alt: '', loading: 'lazy', class: 'cshow__card-image cshow__card-image--secondary' -}}
+                  {%- endif -%}
+                {%- endif -%}
+              </div>
+
+              <p class="cshow__card-title">{{ product.title | escape }}</p>
+
+              {%- if section.settings.show_price -%}
+                <p class="cshow__card-meta">
+                  {%- if product.price_varies -%}
+                    {{ section.settings.price_prefix | escape }} {{ product.price_min | money_without_trailing_zeros }}
+                  {%- else -%}
+                    {{ product.price | money_without_trailing_zeros }}
+                  {%- endif -%}
+                </p>
+              {%- endif -%}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if section.settings.link_text != blank -%}
+        <p class="cshow__footer">
+          <a href="{{ collection.url }}" class="cshow__link">{{ section.settings.link_text | escape }}</a>
+        </p>
+      {%- endif -%}
+    </div>
+  </div>
+{%- elsif request.design_mode -%}
+  <div class="container section-spacing text-center">
+    <p>Choose a collection to display.</p>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .cshow {
+    --cshow-hero-height: clamp(260px, 36vw, 600px);
+    display: block;
+  }
+
+  .cshow--large {
+    --cshow-hero-height: clamp(320px, 44vw, 720px);
+  }
+
+  .cshow--compact {
+    --cshow-hero-height: clamp(220px, 26vw, 460px);
+  }
+
+  /* Hero */
+
+  .cshow__hero {
+    position: relative;
+    display: grid;
+    height: var(--cshow-hero-height);
+    overflow: hidden;
+    color: #fff;
+    background: #1c1c1c;
+    text-decoration: none;
+  }
+
+  .cshow__hero-media {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cshow__hero-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgb(22 19 16 / var(--cshow-overlay));
+    pointer-events: none;
+  }
+
+  .cshow__hero-image {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cshow__hero-image:only-child {
+    grid-column: 1 / -1;
+  }
+
+  .cshow__hero-image img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.6s cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+
+  .cshow__hero-image--left img {
+    object-position: var(--cshow-left-pos);
+  }
+
+  .cshow__hero-image--right img {
+    object-position: var(--cshow-right-pos);
+  }
+
+  .cshow__hero-content {
+    position: relative;
+    place-self: center;
+    padding: 1.5rem;
+    text-align: center;
+    text-shadow: 0 1px 24px rgb(0 0 0 / 0.25);
+  }
+
+  .cshow__subheading {
+    margin: 0 0 0.9rem;
+    font-family: var(--text-font-family);
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  .cshow__title {
+    margin: 0;
+    font-family: var(--cshow-title-font);
+    font-weight: var(--cshow-title-weight);
+    font-style: var(--cshow-title-style);
+    font-size: clamp(2.25rem, 5.4vw, 5rem);
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: inherit;
+  }
+
+  /* Body */
+
+  .cshow__body {
+    padding: clamp(3rem, 6vw, 6rem) var(--container-gutter) clamp(4rem, 8vw, 8rem);
+  }
+
+  .cshow__description {
+    max-width: 44rem;
+    margin: 0 auto clamp(3rem, 5vw, 5rem);
+    font-family: var(--cshow-title-font);
+    font-weight: var(--cshow-title-weight);
+    font-size: clamp(1.25rem, 1.7vw, 1.625rem);
+    line-height: 1.5;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  .cshow__grid {
+    --cshow-gap-x: 1rem;
+    --cshow-gap-y: 2.5rem;
+    --cshow-visible-cols: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--cshow-gap-y) var(--cshow-gap-x);
+    max-width: calc(var(--cshow-visible-cols) * 21rem);
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cshow__item {
+    flex: 0 0 calc((100% - (var(--cshow-visible-cols) - 1) * var(--cshow-gap-x)) / var(--cshow-visible-cols));
+    min-width: 0;
+  }
+
+  .cshow__card {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .cshow__card-media {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: rgb(0 0 0 / 0.04);
+  }
+
+  .cshow__card-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.6s ease, transform 1.4s cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+
+  .cshow__card-image--secondary {
+    opacity: 0;
+  }
+
+  .cshow__card-title {
+    margin: 1.25rem 0 0;
+    font-family: var(--heading-font-family);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1.5;
+  }
+
+  .cshow__card-meta {
+    margin: 0.35rem 0 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+  }
+
+  .cshow__footer {
+    margin: clamp(2.5rem, 4vw, 4rem) 0 0;
+    text-align: center;
+  }
+
+  .cshow__link {
+    display: inline-block;
+    padding-bottom: 0.4rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: inherit;
+    background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px;
+    transition: background-size 0.4s ease;
+  }
+
+  @media (hover: hover) {
+    .cshow__hero:hover .cshow__hero-image img {
+      transform: scale(1.03);
+    }
+
+    .cshow__card:hover .cshow__card-image {
+      transform: scale(1.03);
+    }
+
+    .cshow__card:hover .cshow__card-image--secondary {
+      opacity: 1;
+    }
+
+    .cshow__link:hover {
+      background-size: 40% 1px;
+    }
+  }
+
+  @media (max-width: 699px) {
+    .cshow__hero {
+      height: max(var(--cshow-hero-height), 68vw);
+    }
+  }
+
+  @media (min-width: 700px) {
+    .cshow__grid {
+      --cshow-gap-x: 1.5rem;
+      --cshow-gap-y: 3.5rem;
+      --cshow-visible-cols: min(var(--cshow-cols), 3);
+    }
+
+    .cshow__subheading {
+      font-size: 0.75rem;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .cshow__grid {
+      --cshow-gap-x: 2rem;
+      --cshow-visible-cols: var(--cshow-cols);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cshow__hero-image img,
+    .cshow__card-image {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection showcase",
+  "class": "shopify-section--collection-showcase",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "header",
+      "content": "Banner"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Small text above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "info": "Leave empty to use the collection name."
+    },
+    {
+      "type": "font_picker",
+      "id": "title_font",
+      "label": "Title font",
+      "default": "cormorant_n4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_left",
+      "label": "Left image",
+      "info": "Leave empty to use the collection image."
+    },
+    {
+      "type": "range",
+      "id": "image_left_position",
+      "label": "Left image vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "image_picker",
+      "id": "image_right",
+      "label": "Right image",
+      "info": "Leave empty to use the first product's image."
+    },
+    {
+      "type": "range",
+      "id": "image_right_position",
+      "label": "Right image vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "select",
+      "id": "hero_height",
+      "label": "Banner height",
+      "options": [
+        { "value": "compact", "label": "Compact" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Image darkening",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "%",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Rugs"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show collection description",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Rugs per row (desktop)",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "Maximum rugs to show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show starting price",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "price_prefix",
+      "label": "Price prefix",
+      "default": "From"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link text",
+      "default": "Discover the collection"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection showcase"
+    }
+  ]
+}
+{% endschema %}

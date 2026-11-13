@@ -1,15 +1,133 @@
 {
   "sections": {
-    "main": {
-      "type": "main-page",
+    "ink": {
+      "type": "collection-showcase",
       "settings": {
-        "color_scheme": "",
-        "show_title": true,
-        "page_width": "md"
+        "collection": "from-ink-to-thread",
+        "subheading": "Inspired by the paintings of Ramiro Relvas",
+        "title": "",
+        "title_font": "cormorant_n4",
+        "image_left_position": 50,
+        "image_right_position": 50,
+        "hero_height": "large",
+        "overlay_opacity": 30,
+        "show_description": true,
+        "columns": 5,
+        "products_limit": 5,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_left": "shopify://shop_images/RamiroRelvas_Pintura1.jpg",
+        "image_right": "shopify://shop_images/IMG_E8470.jpg"
+      }
+    },
+    "priming": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "colecao-ultra-fixe",
+        "subheading": "Plain rugs. Silk & wool.",
+        "title": "",
+        "title_font": "cormorant_n4",
+        "image_left_position": 50,
+        "image_right_position": 60,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 3,
+        "products_limit": 6,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_right": "shopify://shop_images/AURA_100_VISCOSE_-AURA2.png"
+      }
+    },
+    "contour": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "contour",
+        "subheading": "Bordered rugs. Line & proportion.",
+        "title": "",
+        "title_font": "cormorant_n4",
+        "image_left_position": 50,
+        "image_right_position": 75,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 4,
+        "products_limit": 8,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_right": "shopify://shop_images/RELIANCE-1_1.png"
+      }
+    },
+    "shading": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "shading",
+        "subheading": "Gradient rugs. Silk.",
+        "title": "",
+        "title_font": "cormorant_n4",
+        "image_left_position": 50,
+        "image_right_position": 80,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 5,
+        "products_limit": 5,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_right": "shopify://shop_images/GRADIENTTERRACOTA-descarregar_3.png"
+      }
+    },
+    "watered": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "watered-layer",
+        "subheading": "Transparency & depth",
+        "title": "",
+        "title_font": "cormorant_n4",
+        "image_left_position": 50,
+        "image_right_position": 75,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 2,
+        "products_limit": 2,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_right": "shopify://shop_images/DUNE-descarregar_1.png"
+      }
+    },
+    "textured": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "textured-touch",
+        "subheading": "Cut & loop pile. Silk & wool.",
+        "title": "",
+        "title_font": "cormorant_n4",
+        "image_left_position": 50,
+        "image_right_position": 70,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 4,
+        "products_limit": 8,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_right": "shopify://shop_images/RAYURES-descarregar_5.png"
       }
     }
   },
   "order": [
-    "main"
+    "ink",
+    "priming",
+    "contour",
+    "shading",
+    "watered",
+    "textured"
   ]
 }
