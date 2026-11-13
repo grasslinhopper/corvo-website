@@ -6,7 +6,6 @@
 
 {%- liquid
   assign collection = section.settings.collection
-  assign title_font = section.settings.title_font
 
   assign image_left = section.settings.image_left
   if image_left == blank
@@ -22,12 +21,7 @@
 -%}
 
 <style>
-  {{ title_font | font_face: font_display: 'swap' }}
-
   #shopify-section-{{ section.id }} {
-    --cshow-title-font: {{ title_font.family }}, {{ title_font.fallback_families }};
-    --cshow-title-weight: {{ title_font.weight }};
-    --cshow-title-style: {{ title_font.style }};
     --cshow-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
     --cshow-cols: {{ section.settings.columns }};
     --cshow-left-pos: 50% {{ section.settings.image_left_position }}%;
@@ -200,13 +194,13 @@
 
   .cshow__title {
     margin: 0;
-    font-family: var(--cshow-title-font);
-    font-weight: var(--cshow-title-weight);
-    font-style: var(--cshow-title-style);
-    font-size: clamp(2.25rem, 5.4vw, 5rem);
-    line-height: 1;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-family: var(--heading-font-family);
+    font-weight: var(--heading-font-weight);
+    font-style: var(--heading-font-style);
+    font-size: clamp(1.625rem, 4vw, 3.75rem);
+    line-height: 1.15;
+    letter-spacing: var(--heading-letter-spacing);
+    text-transform: var(--heading-text-transform);
     color: inherit;
   }
 
@@ -217,12 +211,12 @@
   }
 
   .cshow__description {
-    max-width: 44rem;
+    max-width: 40rem;
     margin: 0 auto clamp(3rem, 5vw, 5rem);
-    font-family: var(--cshow-title-font);
-    font-weight: var(--cshow-title-weight);
-    font-size: clamp(1.25rem, 1.7vw, 1.625rem);
-    line-height: 1.5;
+    font-family: var(--text-font-family);
+    font-weight: var(--text-font-weight);
+    font-size: clamp(1rem, 1.25vw, 1.1875rem);
+    line-height: 1.75;
     text-align: center;
     text-wrap: balance;
   }
@@ -385,12 +379,6 @@
       "id": "title",
       "label": "Title",
       "info": "Leave empty to use the collection name."
-    },
-    {
-      "type": "font_picker",
-      "id": "title_font",
-      "label": "Title font",
-      "default": "cormorant_n4"
     },
     {
       "type": "image_picker",
