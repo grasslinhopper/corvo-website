@@ -3,91 +3,73 @@
     "portfolio": {
       "type": "portfolio",
       "blocks": {
-        "verdant": {
+        "comporta": {
           "type": "project",
           "settings": {
-            "product": "verdant-rug",
-            "title": "",
-            "meta": "From Ink To Thread · Silk, cut pile",
-            "text": "",
-            "image": "shopify://shop_images/VERDANT-transferir_4.png",
-            "image_detail": "shopify://shop_images/VERDANT-IMG_E8465.jpg",
-            "link_text": "View the rug"
-          }
-        },
-        "grid": {
-          "type": "project",
-          "settings": {
-            "product": "border",
-            "title": "",
-            "meta": "Contour",
-            "text": "",
-            "image": "shopify://shop_images/BORDER-2_8cea2702-fb6b-44ea-a616-d26f116f3bed.png",
-            "image_detail": "shopify://shop_images/BORDER-IMG_8522.jpg",
-            "link_text": "View the rug"
-          }
-        },
-        "mocca": {
-          "type": "project",
-          "settings": {
-            "product": "gradient-mocca-rug",
-            "title": "",
-            "meta": "Shading · Silk, cut pile",
-            "text": "",
-            "image": "shopify://shop_images/MOCCAGRADIENT-descarregar_1.png",
-            "image_detail": "shopify://shop_images/MOCCAGRADIENT-IMG_8505.jpg",
-            "link_text": "View the rug"
-          }
-        },
-        "noisy": {
-          "type": "project",
-          "settings": {
-            "product": "noisy-rug",
-            "title": "",
-            "meta": "Watered Layer · Silk, cut and loop pile",
+            "title": "House in Comporta",
+            "meta": "Private residence · Portugal",
             "text": "",
             "image": "shopify://shop_images/NOISY-1.png",
             "image_detail": "shopify://shop_images/NOISY-IMG_E8585.jpg",
-            "link_text": "View the rug"
+            "link_text": ""
           }
         },
-        "vertis": {
+        "vale-do-lobo": {
           "type": "project",
           "settings": {
-            "product": "vertis-rug",
-            "title": "",
-            "meta": "Textured Touch · Silk, cut pile",
+            "title": "House in Vale do Lobo",
+            "meta": "Private residence · Portugal",
+            "text": "",
+            "image": "shopify://shop_images/MOCCAGRADIENT-descarregar_1.png",
+            "image_detail": "shopify://shop_images/MOCCAGRADIENT-IMG_8505.jpg",
+            "link_text": ""
+          }
+        },
+        "foz": {
+          "type": "project",
+          "settings": {
+            "title": "House in Foz",
+            "meta": "Private residence · Portugal",
+            "text": "",
+            "image": "shopify://shop_images/BORDER-2_8cea2702-fb6b-44ea-a616-d26f116f3bed.png",
+            "image_detail": "shopify://shop_images/BORDER-IMG_8522.jpg",
+            "link_text": ""
+          }
+        },
+        "marbella": {
+          "type": "project",
+          "settings": {
+            "title": "House in Marbella",
+            "meta": "Private residence · Spain",
             "text": "",
             "image": "shopify://shop_images/VERTIS-4.png",
             "image_detail": "shopify://shop_images/VERTIS-IMG_8593_8e2c6121-bf89-4d07-8291-16f7496609f0.jpg",
-            "link_text": "View the rug"
+            "link_text": ""
           }
         },
-        "earthbound": {
+        "london": {
           "type": "project",
           "settings": {
-            "product": "earthbound-i-rug",
-            "title": "",
-            "meta": "From Ink To Thread · Silk, cut and loop pile",
+            "title": "Restaurant in London",
+            "meta": "Restaurant · United Kingdom",
             "text": "",
-            "image": "shopify://shop_images/EARTHBOUND-25_187_1_TR-1.png",
-            "image_detail": "shopify://shop_images/EARTHBOUND-25_187_1_TR-IMG_E8575.jpg",
-            "link_text": "View the rug"
+            "image": "shopify://shop_images/VERDANT-transferir_4.png",
+            "image_detail": "shopify://shop_images/VERDANT-IMG_E8465.jpg",
+            "link_text": ""
           }
         }
       },
       "block_order": [
-        "verdant",
-        "grid",
-        "mocca",
-        "noisy",
-        "vertis",
-        "earthbound"
+        "comporta",
+        "vale-do-lobo",
+        "foz",
+        "marbella",
+        "london"
       ],
       "settings": {
         "subheading": "Portfolio",
-        "title": "Selected pieces",
-        "intro": "A selection of Corvo rugs, seen in place and in detail."
+        "title": "Selected projects",
+        "intro": "Homes and spaces where Corvo rugs are on display."
       }
     }
   },
