@@ -1,0 +1,377 @@
+{%- comment -%}
+  Portfolio
+  An editorial list of pieces/projects: a large image, a smaller detail image and a short caption,
+  alternating sides. Each entry can be linked to a product (title, images and link are then filled
+  automatically) or written by hand for a client project.
+{%- endcomment -%}
+
+<div class="pfolio">
+  {%- if section.settings.title != blank or section.settings.intro != blank -%}
+    <header class="pfolio__intro">
+      {%- if section.settings.subheading != blank -%}
+        <p class="pfolio__subheading">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.title != blank -%}
+        <h1 class="pfolio__title">{{ section.settings.title | escape }}</h1>
+      {%- endif -%}
+
+      {%- if section.settings.intro != blank -%}
+        <p class="pfolio__lede">{{ section.settings.intro | escape }}</p>
+      {%- endif -%}
+    </header>
+  {%- endif -%}
+
+  <ol class="pfolio__list" role="list">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign product = block.settings.product
+
+        assign image = block.settings.image
+        if image == blank
+          assign image = product.featured_media
+        endif
+
+        assign image_detail = block.settings.image_detail
+        if image_detail == blank and product.media.size > 1
+          assign image_detail = product.media[1]
+        endif
+
+        assign title = block.settings.title | default: product.title
+
+        assign link_url = block.settings.link_url
+        if link_url == blank
+          assign link_url = product.url
+        endif
+
+        assign number = forloop.index | prepend: '0' | slice: -2, 2
+        assign total = forloop.length | prepend: '0' | slice: -2, 2
+      -%}
+
+      <li class="pfolio__item" {{ block.shopify_attributes }}>
+        <div class="pfolio__media pfolio__media--main">
+          {%- if image != blank -%}
+            {%- if link_url != blank -%}<a href="{{ link_url }}" tabindex="-1" aria-hidden="true">{%- endif -%}
+              {{- image | image_url: width: 1800 | image_tag: sizes: '(max-width: 699px) 100vw, 50vw', widths: '400,600,800,1000,1200,1500,1800', alt: image.alt, loading: 'lazy' -}}
+            {%- if link_url != blank -%}</a>{%- endif -%}
+          {%- endif -%}
+        </div>
+
+        <div class="pfolio__aside">
+          <div class="pfolio__caption">
+            <p class="pfolio__count">{{ number }} <span>/ {{ total }}</span></p>
+
+            {%- if title != blank -%}
+              <h2 class="pfolio__name">{{ title | escape }}</h2>
+            {%- endif -%}
+
+            {%- if block.settings.meta != blank -%}
+              <p class="pfolio__meta">{{ block.settings.meta | escape }}</p>
+            {%- endif -%}
+
+            {%- if block.settings.text != blank -%}
+              <p class="pfolio__text">{{ block.settings.text | escape | newline_to_br }}</p>
+            {%- endif -%}
+
+            {%- if link_url != blank and block.settings.link_text != blank -%}
+              <p><a href="{{ link_url }}" class="pfolio__link">{{ block.settings.link_text | escape }}</a></p>
+            {%- endif -%}
+          </div>
+
+          {%- if image_detail != blank -%}
+            <div class="pfolio__media pfolio__media--detail">
+              {{- image_detail | image_url: width: 1200 | image_tag: sizes: '(max-width: 699px) 100vw, 33vw', widths: '300,400,600,800,1000,1200', alt: '', loading: 'lazy' -}}
+            </div>
+          {%- endif -%}
+        </div>
+      </li>
+    {%- endfor -%}
+  </ol>
+</div>
+
+{% stylesheet %}
+  .pfolio {
+    padding: clamp(3.5rem, 7vw, 7rem) var(--container-gutter) clamp(4rem, 8vw, 8rem);
+  }
+
+  /* Intro */
+
+  .pfolio__intro {
+    max-width: 40rem;
+    margin: 0 auto clamp(4rem, 8vw, 8rem);
+    text-align: center;
+  }
+
+  .pfolio__subheading,
+  .pfolio__count,
+  .pfolio__meta,
+  .pfolio__link {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  .pfolio__subheading {
+    margin: 0 0 1.25rem;
+    opacity: 0.6;
+  }
+
+  .pfolio__title {
+    margin: 0;
+    font-family: var(--heading-font-family);
+    font-weight: var(--heading-font-weight);
+    font-style: var(--heading-font-style);
+    font-size: clamp(1.75rem, 4vw, 3.5rem);
+    line-height: 1.15;
+    letter-spacing: var(--heading-letter-spacing);
+    text-transform: var(--heading-text-transform);
+  }
+
+  .pfolio__lede {
+    margin: 1.75rem 0 0;
+    font-size: clamp(1rem, 1.25vw, 1.1875rem);
+    line-height: 1.75;
+    text-wrap: balance;
+  }
+
+  /* List */
+
+  .pfolio__list {
+    display: grid;
+    gap: clamp(4rem, 10vw, 10rem);
+    max-width: 85rem;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pfolio__item {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .pfolio__media {
+    position: relative;
+    overflow: hidden;
+    background: rgb(0 0 0 / 0.04);
+  }
+
+  .pfolio__media--main {
+    aspect-ratio: 4 / 5;
+  }
+
+  .pfolio__media--detail {
+    aspect-ratio: 4 / 3;
+  }
+
+  .pfolio__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.6s cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+
+  .pfolio__aside {
+    display: grid;
+    gap: 2rem;
+    align-content: space-between;
+  }
+
+  .pfolio__count {
+    margin: 0 0 1.5rem;
+  }
+
+  .pfolio__count span {
+    opacity: 0.45;
+  }
+
+  .pfolio__name {
+    margin: 0;
+    font-family: var(--heading-font-family);
+    font-weight: var(--heading-font-weight);
+    font-style: var(--heading-font-style);
+    font-size: clamp(1.375rem, 2.4vw, 2.25rem);
+    line-height: 1.2;
+    letter-spacing: var(--heading-letter-spacing);
+    text-transform: var(--heading-text-transform);
+  }
+
+  .pfolio__meta {
+    margin: 1rem 0 0;
+    opacity: 0.6;
+  }
+
+  .pfolio__text {
+    max-width: 26rem;
+    margin: 1.5rem 0 0;
+    line-height: 1.75;
+  }
+
+  .pfolio__link {
+    display: inline-block;
+    margin-top: 2rem;
+    padding-bottom: 0.4rem;
+    text-decoration: none;
+    color: inherit;
+    background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px;
+    transition: background-size 0.4s ease;
+  }
+
+  @media (hover: hover) {
+    .pfolio__media--main:hover img {
+      transform: scale(1.03);
+    }
+
+    .pfolio__link:hover {
+      background-size: 40% 1px;
+    }
+  }
+
+  @media (min-width: 700px) {
+    .pfolio__item {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 0 1.5rem;
+      align-items: stretch;
+    }
+
+    .pfolio__media--main {
+      grid-column: 1 / span 6;
+      grid-row: 1;
+    }
+
+    .pfolio__aside {
+      grid-column: 8 / span 5;
+      grid-row: 1;
+      padding-top: 0.5rem;
+    }
+
+    .pfolio__media--detail {
+      aspect-ratio: 1 / 1;
+      width: 78%;
+    }
+
+    .pfolio__item:nth-child(even) .pfolio__media--main {
+      grid-column: 7 / span 6;
+    }
+
+    .pfolio__item:nth-child(even) .pfolio__aside {
+      grid-column: 1 / span 5;
+      justify-items: end;
+      text-align: end;
+    }
+
+    .pfolio__item:nth-child(even) .pfolio__text {
+      margin-inline-start: auto;
+    }
+
+    .pfolio__subheading,
+    .pfolio__count,
+    .pfolio__meta,
+    .pfolio__link {
+      font-size: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pfolio__media img {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Portfolio",
+  "class": "shopify-section--portfolio",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Small text above the title",
+      "default": "Portfolio"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Selected pieces"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Introduction"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "project",
+      "name": "Entry",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product",
+          "info": "Optional. Fills in the title, images and link automatically. Leave empty for a client project and fill in the fields below."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "info": "Leave empty to use the product name."
+        },
+        {
+          "type": "text",
+          "id": "meta",
+          "label": "Small line under the title",
+          "info": "For example: collection and material, or location and year."
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Main image",
+          "info": "Leave empty to use the product's first image."
+        },
+        {
+          "type": "image_picker",
+          "id": "image_detail",
+          "label": "Detail image",
+          "info": "Leave empty to use the product's second image."
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link text",
+          "default": "View the rug"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link",
+          "info": "Leave empty to link to the product."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Portfolio",
+      "blocks": [
+        { "type": "project" },
+        { "type": "project" }
+      ]
+    }
+  ]
+}
+{% endschema %}
