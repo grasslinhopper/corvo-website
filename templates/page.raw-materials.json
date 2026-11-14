@@ -23,13 +23,13 @@
     "wf-2": {
       "type": "wireframe",
       "settings": {
-        "label": "The fibres",
+        "label": "The materials",
         "is_page_title": false,
-        "description": "One card per fibre: wool, silk, botanical silk, linen, jute, lurex. Each card opens to a close-up photo, how it feels, how it wears and where it works best.",
-        "needs": "The final list of fibres, a close-up photo of each and two lines on each.",
+        "description": "One card per material, in three groups: Standard (Eucalyptus, Fine Wool, Wool, Viscose), Contract (Contract Eucalyptus, Contract PET, Giza Cotton) and Premium (Mohair, Sea Island Cotton, Vicuña). Each card opens to a close-up photo, how it feels, how it wears and where it works best.",
+        "needs": "A close-up photo of each material and two lines on each.",
         "phase": "Phase 4",
         "layout": "grid",
-        "columns": 6,
+        "columns": 5,
         "size": "medium"
       }
     },

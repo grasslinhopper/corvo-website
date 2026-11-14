@@ -38,7 +38,7 @@
       "settings": {
         "label": "The steps",
         "is_page_title": false,
-        "description": "Material, colours, then size and shape. One choice per screen, with the image and the price guide updating as you go.",
+        "description": "Craft level of the design, material, colours, then size and shape, with options such as carving, round corners, a higher pile or shipping in 3 weeks. One choice per screen, with the image and the price guide updating as you go.",
         "needs": "",
         "phase": "Phase 4",
         "layout": "split",

@@ -36,7 +36,7 @@
     "wf-3": {
       "type": "wireframe",
       "settings": {
-        "label": "Infinite Colors",
+        "label": "Infinite Colours",
         "is_page_title": false,
         "description": "The colour-matching service in three steps: send a reference, the dye lab matches it, you approve a sample.",
         "needs": "How long a match takes and what a client should send.",

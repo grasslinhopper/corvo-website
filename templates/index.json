@@ -39,7 +39,7 @@
         "button_2_text": "Tailor your rug",
         "button_2_link": "shopify://pages/tailor-your-rug",
         "text_color": "#ffffff",
-        "overlay_opacity": 40,
+        "overlay_opacity": 45,
         "mobile_film": "1",
         "allow_transparent_header": true,
         "pause_label": "Pause the films",

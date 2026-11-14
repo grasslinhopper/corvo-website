@@ -25,11 +25,11 @@
       "settings": {
         "label": "Choose your samples",
         "is_page_title": false,
-        "description": "Pick rugs and colours and add the samples to the cart.",
+        "description": "Pick a rug and a size: 15 × 15, 30 × 30 or 60 × 60 cm. Samples of designs up to craft level 4 are ordered online; more complex designs are quoted.",
         "needs": "",
         "phase": "Phase 3",
         "layout": "grid",
-        "columns": 4,
+        "columns": 3,
         "size": "medium"
       }
     },
@@ -39,7 +39,7 @@
         "label": "How it works",
         "is_page_title": false,
         "description": "What a sample costs, how fast it arrives and whether the cost comes off the order.",
-        "needs": "Your sample policy.",
+        "needs": "Delivery time, and whether the cost comes off the order.",
         "phase": "Phase 3",
         "layout": "text",
         "columns": 3,
