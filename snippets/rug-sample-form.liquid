@@ -26,6 +26,7 @@ Supported variables
   assign sample_colours = product.metafields.rug.colour_refs.value | join: ', '
   assign design_label = 'rug_page.design' | t
   assign colours_label = 'rug_page.colours' | t
+  assign button_style = style | default: 'outline'
 -%}
 
 <product-form class="rug-sample">
@@ -41,7 +42,7 @@ Supported variables
     <input type="hidden" name="properties[_design]" value="{{ product.handle }}">
 
     <buy-buttons class="buy-buttons" form="{{ form_id }}">
-      {%- render 'button', content: label, type: 'submit', style: style | default: 'outline', size: size, stretch: true -%}
+      {%- render 'button', content: label, type: 'submit', style: button_style, size: size, stretch: true -%}
     </buy-buttons>
   </form>
 </product-form>
