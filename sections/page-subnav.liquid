@@ -60,7 +60,7 @@
             <li>
               {%- comment -%}On a page with no heading of its own, its name in the bar is the main heading{%- endcomment -%}
               {%- if link.current and section.settings.current_as_title -%}
-                <h1 class="subnav__heading"><a href="{{ link.url }}" class="subnav__link" aria-current="page">{{ link.title | escape }}</a></h1>
+                <h1 class="subnav__heading"><a href="{{ link.url }}" class="subnav__link" aria-current="page"><span class="sr-only">{{ group_title | escape }}: </span>{{ link.title | escape }}</a></h1>
               {%- else -%}
                 <a href="{{ link.url }}" class="subnav__link" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a>
               {%- endif -%}

@@ -28,11 +28,11 @@
 ## Main pages
 
 - [All rugs]({{ shop.url }}/collections/all): every design, with filters by collection, craft level, material, pile and colour.
-{%- for link in linklists['collection-links'].links %}
-{%- if link.type == 'collection_link' %}
+{% for link in linklists['collection-links'].links -%}
+{%- if link.type == 'collection_link' -%}
 - [{{ link.title }} collection]({{ shop.url }}{{ link.url }}){% if link.object.description != blank %}: {{ link.object.description | strip_html | strip_newlines | truncate: 160 }}{% endif %}
-{%- endif %}
-{%- endfor %}
+{% endif -%}
+{%- endfor -%}
 - [Bespoke]({{ shop.url }}/pages/bespoke): how a rug is designed and made for one project.
 - [Samples]({{ shop.url }}/pages/samples): order a sample of any rug.
 - [Care and questions]({{ shop.url }}/pages/care-faq): care, delivery and the questions asked most often.
