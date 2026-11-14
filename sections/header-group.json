@@ -35,11 +35,59 @@
         "transparent_logo": "shopify://shop_images/CorvoBranco.png"
       },
       "blocks": {
+        "mega-bespoke": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_item": "Bespoke",
+            "images_position": "right",
+            "intro_text": "Any rug, made to your design.",
+            "intro_link_text": "How bespoke works",
+            "image_1": "shopify://shop_images/CORVO_FINAL-19.jpg",
+            "image_1_heading": "Raw Materials",
+            "image_1_text": "The fibres we work with",
+            "image_1_link": "shopify://pages/raw-materials",
+            "image_2": "shopify://shop_images/CORVO_FINAL-22.jpg",
+            "image_2_heading": "Colours",
+            "image_2_text": "The Open Palette and beyond",
+            "image_2_link": "shopify://pages/colours",
+            "image_3": "shopify://shop_images/CORVO_FINAL-72.jpg",
+            "image_3_heading": "Tailor your rug",
+            "image_3_text": "Start with your idea",
+            "image_3_link": "shopify://pages/tailor-your-rug"
+          }
+        },
+        "mega-portfolio": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_item": "Portfolio",
+            "images_position": "right",
+            "intro_text": "Selected projects.",
+            "intro_link_text": "See all projects",
+            "image_1": "shopify://shop_images/NOISY-1.png",
+            "image_1_heading": "House in Comporta",
+            "image_1_text": "Private residence · Portugal",
+            "image_1_link": "shopify://pages/portfolio",
+            "image_2": "shopify://shop_images/MOCCAGRADIENT-descarregar_1.png",
+            "image_2_heading": "House in Vale do Lobo",
+            "image_2_text": "Private residence · Portugal",
+            "image_2_link": "shopify://pages/portfolio",
+            "image_3": "shopify://shop_images/BORDER-2_8cea2702-fb6b-44ea-a616-d26f116f3bed.png",
+            "image_3_heading": "House in Foz",
+            "image_3_text": "Private residence · Portugal",
+            "image_3_link": "shopify://pages/portfolio",
+            "image_4": "shopify://shop_images/VERTIS-4.png",
+            "image_4_heading": "House in Marbella",
+            "image_4_text": "Private residence · Spain",
+            "image_4_link": "shopify://pages/portfolio"
+          }
+        },
         "mega-collections": {
           "type": "mega_menu",
           "settings": {
             "menu_item": "Collections",
             "images_position": "right",
+            "intro_text": "Six collections, each made in your size and colours.",
+            "intro_link_text": "All collections",
             "image_1": "shopify://shop_images/RamiroRelvas_Pintura1.jpg",
             "image_1_heading": "From Ink to Thread",
             "image_1_text": "Inspired by the paintings of Ramiro Relvas",
@@ -47,12 +95,62 @@
             "image_2": "shopify://shop_images/RAYURES-descarregar_5.png",
             "image_2_heading": "All rugs",
             "image_2_text": "Every rug in one place",
-            "image_2_link": "/collections/all"
+            "image_2_link": "/collections/all",
+            "image_3": "shopify://shop_images/Dubuffet_1_Simulation.webp",
+            "image_3_heading": "Design library",
+            "image_3_text": "Designs ready to be made",
+            "image_3_link": "shopify://pages/gallery"
+          }
+        },
+        "mega-resources": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_item": "Resources",
+            "images_position": "right",
+            "intro_text": "Everything for choosing and specifying a rug.",
+            "intro_link_text": "All resources",
+            "image_1": "shopify://shop_images/33b7eb5d-4259-47a0-a077-bfc466503dcb.png",
+            "image_1_heading": "Samples",
+            "image_1_text": "See and touch before you order",
+            "image_1_link": "shopify://pages/samples",
+            "image_2": "shopify://shop_images/CORVO_FINAL-57.jpg",
+            "image_2_heading": "Catalogue",
+            "image_2_text": "The collections in one book",
+            "image_2_link": "shopify://pages/catalogue",
+            "image_3": "shopify://shop_images/CORVO_FINAL-62.jpg",
+            "image_3_heading": "Care & FAQ",
+            "image_3_text": "Practical answers in one place",
+            "image_3_link": "shopify://pages/care-faq"
+          }
+        },
+        "mega-about": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_item": "About",
+            "images_position": "right",
+            "intro_text": "Made in Portugal, part of the Sorema Group.",
+            "intro_link_text": "Our story",
+            "image_1": "shopify://shop_images/HISTORIA_-_corvo_island_1_1.jpg",
+            "image_1_heading": "Story",
+            "image_1_text": "Where Corvo comes from",
+            "image_1_link": "shopify://pages/about-us",
+            "image_2": "shopify://shop_images/CORVO_FINAL-44.jpg",
+            "image_2_heading": "Craftsmanship",
+            "image_2_text": "Made by hand, step by step",
+            "image_2_link": "shopify://pages/craftmanship",
+            "image_3": "shopify://shop_images/Sorema5.jpg",
+            "image_3_heading": "Sorema Group",
+            "image_3_text": "The family behind Corvo",
+            "image_3_link": "shopify://pages/sorema-group"
           }
         }
       },
       "block_order": [
-        "mega-collections"
+        "mega-bespoke",
+        "mega-portfolio",
+        "mega-collections",
+        "mega-resources",
+        "mega-about"
       ]
     }
   },

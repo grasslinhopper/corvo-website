@@ -71,6 +71,101 @@
     }
   }
 
+  {%- comment -%}
+  Corvo addition: every tab opens a wide, visual panel (see snippets/mega-menu.liquid). The name of the tab and a
+  line about it, its pages in one column, then up to four pictures of the same shape that rise into place.
+  {%- endcomment -%}
+  .mega-menu {
+    --mega-menu-gap: clamp(2rem, 4vw, 5rem);
+    --mega-menu-promo-gap: clamp(1rem, 1.5vw, 1.5rem);
+    justify-content: space-between;
+    padding-block: 3rem 3.5rem;
+    padding-inline: max(var(--container-gutter), calc((100% - 1560px) / 2));
+  }
+
+  .mega-menu__intro {
+    flex: 0 1 15rem;
+    align-content: start;
+    justify-items: start;
+    gap: .875rem;
+    min-width: 11rem;
+    display: grid;
+  }
+
+  .mega-menu__linklist {
+    flex-flow: column nowrap;
+    flex: none;
+    gap: 1.125rem;
+  }
+
+  .mega-menu__linklist > li {
+    gap: .875rem;
+  }
+
+  .mega-menu__promo {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .mega-menu__promo > * {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 21rem;
+  }
+
+  .mega-menu__promo .overflow-hidden {
+    aspect-ratio: 4 / 5;
+    width: 100%;
+  }
+
+  .mega-menu__promo img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .header__menu-disclosure[open] .mega-menu__intro > *,
+    .header__menu-disclosure[open] .mega-menu__promo > * {
+      animation: mega-menu-rise .7s cubic-bezier(.2, .7, .2, 1) backwards;
+    }
+
+    .header__menu-disclosure[open] .mega-menu__promo img {
+      animation: mega-menu-settle 1.8s cubic-bezier(.2, .7, .2, 1) backwards;
+    }
+
+    .header__menu-disclosure[open] .mega-menu__intro > :nth-child(2),
+    .header__menu-disclosure[open] .mega-menu__promo > :nth-child(1) {
+      animation-delay: .08s;
+    }
+
+    .header__menu-disclosure[open] .mega-menu__intro > :nth-child(3),
+    .header__menu-disclosure[open] .mega-menu__promo > :nth-child(2) {
+      animation-delay: .16s;
+    }
+
+    .header__menu-disclosure[open] .mega-menu__promo > :nth-child(3) {
+      animation-delay: .24s;
+    }
+
+    .header__menu-disclosure[open] .mega-menu__promo > :nth-child(4) {
+      animation-delay: .32s;
+    }
+  }
+
+  @keyframes mega-menu-rise {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+  }
+
+  @keyframes mega-menu-settle {
+    from {
+      transform: scale(1.1);
+    }
+  }
+
   {%- if section.settings.logo != blank -%}
     #shopify-section-{{ section.id }} {
       --header-logo-width: {{ section.settings.logo_mobile_max_width }}px;
@@ -625,6 +720,21 @@
         },
         {
           "type": "header",
+          "content": "Introduction"
+        },
+        {
+          "type": "text",
+          "id": "intro_text",
+          "label": "Line under the name of the tab",
+          "info": "With this line or the link below, the panel opens with the name of the tab and a way into its page."
+        },
+        {
+          "type": "text",
+          "id": "intro_link_text",
+          "label": "Link to the page of the tab"
+        },
+        {
+          "type": "header",
           "content": "t:sections.header.blocks.mega_menu.image_1"
         },
         {
@@ -671,6 +781,56 @@
         {
           "type": "url",
           "id": "image_2_link",
+          "label": "t:global.text.link"
+        },
+        {
+          "type": "header",
+          "content": "Image 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_3",
+          "label": "t:global.image.image",
+          "info": "t:sections.header.blocks.mega_menu.image_size_recommendation"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "image_3_heading",
+          "label": "t:global.text.heading"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "image_3_text",
+          "label": "t:global.text.text"
+        },
+        {
+          "type": "url",
+          "id": "image_3_link",
+          "label": "t:global.text.link"
+        },
+        {
+          "type": "header",
+          "content": "Image 4"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_4",
+          "label": "t:global.image.image",
+          "info": "t:sections.header.blocks.mega_menu.image_size_recommendation"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "image_4_heading",
+          "label": "t:global.text.heading"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "image_4_text",
+          "label": "t:global.text.text"
+        },
+        {
+          "type": "url",
+          "id": "image_4_link",
           "label": "t:global.text.link"
         }
       ]

@@ -16,6 +16,21 @@ Supported variables
 {%- endcomment -%}
 
 <div class="mega-menu {% if block.settings.images_position == 'left' %}mega-menu--reverse{% endif %}" {{ block.shopify_attributes }}>
+  {%- comment -%}Corvo addition: the panel opens with the name of the tab, a line about it and a way into its page{%- endcomment -%}
+  {%- if block.settings.intro_text != blank or block.settings.intro_link_text != blank -%}
+    <div class="mega-menu__intro">
+      <p class="h4">{{ link.title }}</p>
+
+      {%- if block.settings.intro_text != blank -%}
+        <p class="text-subdued">{{ block.settings.intro_text | escape }}</p>
+      {%- endif -%}
+
+      {%- if block.settings.intro_link_text != blank -%}
+        <a href="{{ link.url }}" class="link text-sm">{{ block.settings.intro_link_text | escape }}</a>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
   {%- if link.levels > 0 -%}
     <ul class="mega-menu__linklist unstyled-list">
       {%- for sub_link in link.links -%}
