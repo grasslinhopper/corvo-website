@@ -1,0 +1,405 @@
+{%- comment -%}
+  Rug samples (Corvo addition)
+
+  The Samples page: every rug with a button that puts its sample in the cart, and the collections as a quick filter.
+
+  A sample is one hidden product (the "Rug sample") in one size. Its size and price are read from that product, so
+  the page never states a figure of its own. The cart line of a sample carries the name of its design: see
+  snippets/rug-sample-form.liquid.
+
+  Only products with a craft level are listed, so anything that is not a rug stays off this page.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign source = section.settings.collection | default: collections.all
+  assign sample = all_products[section.settings.sample_handle]
+
+  unless sample.available
+    assign sample = nil
+  endunless
+
+  if sample != nil
+    assign sample_variant = sample.selected_or_first_available_variant
+
+    # The size as it is written on the site: "20 × 20 cm" for a variant named "20x20 cm"
+    assign sample_size = sample_variant.title
+    assign sample_dimensions = sample_variant.title | downcase | remove: 'cm' | remove: ' ' | split: 'x'
+
+    if sample_dimensions.size == 2
+      assign sample_size = sample_dimensions[0] | append: ' × ' | append: sample_dimensions[1] | append: ' cm'
+    endif
+
+    capture sample_price
+      render 'rug-money', amount: sample_variant.price
+    endcapture
+
+    assign sample_line = section.settings.price_text | escape | replace: '[size]', sample_size | replace: '[price]', sample_price
+  endif
+-%}
+
+<div class="section-spacing section-spacing--tight color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }}">
+  <div class="container">
+    <div class="section-stack">
+      <div class="section-header justify-self-center text-center">
+        <div class="prose">
+          {%- if section.settings.subheading != blank -%}
+            <p class="h6">{{ section.settings.subheading | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.title != blank -%}
+            <h1 class="h2">{{ section.settings.title | escape }}</h1>
+          {%- endif -%}
+
+          {%- if section.settings.text != blank -%}
+            {{- section.settings.text -}}
+          {%- endif -%}
+
+          {%- if sample != nil and section.settings.price_text != blank -%}
+            <p class="rug-samples__price">{{ sample_line }}</p>
+          {%- elsif sample == nil and section.settings.unavailable_text != blank -%}
+            <p class="rug-samples__price">{{ section.settings.unavailable_text | escape }}</p>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <rug-samples class="rug-samples">
+        {%- if section.settings.collection_menu.links.size > 1 -%}
+          <div class="rug-samples__filters" role="group" aria-label="{{ section.settings.filter_label | escape }}">
+            <button type="button" class="rug-samples__filter" data-rug-samples-filter="" aria-pressed="true">{{ section.settings.all_label | escape }}</button>
+
+            {%- for link in section.settings.collection_menu.links -%}
+              {%- if link.type == 'collection_link' -%}
+                <button type="button" class="rug-samples__filter" data-rug-samples-filter="{{ link.object.handle }}" aria-pressed="false">{{ link.title | escape }}</button>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- paginate source.products by 250 -%}
+          <ul class="rug-samples__grid unstyled-list" role="list">
+            {%- for product in source.products -%}
+              {%- if product.metafields.rug.craft_level.value == blank -%}
+                {%- continue -%}
+              {%- endif -%}
+
+              {%- liquid
+                assign product_collection_handles = product.collections | map: 'handle'
+                assign product_collection = nil
+
+                for link in section.settings.collection_menu.links
+                  if link.type == 'collection_link' and product_collection_handles contains link.object.handle
+                    assign product_collection = link.object
+                    break
+                  endif
+                endfor
+
+                assign form_id = 'rug-sample-' | append: section.id | append: '-' | append: product.id
+              -%}
+
+              <li class="rug-samples__item" data-rug-samples-item data-collections="|{{ product_collection_handles | join: '|' }}|">
+                <a href="{{ product.url }}" class="rug-samples__media" tabindex="-1" aria-hidden="true">
+                  {%- if product.featured_media != blank -%}
+                    {{- product.featured_media | image_url: width: product.featured_media.width | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 50vw, (max-width: 999px) 33vw, 25vw', widths: '200,300,400,500,600,800', alt: product.title -}}
+                  {%- endif -%}
+                </a>
+
+                <div class="rug-samples__info">
+                  <a href="{{ product.url }}" class="rug-samples__name h6">{{ product.title | escape }}</a>
+
+                  {%- if product_collection != nil -%}
+                    <span class="text-sm text-subdued">{{ product_collection.title | escape }}</span>
+                  {%- endif -%}
+
+                  <span class="rug-samples__added text-sm" role="status" hidden>{{ section.settings.added_text | escape }}</span>
+                </div>
+
+                {%- if sample != nil -%}
+                  {%- render 'rug-sample-form', product: product, sample: sample, form_id: form_id, label: section.settings.button_text, size: 'sm' -%}
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endpaginate -%}
+
+        <p class="rug-samples__empty text-subdued" data-rug-samples-empty hidden>{{ section.settings.empty_text | escape }}</p>
+      </rug-samples>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .rug-samples {
+    gap: 2.5rem;
+    display: grid;
+  }
+
+  .rug-samples__price {
+    color: rgb(var(--text-color));
+  }
+
+  .rug-samples__filters {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .5rem;
+    display: flex;
+  }
+
+  .rug-samples__filter {
+    color: rgb(var(--text-color) / .7);
+    border: 1px solid rgb(var(--border-color));
+    border-radius: var(--input-border-radius, 0);
+    cursor: pointer;
+    padding: .5rem 1rem;
+    transition: border-color .2s, color .2s;
+  }
+
+  .rug-samples__filter:hover {
+    border-color: rgb(var(--text-color) / .45);
+  }
+
+  .rug-samples__filter[aria-pressed="true"] {
+    color: rgb(var(--text-color));
+    border-color: rgb(var(--text-color));
+    box-shadow: inset 0 0 0 1px rgb(var(--text-color));
+  }
+
+  .rug-samples__filter:focus-visible {
+    outline: 2px solid rgb(var(--text-color));
+    outline-offset: 2px;
+  }
+
+  .rug-samples__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 1rem;
+    display: grid;
+  }
+
+  @media screen and (min-width: 700px) {
+    .rug-samples__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 1.5rem;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .rug-samples__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (min-width: 1400px) {
+    .rug-samples__grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  .rug-samples__item {
+    grid-template-rows: auto 1fr auto;
+    gap: .875rem;
+    min-width: 0;
+    display: grid;
+  }
+
+  .rug-samples__item[hidden] {
+    display: none;
+  }
+
+  .rug-samples__media {
+    background: rgb(var(--text-color) / .05);
+    aspect-ratio: 4 / 5;
+    display: block;
+    overflow: hidden;
+  }
+
+  .rug-samples__media img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    transition: transform .6s;
+  }
+
+  .rug-samples__item:hover .rug-samples__media img {
+    transform: scale(1.03);
+  }
+
+  .rug-samples__info {
+    align-content: start;
+    gap: .125rem;
+    display: grid;
+  }
+
+  .rug-samples__added:not([hidden]) {
+    display: block;
+  }
+
+  .rug-samples__added:before {
+    content: "✓ ";
+  }
+
+  .rug-samples .rug-sample {
+    display: block;
+  }
+
+  .rug-samples__empty {
+    text-align: center;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  /**
+   * Corvo addition: the Samples page. Narrows the rugs to one collection, and marks the rugs whose sample was added.
+   */
+  if (!window.customElements.get('rug-samples')) {
+    window.customElements.define('rug-samples', class extends HTMLElement {
+      connectedCallback() {
+        this.addEventListener('click', this.onClick);
+        this.addEventListener('variant:add', this.onAdded);
+      }
+
+      onClick(event) {
+        const filter = event.target.closest('[data-rug-samples-filter]');
+
+        if (!filter) {
+          return;
+        }
+
+        const handle = filter.dataset.rugSamplesFilter;
+        let shown = 0;
+
+        this.querySelectorAll('[data-rug-samples-filter]').forEach((button) => button.setAttribute('aria-pressed', String(button === filter)));
+
+        this.querySelectorAll('[data-rug-samples-item]').forEach((item) => {
+          const visible = handle === '' || item.dataset.collections.includes(`|${handle}|`);
+
+          item.hidden = !visible;
+          shown += visible ? 1 : 0;
+        });
+
+        this.querySelector('[data-rug-samples-empty]').hidden = shown > 0;
+      }
+
+      onAdded(event) {
+        const added = event.target.closest('[data-rug-samples-item]')?.querySelector('.rug-samples__added');
+
+        if (added) {
+          added.hidden = false;
+        }
+      }
+    });
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Rug samples",
+  "class": "shopify-section--rug-samples",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Every rug with a button that puts its sample in the cart. The size and the price of a sample come from the hidden sample product."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Samples"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>See and touch before you order.</p>"
+    },
+    {
+      "type": "text",
+      "id": "price_text",
+      "label": "Line with the size and the price",
+      "info": "[size] and [price] are filled in from the sample product.",
+      "default": "Each sample is [size] and costs [price]."
+    },
+    {
+      "type": "header",
+      "content": "Rugs"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection to list",
+      "info": "Leave empty to list every rug."
+    },
+    {
+      "type": "link_list",
+      "id": "collection_menu",
+      "label": "Menu of collections",
+      "info": "Its collections become the filter buttons, and each rug shows the first one it belongs to."
+    },
+    {
+      "type": "text",
+      "id": "filter_label",
+      "label": "Name of the filter, for screen readers",
+      "default": "Collections"
+    },
+    {
+      "type": "text",
+      "id": "all_label",
+      "label": "Button for all rugs",
+      "default": "All"
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "Text when a collection has no rug",
+      "default": "No rug in this collection yet."
+    },
+    {
+      "type": "header",
+      "content": "Sample"
+    },
+    {
+      "type": "text",
+      "id": "sample_handle",
+      "label": "Handle of the sample product",
+      "default": "rug-sample"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button",
+      "default": "Add sample"
+    },
+    {
+      "type": "text",
+      "id": "added_text",
+      "label": "Text once a sample is in the cart",
+      "default": "In your cart"
+    },
+    {
+      "type": "text",
+      "id": "unavailable_text",
+      "label": "Text when samples cannot be ordered",
+      "default": "Samples cannot be ordered online at the moment. Please contact us."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rug samples"
+    }
+  ]
+}
+{% endschema %}

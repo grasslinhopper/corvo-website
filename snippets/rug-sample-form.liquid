@@ -1,0 +1,47 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+RUG SAMPLE FORM (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+A button that puts a sample of a rug in the cart.
+
+Every sample is the same hidden product (the "Rug sample"), so the line has to say which rug it is a sample of: it
+carries the design's name, its colour references and, in "_design", the handle that lets the cart show the design's
+name and photo (see snippets/line-item.liquid). The theme's own <product-form> adds it to the cart.
+
+********************************************
+Supported variables
+********************************************
+
+* product: the rug the sample is of (required)
+* sample: the hidden sample product (required)
+* form_id: a unique ID for the form (required)
+* label: the content of the button (required)
+* style: "outline" (default) or "solid"
+* size: "sm" for a smaller button
+{%- endcomment -%}
+
+{%- liquid
+  assign sample_variant = sample.selected_or_first_available_variant
+  assign sample_colours = product.metafields.rug.colour_refs.value | join: ', '
+  assign design_label = 'rug_page.design' | t
+  assign colours_label = 'rug_page.colours' | t
+-%}
+
+<product-form class="rug-sample">
+  <form method="post" action="{{ routes.cart_add_url }}" id="{{ form_id }}" accept-charset="UTF-8">
+    <input type="hidden" name="id" value="{{ sample_variant.id }}">
+    <input type="hidden" name="quantity" value="1">
+    <input type="hidden" name="properties[{{ design_label | escape }}]" value="{{ product.title | escape }}">
+
+    {%- if sample_colours != blank -%}
+      <input type="hidden" name="properties[{{ colours_label | escape }}]" value="{{ sample_colours | escape }}">
+    {%- endif -%}
+
+    <input type="hidden" name="properties[_design]" value="{{ product.handle }}">
+
+    <buy-buttons class="buy-buttons" form="{{ form_id }}">
+      {%- render 'button', content: label, type: 'submit', style: style | default: 'outline', size: size, stretch: true -%}
+    </buy-buttons>
+  </form>
+</product-form>

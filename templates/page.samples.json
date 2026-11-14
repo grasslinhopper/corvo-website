@@ -7,43 +7,74 @@
         "style": "tabs"
       }
     },
-    "wf-1": {
-      "type": "wireframe",
+    "samples": {
+      "type": "rug-samples",
       "settings": {
-        "label": "Samples",
-        "is_page_title": true,
-        "description": "See and touch before you order.",
-        "needs": "",
-        "phase": "Phase 6",
-        "layout": "banner",
-        "columns": 3,
-        "size": "medium"
+        "color_scheme": "",
+        "subheading": "",
+        "title": "Samples",
+        "text": "<p>See and touch before you order. Add a sample of each design you are considering.</p>",
+        "price_text": "Each sample is [size] and costs [price].",
+        "collection": "",
+        "collection_menu": "collection-links",
+        "filter_label": "Collections",
+        "all_label": "All",
+        "empty_text": "No rug in this collection yet.",
+        "sample_handle": "rug-sample",
+        "button_text": "Add sample",
+        "added_text": "In your cart",
+        "unavailable_text": "Samples cannot be ordered online at the moment. Please contact us."
       }
     },
-    "wf-2": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Choose your samples",
-        "is_page_title": false,
-        "description": "Pick a rug and a size: 15 × 15, 30 × 30 or 60 × 60 cm. Samples of designs up to craft level 4 are ordered online; more complex designs are quoted.",
-        "needs": "",
-        "phase": "Phase 3",
-        "layout": "grid",
-        "columns": 3,
-        "size": "medium"
-      }
-    },
-    "wf-3": {
+    "wf-how": {
       "type": "wireframe",
       "settings": {
         "label": "How it works",
         "is_page_title": false,
-        "description": "What a sample costs, how fast it arrives and whether the cost comes off the order.",
-        "needs": "Delivery time, and whether the cost comes off the order.",
+        "description": "How a sample is sent and what its delivery costs, how fast it arrives, and whether its price comes off the order of the rug.",
+        "needs": "Delivery time and delivery cost for samples; whether the price of a sample comes off the order.",
         "phase": "Phase 3",
         "layout": "text",
         "columns": 3,
         "size": "small"
+      }
+    },
+    "more": {
+      "type": "rich-text",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "text": "Looking for something else?",
+            "heading_tag": "h2"
+          }
+        },
+        "text": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>For a sample in your own colours, or of a design made for you, talk to our design team.</p>"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "style": "outline",
+            "text": "Talk to us",
+            "url": "shopify://pages/contact"
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "text",
+        "button"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": true,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": false
       }
     },
     "subnav-pager": {
@@ -56,9 +87,9 @@
   },
   "order": [
     "subnav-tabs",
-    "wf-1",
-    "wf-2",
-    "wf-3",
+    "samples",
+    "wf-how",
+    "more",
     "subnav-pager"
   ]
 }
