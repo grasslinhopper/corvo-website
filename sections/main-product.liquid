@@ -633,6 +633,10 @@ quick buy information in a template, that will be extracted in JS, which ensures
     display: grid;
   }
 
+  .rug-links product-form {
+    display: block;
+  }
+
   .button[data-rug-blocked] {
     opacity: .35;
     cursor: not-allowed;
@@ -1070,6 +1074,13 @@ quick buy information in a template, that will be extracted in JS, which ensures
       "name": "Rug: other next steps",
       "limit": 1,
       "settings": [
+        {
+          "type": "text",
+          "id": "sample_handle",
+          "label": "Handle of the sample product",
+          "info": "When this hidden product exists, button 1 puts a sample of the rug in the cart, at the sample's price. Without it, button 1 opens its link.",
+          "default": "rug-sample"
+        },
         {
           "type": "text",
           "id": "link_1_text",

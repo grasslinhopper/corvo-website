@@ -261,12 +261,66 @@ Supported variables
             {%- endif -%}
 
           {%- when 'rug_links' -%}
-            {%- comment -%}Corvo addition: the quieter next steps under the order button{%- endcomment -%}
+            {%- comment -%}
+            Corvo addition: the quieter next steps under the order button. When the hidden sample product exists, the
+            first button puts a sample of this rug in the cart: the sample line carries the design's name, its colour
+            references and, in "_design", the handle that lets the cart show the design's photo.
+            {%- endcomment -%}
+            {%- liquid
+              assign rug_sample = nil
+
+              if product != blank and block.settings.sample_handle != blank and block.settings.link_1_text != blank
+                assign rug_sample = all_products[block.settings.sample_handle]
+
+                unless rug_sample.available
+                  assign rug_sample = nil
+                endunless
+              endif
+            -%}
+
             {%- capture rug_links -%}
+              {%- if rug_sample != nil -%}
+                {%- liquid
+                  assign rug_sample_variant = rug_sample.selected_or_first_available_variant
+                  assign rug_sample_form_id = 'rug-sample-' | append: section.id | append: '-' | append: product.id
+                  assign rug_sample_colours = product.metafields.rug.colour_refs.value | join: ', '
+                  assign rug_design_label = 'rug_page.design' | t
+                  assign rug_colours_label = 'rug_page.colours' | t
+
+                  capture rug_sample_label
+                    echo block.settings.link_1_text | escape
+                    echo ' · '
+                    render 'rug-money', amount: rug_sample_variant.price
+                  endcapture
+                -%}
+
+                <product-form class="rug-sample">
+                  <form method="post" action="{{ routes.cart_add_url }}" id="{{ rug_sample_form_id }}" accept-charset="UTF-8">
+                    <input type="hidden" name="id" value="{{ rug_sample_variant.id }}">
+                    <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="properties[{{ rug_design_label | escape }}]" value="{{ product.title | escape }}">
+
+                    {%- if rug_sample_colours != blank -%}
+                      <input type="hidden" name="properties[{{ rug_colours_label | escape }}]" value="{{ rug_sample_colours | escape }}">
+                    {%- endif -%}
+
+                    <input type="hidden" name="properties[_design]" value="{{ product.handle }}">
+
+                    <buy-buttons class="buy-buttons" form="{{ rug_sample_form_id }}">
+                      {%- render 'button', content: rug_sample_label, type: 'submit', style: 'outline', stretch: true -%}
+                    </buy-buttons>
+                  </form>
+                </product-form>
+              {%- endif -%}
+
               {%- for i in (1..3) -%}
                 {%- liquid
                   assign text_setting = 'link_' | append: i | append: '_text'
                   assign url_setting = 'link_' | append: i | append: '_url'
+
+                  if i == 1 and rug_sample != nil
+                    continue
+                  endif
                 -%}
 
                 {%- if block.settings[text_setting] != blank and block.settings[url_setting] != blank -%}

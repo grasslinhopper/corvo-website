@@ -1,0 +1,52 @@
+{
+  "sections": {
+    "main": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading": {
+          "type": "subheading",
+          "settings": {
+            "text": "Samples"
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "text": "See and touch before you order",
+            "heading_tag": "h1"
+          }
+        },
+        "text": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>A sample is ordered from the page of its rug, so that it carries the name of the design. Choose a design, then press Order a sample.</p>"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "See all rugs",
+            "url": "shopify://collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "subheading",
+        "heading",
+        "text",
+        "button"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": false
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

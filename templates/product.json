@@ -93,6 +93,7 @@
         "rug_links": {
           "type": "rug_links",
           "settings": {
+            "sample_handle": "rug-sample",
             "link_1_text": "Order a sample",
             "link_1_url": "shopify://pages/samples",
             "link_2_text": "Book a call",

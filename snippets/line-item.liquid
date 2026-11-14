@@ -14,9 +14,9 @@ Supported variables
 {%- endcomment -%}
 
 {%- comment -%}
-Corvo addition: a made-to-measure rug is charged through the hidden price-step product, and its line carries the
-handle of the design it was configured from in the "_design" property. Such a line shows that design (name, photo
-and link) in place of the price product.
+Corvo addition: a made-to-measure rug is charged through the hidden price-step product, and a sample through the
+hidden sample product. Both lines carry the handle of their design in the "_design" property, and show that design
+(name, photo and link) in place of the hidden product.
 {%- endcomment -%}
 {%- liquid
   assign rug_design = nil
@@ -66,7 +66,18 @@ and link) in place of the price product.
 
       {%- capture secondary_information -%}
         {%- if rug_design != nil -%}
-          <p class="smallcaps text-subdued">{{ 'rug_page.made_to_measure' | t }}</p>
+          {%- liquid
+            assign rug_line_kind = 'rug_page.made_to_measure' | t
+            assign rug_line_kind = line_item.product.type | default: rug_line_kind
+            assign rug_first_option = line_item.options_with_values | first
+          -%}
+
+          {%- comment -%}A price step is named by its amount, which says nothing to the buyer; a sample is named by its size{%- endcomment -%}
+          <p class="smallcaps text-subdued">
+            {{- rug_line_kind | escape -}}
+
+            {%- unless line_item.product.has_only_default_variant or rug_first_option.name == 'Reference' %} · {{ line_item.variant.title | escape }}{% endunless -%}
+          </p>
         {%- else -%}
           {%- unless line_item.product.has_only_default_variant or line_item.gift_card -%}
             <p class="smallcaps text-subdued">{{ line_item.variant.title }}</p>
