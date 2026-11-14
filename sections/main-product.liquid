@@ -161,8 +161,10 @@
 
         {%- if rug_steps_block != blank and product.selected_or_first_available_variant != nil -%}
           {%- capture button_content -%}
-            {{- button_content -}}
-            <span class="rug-sticky-price sm:hidden"> · {% render 'rug-money', amount: product.selected_or_first_available_variant.price %}</span>
+            <span>
+              {{- button_content -}}
+              <span class="sm:hidden"> · {% render 'rug-money', amount: product.selected_or_first_available_variant.price %}</span>
+            </span>
           {%- endcapture -%}
         {%- endif -%}
 
