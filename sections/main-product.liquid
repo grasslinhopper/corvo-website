@@ -40,11 +40,18 @@
 {%- assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5 -%}
 {%- capture product_form_id -%}product-form-main-{{ product.id }}-{{ section.id }}{%- endcapture -%}
 
+{%- comment -%}Corvo addition: on a rug page (the "rug_steps" block is in use) the photos stay in view next to the steps{%- endcomment -%}
+{%- assign rug_steps_block = section.blocks | where: 'type', 'rug_steps' | first -%}
+
 <div class="section-spacing section-spacing--tight color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }}">
   <div class="container {% unless section.settings.container_size == 'full' %}container--{{ section.settings.container_size }}{% endunless %}">
     <product-rerender id="product-info-{{ product.id }}-{{ section.id }}" observe-form="{{ product_form_id }}" allow-partial-rerender>
       <div class="product">
         {%- if product.media.size > 0 -%}
+          {%- if rug_steps_block != blank -%}
+            <safe-sticky class="rug-gallery-sticky">
+          {%- endif -%}
+
           {%- render 'product-gallery',
               product: product,
               product_form_id: product_form_id,
@@ -54,6 +61,10 @@
               enable_video_looping: section.settings.enable_video_looping,
               enable_image_zoom: section.settings.enable_image_zoom,
               max_image_zoom_level: section.settings.max_image_zoom_level -%}
+
+          {%- if rug_steps_block != blank -%}
+            </safe-sticky>
+          {%- endif -%}
         {%- endif -%}
 
         {%- render 'product-info', 
@@ -148,6 +159,13 @@
           endif
         -%}
 
+        {%- if rug_steps_block != blank and product.selected_or_first_available_variant != nil -%}
+          {%- capture button_content -%}
+            {{- button_content -}}
+            <span class="rug-sticky-price sm:hidden"> · {% render 'rug-money', amount: product.selected_or_first_available_variant.price %}</span>
+          {%- endcapture -%}
+        {%- endif -%}
+
         {%- render 'button', content: button_content, style: button_style, type: 'submit', form: product_form_id, disabled: button_disabled -%}
       </buy-buttons>
     </product-sticky-bar>
@@ -175,6 +193,317 @@ quick buy information in a template, that will be extracted in JS, which ensures
     // Safari in private mode does not allow setting item, we silently fail
   }
 </script>
+
+{% stylesheet %}
+  /* Corvo addition: the rug page (blocks "rug_eyebrow", "rug_steps" and "rug_links") */
+  .product-info__block-item[data-block-type="rug-eyebrow"] {
+    --product-info-gap: .5rem;
+  }
+
+  .product-info__block-item[data-block-type="rug-steps"] {
+    --product-info-gap: 2rem;
+  }
+
+  .product-info__block-item[data-block-type="rug-links"] {
+    --product-info-gap: .625rem;
+  }
+
+  .product-info__block-item[data-block-type="buy-buttons"]:has(+ [data-block-type="rug-links"]) {
+    margin-block-end: .625rem;
+  }
+
+  .rug-gallery-sticky {
+    grid-area: product-gallery;
+    min-width: 0;
+    display: block;
+  }
+
+  @media screen and (min-width: 1000px) {
+    .rug-gallery-sticky {
+      position: sticky;
+      inset-block-start: calc(var(--sticky-area-height) + 20px);
+    }
+  }
+
+  .rug-steps,
+  .rug-steps__list {
+    gap: 2rem;
+    display: grid;
+  }
+
+  .rug-step {
+    min-width: 0;
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .rug-step__legend {
+    align-items: baseline;
+    gap: .75rem;
+    width: 100%;
+    margin-block-end: .875rem;
+    padding: 0;
+    display: flex;
+  }
+
+  .rug-step__choices {
+    gap: .5rem;
+    display: grid;
+  }
+
+  .rug-step__more {
+    margin-block-start: .75rem;
+  }
+
+  .rug-step__more .link {
+    margin-inline-start: .25rem;
+  }
+
+  .rug-step__preview {
+    border-inline-start: 2px solid rgb(var(--text-color));
+    padding-inline-start: .75rem;
+  }
+
+  .rug-choice {
+    color: rgb(var(--text-color) / .7);
+    border: 1px solid rgb(var(--border-color));
+    border-radius: var(--input-border-radius, 0);
+    cursor: pointer;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: .875rem;
+    padding: .8125rem 1rem;
+    transition: border-color .2s, color .2s;
+    display: grid;
+  }
+
+  .rug-choice:hover {
+    border-color: rgb(var(--text-color) / .45);
+  }
+
+  :checked + .rug-choice,
+  .rug-choice.is-selected {
+    color: rgb(var(--text-color));
+    border-color: rgb(var(--text-color));
+  }
+
+  :focus-visible + .rug-choice,
+  .rug-choice:focus-visible {
+    outline: 2px solid rgb(var(--text-color));
+    outline-offset: 2px;
+  }
+
+  .rug-choice--static {
+    cursor: default;
+  }
+
+  .rug-choice--static:hover {
+    border-color: rgb(var(--text-color));
+  }
+
+  .rug-choice.is-unavailable {
+    opacity: .5;
+  }
+
+  .rug-choice__mark {
+    border: 1px solid rgb(var(--text-color) / .45);
+    border-radius: 50%;
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    position: relative;
+  }
+
+  :checked + .rug-choice .rug-choice__mark,
+  .rug-choice.is-selected .rug-choice__mark {
+    border-color: rgb(var(--text-color));
+  }
+
+  :checked + .rug-choice .rug-choice__mark:after,
+  .rug-choice.is-selected .rug-choice__mark:after {
+    content: "";
+    background: rgb(var(--text-color));
+    border-radius: 50%;
+    position: absolute;
+    inset: 3px;
+  }
+
+  .rug-choice--link .rug-choice__mark {
+    border-style: dashed;
+  }
+
+  .rug-choice__text {
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: .125rem .625rem;
+    min-width: 0;
+    display: flex;
+  }
+
+  .rug-choice__text--stacked {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .rug-choice__note {
+    font-size: var(--text-sm);
+  }
+
+  .rug-choice__price {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rug-choice__arrow {
+    display: flex;
+  }
+
+  .rug-choice__swatches {
+    gap: .25rem;
+    display: flex;
+  }
+
+  .rug-swatch {
+    background: var(--swatch, transparent);
+    border: 1px solid rgb(var(--text-color) / .2);
+    border-radius: 50%;
+    width: .875rem;
+    height: .875rem;
+    display: block;
+  }
+
+  .rug-swatch--multi {
+    background: conic-gradient(#b5533c, #c9a24b, #2f6b5a, #34608f, #8b5e3c, #b5533c);
+  }
+
+  .rug-summary {
+    background: rgb(var(--text-color) / .03);
+    border: 1px solid rgb(var(--border-color));
+    gap: 1rem;
+    padding: 1.25rem;
+    display: grid;
+  }
+
+  .rug-summary__list,
+  .rug-summary__split {
+    gap: .375rem;
+    margin: 0;
+    display: grid;
+  }
+
+  .rug-summary__list > div,
+  .rug-summary__split > div {
+    justify-content: space-between;
+    gap: 1rem;
+    display: flex;
+  }
+
+  .rug-summary__list dt,
+  .rug-summary__split dt {
+    color: rgb(var(--text-color) / .65);
+  }
+
+  .rug-summary__list dd,
+  .rug-summary__split dd {
+    text-align: end;
+    margin: 0;
+  }
+
+  .rug-summary__total {
+    border-block-start: 1px solid rgb(var(--border-color));
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block-start: 1rem;
+    display: flex;
+  }
+
+  .rug-summary__amount {
+    justify-items: end;
+    display: grid;
+  }
+
+  .rug-summary__split dd {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rug-links {
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: .625rem;
+    display: grid;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  /**
+   * Corvo addition: the shipping step as a demonstration.
+   *
+   * While the rugs have no "Shipping" option, the rug page shows the two shipping choices on unpublished themes only.
+   * The choice changes the summary, and the priority choice cannot be ordered: it switches the order buttons off.
+   * Once the rugs carry the option, this element is no longer printed and the theme's own variant logic takes over.
+   */
+  if (!window.customElements.get('rug-shipping-demo')) {
+    const remembered = new Map();
+
+    window.customElements.define('rug-shipping-demo', class extends HTMLElement {
+      connectedCallback() {
+        this.addEventListener('change', this);
+
+        if (remembered.get(this.dataset.product) === 'express') {
+          const express = this.querySelector('input[value="express"]');
+
+          if (express) {
+            express.checked = true;
+          }
+        }
+
+        // The order buttons may be printed again after this element: wait until the page has settled
+        window.setTimeout(() => this.apply(), 0);
+      }
+
+      handleEvent() {
+        remembered.set(this.dataset.product, this.querySelector('input:checked')?.value || 'standard');
+        this.apply();
+      }
+
+      apply() {
+        const input = this.querySelector('input:checked'),
+          scope = this.closest('[data-rug-steps]');
+
+        if (!this.isConnected || !input || !scope) {
+          return;
+        }
+
+        const isExpress = input.value === 'express',
+          form = document.forms[this.getAttribute('form')],
+          note = this.querySelector('[data-rug-preview-note]');
+
+        [['[data-rug-shipping-label]', input.dataset.label], ['[data-rug-total]', input.dataset.total], ['[data-rug-pay-now]', input.dataset.payNow], ['[data-rug-pay-later]', input.dataset.payLater]].forEach(([selector, text]) => {
+          const element = scope.querySelector(selector);
+
+          if (element && text !== undefined) {
+            element.textContent = text;
+          }
+        });
+
+        if (note) {
+          note.hidden = !isExpress;
+        }
+
+        Array.from(form?.elements || []).filter((element) => element.type === 'submit').forEach((button) => {
+          if (isExpress && !button.disabled) {
+            button.disabled = true;
+            button.dataset.rugDemo = 'true';
+          } else if (!isExpress && button.dataset.rugDemo) {
+            button.disabled = false;
+            delete button.dataset.rugDemo;
+          }
+        });
+      }
+    });
+  }
+{% endjavascript %}
 
 {% schema %}
 {
@@ -335,6 +664,183 @@ quick buy information in a template, that will be extracted in JS, which ensures
   "blocks": [
     {
       "type": "@app"
+    },
+    {
+      "type": "rug_eyebrow",
+      "name": "Rug: collection line",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Shows the collection of the rug above its name: the first collection of this menu that contains the rug."
+        },
+        {
+          "type": "link_list",
+          "id": "collection_menu",
+          "label": "Menu of collections"
+        }
+      ]
+    },
+    {
+      "type": "rug_steps",
+      "name": "Rug: buying steps",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Size, colour and shipping as numbered steps, then a summary with the total. Use it instead of the variant picker."
+        },
+        {
+          "type": "url",
+          "id": "custom_link",
+          "label": "Page for other sizes and colours"
+        },
+        {
+          "type": "header",
+          "content": "Size"
+        },
+        {
+          "type": "text",
+          "id": "custom_size_text",
+          "label": "Line under the sizes",
+          "default": "Another size or shape?"
+        },
+        {
+          "type": "text",
+          "id": "custom_size_link_text",
+          "label": "Link text",
+          "default": "Made to measure"
+        },
+        {
+          "type": "header",
+          "content": "Colour"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_colour_step",
+          "label": "Show the colour step",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "other_colour_title",
+          "label": "Other colour, title",
+          "default": "Another colour"
+        },
+        {
+          "type": "text",
+          "id": "other_colour_text",
+          "label": "Other colour, text",
+          "default": "Any colour, matched to your project"
+        },
+        {
+          "type": "header",
+          "content": "Shipping"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_shipping_step",
+          "label": "Show the shipping step",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "shipping_option_name",
+          "label": "Name of the product option",
+          "info": "The step uses the product option with this name. Until the rugs have it, the step shows on unpublished themes only, as a demonstration that cannot be ordered.",
+          "default": "Shipping"
+        },
+        {
+          "type": "text",
+          "id": "standard_note",
+          "label": "Standard, text",
+          "default": "Production time is confirmed with your order."
+        },
+        {
+          "type": "text",
+          "id": "express_note",
+          "label": "Priority, text",
+          "default": "Priority production."
+        },
+        {
+          "type": "text",
+          "id": "standard_label",
+          "label": "Standard, title (demonstration)",
+          "default": "Standard"
+        },
+        {
+          "type": "text",
+          "id": "express_label",
+          "label": "Priority, title (demonstration)",
+          "default": "Shipping in 3 weeks"
+        },
+        {
+          "type": "range",
+          "id": "express_percent",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "label": "Priority supplement (demonstration)",
+          "default": 25
+        },
+        {
+          "type": "header",
+          "content": "Summary"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_payment_split",
+          "label": "Show the payment in two halves",
+          "info": "50% when ordering and 50% before shipping. Switch it on only when the checkout takes a deposit.",
+          "default": false
+        },
+        {
+          "type": "richtext",
+          "id": "summary_note",
+          "label": "Note",
+          "default": "<p>Made to order in Portugal. Transport is not included.</p>"
+        }
+      ]
+    },
+    {
+      "type": "rug_links",
+      "name": "Rug: other next steps",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "link_1_text",
+          "label": "Button 1",
+          "default": "Order a sample"
+        },
+        {
+          "type": "url",
+          "id": "link_1_url",
+          "label": "Button 1 link"
+        },
+        {
+          "type": "text",
+          "id": "link_2_text",
+          "label": "Button 2",
+          "default": "Book a call"
+        },
+        {
+          "type": "url",
+          "id": "link_2_url",
+          "label": "Button 2 link"
+        },
+        {
+          "type": "text",
+          "id": "link_3_text",
+          "label": "Button 3"
+        },
+        {
+          "type": "url",
+          "id": "link_3_url",
+          "label": "Button 3 link"
+        }
+      ]
     },
     {
       "type": "vendor",

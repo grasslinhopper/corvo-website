@@ -1,0 +1,452 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+RUG SPECIFICATION (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+The facts of a rug as a table, with short texts on its materials and on care.
+
+The facts come from the rug fields of the product, so nothing is typed twice:
+
+  - rug.craft_level (reference to a "craft_level" entry)
+  - rug.materials (list of references to "rug_material" entries, each with its own description)
+  - rug.pile (list of text: "Cut", "Loop")
+  - rug.pile_height (text)
+  - rug.colours (number) and rug.colour_refs (list of text)
+
+A row without a value is left out.
+{%- endcomment -%}
+
+{%- liquid
+  assign craft = product.metafields.rug.craft_level.value
+  assign materials = product.metafields.rug.materials.value
+  assign pile = product.metafields.rug.pile.value
+  assign pile_height = product.metafields.rug.pile_height.value
+  assign colour_count = product.metafields.rug.colours.value
+  assign colour_refs = product.metafields.rug.colour_refs.value
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+
+  comment
+    The collection of the rug: the first collection of the menu that contains it
+  endcomment
+
+  assign rug_collection = nil
+  assign product_collection_handles = product.collections | map: 'handle'
+
+  for link in section.settings.collection_menu.links
+    if link.type == 'collection_link' and product_collection_handles contains link.object.handle
+      assign rug_collection = link.object
+      break
+    endif
+  endfor
+
+  comment
+    The standard sizes: the values of the "Size" option (or of the first option), written as "150 × 200"
+  endcomment
+
+  assign size_option = product.options_with_values | first
+
+  for option in product.options_with_values
+    assign option_name = option.name | downcase | strip
+
+    if option_name == 'size'
+      assign size_option = option
+      break
+    endif
+  endfor
+
+  assign sizes_text = ''
+
+  unless product.has_only_default_variant
+    for option_value in size_option.values
+      assign size_label = option_value.name | downcase | remove: 'cm' | strip | replace: 'x', ' × '
+
+      if forloop.first
+        assign sizes_text = size_label
+      else
+        assign sizes_text = sizes_text | append: ' · ' | append: size_label
+      endif
+    endfor
+
+    if sizes_text != blank
+      assign sizes_text = sizes_text | append: ' cm'
+    endif
+  endunless
+
+  comment
+    The pile, in words
+  endcomment
+
+  assign pile_label = ''
+
+  if pile contains 'Cut' and pile contains 'Loop'
+    assign pile_label = 'rug_page.spec.pile_cut_loop' | t
+  elsif pile contains 'Cut'
+    assign pile_label = 'rug_page.spec.pile_cut' | t
+  elsif pile contains 'Loop'
+    assign pile_label = 'rug_page.spec.pile_loop' | t
+  endif
+-%}
+
+{%- if product != blank -%}
+  <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+    <div class="container container--lg">
+      <div class="rug-spec">
+        <div class="rug-spec__facts">
+          {%- if section.settings.title != blank -%}
+            <h2 class="h3">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+
+          <dl class="rug-spec__table">
+            {%- if rug_collection != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.collection' | t }}</dt>
+                <dd><a href="{{ rug_collection.url }}" class="link">{{ rug_collection.title | escape }}</a></dd>
+              </div>
+            {%- endif -%}
+
+            {%- if craft != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.craft_level' | t }}</dt>
+                <dd>
+                  <span>{{ craft.label.value | escape }}</span>
+
+                  {%- if craft.description.value != blank -%}
+                    <span class="text-sm text-subdued">{{ craft.description.value | escape }}</span>
+                  {%- endif -%}
+
+                  {%- if section.settings.craft_note != blank -%}
+                    <span class="text-sm text-subdued">{{ section.settings.craft_note | escape }}</span>
+                  {%- endif -%}
+                </dd>
+              </div>
+            {%- endif -%}
+
+            {%- if materials != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.materials' | t }}</dt>
+                <dd>
+                  {%- capture material_names -%}
+                    {%- for material in materials -%}
+                      {{- material.name.value | escape -}}
+                      {%- unless forloop.last -%}, {% endunless -%}
+                    {%- endfor -%}
+                  {%- endcapture -%}
+
+                  <span>{{ material_names | strip }}</span>
+                </dd>
+              </div>
+            {%- endif -%}
+
+            {%- if pile_label != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.pile' | t }}</dt>
+                <dd>{{ pile_label }}</dd>
+              </div>
+            {%- endif -%}
+
+            {%- if pile_height != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.pile_height' | t }}</dt>
+                <dd>{{ pile_height | escape }}</dd>
+              </div>
+            {%- endif -%}
+
+            {%- if colour_count != blank or colour_refs != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.colours' | t }}</dt>
+                <dd>
+                  {%- if colour_count != blank -%}
+                    <span>
+                      {%- if colour_count == 1 -%}
+                        {{- 'rug_page.colours_one' | t -}}
+                      {%- else -%}
+                        {{- 'rug_page.colours_other' | t: count: colour_count -}}
+                      {%- endif -%}
+                    </span>
+                  {%- endif -%}
+
+                  {%- if colour_refs != blank -%}
+                    {%- assign colour_refs_list = colour_refs | join: ', ' -%}
+                    <span class="text-sm text-subdued">{{ 'rug_page.references' | t: list: colour_refs_list }}</span>
+                  {%- endif -%}
+                </dd>
+              </div>
+            {%- endif -%}
+
+            {%- if sizes_text != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.sizes' | t }}</dt>
+                <dd>{{ sizes_text | escape }}</dd>
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.made_to_measure_text != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.made_to_measure' | t }}</dt>
+                <dd>
+                  <span>
+                    {{- section.settings.made_to_measure_text | escape -}}
+
+                    {%- if section.settings.custom_link != blank and section.settings.custom_link_text != blank %}
+                      <a href="{{ section.settings.custom_link }}" class="link">{{ section.settings.custom_link_text | escape }}</a>
+                    {%- endif -%}
+                  </span>
+                </dd>
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.made_in != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.made_in' | t }}</dt>
+                <dd>{{ section.settings.made_in | escape }}</dd>
+              </div>
+            {%- endif -%}
+          </dl>
+
+          {%- if section.settings.note != blank -%}
+            <div class="prose text-sm text-subdued">
+              {{- section.settings.note -}}
+            </div>
+          {%- endif -%}
+        </div>
+
+        <div class="rug-spec__texts">
+          {%- if materials != blank -%}
+            <div class="rug-spec__text">
+              {%- if section.settings.materials_title != blank -%}
+                <h2 class="h3">{{ section.settings.materials_title | escape }}</h2>
+              {%- endif -%}
+
+              {%- for material in materials -%}
+                {%- if material.description.value != blank -%}
+                  <div class="rug-spec__material">
+                    <h3 class="h6">{{ material.name.value | escape }}</h3>
+                    <p>{{ material.description.value | escape }}</p>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+
+              {%- if section.settings.materials_link != blank and section.settings.materials_link_text != blank -%}
+                <p><a href="{{ section.settings.materials_link }}" class="link">{{ section.settings.materials_link_text | escape }}</a></p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.care_text != blank -%}
+            <div class="rug-spec__text">
+              {%- if section.settings.care_title != blank -%}
+                <h2 class="h3">{{ section.settings.care_title | escape }}</h2>
+              {%- endif -%}
+
+              <div class="prose">
+                {{- section.settings.care_text -}}
+              </div>
+
+              {%- if section.settings.care_link != blank and section.settings.care_link_text != blank -%}
+                <p><a href="{{ section.settings.care_link }}" class="link">{{ section.settings.care_link_text | escape }}</a></p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .rug-spec {
+    gap: 3rem;
+    display: grid;
+  }
+
+  .rug-spec__facts,
+  .rug-spec__texts {
+    align-content: start;
+    gap: 1.5rem;
+    display: grid;
+  }
+
+  .rug-spec__texts {
+    gap: 2.5rem;
+  }
+
+  .rug-spec__table {
+    border-block-start: 1px solid rgb(var(--border-color));
+    margin: 0;
+  }
+
+  .rug-spec__row {
+    border-block-end: 1px solid rgb(var(--border-color));
+    grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: .875rem;
+    display: grid;
+  }
+
+  .rug-spec__row dt {
+    color: rgb(var(--text-color) / .65);
+  }
+
+  .rug-spec__row dd {
+    gap: .25rem;
+    margin: 0;
+    display: grid;
+  }
+
+  .rug-spec__text {
+    gap: 1rem;
+    display: grid;
+  }
+
+  .rug-spec__material {
+    gap: .375rem;
+    display: grid;
+  }
+
+  @media screen and (min-width: 700px) {
+    .rug-spec__row {
+      grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .rug-spec {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+      align-items: start;
+      gap: 5rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Rug specification",
+  "class": "shopify-section--rug-specification",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows the facts stored on the rug: craft level, materials, pile, pile height and colours. Each material brings its own description. A row without a value is left out."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Colour scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "Separate the section with a line",
+      "default": true
+    },
+    {
+      "type": "link_list",
+      "id": "collection_menu",
+      "label": "Menu of collections",
+      "info": "The rug's collection is the first one of this menu that contains it."
+    },
+    {
+      "type": "header",
+      "content": "Specification"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Specification"
+    },
+    {
+      "type": "text",
+      "id": "craft_note",
+      "label": "Line under the craft level",
+      "default": "The craft level measures how demanding a design is to make. It sets the price per m²."
+    },
+    {
+      "type": "text",
+      "id": "made_to_measure_text",
+      "label": "Made to measure",
+      "default": "Any size and shape."
+    },
+    {
+      "type": "url",
+      "id": "custom_link",
+      "label": "Made to measure, link"
+    },
+    {
+      "type": "text",
+      "id": "custom_link_text",
+      "label": "Made to measure, link text",
+      "default": "Tailor your rug"
+    },
+    {
+      "type": "text",
+      "id": "made_in",
+      "label": "Made in",
+      "default": "Portugal"
+    },
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "Note under the table",
+      "default": "<p>The colours shown are indicative. Natural materials and artisanal processes may give variations in colour and texture.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Materials"
+    },
+    {
+      "type": "text",
+      "id": "materials_title",
+      "label": "Title",
+      "default": "Materials"
+    },
+    {
+      "type": "url",
+      "id": "materials_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "materials_link_text",
+      "label": "Link text",
+      "default": "About our materials"
+    },
+    {
+      "type": "header",
+      "content": "Care"
+    },
+    {
+      "type": "text",
+      "id": "care_title",
+      "label": "Title",
+      "default": "Care"
+    },
+    {
+      "type": "richtext",
+      "id": "care_text",
+      "label": "Text",
+      "default": "<p>Vacuum regularly without rotating brushes, attend to spills promptly and rotate the rug from time to time. Keep it out of prolonged sunlight and rely on professional cleaning when needed.</p>"
+    },
+    {
+      "type": "url",
+      "id": "care_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "care_link_text",
+      "label": "Link text",
+      "default": "Care and FAQ"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rug specification"
+    }
+  ]
+}
+{% endschema %}

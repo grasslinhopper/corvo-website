@@ -106,7 +106,7 @@
       "sku": "SKU:",
       "variant": "Variant",
       "view_in_space": "View in your space",
-      "taxes_included": "Tax included.",
+      "taxes_included": "VAT included.",
       "taxes_excluded": "Tax excluded.",
       "shipping_policy_html": "<a href=\"{{ link }}\" class=\"link\">Shipping calculated</a> at checkout",
       "size_chart": "Size chart",
@@ -531,6 +531,42 @@
       "material": "Material",
       "pile": "Pile",
       "colour": "Colour"
+    }
+  },
+  "rug_page": {
+    "collection": "{{ collection }} collection",
+    "craft_level": "Craft level {{ number }}",
+    "step": "Step {{ number }}",
+    "size": "Size",
+    "colour": "Colour",
+    "shipping": "Shipping",
+    "area": "{{ area }} m²",
+    "as_shown": "As shown",
+    "colours_one": "1 colour",
+    "colours_other": "{{ count }} colours",
+    "references": "References: {{ list }}",
+    "included": "Included",
+    "surcharge": "+ {{ amount }}",
+    "your_rug": "Your rug",
+    "design": "Design",
+    "total": "Total",
+    "vat_included": "VAT included",
+    "pay_now": "50% when you order",
+    "pay_later": "50% before shipping",
+    "preview_only": "Preview only. This choice can be ordered once the new rug page is live.",
+    "spec": {
+      "collection": "Collection",
+      "craft_level": "Craft level",
+      "materials": "Materials",
+      "pile": "Pile",
+      "pile_cut": "Cut pile",
+      "pile_loop": "Loop pile",
+      "pile_cut_loop": "Cut and loop pile",
+      "pile_height": "Pile height",
+      "colours": "Colours",
+      "sizes": "Standard sizes",
+      "made_to_measure": "Made to measure",
+      "made_in": "Made in"
     }
   }
 }

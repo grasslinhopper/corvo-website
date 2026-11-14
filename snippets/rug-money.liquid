@@ -1,0 +1,15 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+RUG MONEY (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Prints an amount the way the theme prints prices, so the rug page and the price list agree.
+
+* amount: the amount in cents (required)
+{%- endcomment -%}
+
+{%- if settings.currency_code_enabled -%}
+  {{- amount | money_with_currency -}}
+{%- else -%}
+  {{- amount | money -}}
+{%- endif -%}

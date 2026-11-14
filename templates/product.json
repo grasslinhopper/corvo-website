@@ -12,9 +12,11 @@
     "main": {
       "type": "main-product",
       "blocks": {
-        "vendor": {
-          "type": "vendor",
-          "settings": {}
+        "rug_eyebrow": {
+          "type": "rug_eyebrow",
+          "settings": {
+            "collection_menu": "collection-links"
+          }
         },
         "title": {
           "type": "title",
@@ -25,25 +27,11 @@
         "price": {
           "type": "price",
           "settings": {
-            "show_taxes_notice": false
-          }
-        },
-        "variant_picker": {
-          "type": "variant_picker",
-          "settings": {
-            "hide_sold_out_variants": false,
-            "selector_style": "block",
-            "swatch_selector_style": "block_swatch",
-            "variant_image_options": "",
-            "size_chart_page": ""
+            "show_taxes_notice": true
           }
         },
         "payment_terms": {
           "type": "payment_terms",
-          "settings": {}
-        },
-        "separator": {
-          "type": "separator",
           "settings": {}
         },
         "description": {
@@ -53,38 +41,24 @@
             "show_below_gallery": false
           }
         },
-        "accordion_hFwam6": {
-          "type": "accordion",
-          "disabled": true,
+        "rug_steps": {
+          "type": "rug_steps",
           "settings": {
-            "show_below_gallery": false,
-            "icon": "none",
-            "title": "Product details",
-            "content": "<p>Share some content to your customers about your products.</p>",
-            "liquid": "",
-            "page": ""
-          }
-        },
-        "accordion_iWMFaC": {
-          "type": "accordion",
-          "settings": {
-            "show_below_gallery": false,
-            "icon": "none",
-            "title": "Care & Maintenance",
-            "content": "<p>This product should be handled with care. Regular vacuuming without rotating brushes, prompt attention to spills, and periodic rotation will help preserve its appearance and structure. To maintain the quality of the fibers over time, we recommend protecting the rug from prolonged sunlight and relying on professional cleaning when needed.</p>",
-            "liquid": "",
-            "page": ""
-          }
-        },
-        "accordion_EwMfKL": {
-          "type": "accordion",
-          "settings": {
-            "show_below_gallery": false,
-            "icon": "none",
-            "title": "Shipment Details",
-            "content": "<p>Prices include VAT and are shown exclusive of shipping. Following the initial payment, shipping arrangements and final costs are confirmed in consultation with our design concierge, ensuring each detail is handled with care and precision.</p>",
-            "liquid": "",
-            "page": ""
+            "custom_link": "shopify://pages/tailor-your-rug",
+            "custom_size_text": "Another size or shape?",
+            "custom_size_link_text": "Made to measure",
+            "show_colour_step": true,
+            "other_colour_title": "Another colour",
+            "other_colour_text": "Any colour, matched to your project",
+            "show_shipping_step": true,
+            "shipping_option_name": "Shipping",
+            "standard_note": "Production time is confirmed with your order.",
+            "express_note": "Priority production.",
+            "standard_label": "Standard",
+            "express_label": "Shipping in 3 weeks",
+            "express_percent": 25,
+            "show_payment_split": true,
+            "summary_note": "<p>Made to order in Portugal. Transport is not included: after your order, our design concierge confirms shipping arrangements and costs with you.</p>"
           }
         },
         "buy_buttons": {
@@ -96,6 +70,16 @@
             "atc_button_text_color": "",
             "payment_button_background": "",
             "payment_button_text_color": ""
+          }
+        },
+        "rug_links": {
+          "type": "rug_links",
+          "settings": {
+            "link_1_text": "Order a sample",
+            "link_1_url": "shopify://pages/samples",
+            "link_2_text": "Book a call",
+            "link_2_url": "shopify://pages/contact",
+            "link_3_text": ""
           }
         },
         "complementary_products": {
@@ -110,35 +94,51 @@
         }
       },
       "block_order": [
-        "vendor",
+        "rug_eyebrow",
         "title",
         "price",
-        "variant_picker",
         "payment_terms",
-        "separator",
         "description",
-        "accordion_hFwam6",
-        "accordion_iWMFaC",
-        "accordion_EwMfKL",
+        "rug_steps",
         "buy_buttons",
+        "rug_links",
         "complementary_products"
-      ],
-      "custom_css": [
-        ".product__thumbnails,.product-gallery__thumbnail-list,.product-gallery__nav {display: none !important;}"
       ],
       "settings": {
         "color_scheme": "",
         "container_size": "lg",
-        "product_info_size": 30,
+        "product_info_size": 40,
         "show_sticky_add_to_cart": true,
         "center_basic_info": false,
-        "desktop_media_layout": "grid",
+        "desktop_media_layout": "carousel_thumbnails_left",
         "desktop_media_grid_gap": 20,
         "mobile_controls": "dots",
         "enable_media_autoplay": false,
         "enable_video_looping": true,
         "enable_image_zoom": true,
         "max_image_zoom_level": 3
+      }
+    },
+    "rug_specification": {
+      "type": "rug-specification",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": true,
+        "collection_menu": "collection-links",
+        "title": "Specification",
+        "craft_note": "The craft level measures how demanding a design is to make. It sets the price per m².",
+        "made_to_measure_text": "Any size and shape.",
+        "custom_link": "shopify://pages/tailor-your-rug",
+        "custom_link_text": "Tailor your rug",
+        "made_in": "Portugal",
+        "note": "<p>The colours shown are indicative. Natural materials and artisanal processes may give variations in colour and texture.</p>",
+        "materials_title": "Materials",
+        "materials_link": "shopify://pages/raw-materials",
+        "materials_link_text": "About our materials",
+        "care_title": "Care",
+        "care_text": "<p>This product should be handled with care. Regular vacuuming without rotating brushes, prompt attention to spills, and periodic rotation will help preserve its appearance and structure. To maintain the quality of the fibres over time, we recommend protecting the rug from prolonged sunlight and relying on professional cleaning when needed.</p>",
+        "care_link": "shopify://pages/care-faq",
+        "care_link_text": "Care and FAQ"
       }
     },
     "related_products_j3zKUm": {
@@ -546,6 +546,7 @@
   },
   "order": [
     "main",
+    "rug_specification",
     "related_products_j3zKUm",
     "text_with_icons_3YdCmt",
     "slideshow_rnEG8i",

@@ -1,0 +1,516 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+RUG STEPS (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+The buying steps of a rug page: size, colour and shipping, then a summary that keeps the price in view.
+
+It takes the place of the theme's "variant_picker" block and relies on the same mechanics. Each choice is a radio
+button tied to the product form. The <variant-picker> element fetches this section again for the chosen combination,
+and the <product-rerender> wrapper swaps this whole block for the new one, so every price below is printed by Liquid.
+
+********************************************
+Supported variables
+********************************************
+
+* product: the rug (required)
+* form_id: the ID of the product form (required)
+* block: the "rug_steps" block, for its settings (required)
+* context: "main_product" or "featured_product"
+
+********************************************
+The shipping step
+********************************************
+
+When the product has an option named as in the block setting ("Shipping" by default), its values are real choices
+with their own variant prices: the first value is the standard one, the others are priorities.
+
+Until the rugs carry that option, the step is shown as a demonstration, on unpublished themes only. It works out the
+supplement from the block's percentage, rounded to the euro, and cannot be ordered.
+{%- endcomment -%}
+
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign shipping_name = block.settings.shipping_option_name | default: 'Shipping' | downcase | strip
+  assign shipping_option = nil
+  assign shipping_position = 0
+  assign step = 0
+  assign first_step_done = false
+  assign summary_rows = ''
+
+  for option in product.options_with_values
+    assign option_name = option.name | downcase | strip
+
+    if option_name == shipping_name
+      assign shipping_option = option
+      assign shipping_position = option.position
+    endif
+  endfor
+
+  assign shipping_demo = false
+
+  if shipping_position == 0 and block.settings.show_shipping_step
+    unless theme.role == 'main'
+      assign shipping_demo = true
+    endunless
+  endif
+
+  assign families = product.metafields.rug.colour_family.value
+  assign colour_count = product.metafields.rug.colours.value
+  assign colour_refs = product.metafields.rug.colour_refs.value
+  assign family_list = 'Ivory & cream|Beige & sand|Brown|Grey|Black & charcoal|Blue|Green|Red & terracotta|Gold|Multicolour' | split: '|'
+  assign family_colors = '#f1ece1|#d9c8a9|#8b5e3c|#9b9b99|#2b2b2b|#34608f|#2f6b5a|#b5533c|#c9a24b|multi' | split: '|'
+-%}
+
+{%- capture steps -%}
+  {%- comment -%}
+  --------------------------------------------------------------------------------------------------------------------
+  SIZE (and any other option that is not the shipping one)
+  --------------------------------------------------------------------------------------------------------------------
+  {%- endcomment -%}
+
+  {%- for option in product.options_with_values -%}
+    {%- if option.position == shipping_position or product.has_only_default_variant -%}
+      {%- continue -%}
+    {%- endif -%}
+
+    {%- assign step = step | plus: 1 -%}
+
+    <fieldset class="rug-step">
+      <legend class="rug-step__legend">
+        <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+        <span class="rug-step__title h6">{{ option.name | escape }}</span>
+      </legend>
+
+      <div class="rug-step__choices">
+        {%- for option_value in option.values -%}
+          {%- liquid
+            assign value_variant = option_value.variant
+            assign input_id = 'rug-choice-' | append: section.id | append: '-' | append: product.id | append: '-' | append: option.position | append: '-' | append: option_value.id
+            assign label = option_value.name
+            assign area_text = ''
+            assign dimensions = option_value.name | downcase | remove: 'cm' | remove: ' ' | split: 'x'
+
+            if dimensions.size == 2
+              assign width = dimensions[0] | plus: 0
+              assign length = dimensions[1] | plus: 0
+
+              if width > 0 and length > 0
+                assign label = width | append: ' × ' | append: length | append: ' cm'
+                assign area_hundredths = width | times: length | divided_by: 100
+                assign area_whole = area_hundredths | divided_by: 100
+                assign area_rest = area_hundredths | modulo: 100
+                assign area_text = area_whole | append: ''
+
+                if area_rest > 0
+                  assign area_decimals = area_rest | append: ''
+                  assign area_rest_tens = area_rest | modulo: 10
+
+                  if area_rest_tens == 0
+                    assign area_decimals = area_rest | divided_by: 10 | append: ''
+                  elsif area_rest < 10
+                    assign area_decimals = area_rest | prepend: '0'
+                  endif
+
+                  assign area_text = area_text | append: '.' | append: area_decimals
+                endif
+              endif
+            endif
+          -%}
+
+          <input class="sr-only" type="radio" id="{{ input_id }}" name="{{ form_id }}-option{{ option.position }}" value="{{ option_value.id }}" form="{{ form_id }}" data-option-position="{{ option.position }}" {% if option_value.selected %}checked{% endif %}>
+
+          <label class="rug-choice {% unless option_value.available %}is-unavailable{% endunless %}" for="{{ input_id }}">
+            <span class="rug-choice__mark" aria-hidden="true"></span>
+
+            <span class="rug-choice__text">
+              <span class="rug-choice__title">{{ label | escape }}</span>
+
+              {%- if area_text != blank -%}
+                <span class="rug-choice__note text-subdued">{{ 'rug_page.area' | t: area: area_text }}</span>
+              {%- endif -%}
+            </span>
+
+            {%- if value_variant -%}
+              <span class="rug-choice__price">{%- render 'rug-money', amount: value_variant.price -%}</span>
+            {%- endif -%}
+          </label>
+
+          {%- if option_value.selected -%}
+            {%- capture summary_row -%}
+              <div>
+                <dt>{{ option.name | escape }}</dt>
+                <dd>{{ label | escape }}{% if area_text != blank %} · {{ 'rug_page.area' | t: area: area_text }}{% endif %}</dd>
+              </div>
+            {%- endcapture -%}
+
+            {%- assign summary_rows = summary_rows | append: summary_row -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      {%- if first_step_done == false and block.settings.custom_size_text != blank -%}
+        <p class="rug-step__more text-sm text-subdued">
+          {{- block.settings.custom_size_text | escape -}}
+
+          {%- if block.settings.custom_link != blank and block.settings.custom_size_link_text != blank %}
+            <a href="{{ block.settings.custom_link }}" class="link">{{ block.settings.custom_size_link_text | escape }}</a>
+          {%- endif -%}
+        </p>
+      {%- endif -%}
+
+      {%- assign first_step_done = true -%}
+    </fieldset>
+  {%- endfor -%}
+
+  {%- comment -%}
+  --------------------------------------------------------------------------------------------------------------------
+  COLOUR
+  --------------------------------------------------------------------------------------------------------------------
+  {%- endcomment -%}
+
+  {%- if block.settings.show_colour_step -%}
+    {%- liquid
+      assign step = step | plus: 1
+      assign colour_legend_id = 'rug-colour-' | append: section.id | append: '-' | append: product.id
+      assign colour_note = families | join: ', '
+
+      if colour_count != blank
+        if colour_count == 1
+          assign colour_count_label = 'rug_page.colours_one' | t
+        else
+          assign colour_count_label = 'rug_page.colours_other' | t: count: colour_count
+        endif
+
+        if colour_note != blank
+          assign colour_note = colour_note | append: ' · ' | append: colour_count_label
+        else
+          assign colour_note = colour_count_label
+        endif
+      endif
+    -%}
+
+    <div class="rug-step" role="group" aria-labelledby="{{ colour_legend_id }}">
+      <p class="rug-step__legend" id="{{ colour_legend_id }}">
+        <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+        <span class="rug-step__title h6">{{ 'rug_page.colour' | t }}</span>
+      </p>
+
+      <div class="rug-step__choices">
+        <div class="rug-choice rug-choice--static is-selected">
+          <span class="rug-choice__mark" aria-hidden="true"></span>
+
+          <span class="rug-choice__text">
+            <span class="rug-choice__title">{{ 'rug_page.as_shown' | t }}</span>
+
+            {%- if colour_note != blank -%}
+              <span class="rug-choice__note text-subdued">{{ colour_note | escape }}</span>
+            {%- endif -%}
+          </span>
+
+          {%- if families != blank -%}
+            <span class="rug-choice__swatches" aria-hidden="true">
+              {%- for family in families -%}
+                {%- for known_family in family_list -%}
+                  {%- if known_family == family -%}
+                    {%- assign family_color = family_colors[forloop.index0] -%}
+
+                    {%- if family_color == 'multi' -%}
+                      <span class="rug-swatch rug-swatch--multi"></span>
+                    {%- else -%}
+                      <span class="rug-swatch" style="--swatch: {{ family_color }}"></span>
+                    {%- endif -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endfor -%}
+            </span>
+          {%- endif -%}
+        </div>
+
+        {%- if block.settings.other_colour_title != blank and block.settings.custom_link != blank -%}
+          <a class="rug-choice rug-choice--link" href="{{ block.settings.custom_link }}">
+            <span class="rug-choice__mark" aria-hidden="true"></span>
+
+            <span class="rug-choice__text">
+              <span class="rug-choice__title">{{ block.settings.other_colour_title | escape }}</span>
+
+              {%- if block.settings.other_colour_text != blank -%}
+                <span class="rug-choice__note text-subdued">{{ block.settings.other_colour_text | escape }}</span>
+              {%- endif -%}
+            </span>
+
+            <span class="rug-choice__arrow" aria-hidden="true">{%- render 'icon' with 'chevron-right' -%}</span>
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if colour_refs != blank -%}
+        {%- assign colour_refs_list = colour_refs | join: ', ' -%}
+        <p class="rug-step__more text-sm text-subdued">{{ 'rug_page.references' | t: list: colour_refs_list }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- capture summary_row -%}
+      <div>
+        <dt>{{ 'rug_page.colour' | t }}</dt>
+        <dd>{{ 'rug_page.as_shown' | t }}</dd>
+      </div>
+    {%- endcapture -%}
+
+    {%- assign summary_rows = summary_rows | append: summary_row -%}
+  {%- endif -%}
+
+  {%- comment -%}
+  --------------------------------------------------------------------------------------------------------------------
+  SHIPPING, as a real option of the product
+  --------------------------------------------------------------------------------------------------------------------
+  {%- endcomment -%}
+
+  {%- if shipping_position > 0 and block.settings.show_shipping_step -%}
+    {%- liquid
+      assign step = step | plus: 1
+      assign standard_price = shipping_option.values.first.variant.price | default: variant.price
+    -%}
+
+    <fieldset class="rug-step">
+      <legend class="rug-step__legend">
+        <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+        <span class="rug-step__title h6">{{ shipping_option.name | escape }}</span>
+      </legend>
+
+      <div class="rug-step__choices">
+        {%- for option_value in shipping_option.values -%}
+          {%- liquid
+            assign value_variant = option_value.variant
+            assign input_id = 'rug-choice-' | append: section.id | append: '-' | append: product.id | append: '-' | append: shipping_option.position | append: '-' | append: option_value.id
+
+            if forloop.first
+              assign choice_note = block.settings.standard_note
+            else
+              assign choice_note = block.settings.express_note
+            endif
+          -%}
+
+          <input class="sr-only" type="radio" id="{{ input_id }}" name="{{ form_id }}-option{{ shipping_option.position }}" value="{{ option_value.id }}" form="{{ form_id }}" data-option-position="{{ shipping_option.position }}" {% if option_value.selected %}checked{% endif %}>
+
+          <label class="rug-choice {% unless option_value.available %}is-unavailable{% endunless %}" for="{{ input_id }}">
+            <span class="rug-choice__mark" aria-hidden="true"></span>
+
+            <span class="rug-choice__text rug-choice__text--stacked">
+              <span class="rug-choice__title">{{ option_value.name | escape }}</span>
+
+              {%- if choice_note != blank -%}
+                <span class="rug-choice__note text-subdued">{{ choice_note | escape }}</span>
+              {%- endif -%}
+            </span>
+
+            <span class="rug-choice__price">
+              {%- if forloop.first or value_variant == blank -%}
+                {{- 'rug_page.included' | t -}}
+              {%- else -%}
+                {%- assign surcharge = value_variant.price | minus: standard_price -%}
+                {%- capture surcharge_text -%}{%- render 'rug-money', amount: surcharge -%}{%- endcapture -%}
+                {{- 'rug_page.surcharge' | t: amount: surcharge_text -}}
+              {%- endif -%}
+            </span>
+          </label>
+
+          {%- if option_value.selected -%}
+            {%- capture summary_row -%}
+              <div>
+                <dt>{{ shipping_option.name | escape }}</dt>
+                <dd>{{ option_value.name | escape }}</dd>
+              </div>
+            {%- endcapture -%}
+
+            {%- assign summary_rows = summary_rows | append: summary_row -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </fieldset>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+AMOUNTS OF THE SUMMARY
+----------------------------------------------------------------------------------------------------------------------
+{%- endcomment -%}
+
+{%- liquid
+  assign total = variant.price
+  assign pay_now = total | plus: 1 | divided_by: 2
+  assign pay_later = total | minus: pay_now
+
+  capture total_text
+    render 'rug-money', amount: total
+  endcapture
+
+  capture pay_now_text
+    render 'rug-money', amount: pay_now
+  endcapture
+
+  capture pay_later_text
+    render 'rug-money', amount: pay_later
+  endcapture
+
+  if shipping_demo
+    assign express_total = total | times: block.settings.express_percent | divided_by: 100.0 | plus: total | divided_by: 100.0 | round | times: 100
+    assign express_extra = express_total | minus: total
+    assign express_pay_now = express_total | plus: 1 | divided_by: 2
+    assign express_pay_later = express_total | minus: express_pay_now
+
+    capture express_total_text
+      render 'rug-money', amount: express_total
+    endcapture
+
+    capture express_extra_text
+      render 'rug-money', amount: express_extra
+    endcapture
+
+    capture express_pay_now_text
+      render 'rug-money', amount: express_pay_now
+    endcapture
+
+    capture express_pay_later_text
+      render 'rug-money', amount: express_pay_later
+    endcapture
+  endif
+-%}
+
+<product-rerender id="rug-steps-{{ product.id }}-{{ section.id }}" observe-form="{{ form_id }}">
+  <div class="rug-steps" data-rug-steps>
+    {%- if product.has_only_default_variant -%}
+      <div class="rug-steps__list">
+        {{- steps -}}
+      </div>
+    {%- else -%}
+      <variant-picker class="rug-steps__list" section-id="{{ section.id }}" form-id="{{ form_id }}" context="{{ context }}" handle="{{ product.handle }}" {% if context == 'main_product' %}update-url{% endif %}>
+        {%- comment -%}The theme reads the selected variant from this JSON when a choice changes. It must stay.{%- endcomment -%}
+        <script data-variant type="application/json">
+          {{- variant | json -}}
+        </script>
+
+        {{- steps -}}
+      </variant-picker>
+    {%- endif -%}
+
+    {%- comment -%}
+    ------------------------------------------------------------------------------------------------------------------
+    SHIPPING, as a demonstration (unpublished themes only, while the rugs have no shipping option)
+    ------------------------------------------------------------------------------------------------------------------
+    {%- endcomment -%}
+
+    {%- if shipping_demo -%}
+      {%- liquid
+        assign step = step | plus: 1
+        assign demo_name = 'rug-shipping-demo-' | append: section.id | append: '-' | append: product.id
+      -%}
+
+      <rug-shipping-demo class="rug-steps__list" form="{{ form_id }}" data-product="{{ product.id }}">
+        <fieldset class="rug-step">
+          <legend class="rug-step__legend">
+            <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+            <span class="rug-step__title h6">{{ 'rug_page.shipping' | t }}</span>
+          </legend>
+
+          <div class="rug-step__choices">
+            <input class="sr-only" type="radio" id="{{ demo_name }}-standard" name="{{ demo_name }}" value="standard" checked data-label="{{ block.settings.standard_label | escape }}" data-total="{{ total_text | strip | escape }}" data-pay-now="{{ pay_now_text | strip | escape }}" data-pay-later="{{ pay_later_text | strip | escape }}">
+
+            <label class="rug-choice" for="{{ demo_name }}-standard">
+              <span class="rug-choice__mark" aria-hidden="true"></span>
+
+              <span class="rug-choice__text rug-choice__text--stacked">
+                <span class="rug-choice__title">{{ block.settings.standard_label | escape }}</span>
+
+                {%- if block.settings.standard_note != blank -%}
+                  <span class="rug-choice__note text-subdued">{{ block.settings.standard_note | escape }}</span>
+                {%- endif -%}
+              </span>
+
+              <span class="rug-choice__price">{{ 'rug_page.included' | t }}</span>
+            </label>
+
+            <input class="sr-only" type="radio" id="{{ demo_name }}-express" name="{{ demo_name }}" value="express" data-label="{{ block.settings.express_label | escape }}" data-total="{{ express_total_text | strip | escape }}" data-pay-now="{{ express_pay_now_text | strip | escape }}" data-pay-later="{{ express_pay_later_text | strip | escape }}">
+
+            <label class="rug-choice" for="{{ demo_name }}-express">
+              <span class="rug-choice__mark" aria-hidden="true"></span>
+
+              <span class="rug-choice__text rug-choice__text--stacked">
+                <span class="rug-choice__title">{{ block.settings.express_label | escape }}</span>
+
+                {%- if block.settings.express_note != blank -%}
+                  <span class="rug-choice__note text-subdued">{{ block.settings.express_note | escape }}</span>
+                {%- endif -%}
+              </span>
+
+              <span class="rug-choice__price">
+                {%- assign express_extra_clean = express_extra_text | strip -%}
+                {{- 'rug_page.surcharge' | t: amount: express_extra_clean -}}
+              </span>
+            </label>
+          </div>
+
+          <p class="rug-step__more rug-step__preview text-sm" data-rug-preview-note hidden>{{ 'rug_page.preview_only' | t }}</p>
+        </fieldset>
+      </rug-shipping-demo>
+
+      {%- capture summary_row -%}
+        <div>
+          <dt>{{ 'rug_page.shipping' | t }}</dt>
+          <dd data-rug-shipping-label>{{ block.settings.standard_label | escape }}</dd>
+        </div>
+      {%- endcapture -%}
+
+      {%- assign summary_rows = summary_rows | append: summary_row -%}
+    {%- endif -%}
+
+    {%- comment -%}
+    ------------------------------------------------------------------------------------------------------------------
+    SUMMARY
+    ------------------------------------------------------------------------------------------------------------------
+    {%- endcomment -%}
+
+    <div class="rug-summary">
+      <p class="rug-summary__title smallcaps text-subdued">{{ 'rug_page.your_rug' | t }}</p>
+
+      <dl class="rug-summary__list">
+        <div>
+          <dt>{{ 'rug_page.design' | t }}</dt>
+          <dd>{{ product.title | escape }}</dd>
+        </div>
+
+        {{- summary_rows -}}
+      </dl>
+
+      <div class="rug-summary__total">
+        <span class="h6">{{ 'rug_page.total' | t }}</span>
+
+        <span class="rug-summary__amount">
+          <span class="h4" data-rug-total>{{ total_text | strip }}</span>
+          <span class="text-sm text-subdued">{{ 'rug_page.vat_included' | t }}</span>
+        </span>
+      </div>
+
+      {%- if block.settings.show_payment_split -%}
+        <dl class="rug-summary__split text-sm">
+          <div>
+            <dt>{{ 'rug_page.pay_now' | t }}</dt>
+            <dd data-rug-pay-now>{{ pay_now_text | strip }}</dd>
+          </div>
+
+          <div>
+            <dt>{{ 'rug_page.pay_later' | t }}</dt>
+            <dd data-rug-pay-later>{{ pay_later_text | strip }}</dd>
+          </div>
+        </dl>
+      {%- endif -%}
+
+      {%- if block.settings.summary_note != blank -%}
+        <div class="rug-summary__note prose text-sm text-subdued">
+          {{- block.settings.summary_note -}}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</product-rerender>
