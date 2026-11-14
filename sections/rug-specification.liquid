@@ -58,7 +58,7 @@ A row without a value is left out.
 
   unless product.has_only_default_variant
     for option_value in size_option.values
-      assign size_label = option_value.name | downcase | remove: 'cm' | strip | replace: 'x', ' × '
+      assign size_label = option_value.name | downcase | remove: 'cm' | strip | escape | replace: 'x', '&nbsp;×&nbsp;'
 
       if forloop.first
         assign sizes_text = size_label
@@ -68,7 +68,7 @@ A row without a value is left out.
     endfor
 
     if sizes_text != blank
-      assign sizes_text = sizes_text | append: ' cm'
+      assign sizes_text = sizes_text | append: '&nbsp;cm'
     endif
   endunless
 
@@ -176,7 +176,7 @@ A row without a value is left out.
             {%- if sizes_text != blank -%}
               <div class="rug-spec__row">
                 <dt>{{ 'rug_page.spec.sizes' | t }}</dt>
-                <dd>{{ sizes_text | escape }}</dd>
+                <dd>{{ sizes_text }}</dd>
               </div>
             {%- endif -%}
 
@@ -288,6 +288,7 @@ A row without a value is left out.
   }
 
   .rug-spec__row dd {
+    justify-items: start;
     gap: .25rem;
     margin: 0;
     display: grid;

@@ -429,9 +429,14 @@ quick buy information in a template, that will be extracted in JS, which ensures
   }
 
   .rug-links {
-    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
     gap: .625rem;
     display: grid;
+  }
+
+  .button[data-rug-demo] {
+    opacity: .35;
+    cursor: not-allowed;
   }
 {% endstylesheet %}
 

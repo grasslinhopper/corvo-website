@@ -97,7 +97,12 @@
             {%- endif -%}
 
             {%- if section.settings.show_shipping_text -%}
-              <p class="text-subdued">{{ 'cart.general.taxes_and_shipping_at_checkout' | t }}</p>
+              {%- comment -%}Corvo addition: the shop's prices include VAT, so the drawer says so, as the cart page does{%- endcomment -%}
+              {%- if cart.taxes_included -%}
+                <p class="text-subdued">{{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}</p>
+              {%- else -%}
+                <p class="text-subdued">{{ 'cart.general.taxes_and_shipping_at_checkout' | t }}</p>
+              {%- endif -%}
             {%- endif -%}
           </div>
         {%- endif -%}
