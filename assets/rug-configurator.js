@@ -76,6 +76,19 @@
     return /^\d+$/.test(value) ? parseInt(value, 10) : NaN;
   }
 
+  /**
+   * A choice written after its own heading: "Shipping in 3 weeks" under "Shipping" reads "In 3 weeks"
+   */
+  function afterHeading(label, heading) {
+    if (heading && label.toLowerCase().startsWith(`${heading.toLowerCase()} `)) {
+      const rest = label.slice(heading.length + 1);
+
+      return rest.charAt(0).toUpperCase() + rest.slice(1);
+    }
+
+    return label;
+  }
+
   function element(tag, className, text) {
     const node = document.createElement(tag);
 
@@ -321,6 +334,7 @@
         swatch.style.removeProperty('--swatch');
       }
 
+      swatch.classList.toggle('is-known', hex !== '');
       swatch.classList.toggle('is-custom', colour.choice?.type === 'custom');
     }
 
@@ -597,7 +611,7 @@
       }
 
       if (this.querySelector('[data-rug-shipping]')) {
-        properties[strings.propertyShipping] = state.express ? `${strings.express} (${strings.percent})` : strings.standard;
+        properties[strings.propertyShipping] = state.express ? `${afterHeading(strings.express, strings.propertyShipping)} (${strings.percent})` : strings.standard;
       }
 
       // Hidden from the buyer, kept for the team: where the line comes from and how its price was worked out
@@ -856,7 +870,7 @@
       print('[data-rug-summary-supplement]', valid && state.reason ? strings[state.reason] : '');
       this.querySelector('[data-rug-summary-supplement-row]').hidden = !valid || !state.reason;
       print('[data-rug-summary-colours]', state.changed === 0 ? strings.asShown : (state.changed === 1 ? strings.changedOne : strings.changedOther.replace('[count]', state.changed)));
-      print('[data-rug-summary-shipping]', state.express ? strings.express : strings.standard);
+      print('[data-rug-summary-shipping]', state.express ? afterHeading(strings.express, strings.propertyShipping) : strings.standard);
       print('[data-rug-express-extra]', valid && state.expressExtra > 0 ? strings.surcharge.replace('[amount]', this.money(state.expressExtra)) : strings.percent);
 
       this.showMessage(state.status === 'quote' ? strings.onRequest : '');
