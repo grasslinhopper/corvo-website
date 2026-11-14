@@ -20,10 +20,13 @@ Supported variables
   {%- assign text_setting = 'image_' | append: i | append: '_text' -%}
   {%- assign link_setting = 'image_' | append: i | append: '_link' -%}
 
+  {%- comment -%}Corvo addition: a picture without a description of its own is described by its heading{%- endcomment -%}
+  {%- assign image_alt = block.settings[image_setting].alt | default: block.settings[heading_setting] | strip_html -%}
+
   {%- capture image_content -%}
     {%- if block.settings[image_setting] -%}
       <div class="overflow-hidden">
-        {{- block.settings[image_setting] | image_url: width: block.settings[image_setting].width | image_tag: loading: 'lazy', sizes: '(min-width: 1000px) 21rem, 315px', widths: '315,480,630,800,945', class: 'zoom-image group-hover:zoom' -}}
+        {{- block.settings[image_setting] | image_url: width: block.settings[image_setting].width | image_tag: loading: 'lazy', sizes: '(min-width: 1000px) 21rem, 315px', widths: '315,480,630,800,945', class: 'zoom-image group-hover:zoom', alt: image_alt -}}
       </div>
     {%- endif -%}
 

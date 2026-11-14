@@ -1,0 +1,55 @@
+{%- layout none -%}
+{%- comment -%}
+  Corvo addition: a guide to the site for AI assistants, in plain text (the "llms.txt" convention, llmstxt.org).
+
+  It is written from the shop's own data, so it never falls out of date: the rugs, their materials, sizes and prices
+  are read as the page is served. To publish it, create a page that uses this template and redirect /llms.txt to it.
+{%- endcomment -%}
+{%- liquid
+  assign rugs = collections.all.products
+  assign sample = all_products['rug-sample']
+-%}
+# Corvo
+
+> {{ 'general.corvo.description' | t }}
+
+## Key facts
+
+- Who: Corvo, a maker of bespoke and made-to-order rugs in {{ 'general.corvo.locality' | t }}, Portugal. Part of the {{ 'general.corvo.parent' | t }} Group.
+- What: {{ collections.all.products_count }} rug designs in six collections. Every rug is made to order by hand in Portugal.
+- Sizes: each design comes in five standard sizes, and is made to measure in any size up to 12 × 7 m.
+- Colours: every colour of a design can be changed, to a colour of the Open Palette or to a custom colour.
+- Prices: shown on each rug page in euros, VAT included. A made-to-measure price is calculated on the rug page from the price per m² of the design.
+{%- if sample.available %}
+- Samples: a {{ sample.selected_or_first_available_variant.title | replace: 'x', ' × ' }} sample of any rug costs {{ sample.selected_or_first_available_variant.price | money }}.
+{%- endif %}
+- Website: {{ shop.url }}
+
+## Main pages
+
+- [All rugs]({{ shop.url }}/collections/all): every design, with filters by collection, craft level, material, pile and colour.
+{%- for link in linklists['collection-links'].links %}
+{%- if link.type == 'collection_link' %}
+- [{{ link.title }} collection]({{ shop.url }}{{ link.url }}){% if link.object.description != blank %}: {{ link.object.description | strip_html | strip_newlines | truncate: 160 }}{% endif %}
+{%- endif %}
+{%- endfor %}
+- [Bespoke]({{ shop.url }}/pages/bespoke): how a rug is designed and made for one project.
+- [Samples]({{ shop.url }}/pages/samples): order a sample of any rug.
+- [Care and questions]({{ shop.url }}/pages/care-faq): care, delivery and the questions asked most often.
+- [Story]({{ shop.url }}/pages/about-us): where Corvo comes from.
+- [Contact]({{ shop.url }}/pages/contact): start a project or book a meeting.
+
+## Rugs
+
+{% for rug in rugs -%}
+{%- liquid
+  assign craft = rug.metafields.rug.craft_level.value
+  if craft == blank
+    continue
+  endif
+  assign materials = rug.metafields.rug.materials.value | map: 'name' | map: 'value' | join: ', '
+  assign own_factor = rug.metafields.rug.supplement.value | default: 0 | plus: 100 | divided_by: 100.0
+  assign per_m2 = craft.retail_per_m2.value | times: own_factor | times: 1.23 | times: 100 | round
+-%}
+- [{{ rug.title }}]({{ shop.url }}{{ rug.url }}): {{ craft.label.value }}{% if materials != blank %}; {{ materials }}{% endif %}{% if rug.metafields.rug.pile_height.value != blank %}; pile {{ rug.metafields.rug.pile_height.value }}{% endif %}; standard sizes from {{ rug.price_min | money }} to {{ rug.price_max | money }}; made to measure at {{ per_m2 | money }} per m², VAT included.
+{% endfor %}

@@ -58,7 +58,12 @@
         <ul class="subnav__list unstyled-list" role="list">
           {%- for link in siblings -%}
             <li>
-              <a href="{{ link.url }}" class="subnav__link" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+              {%- comment -%}On a page with no heading of its own, its name in the bar is the main heading{%- endcomment -%}
+              {%- if link.current and section.settings.current_as_title -%}
+                <h1 class="subnav__heading"><a href="{{ link.url }}" class="subnav__link" aria-current="page">{{ link.title | escape }}</a></h1>
+              {%- else -%}
+                <a href="{{ link.url }}" class="subnav__link" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+              {%- endif -%}
             </li>
           {%- endfor -%}
         </ul>
@@ -170,6 +175,11 @@
     color: inherit;
     opacity: 0.55;
     transition: opacity 0.2s ease;
+  }
+
+  .subnav__heading {
+    all: unset;
+    display: contents;
   }
 
   .subnav__link[aria-current="page"] {
@@ -328,6 +338,13 @@
       "label": "Keep the tab bar in view while scrolling",
       "info": "Switch off on pages that have their own bar, such as the rug list.",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "current_as_title",
+      "label": "The name of the page in the bar is its main heading",
+      "info": "Switch on for a page that has no title of its own, so that search engines and AI assistants are told what the page is. Nothing changes to the eye.",
+      "default": false
     },
     {
       "type": "text",

@@ -76,6 +76,31 @@ A row without a value is left out.
     The pile, in words
   endcomment
 
+  comment
+    Facts in plain words, for every reader that does not run scripts (search engines, AI assistants): the price per
+    m² with VAT, the standard sizes with their prices, and the sample
+  endcomment
+
+  assign vat_percent = section.settings.vat_percent | default: 23
+  assign own_supplement = product.metafields.rug.supplement.value | default: 0
+  assign per_m2 = 0
+
+  if craft.retail_per_m2.value != blank
+    assign own_factor = own_supplement | plus: 100 | divided_by: 100.0
+    assign vat_factor = vat_percent | plus: 100 | divided_by: 100.0
+    assign per_m2 = craft.retail_per_m2.value | times: own_factor | times: vat_factor | times: 100 | round
+  endif
+
+  assign rug_sample = nil
+
+  if section.settings.sample_handle != blank
+    assign rug_sample = all_products[section.settings.sample_handle]
+
+    unless rug_sample.available
+      assign rug_sample = nil
+    endunless
+  endif
+
   assign pile_label = ''
 
   if pile contains 'Cut' and pile contains 'Loop'
@@ -94,6 +119,42 @@ A row without a value is left out.
         <div class="rug-spec__facts">
           {%- if section.settings.title != blank -%}
             <h2 class="h3">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+
+          {%- if section.settings.show_summary -%}
+            {%- liquid
+              assign material_names = materials | map: 'name' | map: 'value' | join: ', '
+              assign first_variant = product.variants | first
+              assign last_variant = product.variants | last
+              assign first_size = first_variant.title | downcase | remove: 'cm' | strip | replace: 'x', ' × ' | append: ' cm'
+              assign last_size = last_variant.title | downcase | remove: 'cm' | strip | replace: 'x', ' × ' | append: ' cm'
+
+              capture first_price
+                render 'rug-money', amount: first_variant.price
+              endcapture
+
+              capture last_price
+                render 'rug-money', amount: last_variant.price
+              endcapture
+
+              capture per_m2_price
+                render 'rug-money', amount: per_m2
+              endcapture
+            -%}
+
+            <p class="rug-spec__summary">
+              {{ 'rug_page.facts.intro' | t: name: product.title }}
+
+              {%- if rug_collection != blank %} {{ 'rug_page.facts.collection' | t: collection: rug_collection.title }}{% endif -%}
+              {%- if material_names != blank %} {{ 'rug_page.facts.materials' | t: materials: material_names }}{% endif -%}
+              {%- if pile_label != blank %} {{ 'rug_page.facts.pile' | t: pile: pile_label, height: pile_height }}{% endif -%}
+
+              {%- if colour_count == 1 %} {{ 'rug_page.facts.colours_one' | t }}{% elsif colour_count != blank %} {{ 'rug_page.facts.colours_other' | t: count: colour_count }}{% endif -%}
+
+              {%- unless product.has_only_default_variant %} {{ 'rug_page.facts.sizes' | t: count: product.variants.size, smallest: first_size, low: first_price, largest: last_size, high: last_price }}{% endunless -%}
+
+              {%- if per_m2 > 0 and section.settings.made_to_measure_text != blank %} {{ 'rug_page.facts.measure' | t: limit: section.settings.made_to_measure_text, price: per_m2_price }}{% endif -%}
+            </p>
           {%- endif -%}
 
           <dl class="rug-spec__table">
@@ -176,7 +237,17 @@ A row without a value is left out.
             {%- if sizes_text != blank -%}
               <div class="rug-spec__row">
                 <dt>{{ 'rug_page.spec.sizes' | t }}</dt>
-                <dd>{{ sizes_text }}</dd>
+                <dd>
+                  {%- comment -%}Each standard size with its price, as text{%- endcomment -%}
+                  <ul class="rug-spec__sizes unstyled-list" role="list">
+                    {%- for size_variant in product.variants -%}
+                      <li>
+                        <span>{{ size_variant.title | downcase | remove: 'cm' | strip | escape | replace: 'x', '&nbsp;×&nbsp;' }}&nbsp;cm</span>
+                        <span class="text-subdued">{%- render 'rug-money', amount: size_variant.price -%}</span>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </dd>
               </div>
             {%- endif -%}
 
@@ -191,7 +262,28 @@ A row without a value is left out.
                       <a href="{{ section.settings.custom_link }}" class="link">{{ section.settings.custom_link_text | escape }}</a>
                     {%- endif -%}
                   </span>
+
+                  {%- if per_m2 > 0 -%}
+                    {%- capture per_m2_text -%}{%- render 'rug-money', amount: per_m2 -%}{%- endcapture -%}
+                    <span class="text-sm text-subdued">{{ 'rug_page.spec.per_m2' | t: price: per_m2_text }}</span>
+                  {%- endif -%}
                 </dd>
+              </div>
+            {%- endif -%}
+
+            {%- if rug_sample != nil -%}
+              {%- liquid
+                assign sample_variant = rug_sample.selected_or_first_available_variant
+                assign sample_size = sample_variant.title | downcase | remove: 'cm' | strip | replace: 'x', ' × ' | append: ' cm'
+
+                capture sample_price
+                  render 'rug-money', amount: sample_variant.price
+                endcapture
+              -%}
+
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.sample' | t }}</dt>
+                <dd>{{ 'rug_page.spec.sample_value' | t: size: sample_size, price: sample_price }}</dd>
               </div>
             {%- endif -%}
 
@@ -268,6 +360,25 @@ A row without a value is left out.
 
   .rug-spec__texts {
     gap: 2.5rem;
+  }
+
+  .rug-spec__summary {
+    max-width: 44rem;
+    margin-block-end: 1.5rem;
+  }
+
+  .rug-spec__sizes {
+    gap: .25rem;
+    display: grid;
+  }
+
+  .rug-spec__sizes li {
+    gap: 1.25rem;
+    display: flex;
+  }
+
+  .rug-spec__sizes li > :first-child {
+    min-width: 7.5rem;
   }
 
   .rug-spec__table {
@@ -367,10 +478,30 @@ A row without a value is left out.
       "default": "The craft level measures how demanding a design is to make. It sets the price per m²."
     },
     {
+      "type": "checkbox",
+      "id": "show_summary",
+      "label": "Open with the facts in plain words",
+      "info": "One short paragraph written from the rug's own facts and prices. It helps search engines and AI assistants as much as people.",
+      "default": true
+    },
+    {
       "type": "text",
       "id": "made_to_measure_text",
       "label": "Made to measure",
-      "default": "Any size and shape."
+      "default": "Any size up to 12 × 7 m."
+    },
+    {
+      "type": "number",
+      "id": "vat_percent",
+      "label": "VAT (%)",
+      "info": "For the price per m², which is worked out from the rug's craft level.",
+      "default": 23
+    },
+    {
+      "type": "text",
+      "id": "sample_handle",
+      "label": "Handle of the sample product",
+      "default": "rug-sample"
     },
     {
       "type": "url",

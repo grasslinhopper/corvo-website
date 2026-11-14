@@ -9,6 +9,15 @@
  */
 {
   "general": {
+    "corvo": {
+      "home_title": "Corvo: bespoke rugs, made to order by hand in Portugal",
+      "all_rugs_title": "All rugs",
+      "description": "Corvo makes bespoke and made-to-order rugs by hand in Espinho, Portugal. Every design can be made in any size up to 12 × 7 m and in custom colours. Corvo is part of the Sorema Group.",
+      "all_rugs_description": "All {{ count }} Corvo rugs in one place. Each is made to order by hand in Portugal, in five standard sizes or made to measure up to 12 × 7 m, with prices shown per size.",
+      "collections_description": "The six Corvo rug collections. Every rug is made to order by hand in Portugal, in standard sizes or made to measure, and in custom colours.",
+      "locality": "Silvalde, Espinho",
+      "parent": "Sorema"
+    },
     "page": "Page {{ page }}",
     "home": "Home",
     "accessibility": {
@@ -582,7 +591,21 @@
     "on_request": "A rug of this size is priced on request.",
     "price_failed": "We could not confirm this price just now. Please try again.",
     "made_to_measure": "Made to measure",
+    "facts": {
+      "intro": "{{ name }} is a made-to-order rug by Corvo, handcrafted in Portugal.",
+      "collection": "It belongs to the {{ collection }} collection.",
+      "materials": "Materials: {{ materials }}.",
+      "pile": "{{ pile }}, {{ height }}.",
+      "colours_one": "1 colour.",
+      "colours_other": "{{ count }} colours.",
+      "sizes": "{{ count }} standard sizes, from {{ smallest }} at {{ low }} to {{ largest }} at {{ high }}, VAT included.",
+      "measure": "Made to measure: {{ limit }} The price is {{ price }} per m², VAT included.",
+      "limit": "Any size up to 12 × 7 m"
+    },
     "spec": {
+      "per_m2": "{{ price }} per m², VAT included",
+      "sample": "Sample",
+      "sample_value": "{{ size }}, {{ price }}",
       "collection": "Collection",
       "craft_level": "Craft level",
       "materials": "Materials",

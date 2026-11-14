@@ -5,10 +5,47 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=5.0">
 
-    <title>{% if page_title == blank %}{{ shop.name }}{% else %}{{ page_title }}{% if current_page != 1 %} &ndash; {{ 'general.page' | t: page: current_page }}{% endif %}{% endif %}</title>
+    {%- comment -%}
+    Corvo addition: every page tells search engines and AI assistants what it is. A title always names Corvo, the list
+    of all rugs is not called "Products", and a page without a description of its own gets a factual one.
+    {%- endcomment -%}
+    {%- liquid
+      assign seo_title = page_title
+      assign seo_description = page_description
 
-    {%- if page_description -%}
-      <meta name="description" content="{{ page_description | escape }}">
+      if request.page_type == 'index'
+        assign seo_title = 'general.corvo.home_title' | t
+      elsif request.page_type == 'collection' and collection.handle == 'all'
+        assign seo_title = 'general.corvo.all_rugs_title' | t
+      endif
+
+      if seo_title == blank
+        assign seo_title = shop.name
+      endif
+
+      unless seo_title contains shop.name
+        assign seo_title = seo_title | append: ' | ' | append: shop.name
+      endunless
+
+      if seo_description == blank
+        if request.page_type == 'index'
+          assign seo_description = 'general.corvo.description' | t
+        elsif request.page_type == 'collection' and collection.handle == 'all'
+          assign seo_description = 'general.corvo.all_rugs_description' | t: count: collection.products_count
+        elsif request.page_type == 'collection' and collection.description != blank
+          assign seo_description = collection.description | strip_html | strip_newlines | truncate: 160
+        elsif request.page_type == 'page' and page.content != blank
+          assign seo_description = page.content | strip_html | strip_newlines | truncate: 160
+        elsif request.page_type == 'list-collections'
+          assign seo_description = 'general.corvo.collections_description' | t
+        endif
+      endif
+    -%}
+
+    <title>{{ seo_title }}{% if current_page != 1 %} &ndash; {{ 'general.page' | t: page: current_page }}{% endif %}</title>
+
+    {%- if seo_description != blank -%}
+      <meta name="description" content="{{ seo_description | escape }}">
     {%- endif -%}
 
     <link rel="canonical" href="{{ canonical_url }}">

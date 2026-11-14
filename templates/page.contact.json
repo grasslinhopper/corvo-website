@@ -187,7 +187,8 @@
       "type": "page-subnav",
       "settings": {
         "menu": "site-menu",
-        "style": "tabs"
+        "style": "tabs",
+        "current_as_title": true
       }
     }
   },
