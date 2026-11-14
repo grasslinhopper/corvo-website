@@ -42,7 +42,7 @@
           "settings": {
             "menu": "footer-corvo",
             "show_menu_title": true,
-            "menu_title": ""
+            "menu_title": "About"
           }
         },
         "newsletter": {

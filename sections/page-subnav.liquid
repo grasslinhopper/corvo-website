@@ -192,11 +192,15 @@
   }
 
   /* Previous / next links at the foot of a page */
+  /* One column on phones (long page names need the full width), two columns from tablet up */
   .subnav-pager {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1px;
+    grid-template-columns: minmax(0, 1fr);
     border-block-start: 1px solid rgb(var(--text-color) / 0.12);
+  }
+
+  .subnav-pager > span:empty {
+    display: none;
   }
 
   .subnav-pager__link {
@@ -209,9 +213,30 @@
   }
 
   .subnav-pager__link--next {
-    grid-column: 2;
     text-align: end;
-    border-inline-start: 1px solid rgb(var(--text-color) / 0.12);
+  }
+
+  .subnav-pager__link--previous + .subnav-pager__link--next {
+    border-block-start: 1px solid rgb(var(--text-color) / 0.12);
+  }
+
+  .subnav-pager__title {
+    overflow-wrap: anywhere;
+  }
+
+  @media (min-width: 700px) {
+    .subnav-pager {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .subnav-pager__link--next {
+      grid-column: 2;
+      border-inline-start: 1px solid rgb(var(--text-color) / 0.12);
+    }
+
+    .subnav-pager__link--previous + .subnav-pager__link--next {
+      border-block-start: 0;
+    }
   }
 
   .subnav-pager__label {
