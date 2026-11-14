@@ -1,0 +1,92 @@
+{
+  "sections": {
+    "subnav-tabs": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "tabs"
+      }
+    },
+    "wf-1": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Sorema Group",
+        "is_page_title": true,
+        "description": "The family group behind Corvo, over an image of the mill.",
+        "needs": "",
+        "phase": "Phase 7",
+        "layout": "banner",
+        "columns": 3,
+        "size": "large"
+      }
+    },
+    "wf-2": {
+      "type": "wireframe",
+      "settings": {
+        "label": "The group",
+        "is_page_title": false,
+        "description": "Who Sorema is, since 1974, and what it makes.",
+        "needs": "A short text and photos approved by the group.",
+        "phase": "Phase 7",
+        "layout": "split",
+        "columns": 3,
+        "size": "medium"
+      }
+    },
+    "wf-3": {
+      "type": "wireframe",
+      "settings": {
+        "label": "The brands",
+        "is_page_title": false,
+        "description": "Sorema, Graccioza and Corvo: the archipelago of brands.",
+        "needs": "",
+        "phase": "Phase 7",
+        "layout": "grid",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "wf-4": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Facts and figures",
+        "is_page_title": false,
+        "description": "Years, people, production and countries served, as four large numbers.",
+        "needs": "The figures.",
+        "phase": "Phase 7",
+        "layout": "grid",
+        "columns": 4,
+        "size": "small"
+      }
+    },
+    "wf-5": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Certifications and sustainability",
+        "is_page_title": false,
+        "description": "The certificates held and what the group does on materials, water and energy.",
+        "needs": "The list of certificates.",
+        "phase": "Phase 7",
+        "layout": "split",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "subnav-pager": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "pager"
+      }
+    }
+  },
+  "order": [
+    "subnav-tabs",
+    "wf-1",
+    "wf-2",
+    "wf-3",
+    "wf-4",
+    "wf-5",
+    "subnav-pager"
+  ]
+}

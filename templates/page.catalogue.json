@@ -1,0 +1,64 @@
+{
+  "sections": {
+    "subnav-tabs": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "tabs"
+      }
+    },
+    "wf-1": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Catalogue",
+        "is_page_title": true,
+        "description": "The current Corvo catalogue.",
+        "needs": "",
+        "phase": "Phase 6",
+        "layout": "banner",
+        "columns": 3,
+        "size": "medium"
+      }
+    },
+    "wf-2": {
+      "type": "wireframe",
+      "settings": {
+        "label": "View online",
+        "is_page_title": false,
+        "description": "The catalogue shown page by page on screen.",
+        "needs": "The catalogue as a PDF.",
+        "phase": "Phase 6",
+        "layout": "split",
+        "columns": 3,
+        "size": "medium"
+      }
+    },
+    "wf-3": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Download or request a copy",
+        "is_page_title": false,
+        "description": "A download button and a short form to ask for a printed copy.",
+        "needs": "",
+        "phase": "Phase 6",
+        "layout": "grid",
+        "columns": 2,
+        "size": "small"
+      }
+    },
+    "subnav-pager": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "pager"
+      }
+    }
+  },
+  "order": [
+    "subnav-tabs",
+    "wf-1",
+    "wf-2",
+    "wf-3",
+    "subnav-pager"
+  ]
+}

@@ -45,6 +45,32 @@
     }
   {%- endif -%}
 
+  {%- comment -%}Corvo addition: optional call-to-action button (see snippets/header-cta.liquid){%- endcomment -%}
+  .header-cta {
+    --button-background: var(--text-color);
+    --button-text-color: var(--background);
+    --button-outline-color: var(--text-color);
+    white-space: nowrap;
+  }
+
+  .header-cta--header {
+    padding-inline: 1.1rem;
+  }
+
+  .header__cta-item {
+    display: none;
+  }
+
+  .header-sidebar__cta {
+    padding: 0 var(--drawer-body-padding-inline) 1.25rem;
+  }
+
+  @media screen and (min-width: 1150px) {
+    .header__cta-item {
+      display: block;
+    }
+  }
+
   {%- if section.settings.logo != blank -%}
     #shopify-section-{{ section.id }} {
       --header-logo-width: {{ section.settings.logo_mobile_max_width }}px;
@@ -225,6 +251,12 @@
             </li>
           {%- endif -%}
         {%- endfor -%}
+
+        {%- if section.settings.cta_text != blank and section.settings.cta_link != blank -%}
+          <li class="header__cta-item">
+            {%- render 'header-cta', text: section.settings.cta_text, link: section.settings.cta_link, context: 'header' -%}
+          </li>
+        {%- endif -%}
 
         {%- if shop.customer_accounts_enabled -%}
           <li class="header__account-link sm-max:hidden">
@@ -547,6 +579,21 @@
       "id": "transparent_logo",
       "label": "t:sections.header.transparent_header_logo_image",
       "info": "t:sections.header.transparent_header_logo_size_recommendation"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "info": "Shown to the right of the menu on wide screens and at the foot of the mobile menu. Leave empty to hide the button."
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
     }
   ],
   "blocks": [

@@ -31,7 +31,9 @@
 
 {%- if collection != blank -%}
   <div class="cshow cshow--{{ section.settings.hero_height }}">
-    {%- if section.index == 1 and request.page_type == 'page' -%}
+    {%- if section.settings.page_heading != blank -%}
+      <h1 class="sr-only">{{ section.settings.page_heading | escape }}</h1>
+    {%- elsif section.index == 1 and request.page_type == 'page' -%}
       <h1 class="sr-only">{{ page.title | escape }}</h1>
     {%- endif -%}
 
@@ -364,6 +366,12 @@
       "type": "collection",
       "id": "collection",
       "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "page_heading",
+      "label": "Hidden page heading",
+      "info": "For search engines and screen readers. Fill it in on the first showcase of a page only."
     },
     {
       "type": "header",

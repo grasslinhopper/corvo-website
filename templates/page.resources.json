@@ -1,0 +1,64 @@
+{
+  "sections": {
+    "subnav-tabs": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "tabs"
+      }
+    },
+    "wf-1": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Resources",
+        "is_page_title": true,
+        "description": "For designers, architects and retailers: everything needed to specify and sell Corvo, open to all.",
+        "needs": "",
+        "phase": "Phase 6",
+        "layout": "banner",
+        "columns": 3,
+        "size": "medium"
+      }
+    },
+    "wf-2": {
+      "type": "wireframe",
+      "settings": {
+        "label": "The tools",
+        "is_page_title": false,
+        "description": "Four cards: Sales tools, Catalogue, Samples, Care & FAQ.",
+        "needs": "",
+        "phase": "Phase 6",
+        "layout": "grid",
+        "columns": 4,
+        "size": "medium"
+      }
+    },
+    "wf-3": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Your contact at Corvo",
+        "is_page_title": false,
+        "description": "A named person with an email address and a link to book a meeting.",
+        "needs": "Name, photo and email of the contact person.",
+        "phase": "Phase 6",
+        "layout": "split",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "subnav-pager": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "pager"
+      }
+    }
+  },
+  "order": [
+    "subnav-tabs",
+    "wf-1",
+    "wf-2",
+    "wf-3",
+    "subnav-pager"
+  ]
+}

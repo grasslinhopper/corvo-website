@@ -1,62 +1,136 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "image_with_text_block_D8A6Mf": {
-      "type": "image-with-text-block",
-      "blocks": {
-        "subheading_UrqpCp": {
-          "type": "subheading",
-          "settings": {
-            "text": "collections"
-          }
-        },
-        "richtext_D9erBa": {
-          "type": "richtext",
-          "settings": {
-            "content": "<p>All of our collections were crafted with extreme care, thinking about spaces and weaved in time.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "subheading_UrqpCp",
-        "richtext_D9erBa"
-      ],
-      "name": "t:sections.image_with_text_block.presets.image_with_text_block.name",
+    "subnav-tabs": {
+      "type": "page-subnav",
       "settings": {
-        "color_scheme": "",
-        "image_size": "lg",
-        "image": "shopify://shop_images/CORVO_PRODUTO-4.jpg",
-        "content_width": "lg",
-        "enable_parallax": true,
-        "remove_vertical_spacing": true
+        "menu": "site-menu",
+        "style": "tabs"
       }
     },
-    "main": {
-      "type": "main-list-collections",
+    "ink": {
+      "type": "collection-showcase",
       "settings": {
-        "color_scheme": "scheme-3",
-        "show_title": false,
-        "collections": [],
-        "collections_per_row_mobile": "1",
-        "collections_per_row_desktop": 2,
-        "image_size": "lg",
-        "content_position": "place-self-end-center text-center",
-        "text_color": "#ffffff",
-        "overlay_color": "#000000",
-        "overlay_opacity": 20
+        "collection": "from-ink-to-thread",
+        "subheading": "Inspired by the paintings of Ramiro Relvas",
+        "title": "",
+        "image_left_position": 50,
+        "image_right_position": 50,
+        "hero_height": "large",
+        "overlay_opacity": 30,
+        "show_description": true,
+        "columns": 5,
+        "products_limit": 5,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_left": "shopify://shop_images/RamiroRelvas_Pintura1.jpg",
+        "image_right": "shopify://shop_images/IMG_E8470.jpg",
+        "page_heading": "Collections"
+      }
+    },
+    "priming": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "colecao-ultra-fixe",
+        "subheading": "Plain rugs. Silk & wool.",
+        "title": "",
+        "image_left_position": 50,
+        "image_right_position": 60,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 3,
+        "products_limit": 6,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_right": "shopify://shop_images/AURA_100_VISCOSE_-AURA2.png"
+      }
+    },
+    "contour": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "contour",
+        "subheading": "Bordered rugs. Line & proportion.",
+        "title": "",
+        "image_left_position": 50,
+        "image_right_position": 75,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 4,
+        "products_limit": 8,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_right": "shopify://shop_images/RELIANCE-1_1.png"
+      }
+    },
+    "shading": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "shading",
+        "subheading": "Gradient rugs. Silk.",
+        "title": "",
+        "image_left_position": 50,
+        "image_right_position": 80,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 5,
+        "products_limit": 5,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_right": "shopify://shop_images/GRADIENTTERRACOTA-descarregar_3.png"
+      }
+    },
+    "watered": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "watered-layer",
+        "subheading": "Transparency & depth",
+        "title": "",
+        "image_left_position": 50,
+        "image_right_position": 75,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 2,
+        "products_limit": 2,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_right": "shopify://shop_images/DUNE-descarregar_1.png"
+      }
+    },
+    "textured": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "textured-touch",
+        "subheading": "Cut & loop pile. Silk & wool.",
+        "title": "",
+        "image_left_position": 50,
+        "image_right_position": 70,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 4,
+        "products_limit": 8,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_right": "shopify://shop_images/RAYURES-descarregar_5.png"
       }
     }
   },
   "order": [
-    "image_with_text_block_D8A6Mf",
-    "main"
+    "subnav-tabs",
+    "ink",
+    "priming",
+    "contour",
+    "shading",
+    "watered",
+    "textured"
   ]
 }

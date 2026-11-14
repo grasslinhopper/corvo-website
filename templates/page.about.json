@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "image_with_text_overlay_ANFaAT": {
@@ -283,15 +274,45 @@
         "show_title": true,
         "page_width": "xs"
       }
+    },
+    "wf-timeline": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Fifty years in a timeline",
+        "is_page_title": false,
+        "description": "The dates that matter, from Ramiro Relvas's first project to Corvo today, each with a photo.",
+        "needs": "The dates, one line on each and archive photos.",
+        "phase": "Phase 7",
+        "layout": "grid",
+        "columns": 5,
+        "size": "small"
+      }
+    },
+    "subnav-tabs": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "tabs"
+      }
+    },
+    "subnav-pager": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "pager"
+      }
     }
   },
   "order": [
     "image_with_text_overlay_ANFaAT",
+    "subnav-tabs",
     "rich_text_fJ6dgm",
+    "wf-timeline",
     "before_after_eFbFpk",
     "image_with_text_block_GPhchJ",
     "multiple_media_with_text_NYep8A",
     "media_grid_pRQqCb",
-    "main"
+    "main",
+    "subnav-pager"
   ]
 }

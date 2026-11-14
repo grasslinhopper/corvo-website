@@ -1,0 +1,22 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+HEADER CALL-TO-ACTION (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Renders the optional header button ("Tailor your rug"). Used twice: to the right of the desktop menu and at the foot
+of the mobile menu.
+
+********************************************
+Supported variables
+********************************************
+
+* text: the button text
+* link: the button url
+* context: "header" or "sidebar"
+{%- endcomment -%}
+
+{%- if text != blank and link != blank -%}
+  <a href="{{ link }}" class="header-cta header-cta--{{ context }} button button--outline {% if context == 'header' %}button--sm{% else %}w-full{% endif %}">
+    {{- text | escape -}}
+  </a>
+{%- endif -%}

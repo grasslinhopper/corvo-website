@@ -1,0 +1,106 @@
+{
+  "sections": {
+    "subnav-tabs": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "tabs"
+      }
+    },
+    "wf-1": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Service",
+        "is_page_title": true,
+        "description": "One line on what working with Corvo is like, over an image of the atelier.",
+        "needs": "",
+        "phase": "Phase 4",
+        "layout": "banner",
+        "columns": 3,
+        "size": "large"
+      }
+    },
+    "wf-2": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Five steps",
+        "is_page_title": false,
+        "description": "Consultation, design artwork, sampling, production, delivery. The text exists on the Bespoke page today and moves here.",
+        "needs": "",
+        "phase": "Phase 4",
+        "layout": "grid",
+        "columns": 5,
+        "size": "medium"
+      }
+    },
+    "wf-3": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Lead time",
+        "is_page_title": false,
+        "description": "A simple timeline: 4 to 6 weeks from approval to delivery, with what happens in each week.",
+        "needs": "Confirmation of the timing of each step.",
+        "phase": "Phase 4",
+        "layout": "text",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "wf-4": {
+      "type": "wireframe",
+      "settings": {
+        "label": "For professionals",
+        "is_page_title": false,
+        "description": "What designers and architects get: sampling, specifications and a named contact.",
+        "needs": "Name and photo of the contact person.",
+        "phase": "Phase 4",
+        "layout": "split",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "wf-5": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Delivery and aftercare",
+        "is_page_title": false,
+        "description": "How a rug is packed, shipped and installed, and how Corvo looks after it later.",
+        "needs": "",
+        "phase": "Phase 4",
+        "layout": "split",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "wf-6": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Start",
+        "is_page_title": false,
+        "description": "Two buttons: Book a meeting and Tailor your rug.",
+        "needs": "",
+        "phase": "Phase 4",
+        "layout": "text",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "subnav-pager": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "pager"
+      }
+    }
+  },
+  "order": [
+    "subnav-tabs",
+    "wf-1",
+    "wf-2",
+    "wf-3",
+    "wf-4",
+    "wf-5",
+    "wf-6",
+    "subnav-pager"
+  ]
+}

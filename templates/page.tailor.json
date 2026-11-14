@@ -1,0 +1,78 @@
+{
+  "sections": {
+    "subnav-tabs": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "tabs"
+      }
+    },
+    "wf-1": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Tailor your rug",
+        "is_page_title": true,
+        "description": "The start of the step-by-step page. One line: any design, any colour, any size.",
+        "needs": "",
+        "phase": "Phase 4",
+        "layout": "banner",
+        "columns": 3,
+        "size": "large"
+      }
+    },
+    "wf-2": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Choose a starting point",
+        "is_page_title": false,
+        "description": "Three doors: a design from a collection, a design from the Design library, or your own drawing.",
+        "needs": "",
+        "phase": "Phase 4",
+        "layout": "grid",
+        "columns": 3,
+        "size": "medium"
+      }
+    },
+    "wf-3": {
+      "type": "wireframe",
+      "settings": {
+        "label": "The steps",
+        "is_page_title": false,
+        "description": "Material, colours, then size and shape. One choice per screen, with the image and the price guide updating as you go.",
+        "needs": "",
+        "phase": "Phase 4",
+        "layout": "split",
+        "columns": 3,
+        "size": "medium"
+      }
+    },
+    "wf-4": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Summary",
+        "is_page_title": false,
+        "description": "Price guide per m², lead time, then Order for a collection design or Request a proposal for anything else.",
+        "needs": "Size limits, the shapes offered and what a proposal includes.",
+        "phase": "Phase 4",
+        "layout": "text",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "subnav-pager": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "pager"
+      }
+    }
+  },
+  "order": [
+    "subnav-tabs",
+    "wf-1",
+    "wf-2",
+    "wf-3",
+    "wf-4",
+    "subnav-pager"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "sections": {
+    "subnav-tabs": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "tabs"
+      }
+    },
+    "wf-1": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Samples",
+        "is_page_title": true,
+        "description": "See and touch before you order.",
+        "needs": "",
+        "phase": "Phase 6",
+        "layout": "banner",
+        "columns": 3,
+        "size": "medium"
+      }
+    },
+    "wf-2": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Choose your samples",
+        "is_page_title": false,
+        "description": "Pick rugs and colours and add the samples to the cart.",
+        "needs": "",
+        "phase": "Phase 3",
+        "layout": "grid",
+        "columns": 4,
+        "size": "medium"
+      }
+    },
+    "wf-3": {
+      "type": "wireframe",
+      "settings": {
+        "label": "How it works",
+        "is_page_title": false,
+        "description": "What a sample costs, how fast it arrives and whether the cost comes off the order.",
+        "needs": "Your sample policy.",
+        "phase": "Phase 3",
+        "layout": "text",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "subnav-pager": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "pager"
+      }
+    }
+  },
+  "order": [
+    "subnav-tabs",
+    "wf-1",
+    "wf-2",
+    "wf-3",
+    "subnav-pager"
+  ]
+}

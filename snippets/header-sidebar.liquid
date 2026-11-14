@@ -78,6 +78,13 @@ therefore using a different structure for the Shadow DOM template
       endif
     -%}
 
+    {%- comment -%}Corvo addition: the header button repeated at the foot of the menu{%- endcomment -%}
+    {%- if section.settings.cta_text != blank and section.settings.cta_link != blank -%}
+      <div class="header-sidebar__cta">
+        {%- render 'header-cta', text: section.settings.cta_text, link: section.settings.cta_link, context: 'sidebar' -%}
+      </div>
+    {%- endif -%}
+
     {%- if shop.customer_accounts_enabled or show_country_selector or show_locale_selector -%}
       <div class="header-sidebar__footer">
         {%- if shop.customer_accounts_enabled -%}

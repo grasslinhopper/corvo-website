@@ -1,0 +1,314 @@
+{%- comment -%}
+  Page sub-navigation (Corvo addition)
+
+  Finds the group of sibling pages the current page belongs to by reading the header menu, then renders either:
+  - "tabs": a bar that sticks under the header and marks the current page, or
+  - "pager": previous / next links for the foot of the page.
+
+  Because it reads the menu, adding or reordering pages in the menu updates every bar. It renders nothing on a page
+  that has no siblings in the menu.
+{%- endcomment -%}
+
+{%- liquid
+  assign menu = section.settings.menu
+  assign siblings = null
+  assign group_title = ''
+
+  for link in menu.links
+    if link.links.size == 0
+      continue
+    endif
+
+    assign found = false
+
+    for sub_link in link.links
+      for sub_sub_link in sub_link.links
+        if sub_sub_link.current
+          assign siblings = sub_link.links
+          assign group_title = sub_link.title
+          assign found = true
+          break
+        endif
+      endfor
+
+      if found
+        break
+      endif
+
+      if sub_link.current
+        assign siblings = link.links
+        assign group_title = link.title
+        assign found = true
+        break
+      endif
+    endfor
+
+    if found
+      break
+    endif
+  endfor
+-%}
+
+{%- if siblings != null and siblings.size > 1 -%}
+  {%- if section.settings.style == 'tabs' -%}
+    <nav class="subnav subnav--tabs" aria-label="{{ group_title | escape }}">
+      <div class="subnav__inner">
+        <p class="subnav__title">{{ group_title | escape }}</p>
+
+        <ul class="subnav__list unstyled-list" role="list">
+          {%- for link in siblings -%}
+            <li>
+              <a href="{{ link.url }}" class="subnav__link" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </nav>
+  {%- else -%}
+    {%- liquid
+      assign previous_link = null
+      assign next_link = null
+      assign take_next = false
+
+      for link in siblings
+        if take_next
+          assign next_link = link
+          break
+        endif
+
+        if link.current
+          assign take_next = true
+        else
+          assign previous_link = link
+        endif
+      endfor
+    -%}
+
+    {%- if previous_link != null or next_link != null -%}
+      <nav class="subnav subnav--pager" aria-label="{{ group_title | escape }}">
+        <div class="subnav-pager">
+          {%- if previous_link != null -%}
+            <a href="{{ previous_link.url }}" class="subnav-pager__link subnav-pager__link--previous">
+              <span class="subnav-pager__label">{{ section.settings.previous_label | escape }}</span>
+              <span class="subnav-pager__title">{{ previous_link.title | escape }}</span>
+            </a>
+          {%- else -%}
+            <span></span>
+          {%- endif -%}
+
+          {%- if next_link != null -%}
+            <a href="{{ next_link.url }}" class="subnav-pager__link subnav-pager__link--next">
+              <span class="subnav-pager__label">{{ section.settings.next_label | escape }}</span>
+              <span class="subnav-pager__title">{{ next_link.title | escape }}</span>
+            </a>
+          {%- endif -%}
+        </div>
+      </nav>
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+  /* The tab bar sticks under the header and follows it when the header hides on scroll */
+  .shopify-section--page-subnav:has(.subnav--tabs) {
+    position: sticky;
+    inset-block-start: var(--sticky-area-height, 0px);
+    z-index: 2;
+    transition: inset-block-start 0.15s ease-in-out;
+  }
+
+  .subnav--tabs {
+    background: rgb(var(--background));
+    border-block-end: 1px solid rgb(var(--text-color) / 0.12);
+  }
+
+  .subnav__inner {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding-inline: var(--container-gutter);
+  }
+
+  .subnav__title {
+    display: none;
+    flex: none;
+    margin: 0;
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  .subnav__list {
+    display: flex;
+    gap: 1.75rem;
+    margin: 0 auto;
+    padding: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .subnav__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .subnav__link {
+    position: relative;
+    display: block;
+    padding-block: 0.95rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    color: inherit;
+    opacity: 0.55;
+    transition: opacity 0.2s ease;
+  }
+
+  .subnav__link[aria-current="page"] {
+    opacity: 1;
+  }
+
+  .subnav__link[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: -1px;
+    height: 1px;
+    background: currentColor;
+  }
+
+  @media (hover: hover) {
+    .subnav__link:hover {
+      opacity: 1;
+    }
+  }
+
+  /* Previous / next links at the foot of a page */
+  .subnav-pager {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    border-block-start: 1px solid rgb(var(--text-color) / 0.12);
+  }
+
+  .subnav-pager__link {
+    display: grid;
+    gap: 0.6rem;
+    padding: clamp(2rem, 5vw, 4rem) var(--container-gutter);
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.3s ease;
+  }
+
+  .subnav-pager__link--next {
+    grid-column: 2;
+    text-align: end;
+    border-inline-start: 1px solid rgb(var(--text-color) / 0.12);
+  }
+
+  .subnav-pager__label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  .subnav-pager__title {
+    font-family: var(--heading-font-family);
+    font-weight: var(--heading-font-weight);
+    font-style: var(--heading-font-style);
+    font-size: clamp(1.125rem, 2.2vw, 1.875rem);
+    line-height: 1.2;
+    letter-spacing: var(--heading-letter-spacing);
+    text-transform: var(--heading-text-transform);
+  }
+
+  @media (hover: hover) {
+    .subnav-pager__link:hover {
+      background-color: rgb(var(--text-color) / 0.04);
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .subnav__title {
+      display: block;
+    }
+
+    .subnav__list {
+      gap: 2.5rem;
+    }
+
+    .subnav__link,
+    .subnav__title,
+    .subnav-pager__label {
+      font-size: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shopify-section--page-subnav:has(.subnav--tabs),
+    .subnav__link,
+    .subnav-pager__link {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Page sub-navigation",
+  "class": "shopify-section--page-subnav",
+  "tag": "div",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows the sibling pages of the current page, read from the menu below. Nothing is shown on pages that have no siblings in that menu."
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Style",
+      "options": [
+        {
+          "value": "tabs",
+          "label": "Tab bar (top of the page)"
+        },
+        {
+          "value": "pager",
+          "label": "Previous / next (foot of the page)"
+        }
+      ],
+      "default": "tabs"
+    },
+    {
+      "type": "text",
+      "id": "previous_label",
+      "label": "Previous label",
+      "default": "Previous"
+    },
+    {
+      "type": "text",
+      "id": "next_label",
+      "label": "Next label",
+      "default": "Next"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Page sub-navigation"
+    }
+  ]
+}
+{% endschema %}

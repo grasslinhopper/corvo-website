@@ -1,0 +1,281 @@
+{%- comment -%}
+  Wireframe placeholder (Corvo addition, TEMPORARY)
+
+  Marks where a planned block will go: its name, what it will show and what is still needed. Each one is replaced by
+  the real section when its page is built. As a safety net it renders nothing on the published theme.
+{%- endcomment -%}
+
+{%- unless theme.role == 'main' -%}
+  {%- assign layout = section.settings.layout -%}
+
+  <div class="wf wf--{{ layout }} wf--{{ section.settings.size }}">
+    <div class="wf__frame">
+      <div class="wf__text">
+        <p class="wf__meta">
+          <span class="wf__tag">Wireframe</span>
+          {%- if section.settings.phase != blank -%}
+            <span>{{ section.settings.phase | escape }}</span>
+          {%- endif -%}
+        </p>
+
+        {%- if section.settings.label != blank -%}
+          {%- if section.settings.is_page_title -%}
+            <h1 class="wf__label">{{ section.settings.label | escape }}</h1>
+          {%- else -%}
+            <h2 class="wf__label">{{ section.settings.label | escape }}</h2>
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- if section.settings.description != blank -%}
+          <p class="wf__description">{{ section.settings.description | escape | newline_to_br }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.needs != blank -%}
+          <p class="wf__needs"><span>Still needed</span> {{ section.settings.needs | escape }}</p>
+        {%- endif -%}
+      </div>
+
+      {%- case layout -%}
+        {%- when 'split' -%}
+          <div class="wf__media" aria-hidden="true"></div>
+
+        {%- when 'grid' -%}
+          <div class="wf__grid" style="--wf-columns: {{ section.settings.columns }};" aria-hidden="true">
+            {%- for i in (1..section.settings.columns) -%}
+              <span class="wf__cell"></span>
+            {%- endfor -%}
+          </div>
+      {%- endcase -%}
+    </div>
+  </div>
+{%- endunless -%}
+
+{% stylesheet %}
+  .wf {
+    --wf-line: rgb(var(--text-color) / 0.28);
+    --wf-hatch: repeating-linear-gradient(135deg, rgb(var(--text-color) / 0.06) 0 1px, transparent 1px 12px);
+    padding: clamp(0.75rem, 1.5vw, 1.25rem) var(--container-gutter);
+  }
+
+  .wf__frame {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: center;
+    max-width: 85rem;
+    margin-inline: auto;
+    padding: clamp(1.5rem, 4vw, 3.5rem);
+    border: 1px dashed var(--wf-line);
+  }
+
+  .wf--medium .wf__frame {
+    min-height: 18rem;
+  }
+
+  .wf--large .wf__frame {
+    min-height: min(34rem, 70vh);
+  }
+
+  .wf--banner .wf__frame {
+    justify-items: center;
+    text-align: center;
+    background-image: var(--wf-hatch);
+  }
+
+  .wf__text {
+    max-width: 38rem;
+  }
+
+  .wf__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin: 0 0 1.25rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  .wf--banner .wf__meta {
+    justify-content: center;
+  }
+
+  .wf__tag {
+    padding: 0.15rem 0.6rem;
+    border: 1px solid currentColor;
+  }
+
+  .wf__label {
+    margin: 0;
+    font-family: var(--heading-font-family);
+    font-weight: var(--heading-font-weight);
+    font-style: var(--heading-font-style);
+    font-size: clamp(1.25rem, 2.4vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: var(--heading-letter-spacing);
+    text-transform: var(--heading-text-transform);
+  }
+
+  h1.wf__label {
+    font-size: clamp(1.75rem, 4vw, 3.25rem);
+  }
+
+  .wf__description {
+    margin: 1rem 0 0;
+    line-height: 1.7;
+  }
+
+  .wf__needs {
+    margin: 1.25rem 0 0;
+    font-size: 0.875em;
+    line-height: 1.6;
+    opacity: 0.75;
+  }
+
+  .wf__needs span {
+    margin-inline-end: 0.5rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .wf__media,
+  .wf__cell {
+    display: block;
+    border: 1px dashed var(--wf-line);
+    background-image: var(--wf-hatch);
+  }
+
+  .wf__media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .wf__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .wf__cell {
+    aspect-ratio: 4 / 5;
+  }
+
+  @media (min-width: 700px) {
+    .wf--split .wf__frame {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .wf__grid {
+      grid-template-columns: repeat(min(var(--wf-columns), 3), minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .wf__grid {
+      grid-template-columns: repeat(var(--wf-columns), minmax(0, 1fr));
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Wireframe (temporary)",
+  "class": "shopify-section--wireframe",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A placeholder for a block that is planned but not built yet. It is never shown on the published theme."
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Block name",
+      "default": "Planned block"
+    },
+    {
+      "type": "checkbox",
+      "id": "is_page_title",
+      "label": "This is the page title",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "What it will show"
+    },
+    {
+      "type": "textarea",
+      "id": "needs",
+      "label": "Still needed"
+    },
+    {
+      "type": "text",
+      "id": "phase",
+      "label": "Phase",
+      "info": "For example: Phase 4"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Shape",
+      "options": [
+        {
+          "value": "text",
+          "label": "Text only"
+        },
+        {
+          "value": "banner",
+          "label": "Banner"
+        },
+        {
+          "value": "split",
+          "label": "Image beside text"
+        },
+        {
+          "value": "grid",
+          "label": "Row of cards"
+        }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Cards in the row",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Height",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "small"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wireframe (temporary)"
+    }
+  ]
+}
+{% endschema %}

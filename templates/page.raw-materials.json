@@ -1,0 +1,92 @@
+{
+  "sections": {
+    "subnav-tabs": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "tabs"
+      }
+    },
+    "wf-1": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Raw Materials",
+        "is_page_title": true,
+        "description": "Opening image or short film of yarn, with one line on Corvo's command of fibre.",
+        "needs": "A close-up photo or a 10-second loop of yarn.",
+        "phase": "Phase 4",
+        "layout": "banner",
+        "columns": 3,
+        "size": "large"
+      }
+    },
+    "wf-2": {
+      "type": "wireframe",
+      "settings": {
+        "label": "The fibres",
+        "is_page_title": false,
+        "description": "One card per fibre: wool, silk, botanical silk, linen, jute, lurex. Each card opens to a close-up photo, how it feels, how it wears and where it works best.",
+        "needs": "The final list of fibres, a close-up photo of each and two lines on each.",
+        "phase": "Phase 4",
+        "layout": "grid",
+        "columns": 6,
+        "size": "medium"
+      }
+    },
+    "wf-3": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Pile types and heights",
+        "is_page_title": false,
+        "description": "Cut pile, loop pile and the two combined, shown side by side with the pile heights offered.",
+        "needs": "Close-up photos and the pile heights you offer.",
+        "phase": "Phase 4",
+        "layout": "split",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "wf-4": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Yarn concepts",
+        "is_page_title": false,
+        "description": "Corvo's own yarn developments. Five are already listed in Shopify.",
+        "needs": "One line on each.",
+        "phase": "Phase 4",
+        "layout": "grid",
+        "columns": 5,
+        "size": "small"
+      }
+    },
+    "wf-5": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Order samples",
+        "is_page_title": false,
+        "description": "A closing line with one button: order a yarn or pile sample.",
+        "needs": "",
+        "phase": "Phase 4",
+        "layout": "text",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "subnav-pager": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "pager"
+      }
+    }
+  },
+  "order": [
+    "subnav-tabs",
+    "wf-1",
+    "wf-2",
+    "wf-3",
+    "wf-4",
+    "wf-5",
+    "subnav-pager"
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "sections": {
+    "subnav-tabs": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "tabs"
+      }
+    },
+    "wf-1": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Care & FAQ",
+        "is_page_title": true,
+        "description": "Practical answers in one place: care, delivery, returns and the questions clients ask most.",
+        "needs": "",
+        "phase": "Phase 6",
+        "layout": "banner",
+        "columns": 3,
+        "size": "medium"
+      }
+    },
+    "wf-2": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Care guide",
+        "is_page_title": false,
+        "description": "Vacuuming, spills, rotation, sunlight and professional cleaning. The text exists today in the Journal and on the rug page.",
+        "needs": "",
+        "phase": "Phase 6",
+        "layout": "split",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "cat_bespoke": {
+          "type": "category",
+          "settings": {
+            "title": "Bespoke & customization",
+            "icon": "none"
+          }
+        },
+        "q_made_to_order": {
+          "type": "question",
+          "settings": {
+            "question": "Are Corvo rugs made to order?",
+            "answer": "<p>Yes. Every Corvo rug is made to order in our Portuguese atelier, hand-tufted for the room it will live in.</p>"
+          }
+        },
+        "q_customization": {
+          "type": "question",
+          "settings": {
+            "question": "Can I customize the size, shape and colours?",
+            "answer": "<p>Yes. Dimensions, shape, materials and an infinite range of colours can all be tailored to your project. We prepare samples for your approval before production begins.</p>"
+          }
+        },
+        "q_start_bespoke": {
+          "type": "question",
+          "settings": {
+            "question": "How do I start a bespoke project?",
+            "answer": "<p>Write to our design concierge through our <a href=\"/pages/contact\">contact page</a>. From there, the path is simple: consultation, design, sampling, production.</p>"
+          }
+        },
+        "cat_materials": {
+          "type": "category",
+          "settings": {
+            "title": "Materials & craft",
+            "icon": "none"
+          }
+        },
+        "q_materials": {
+          "type": "question",
+          "settings": {
+            "question": "What materials do you use?",
+            "answer": "<p>Natural wools — including New Zealand wool — alongside Lyocell and jute. Each is chosen for its feel, its wear and the way it holds light.</p>"
+          }
+        },
+        "cat_orders": {
+          "type": "category",
+          "settings": {
+            "title": "Orders & delivery",
+            "icon": "none"
+          }
+        },
+        "q_shipping": {
+          "type": "question",
+          "settings": {
+            "question": "Do you ship internationally?",
+            "answer": "<p>Yes. We ship worldwide, insured door-to-door.</p>"
+          }
+        },
+        "q_production": {
+          "type": "question",
+          "settings": {
+            "question": "How long does production take?",
+            "answer": "<p>Bespoke pieces are typically ready in 4–6 weeks from design approval.</p>"
+          }
+        },
+        "cat_trade": {
+          "type": "category",
+          "settings": {
+            "title": "Trade",
+            "icon": "none"
+          }
+        },
+        "q_trade": {
+          "type": "question",
+          "settings": {
+            "question": "Do you work with interior designers and architects?",
+            "answer": "<p>Yes. We offer dedicated trade support and sampling. Write to us to join the programme.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "cat_bespoke",
+        "q_made_to_order",
+        "q_customization",
+        "q_start_bespoke",
+        "cat_materials",
+        "q_materials",
+        "cat_orders",
+        "q_shipping",
+        "q_production",
+        "cat_trade",
+        "q_trade"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "show_categories": true,
+        "subheading": "Support",
+        "title": "Questions, answered"
+      }
+    },
+    "faq-cta": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "text": "Still curious?",
+            "heading_tag": "h2"
+          }
+        },
+        "text": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Write to our design concierge — replies within one business day.</p>"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "Contact us",
+            "url": "shopify://pages/contact"
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "text",
+        "button"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "image": "shopify://shop_images/CORVO_FINAL-62.jpg",
+        "reveal_on_scroll": true,
+        "image_position": "start",
+        "content_width": "sm"
+      }
+    },
+    "wf-3": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Delivery and returns",
+        "is_page_title": false,
+        "description": "How rugs are shipped, what delivery costs and what can be returned.",
+        "needs": "Your shipping and returns rules, including returns on made-to-order rugs.",
+        "phase": "Phase 3",
+        "layout": "text",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "wf-4": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Rug size guide",
+        "is_page_title": false,
+        "description": "Which size suits which room, shown with simple room drawings.",
+        "needs": "",
+        "phase": "Phase 6",
+        "layout": "split",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "subnav-pager": {
+      "type": "page-subnav",
+      "settings": {
+        "menu": "site-menu",
+        "style": "pager"
+      }
+    }
+  },
+  "order": [
+    "subnav-tabs",
+    "wf-1",
+    "wf-2",
+    "faq",
+    "faq-cta",
+    "wf-3",
+    "wf-4",
+    "subnav-pager"
+  ]
+}
