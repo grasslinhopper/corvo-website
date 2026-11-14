@@ -28,18 +28,19 @@
         assign source_url = ''
 
         for source in video.sources
-          if source.format == 'mp4' and source.url contains '720p'
+          if source.format == 'mp4'
             assign source_url = source.url
+            break
           endif
         endfor
 
-        if source_url == ''
-          for source in video.sources
-            if source.format == 'mp4'
-              assign source_url = source.url
-              break
-            endif
-          endfor
+        comment
+          Shopify only lists the 1080p file here, but it also stores a 720p version at the same address with a
+          different name. That lighter file is tried first; if it is ever missing, the script falls back to the listed one.
+        endcomment
+        assign light_url = source_url | replace: 'HD-1080p-7.2Mbps', 'HD-720p-4.5Mbps'
+        if light_url == source_url
+          assign light_url = ''
         endif
 
         assign mobile_index = section.settings.mobile_film | plus: 0
@@ -56,7 +57,7 @@
         {%- endif -%}
 
         {%- if source_url != '' -%}
-          <video class="hero-films__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="{{ source_url }}" data-trim-end="{{ block.settings.trim_end }}"></video>
+          <video class="hero-films__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="{{ source_url }}" {% if light_url != '' %}data-src-light="{{ light_url }}"{% endif %} data-trim-end="{{ block.settings.trim_end }}"></video>
         {%- endif -%}
       </div>
     {%- endfor -%}
@@ -357,6 +358,31 @@
           if (this.breakpoint) this.breakpoint.removeEventListener('change', this.onBreakpointChange);
         }
 
+        // Sets the film's address the first time it is needed: the lighter 720p file, or the listed file if that fails
+        load(video) {
+          if (video.getAttribute('src')) return;
+
+          const light = video.dataset.srcLight;
+
+          if (light) {
+            video.addEventListener(
+              'error',
+              () => {
+                if (video.getAttribute('src') !== light) return;
+                video.setAttribute('src', video.dataset.src);
+                if (this.inView && !this.paused) {
+                  const attempt = video.play();
+                  if (attempt) attempt.catch(() => {});
+                }
+              },
+              { once: true }
+            );
+            video.setAttribute('src', light);
+          } else {
+            video.setAttribute('src', video.dataset.src);
+          }
+        }
+
         sync() {
           const shouldPlay = this.inView && !this.paused;
 
@@ -365,7 +391,7 @@
             const visible = video.offsetParent !== null;
 
             if (shouldPlay && visible) {
-              if (!video.getAttribute('src')) video.setAttribute('src', video.dataset.src);
+              this.load(video);
               const attempt = video.play();
               if (attempt) attempt.catch(() => {});
             } else {
