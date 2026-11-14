@@ -248,8 +248,9 @@ Supported variables
 
           {%- when 'rug_steps' -%}
             {%- comment -%}
-            Corvo addition: the buying steps of a rug. In the quick buy window there is no room for them, so the
-            theme's own size selector is used there.
+            Corvo addition: the buying steps of a rug (size, colours, shipping and the price worked out on the page).
+            In the quick buy window there is no room for them, so the theme's own size selector is used there, with
+            the standard sizes.
             {%- endcomment -%}
             {%- if product != blank -%}
               {%- if context == 'quick_buy' -%}

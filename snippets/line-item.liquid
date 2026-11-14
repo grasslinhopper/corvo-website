@@ -13,9 +13,32 @@ Supported variables
 * show_quantity_selector: if set to true, the quantity selector is displayed (useful for instance of mini-cart)
 {%- endcomment -%}
 
+{%- comment -%}
+Corvo addition: a made-to-measure rug is charged through the hidden price-step product, and its line carries the
+handle of the design it was configured from in the "_design" property. Such a line shows that design (name, photo
+and link) in place of the price product.
+{%- endcomment -%}
+{%- liquid
+  assign rug_design = nil
+  assign rug_design_handle = line_item.properties['_design']
+
+  if rug_design_handle != blank
+    assign rug_design = all_products[rug_design_handle]
+
+    if rug_design.id == blank
+      assign rug_design = nil
+    endif
+  endif
+
+  assign line_image = rug_design.featured_image | default: line_item.image
+  assign line_title = rug_design.title | default: line_item.product.title | default: line_item.title
+  assign line_url = rug_design.url | default: line_item.url
+  assign rug_design_label = 'rug_page.design' | t
+-%}
+
 <line-item class="line-item">
-  {%- if line_item.image != blank -%}
-    {{- line_item.image | image_url: width: line_item.image.width | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 70px, 120px', widths: '70,120,140,210,240,360', class: 'line-item__media' -}}
+  {%- if line_image != blank -%}
+    {{- line_image | image_url: width: line_image.width | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 70px, 120px', widths: '70,120,140,210,240,360', class: 'line-item__media' -}}
   {%- endif -%}
 
   <div class="line-item-info">
@@ -32,19 +55,23 @@ Supported variables
       {%- endif -%}
 
       <div class="v-stack justify-items-start gap-1">
-        {%- if line_item.url != blank -%}
-          <a href="{{ line_item.url }}" class="{{ text_class }}">{{ line_item.product.title | default: line_item.title }}</a>
+        {%- if line_url != blank -%}
+          <a href="{{ line_url }}" class="{{ text_class }}">{{ line_title }}</a>
         {%- else -%}
-          <p class="{{ text_class }}">{{ line_item.product.title | default: line_item.title }}</p>
+          <p class="{{ text_class }}">{{ line_title }}</p>
         {%- endif -%}
 
         {%- render 'price-list', line_item: line_item, context: 'line_item' -%}
       </div>
 
       {%- capture secondary_information -%}
-        {%- unless line_item.product.has_only_default_variant or line_item.gift_card -%}
-          <p class="smallcaps text-subdued">{{ line_item.variant.title }}</p>
-        {%- endunless -%}
+        {%- if rug_design != nil -%}
+          <p class="smallcaps text-subdued">{{ 'rug_page.made_to_measure' | t }}</p>
+        {%- else -%}
+          {%- unless line_item.product.has_only_default_variant or line_item.gift_card -%}
+            <p class="smallcaps text-subdued">{{ line_item.variant.title }}</p>
+          {%- endunless -%}
+        {%- endif -%}
 
         {%- if line_item.selling_plan_allocation -%}
           <p class="text-subdued">{{ line_item.selling_plan_allocation.selling_plan.name }}</p>
@@ -56,6 +83,11 @@ Supported variables
               {%- assign first_character_in_key = property.first | truncate: 1, '' -%}
 
               {%- if property.last == blank or first_character_in_key == '_' -%}
+                {%- continue -%}
+              {%- endif -%}
+
+              {%- comment -%}Corvo addition: the design is already the name of the line{%- endcomment -%}
+              {%- if rug_design != nil and property.first == rug_design_label -%}
                 {%- continue -%}
               {%- endif -%}
 

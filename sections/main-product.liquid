@@ -163,7 +163,7 @@
           {%- capture button_content -%}
             <span>
               {{- button_content -}}
-              <span class="sm:hidden"> · {% render 'rug-money', amount: product.selected_or_first_available_variant.price %}</span>
+              <span class="sm:hidden"> · <span data-rug-live-price>{% render 'rug-money', amount: product.selected_or_first_available_variant.price %}</span></span>
             </span>
           {%- endcapture -%}
         {%- endif -%}
@@ -227,8 +227,7 @@ quick buy information in a template, that will be extracted in JS, which ensures
     }
   }
 
-  .rug-steps,
-  .rug-steps__list {
+  .rug-steps {
     gap: 2rem;
     display: grid;
   }
@@ -249,12 +248,20 @@ quick buy information in a template, that will be extracted in JS, which ensures
     display: flex;
   }
 
+  .rug-step__aside {
+    text-align: end;
+    margin-inline-start: auto;
+  }
+
   .rug-step__choices {
     gap: .5rem;
     display: grid;
   }
 
-  .rug-step__more {
+  .rug-step__more,
+  .rug-step__error,
+  .rug-step__note,
+  .rug-step__preview {
     margin-block-start: .75rem;
   }
 
@@ -262,11 +269,215 @@ quick buy information in a template, that will be extracted in JS, which ensures
     margin-inline-start: .25rem;
   }
 
+  .rug-step__note,
   .rug-step__preview {
     border-inline-start: 2px solid rgb(var(--text-color));
     padding-inline-start: .75rem;
   }
 
+  .rug-step__error {
+    color: rgb(var(--error-text));
+  }
+
+  /* Size: the standard sizes as shortcuts, then the two sides */
+  .rug-sizes {
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-block-end: .75rem;
+    display: flex;
+  }
+
+  .rug-size,
+  .rug-chip {
+    color: rgb(var(--text-color) / .7);
+    border: 1px solid rgb(var(--border-color));
+    border-radius: var(--input-border-radius, 0);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    padding: .5rem .75rem;
+    transition: border-color .2s, color .2s;
+  }
+
+  .rug-size:hover,
+  .rug-chip:hover {
+    border-color: rgb(var(--text-color) / .45);
+  }
+
+  .rug-size[aria-pressed="true"],
+  .rug-chip[aria-pressed="true"] {
+    color: rgb(var(--text-color));
+    border-color: rgb(var(--text-color));
+    box-shadow: inset 0 0 0 1px rgb(var(--text-color));
+  }
+
+  .rug-size:focus-visible,
+  .rug-chip:focus-visible {
+    outline: 2px solid rgb(var(--text-color));
+    outline-offset: 2px;
+  }
+
+  .rug-dimensions {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: .75rem;
+    display: grid;
+  }
+
+  .rug-field {
+    border: 1px solid rgb(var(--border-color));
+    border-radius: var(--input-border-radius, 0);
+    cursor: text;
+    gap: .125rem;
+    padding: .625rem 1rem;
+    transition: border-color .2s;
+    display: grid;
+  }
+
+  .rug-field:hover {
+    border-color: rgb(var(--text-color) / .45);
+  }
+
+  .rug-field:focus-within {
+    border-color: rgb(var(--text-color));
+    box-shadow: inset 0 0 0 1px rgb(var(--text-color));
+  }
+
+  .rug-field:has([aria-invalid="true"]) {
+    border-color: rgb(var(--error-text));
+    box-shadow: inset 0 0 0 1px rgb(var(--error-text));
+  }
+
+  .rug-field__label {
+    justify-content: space-between;
+    gap: .75rem;
+    display: flex;
+  }
+
+  .rug-field__control {
+    align-items: baseline;
+    gap: .375rem;
+    display: flex;
+  }
+
+  .rug-field__input {
+    font: inherit;
+    color: rgb(var(--text-color));
+    font-variant-numeric: tabular-nums;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    outline: none;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    /* 16px at least, so that phones do not zoom in when the field is tapped */
+    font-size: max(1rem, 16px);
+  }
+
+  .rug-field__input::placeholder {
+    color: rgb(var(--text-color) / .45);
+  }
+
+  /* Colours: one row per colour of the design, with the palette opening under the row being changed */
+  .rug-colours {
+    border: 1px solid rgb(var(--border-color));
+    border-radius: var(--input-border-radius, 0);
+  }
+
+  .rug-colour + .rug-colour {
+    border-block-start: 1px solid rgb(var(--border-color));
+  }
+
+  .rug-colour__row {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: .875rem;
+    padding: .8125rem 1rem;
+    display: grid;
+  }
+
+  .rug-colour__swatch,
+  .rug-chip__swatch {
+    background: var(--swatch, repeating-linear-gradient(135deg, rgb(var(--text-color) / .08) 0 3px, transparent 3px 6px));
+    border: 1px solid rgb(var(--text-color) / .2);
+    border-radius: 50%;
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    display: block;
+  }
+
+  .rug-colour__swatch.is-custom {
+    background: conic-gradient(#b5533c, #c9a24b, #2f6b5a, #34608f, #8b5e3c, #b5533c);
+  }
+
+  .rug-colour__text {
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: .125rem .625rem;
+    min-width: 0;
+    display: flex;
+  }
+
+  .rug-colour.is-changed .rug-colour__value {
+    color: rgb(var(--text-color));
+  }
+
+  .rug-colour__value {
+    overflow-wrap: anywhere;
+  }
+
+  .rug-palette {
+    border-block-start: 1px solid rgb(var(--border-color));
+    background: rgb(var(--text-color) / .03);
+    gap: .875rem;
+    padding: 1rem;
+    display: grid;
+  }
+
+  .rug-palette__title {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: .25rem .75rem;
+    display: flex;
+  }
+
+  .rug-palette__grid {
+    grid-template-columns: repeat(auto-fill, minmax(4.25rem, 1fr));
+    gap: .375rem;
+    display: grid;
+  }
+
+  .rug-chip {
+    background: rgb(var(--background));
+    justify-content: center;
+    align-items: center;
+    gap: .375rem;
+    padding: .4375rem .5rem;
+    font-size: var(--text-sm);
+    display: flex;
+  }
+
+  .rug-chip__swatch {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .rug-chip__name {
+    display: none;
+  }
+
+  .rug-palette .rug-field {
+    background: rgb(var(--background));
+  }
+
+  .rug-palette__actions {
+    justify-content: space-between;
+    gap: 1rem;
+    display: flex;
+  }
+
+  /* Shipping: two choices, as rows */
   .rug-choice {
     color: rgb(var(--text-color) / .7);
     border: 1px solid rgb(var(--border-color));
@@ -284,28 +495,14 @@ quick buy information in a template, that will be extracted in JS, which ensures
     border-color: rgb(var(--text-color) / .45);
   }
 
-  :checked + .rug-choice,
-  .rug-choice.is-selected {
+  :checked + .rug-choice {
     color: rgb(var(--text-color));
     border-color: rgb(var(--text-color));
   }
 
-  :focus-visible + .rug-choice,
-  .rug-choice:focus-visible {
+  :focus-visible + .rug-choice {
     outline: 2px solid rgb(var(--text-color));
     outline-offset: 2px;
-  }
-
-  .rug-choice--static {
-    cursor: default;
-  }
-
-  .rug-choice--static:hover {
-    border-color: rgb(var(--text-color));
-  }
-
-  .rug-choice.is-unavailable {
-    opacity: .5;
   }
 
   .rug-choice__mark {
@@ -317,22 +514,16 @@ quick buy information in a template, that will be extracted in JS, which ensures
     position: relative;
   }
 
-  :checked + .rug-choice .rug-choice__mark,
-  .rug-choice.is-selected .rug-choice__mark {
+  :checked + .rug-choice .rug-choice__mark {
     border-color: rgb(var(--text-color));
   }
 
-  :checked + .rug-choice .rug-choice__mark:after,
-  .rug-choice.is-selected .rug-choice__mark:after {
+  :checked + .rug-choice .rug-choice__mark:after {
     content: "";
     background: rgb(var(--text-color));
     border-radius: 50%;
     position: absolute;
     inset: 3px;
-  }
-
-  .rug-choice--link .rug-choice__mark {
-    border-style: dashed;
   }
 
   .rug-choice__text {
@@ -357,28 +548,7 @@ quick buy information in a template, that will be extracted in JS, which ensures
     font-variant-numeric: tabular-nums;
   }
 
-  .rug-choice__arrow {
-    display: flex;
-  }
-
-  .rug-choice__swatches {
-    gap: .25rem;
-    display: flex;
-  }
-
-  .rug-swatch {
-    background: var(--swatch, transparent);
-    border: 1px solid rgb(var(--text-color) / .2);
-    border-radius: 50%;
-    width: .875rem;
-    height: .875rem;
-    display: block;
-  }
-
-  .rug-swatch--multi {
-    background: conic-gradient(#b5533c, #c9a24b, #2f6b5a, #34608f, #8b5e3c, #b5533c);
-  }
-
+  /* Summary */
   .rug-summary {
     background: rgb(var(--text-color) / .03);
     border: 1px solid rgb(var(--border-color));
@@ -394,7 +564,7 @@ quick buy information in a template, that will be extracted in JS, which ensures
     display: grid;
   }
 
-  .rug-summary__list > div,
+  .rug-summary__list > div:not([hidden]),
   .rug-summary__split > div {
     justify-content: space-between;
     gap: 1rem;
@@ -426,8 +596,24 @@ quick buy information in a template, that will be extracted in JS, which ensures
     display: grid;
   }
 
-  .rug-summary__split dd {
+  .rug-summary__split dd,
+  [data-rug-total] {
     font-variant-numeric: tabular-nums;
+  }
+
+  .rug-summary__message {
+    border-inline-start: 2px solid rgb(var(--text-color));
+    padding-inline-start: .75rem;
+  }
+
+  .rug-summary__message .link {
+    margin-inline-start: .25rem;
+  }
+
+  /* While a price in another currency is being fetched, the amounts step back */
+  [data-rug-busy] [data-rug-total],
+  [data-rug-busy] .rug-summary__split dd {
+    opacity: .4;
   }
 
   .rug-links {
@@ -436,81 +622,11 @@ quick buy information in a template, that will be extracted in JS, which ensures
     display: grid;
   }
 
-  .button[data-rug-demo] {
+  .button[data-rug-blocked] {
     opacity: .35;
     cursor: not-allowed;
   }
 {% endstylesheet %}
-
-{% javascript %}
-  /**
-   * Corvo addition: the shipping step as a demonstration.
-   *
-   * While the rugs have no "Shipping" option, the rug page shows the two shipping choices on unpublished themes only.
-   * The choice changes the summary, and the priority choice cannot be ordered: it switches the order buttons off.
-   * Once the rugs carry the option, this element is no longer printed and the theme's own variant logic takes over.
-   */
-  if (!window.customElements.get('rug-shipping-demo')) {
-    const remembered = new Map();
-
-    window.customElements.define('rug-shipping-demo', class extends HTMLElement {
-      connectedCallback() {
-        this.addEventListener('change', this);
-
-        if (remembered.get(this.dataset.product) === 'express') {
-          const express = this.querySelector('input[value="express"]');
-
-          if (express) {
-            express.checked = true;
-          }
-        }
-
-        // The order buttons may be printed again after this element: wait until the page has settled
-        window.setTimeout(() => this.apply(), 0);
-      }
-
-      handleEvent() {
-        remembered.set(this.dataset.product, this.querySelector('input:checked')?.value || 'standard');
-        this.apply();
-      }
-
-      apply() {
-        const input = this.querySelector('input:checked'),
-          scope = this.closest('[data-rug-steps]');
-
-        if (!this.isConnected || !input || !scope) {
-          return;
-        }
-
-        const isExpress = input.value === 'express',
-          form = document.forms[this.getAttribute('form')],
-          note = this.querySelector('[data-rug-preview-note]');
-
-        [['[data-rug-shipping-label]', input.dataset.label], ['[data-rug-total]', input.dataset.total], ['[data-rug-pay-now]', input.dataset.payNow], ['[data-rug-pay-later]', input.dataset.payLater]].forEach(([selector, text]) => {
-          const element = scope.querySelector(selector);
-
-          if (element && text !== undefined) {
-            element.textContent = text;
-          }
-        });
-
-        if (note) {
-          note.hidden = !isExpress;
-        }
-
-        Array.from(form?.elements || []).filter((element) => element.type === 'submit').forEach((button) => {
-          if (isExpress && !button.disabled) {
-            button.disabled = true;
-            button.dataset.rugDemo = 'true';
-          } else if (!isExpress && button.dataset.rugDemo) {
-            button.disabled = false;
-            delete button.dataset.rugDemo;
-          }
-        });
-      }
-    });
-  }
-{% endjavascript %}
 
 {% schema %}
 {
@@ -695,32 +811,102 @@ quick buy information in a template, that will be extracted in JS, which ensures
       "settings": [
         {
           "type": "paragraph",
-          "content": "Size, colour and shipping as numbered steps, then a summary with the total. Use it instead of the variant picker."
+          "content": "Size, colours and shipping as numbered steps, then a summary with the total. The price is worked out on the page from the rug's craft level, the size typed in, the colours changed and the shipping chosen. Use it instead of the variant picker."
         },
         {
           "type": "url",
           "id": "custom_link",
-          "label": "Page for other sizes and colours"
+          "label": "Page for anything this page cannot price",
+          "info": "Shapes, sizes above the limit and other special requests."
         },
         {
           "type": "header",
           "content": "Size"
         },
         {
-          "type": "text",
-          "id": "custom_size_text",
-          "label": "Line under the sizes",
-          "default": "Another size or shape?"
+          "type": "number",
+          "id": "min_side",
+          "label": "Shortest side allowed (cm)",
+          "default": 100
+        },
+        {
+          "type": "number",
+          "id": "max_long",
+          "label": "Longest side allowed (cm)",
+          "default": 1200
+        },
+        {
+          "type": "number",
+          "id": "max_short",
+          "label": "Longest shorter side allowed (cm)",
+          "info": "A rug can be up to the longest side by this side: 1200 by 700 cm is 12 × 7 m.",
+          "default": 700
+        },
+        {
+          "type": "number",
+          "id": "size_step",
+          "label": "Sizes go in steps of (cm)",
+          "default": 1
         },
         {
           "type": "text",
-          "id": "custom_size_link_text",
+          "id": "size_text",
+          "label": "Line under the size",
+          "default": "Made to measure: any size up to 12 × 7 m."
+        },
+        {
+          "type": "text",
+          "id": "size_link_text",
           "label": "Link text",
-          "default": "Made to measure"
+          "default": "Another shape?"
         },
         {
           "type": "header",
-          "content": "Colour"
+          "content": "Price rules"
+        },
+        {
+          "type": "paragraph",
+          "content": "The price per m² comes from the rug's craft level, and the rug's own supplement from its \"Price supplement (%)\" field. Change these rules only when the price list changes."
+        },
+        {
+          "type": "number",
+          "id": "vat_percent",
+          "label": "VAT (%)",
+          "default": 23
+        },
+        {
+          "type": "number",
+          "id": "small_area",
+          "label": "Small rugs: below this area (m²)",
+          "default": 3
+        },
+        {
+          "type": "number",
+          "id": "small_percent",
+          "label": "Small rugs: supplement (%)",
+          "default": 30
+        },
+        {
+          "type": "number",
+          "id": "large_long",
+          "label": "Large rugs: longer than (cm)",
+          "default": 900
+        },
+        {
+          "type": "number",
+          "id": "large_short",
+          "label": "Large rugs: or wider than (cm)",
+          "default": 400
+        },
+        {
+          "type": "number",
+          "id": "large_percent",
+          "label": "Large rugs: supplement (%)",
+          "default": 15
+        },
+        {
+          "type": "header",
+          "content": "Colours"
         },
         {
           "type": "checkbox",
@@ -730,15 +916,46 @@ quick buy information in a template, that will be extracted in JS, which ensures
         },
         {
           "type": "text",
-          "id": "other_colour_title",
-          "label": "Other colour, title",
+          "id": "palette_title",
+          "label": "Palette, title",
+          "default": "Open Palette"
+        },
+        {
+          "type": "text",
+          "id": "palette_note",
+          "label": "Palette, note",
+          "default": "Included"
+        },
+        {
+          "type": "textarea",
+          "id": "palette",
+          "label": "Palette colours",
+          "info": "One colour per line: the code, then optionally a name and a colour value, separated by |. Example: 284 | Sand | #d9c8a9"
+        },
+        {
+          "type": "text",
+          "id": "custom_colour_title",
+          "label": "Custom colour, title",
           "default": "Another colour"
         },
         {
           "type": "text",
-          "id": "other_colour_text",
-          "label": "Other colour, text",
-          "default": "Any colour, matched to your project"
+          "id": "custom_colour_text",
+          "label": "Custom colour, text",
+          "default": "Infinite Colours: any colour, matched to your reference."
+        },
+        {
+          "type": "number",
+          "id": "custom_colour_price",
+          "label": "Custom colour: price per colour, with VAT",
+          "info": "In the shop's currency. Leave at 0 for no supplement.",
+          "default": 0
+        },
+        {
+          "type": "text",
+          "id": "colour_text",
+          "label": "Line under the colours",
+          "default": "The photos show the original colours."
         },
         {
           "type": "header",
@@ -752,10 +969,9 @@ quick buy information in a template, that will be extracted in JS, which ensures
         },
         {
           "type": "text",
-          "id": "shipping_option_name",
-          "label": "Name of the product option",
-          "info": "The step uses the product option with this name. Until the rugs have it, the step shows on unpublished themes only, as a demonstration that cannot be ordered.",
-          "default": "Shipping"
+          "id": "standard_label",
+          "label": "Standard, title",
+          "default": "Standard"
         },
         {
           "type": "text",
@@ -765,21 +981,15 @@ quick buy information in a template, that will be extracted in JS, which ensures
         },
         {
           "type": "text",
+          "id": "express_label",
+          "label": "Priority, title",
+          "default": "Shipping in 3 weeks"
+        },
+        {
+          "type": "text",
           "id": "express_note",
           "label": "Priority, text",
           "default": "Priority production."
-        },
-        {
-          "type": "text",
-          "id": "standard_label",
-          "label": "Standard, title (demonstration)",
-          "default": "Standard"
-        },
-        {
-          "type": "text",
-          "id": "express_label",
-          "label": "Priority, title (demonstration)",
-          "default": "Shipping in 3 weeks"
         },
         {
           "type": "range",
@@ -788,7 +998,8 @@ quick buy information in a template, that will be extracted in JS, which ensures
           "max": 100,
           "step": 5,
           "unit": "%",
-          "label": "Priority supplement (demonstration)",
+          "label": "Priority supplement",
+          "info": "Added to the whole price. At 0 the shipping step is hidden.",
           "default": 25
         },
         {
@@ -807,6 +1018,39 @@ quick buy information in a template, that will be extracted in JS, which ensures
           "id": "summary_note",
           "label": "Note",
           "default": "<p>Made to order in Portugal. Transport is not included.</p>"
+        },
+        {
+          "type": "text",
+          "id": "contact_link_text",
+          "label": "Link shown when a price cannot be given",
+          "default": "Talk to us"
+        },
+        {
+          "type": "header",
+          "content": "Price steps"
+        },
+        {
+          "type": "paragraph",
+          "content": "A made-to-measure price is charged through a hidden product whose variants are amounts. The price is rounded to the nearest one. These settings describe that product: change them only together with it."
+        },
+        {
+          "type": "text",
+          "id": "price_product",
+          "label": "Handle of the price product",
+          "default": "made-to-measure-rug"
+        },
+        {
+          "type": "number",
+          "id": "price_steps_min",
+          "label": "Lowest amount",
+          "default": 500
+        },
+        {
+          "type": "text",
+          "id": "price_steps",
+          "label": "Steps",
+          "info": "Written as \"up to this amount: in steps of\", separated by commas.",
+          "default": "5000:20, 15000:50, 45000:100, 120000:250"
         }
       ]
     },
