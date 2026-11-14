@@ -21,6 +21,7 @@ Supported variables
 * show_swatches: show or not the swatches. The swatch type is inferred from setting, and will default to true if nothing is set.
 * hide_product_information: if set to true, all content (vendor, badge, title...) are not rendered, to create image-based grid
 * quick_buy_context: a unique text to dissociate quick buy if the same product is embedded multiple times
+* meta: an optional short line shown under the title (Corvo addition: the rug list passes collection and materials)
 {%- endcomment -%}
 
 {%- liquid
@@ -143,6 +144,10 @@ Supported variables
               <a href="{{ product.url }}" class="product-title {% if text_class != blank %}{{ text_class }}{% endif %} {% if settings.product_title_max_lines > 0 %}line-clamp{% endif %}" {% if settings.product_title_max_lines > 0 %}style="--line-clamp-count: {{ settings.product_title_max_lines }}"{% endif %} data-instant>
                 {{- product.title -}}
               </a>
+            {%- endif -%}
+
+            {%- if show_title and meta != blank -%}
+              <p class="product-card__meta smallcaps text-subdued">{{ meta | escape }}</p>
             {%- endif -%}
 
             {%- if show_prices -%}

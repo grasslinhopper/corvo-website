@@ -1,0 +1,1081 @@
+{%- comment -%}
+  Rug list (Corvo addition)
+
+  The list of rugs on a collection page and on "All rugs". Every rug of the collection is rendered on one page, so
+  filtering and sorting happen in the browser: at once, without a reload, and without the Search & Discovery app.
+
+  The facts come from the product fields in the "rug" namespace:
+  - rug.craft_level (reference to a "Craft level" entry)
+  - rug.materials (list of references to "Rug material" entries)
+  - rug.pile (list of text: Cut, Loop)
+  - rug.colour_family (list of text)
+
+  Each filter group is a block, so groups can be reordered, renamed or removed in the theme editor.
+  A group is shown only when the rugs on the page have at least two different values for it.
+{%- endcomment -%}
+
+{%- liquid
+  assign family_list = 'Ivory & cream|Beige & sand|Brown|Grey|Black & charcoal|Blue|Green|Red & terracotta|Gold|Multicolour' | split: '|'
+  assign family_colors = '#f1ece1|#d9c8a9|#8b5e3c|#9b9b99|#2b2b2b|#34608f|#2f6b5a|#b5533c|#c9a24b|multi' | split: '|'
+
+  if section.settings.products_per_row_mobile == '1'
+    assign products_mobile_grid_mode = 'large'
+  else
+    assign products_mobile_grid_mode = 'medium'
+  endif
+
+  assign products_desktop_grid_mode = section.settings.products_size_desktop
+
+  assign show_filters = false
+  if section.blocks.size > 0 and collection.all_products_count >= section.settings.min_products_for_filters
+    assign show_filters = true
+  endif
+
+  assign use_sidebar = false
+  if show_filters and section.settings.filter_layout == 'sidebar'
+    assign use_sidebar = true
+  endif
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --product-list-horizontal-spacing-factor: {{ section.settings.horizontal_spacing_factor }};
+    --product-list-vertical-spacing-factor: {{ section.settings.vertical_spacing_factor }};
+    --collection-items-per-row-medium: 2;
+    --collection-items-per-row-large: 1;
+  }
+
+  #shopify-section-{{ section.id }} .product-list {
+    --product-list-max-items-per-row-allowed: 99 !important;
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} {
+      --collection-items-per-row-medium: 3;
+      --collection-items-per-row-large: 2;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} {
+      {%- if use_sidebar -%}
+        --collection-items-per-row-medium: 3;
+        --collection-items-per-row-large: 2;
+      {%- else -%}
+        --collection-items-per-row-medium: 4;
+        --collection-items-per-row-large: 3;
+      {%- endif -%}
+    }
+
+    {%- if use_sidebar -%}
+      #shopify-section-{{ section.id }} .collection {
+        --collection-grid-template: var(--collection-sidebar-width, 0) minmax(0, 1fr);
+      }
+    {%- endif -%}
+  }
+
+  @media screen and (min-width: 1400px) {
+    #shopify-section-{{ section.id }} {
+      {%- if use_sidebar -%}
+        --collection-items-per-row-medium: 4;
+        --collection-items-per-row-large: 3;
+      {%- endif -%}
+    }
+  }
+</style>
+
+<div class="color-scheme color-scheme--{{ section.settings.color_scheme.id }}">
+  <div class="container">
+    <div class="v-stack gap-6 sm:gap-12">
+      {%- if collection.all_products_count == 0 -%}
+        <div class="empty-state">
+          <div class="prose">
+            <h1 class="h4">{{ collection.title }}</h1>
+            <p>{{ 'collection.general.empty_collection' | t }}</p>
+
+            {%- assign button_content = 'collection.general.continue_shopping' | t -%}
+            {%- render 'button', href: routes.all_products_collection_url, size: 'xl', content: button_content -%}
+          </div>
+        </div>
+      {%- else -%}
+        {%- paginate collection.products by 250 -%}
+          {%- comment -%}
+          ------------------------------------------------------------------------------------------------------------
+          FIRST PASS: the facts of every rug, as data for the script, and the values that are present on this page
+          ------------------------------------------------------------------------------------------------------------
+          {%- endcomment -%}
+
+          {%- liquid
+            assign present_collections = '|'
+            assign present_levels = '|'
+            assign present_materials = '|'
+            assign present_piles = '|'
+            assign present_families = '|'
+          -%}
+
+          {%- capture rug_data -%}
+            {%- for product in collection.products -%}
+              {%- liquid
+                assign level_number = product.metafields.rug.craft_level.value.number.value | default: 0
+                assign materials = product.metafields.rug.materials.value
+                assign piles = product.metafields.rug.pile.value
+                assign families = product.metafields.rug.colour_family.value
+
+                assign product_collection_handle = ''
+                for product_collection in product.collections
+                  unless product_collection.handle == 'all' or product_collection.handle == 'frontpage'
+                    assign product_collection_handle = product_collection.handle
+                    break
+                  endunless
+                endfor
+
+                assign material_handles = ''
+                for material in materials
+                  assign material_handles = material_handles | append: material.system.handle | append: ','
+                  assign present_materials = present_materials | append: material.system.handle | append: '|'
+                endfor
+
+                assign pile_handles = ''
+                for pile in piles
+                  assign pile_handle = pile | handleize
+                  assign pile_handles = pile_handles | append: pile_handle | append: ','
+                  assign present_piles = present_piles | append: pile_handle | append: '|'
+                endfor
+
+                assign family_handles = ''
+                for family in families
+                  assign family_handle = family | handleize
+                  assign family_handles = family_handles | append: family_handle | append: ','
+                  assign present_families = present_families | append: family_handle | append: '|'
+                endfor
+
+                if product_collection_handle != ''
+                  assign present_collections = present_collections | append: product_collection_handle | append: '|'
+                endif
+
+                if level_number != 0
+                  assign present_levels = present_levels | append: level_number | append: '|'
+                endif
+              -%}
+
+              {{- product.handle | json }}:{"t":{{ product.title | json }},"p":{{ product.price_min | default: 0 }},"c":{{ product_collection_handle | json }},"l":{{ level_number }},"m":{{ material_handles | split: ',' | json }},"pi":{{ pile_handles | split: ',' | json }},"f":{{ family_handles | split: ',' | json }}}
+              {%- unless forloop.last -%},{%- endunless -%}
+            {%- endfor -%}
+          {%- endcapture -%}
+
+          {%- comment -%}
+          ------------------------------------------------------------------------------------------------------------
+          FILTER GROUPS: written once, then printed in the sidebar and in the drawer (RUGCTX is replaced in each)
+          ------------------------------------------------------------------------------------------------------------
+          {%- endcomment -%}
+
+          {%- assign rendered_groups = 0 -%}
+
+          {%- capture filter_groups -%}
+            {%- if show_filters -%}
+              {%- for block in section.blocks -%}
+                {%- liquid
+                  assign facet = block.settings.source
+
+                  case facet
+                    when 'collection'
+                      assign present_values = present_collections
+                      assign default_label = 'rug_list.filters.collection' | t
+                    when 'level'
+                      assign present_values = present_levels
+                      assign default_label = 'rug_list.filters.craft_level' | t
+                    when 'material'
+                      assign present_values = present_materials
+                      assign default_label = 'rug_list.filters.material' | t
+                    when 'pile'
+                      assign present_values = present_piles
+                      assign default_label = 'rug_list.filters.pile' | t
+                    when 'colour'
+                      assign present_values = present_families
+                      assign default_label = 'rug_list.filters.colour' | t
+                  endcase
+
+                  assign group_label = block.settings.label | default: default_label
+                  assign distinct_values = present_values | split: '|' | uniq | size | minus: 1
+                -%}
+
+                {%- if distinct_values >= 2 -%}
+                  {%- capture group_content -%}
+                    <div class="v-stack gap-2.5">
+                      {%- case facet -%}
+                        {%- when 'collection' -%}
+                          {%- for link in section.settings.collection_menu.links -%}
+                            {%- if link.type == 'collection_link' -%}
+                              {%- assign token = '|' | append: link.object.handle | append: '|' -%}
+
+                              {%- if present_collections contains token -%}
+                                {%- render 'rug-filter-option', facet: facet, value: link.object.handle, label: link.title, group: group_label, section_id: section.id -%}
+                              {%- endif -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+
+                        {%- when 'level' -%}
+                          {%- for level in shop.metaobjects.craft_level.values -%}
+                            {%- assign token = '|' | append: level.number.value | append: '|' -%}
+
+                            {%- if present_levels contains token -%}
+                              {%- render 'rug-filter-option', facet: facet, value: level.number.value, label: level.label.value, group: group_label, section_id: section.id -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+
+                        {%- when 'material' -%}
+                          {%- for material in shop.metaobjects.rug_material.values -%}
+                            {%- assign token = '|' | append: material.system.handle | append: '|' -%}
+
+                            {%- if present_materials contains token -%}
+                              {%- render 'rug-filter-option', facet: facet, value: material.system.handle, label: material.name.value, group: group_label, section_id: section.id -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+
+                        {%- when 'pile' -%}
+                          {%- assign pile_list = 'Cut|Loop' | split: '|' -%}
+
+                          {%- for pile in pile_list -%}
+                            {%- assign pile_handle = pile | handleize -%}
+                            {%- assign token = '|' | append: pile_handle | append: '|' -%}
+
+                            {%- if present_piles contains token -%}
+                              {%- render 'rug-filter-option', facet: facet, value: pile_handle, label: pile, group: group_label, section_id: section.id -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+
+                        {%- when 'colour' -%}
+                          {%- for family in family_list -%}
+                            {%- assign family_handle = family | handleize -%}
+                            {%- assign token = '|' | append: family_handle | append: '|' -%}
+
+                            {%- if present_families contains token -%}
+                              {%- render 'rug-filter-option', facet: facet, value: family_handle, label: family, group: group_label, swatch: family_colors[forloop.index0], section_id: section.id -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+                      {%- endcase -%}
+                    </div>
+
+                    {%- if block.settings.note != blank -%}
+                      <p class="rug-filter__note">{{ block.settings.note | escape }}</p>
+                    {%- endif -%}
+                  {%- endcapture -%}
+
+                  {%- render 'accordion', title: group_label, content: group_content, open: block.settings.open, show_arrow: true -%}
+                  {%- assign rendered_groups = rendered_groups | plus: 1 -%}
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endcapture -%}
+
+          {%- liquid
+            if rendered_groups == 0
+              assign show_filters = false
+              assign use_sidebar = false
+            endif
+
+            assign count_one = 'rug_list.count_one' | t: count: '%c'
+            assign count_other = 'rug_list.count_other' | t: count: '%c'
+            assign count_filtered = 'rug_list.count_filtered' | t: count: '%c', total: '%t'
+            assign show_one = 'rug_list.show_one' | t: count: '%c'
+            assign show_other = 'rug_list.show_other' | t: count: '%c'
+            assign remove_label = 'collection.faceting.remove_filter' | t: name: '%n'
+
+            if collection.products_count == 1
+              assign initial_count = count_one | replace: '%c', collection.products_count
+            else
+              assign initial_count = count_other | replace: '%c', collection.products_count
+            endif
+          -%}
+
+          <rug-list class="rug-list contents" data-section-id="{{ section.id }}"
+            data-text-count-one="{{ count_one | escape }}"
+            data-text-count-other="{{ count_other | escape }}"
+            data-text-filtered="{{ count_filtered | escape }}"
+            data-text-show-one="{{ show_one | escape }}"
+            data-text-show-other="{{ show_other | escape }}"
+            data-text-remove="{{ remove_label | escape }}"
+            data-text-clear="{{ 'collection.faceting.clear_filters' | t | escape }}">
+
+            <script type="application/json" data-rug-data>{ {{- rug_data -}} }</script>
+
+            <template data-rug-close-icon>{%- render 'icon' with 'close', width: 10 -%}</template>
+
+            {%- comment -%}
+            ----------------------------------------------------------------------------------------------------------
+            TOOLBAR
+            ----------------------------------------------------------------------------------------------------------
+            {%- endcomment -%}
+
+            <height-observer variable="collection-toolbar" class="collection-toolbar full-bleed rug-list__toolbar">
+              <div class="collection-toolbar__button-list rug-list__needs-js">
+                {%- if show_filters -%}
+                  <div class="collection-toolbar__button-container {% if use_sidebar %}md:hidden{% endif %}">
+                    <button type="button" aria-controls="rug-filters-{{ section.id }}" class="collection-toolbar__button heading text-xxs w-full">
+                      {{- 'collection.faceting.filter_button' | t }} <span data-rug-active-count="{{ section.id }}"></span>
+                    </button>
+                  </div>
+                {%- endif -%}
+
+                <div class="collection-toolbar__button-container">
+                  <button type="button" aria-controls="rug-sort-{{ section.id }}" class="collection-toolbar__button heading text-xxs w-full">
+                    <span class="text-with-icon justify-center">
+                      {{- 'collection.faceting.sort_by' | t -}}
+                      {%- render 'icon' with 'chevron-down' -%}
+                    </span>
+                  </button>
+
+                  <x-popover id="rug-sort-{{ section.id }}" class="popover popover--bottom-end color-scheme color-scheme--dialog" close-on-listbox-select data-rug-sort="{{ section.id }}">
+                    <p class="h4" slot="header">{{ 'collection.faceting.sort_by' | t }}</p>
+
+                    <x-listbox class="popover__value-list">
+                      <button type="button" class="popover__value-option group" role="option" value="featured" aria-selected="true"><span class="reversed-link">{{ 'rug_list.sort.featured' | t }}</span></button>
+                      <button type="button" class="popover__value-option group" role="option" value="title"><span class="reversed-link">{{ 'rug_list.sort.title' | t }}</span></button>
+                      <button type="button" class="popover__value-option group" role="option" value="price-asc"><span class="reversed-link">{{ 'rug_list.sort.price_asc' | t }}</span></button>
+                      <button type="button" class="popover__value-option group" role="option" value="price-desc"><span class="reversed-link">{{ 'rug_list.sort.price_desc' | t }}</span></button>
+                      <button type="button" class="popover__value-option group" role="option" value="level"><span class="reversed-link">{{ 'rug_list.sort.level' | t }}</span></button>
+                    </x-listbox>
+                  </x-popover>
+                </div>
+              </div>
+
+              <p class="collection-toolbar__products-count h6 text-subdued md-max:hidden" data-rug-count aria-live="polite">{{ initial_count }}</p>
+            </height-observer>
+
+            <div class="collection">
+              {%- if show_filters -%}
+                <x-drawer id="rug-filters-{{ section.id }}" class="facets-drawer drawer drawer--sm color-scheme color-scheme--dialog {% if use_sidebar %}md:hidden{% endif %}">
+                  <p class="h4" slot="header">{{ 'collection.faceting.filters' | t }}</p>
+
+                  <div class="facets rug-filters">
+                    <div class="accordion-list">
+                      {{- filter_groups | replace: 'RUGCTX', 'drawer' -}}
+                    </div>
+                  </div>
+
+                  <div slot="footer" class="v-stack gap-4">
+                    <button type="button" class="link text-subdued justify-self-center" data-rug-clear="{{ section.id }}" hidden>{{ 'collection.faceting.clear_filters' | t }}</button>
+
+                    {%- capture button_content -%}<span data-rug-show="{{ section.id }}">{{ 'collection.faceting.apply_filters' | t }}</span>{%- endcapture -%}
+
+                    <dialog-close-button class="contents">
+                      {%- render 'button', type: 'button', content: button_content, stretch: true -%}
+                    </dialog-close-button>
+                  </div>
+                </x-drawer>
+
+                {%- if use_sidebar -%}
+                  <safe-sticky class="facets-sidebar md-max:hidden rug-list__needs-js">
+                    <div class="facets rug-filters">
+                      <div class="accordion-list">
+                        {{- filter_groups | replace: 'RUGCTX', 'sidebar' -}}
+                      </div>
+                    </div>
+                  </safe-sticky>
+                {%- endif -%}
+              {%- endif -%}
+
+              <div class="collection__main">
+                <p class="rug-list__count text-subdued md:hidden" data-rug-count>{{ initial_count }}</p>
+
+                <div class="active-facets rug-list__active {% unless use_sidebar %}justify-center{% endunless %}" data-rug-active hidden></div>
+
+                <product-list id="product-list-{{ section.id }}" class="product-list" collection-mobile-layout="{{ products_mobile_grid_mode }}" collection-desktop-layout="{{ products_desktop_grid_mode }}">
+                  {%- for product in collection.products -%}
+                    {%- liquid
+                      assign meta = ''
+
+                      if section.settings.show_card_meta
+                        if collection.handle == 'all'
+                          for product_collection in product.collections
+                            unless product_collection.handle == 'all' or product_collection.handle == 'frontpage'
+                              assign meta = product_collection.title
+                              break
+                            endunless
+                          endfor
+                        endif
+
+                        assign material_names = ''
+                        for material in product.metafields.rug.materials.value
+                          if material_names != ''
+                            assign material_names = material_names | append: ', '
+                          endif
+                          assign material_names = material_names | append: material.name.value
+                        endfor
+
+                        if material_names != ''
+                          if meta != ''
+                            assign meta = meta | append: ' · '
+                          endif
+                          assign meta = meta | append: material_names
+                        endif
+                      endif
+                    -%}
+
+                    {%- render 'product-card', product: product, reveal: settings.stagger_products_apparition, position: forloop.index, stacked: true, meta: meta -%}
+                  {%- endfor -%}
+                </product-list>
+
+                <div class="empty-state rug-list__empty" data-rug-empty hidden>
+                  <div class="v-stack gap-6 justify-items-center">
+                    <p>{{ 'rug_list.empty' | t }}</p>
+
+                    <div class="h-stack wrap justify-center gap-4">
+                      <button type="button" class="button" data-rug-clear="{{ section.id }}">{{ 'collection.faceting.clear_filters' | t }}</button>
+
+                      {%- if section.settings.empty_link != blank and section.settings.empty_link_text != blank -%}
+                        <a href="{{ section.settings.empty_link }}" class="button button--outline">{{ section.settings.empty_link_text | escape }}</a>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </div>
+
+                {%- render 'pagination', paginate: paginate -%}
+              </div>
+            </div>
+          </rug-list>
+
+          <noscript>
+            <style>
+              .rug-list__needs-js { display: none !important; }
+            </style>
+          </noscript>
+        {%- endpaginate -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  /* Anything this section hides stays hidden, whatever display its class sets */
+  .rug-list [hidden],
+  .facets-drawer [data-rug-clear][hidden] {
+    display: none !important;
+  }
+
+  /* On phones the count sits above the list; on computers it is in the toolbar */
+  .rug-list__count {
+    margin: 0;
+    font-size: 0.8125rem;
+    text-align: center;
+  }
+
+  /* Filter options */
+  .rug-filter__option label {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    cursor: pointer;
+  }
+
+  .rug-filter__option .checkbox:disabled ~ label {
+    cursor: default;
+  }
+
+  .rug-filter__count {
+    font-size: 0.8125em;
+    opacity: 0.7;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rug-filter__swatch {
+    flex: none;
+    align-self: center;
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 50%;
+    background: var(--swatch, transparent);
+    box-shadow: inset 0 0 0 1px rgb(var(--text-color) / 0.18);
+  }
+
+  .rug-filter__swatch--multi {
+    background: conic-gradient(#b5533c, #c9a24b, #2f6b5a, #34608f, #8b5e3c, #b5533c);
+  }
+
+  .rug-filter__note {
+    margin-block-start: 1rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    opacity: 0.7;
+  }
+
+  /* The line under a rug's name: its collection and materials */
+  .product-card__meta {
+    margin: 0;
+  }
+
+  /* Active filters above the list */
+  .rug-list__active .removable-facet button {
+    display: flex;
+    align-items: center;
+  }
+
+  .rug-list__empty {
+    padding-block: 4rem;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('rug-list')) {
+    const FACETS = ['collection', 'level', 'material', 'pile', 'colour'];
+
+    const SORTERS = {
+      featured: (a, b) => a.rug.index - b.rug.index,
+      title: (a, b) => a.rug.title.localeCompare(b.rug.title),
+      'price-asc': (a, b) => a.rug.price - b.rug.price || a.rug.index - b.rug.index,
+      'price-desc': (a, b) => b.rug.price - a.rug.price || a.rug.index - b.rug.index,
+      level: (a, b) => a.rug.level - b.rug.level || a.rug.title.localeCompare(b.rug.title),
+    };
+
+    customElements.define('rug-list', class RugList extends HTMLElement {
+      connectedCallback() {
+        this.sectionId = this.dataset.sectionId;
+        this.list = this.querySelector('product-list');
+
+        if (!this.list) {
+          return;
+        }
+
+        let data = {};
+
+        try {
+          data = JSON.parse(this.querySelector('script[data-rug-data]').textContent);
+        } catch (error) {
+          data = {};
+        }
+
+        this.cards = Array.from(this.list.children).filter((element) => element.matches('product-card'));
+
+        this.cards.forEach((card, index) => {
+          const rug = data[card.getAttribute('handle')] || {};
+
+          card.rug = {
+            index,
+            title: rug.t || '',
+            price: rug.p || 0,
+            level: rug.l || 0,
+            facets: {
+              collection: rug.c ? [rug.c] : [],
+              level: rug.l ? [String(rug.l)] : [],
+              material: rug.m || [],
+              pile: rug.pi || [],
+              colour: rug.f || [],
+            },
+          };
+        });
+
+        this.selected = {};
+        FACETS.forEach((facet) => { this.selected[facet] = new Set(); });
+        this.sort = 'featured';
+
+        this.onChange = this.onChange.bind(this);
+        this.onClick = this.onClick.bind(this);
+        this.onSort = this.onSort.bind(this);
+
+        document.addEventListener('change', this.onChange);
+        document.addEventListener('click', this.onClick);
+        document.addEventListener('listbox:change', this.onSort);
+
+        this.readUrl();
+        this.update(true);
+      }
+
+      disconnectedCallback() {
+        document.removeEventListener('change', this.onChange);
+        document.removeEventListener('click', this.onClick);
+        document.removeEventListener('listbox:change', this.onSort);
+      }
+
+      /* The filter boxes live in the sidebar and in the drawer, and the drawer may be moved elsewhere in the page */
+      get inputs() {
+        return Array.from(document.querySelectorAll(`input[data-rug-list="${this.sectionId}"]`));
+      }
+
+      onChange(event) {
+        const input = event.target;
+
+        if (!input.matches || !input.matches(`input[data-rug-list="${this.sectionId}"]`)) {
+          return;
+        }
+
+        const values = this.selected[input.dataset.facet];
+
+        if (!values) {
+          return;
+        }
+
+        if (input.checked) {
+          values.add(input.value);
+        } else {
+          values.delete(input.value);
+        }
+
+        this.update();
+      }
+
+      onClick(event) {
+        const clear = event.target.closest(`[data-rug-clear="${this.sectionId}"]`);
+
+        if (clear) {
+          FACETS.forEach((facet) => this.selected[facet].clear());
+          this.update();
+          return;
+        }
+
+        const remove = event.target.closest('[data-rug-remove]');
+
+        if (remove && this.contains(remove)) {
+          this.selected[remove.dataset.facet]?.delete(remove.dataset.value);
+          this.update();
+        }
+      }
+
+      onSort(event) {
+        if (!event.target.closest(`[data-rug-sort="${this.sectionId}"]`)) {
+          return;
+        }
+
+        this.sort = SORTERS[event.detail.value] ? event.detail.value : 'featured';
+        this.update();
+      }
+
+      readUrl() {
+        const parameters = new URLSearchParams(window.location.search);
+        const known = {};
+
+        this.inputs.forEach((input) => {
+          (known[input.dataset.facet] = known[input.dataset.facet] || new Set()).add(input.value);
+        });
+
+        FACETS.forEach((facet) => {
+          (parameters.get(facet) || '').split(',').forEach((value) => {
+            if (value && known[facet] && known[facet].has(value)) {
+              this.selected[facet].add(value);
+            }
+          });
+        });
+
+        const sort = parameters.get('sort');
+
+        if (sort && SORTERS[sort]) {
+          this.sort = sort;
+
+          document.querySelectorAll(`[data-rug-sort="${this.sectionId}"] [role="option"]`).forEach((option) => {
+            option.setAttribute('aria-selected', option.value === sort ? 'true' : 'false');
+          });
+        }
+      }
+
+      writeUrl() {
+        const url = new URL(window.location.href);
+
+        FACETS.forEach((facet) => {
+          if (this.selected[facet].size > 0) {
+            url.searchParams.set(facet, Array.from(this.selected[facet]).join(','));
+          } else {
+            url.searchParams.delete(facet);
+          }
+        });
+
+        if (this.sort !== 'featured') {
+          url.searchParams.set('sort', this.sort);
+        } else {
+          url.searchParams.delete('sort');
+        }
+
+        /* Keep the commas readable in the address */
+        window.history.replaceState(window.history.state, '', url.toString().replace(/%2C/g, ','));
+      }
+
+      matches(card, ignoredFacet) {
+        return FACETS.every((facet) => {
+          const values = this.selected[facet];
+
+          return facet === ignoredFacet || values.size === 0 || card.rug.facets[facet].some((value) => values.has(value));
+        });
+      }
+
+      text(key, replacements) {
+        let text = this.dataset[key] || '';
+
+        Object.keys(replacements || {}).forEach((token) => {
+          text = text.replace(token, replacements[token]);
+        });
+
+        return text;
+      }
+
+      update(initial = false) {
+        /* 1. Show the rugs that match */
+        let visible = 0;
+
+        this.cards.forEach((card) => {
+          const show = this.matches(card);
+
+          card.hidden = !show;
+          visible += show ? 1 : 0;
+        });
+
+        /* 2. Put them in order, touching the page only when the order changes */
+        const ordered = this.cards.slice().sort(SORTERS[this.sort] || SORTERS.featured);
+        const current = Array.from(this.list.children).filter((element) => element.matches('product-card'));
+
+        if (ordered.some((card, index) => card !== current[index])) {
+          ordered.forEach((card) => this.list.appendChild(card));
+        }
+
+        /* 3. Refresh every filter box: its tick, and how many rugs it would give */
+        const inputs = this.inputs;
+        let active = 0;
+
+        FACETS.forEach((facet) => { active += this.selected[facet].size; });
+
+        inputs.forEach((input) => {
+          const facet = input.dataset.facet;
+          const count = this.cards.reduce((total, card) => total + (this.matches(card, facet) && card.rug.facets[facet].includes(input.value) ? 1 : 0), 0);
+          const output = input.parentElement.querySelector('[data-rug-option-count]');
+
+          input.checked = this.selected[facet].has(input.value);
+          input.disabled = count === 0 && !input.checked;
+
+          if (output) {
+            output.textContent = `(${count})`;
+          }
+        });
+
+        /* 4. The count, the chips of active filters, and the empty message */
+        const total = this.cards.length;
+        const countText = active > 0
+          ? this.text('textFiltered', { '%c': visible, '%t': total })
+          : this.text(total === 1 ? 'textCountOne' : 'textCountOther', { '%c': total });
+
+        this.querySelectorAll('[data-rug-count]').forEach((element) => {
+          if (element.textContent !== countText) {
+            element.textContent = countText;
+          }
+        });
+
+        document.querySelectorAll(`[data-rug-show="${this.sectionId}"]`).forEach((element) => {
+          element.textContent = this.text(visible === 1 ? 'textShowOne' : 'textShowOther', { '%c': visible });
+        });
+
+        document.querySelectorAll(`[data-rug-active-count="${this.sectionId}"]`).forEach((element) => {
+          element.textContent = active > 0 ? `(${active})` : '';
+        });
+
+        document.querySelectorAll(`[data-rug-clear="${this.sectionId}"]`).forEach((element) => {
+          if (!element.closest('[data-rug-empty]')) {
+            element.hidden = active === 0;
+          }
+        });
+
+        this.renderChips(inputs, active);
+
+        const empty = this.querySelector('[data-rug-empty]');
+
+        if (empty) {
+          empty.hidden = visible > 0;
+        }
+
+        this.list.hidden = visible === 0;
+
+        if (!initial) {
+          this.writeUrl();
+
+          if (visible > 0 && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+            this.list.animate([{ opacity: 0.35 }, { opacity: 1 }], { duration: 280, easing: 'ease-out' });
+          }
+        }
+      }
+
+      renderChips(inputs, active) {
+        const container = this.querySelector('[data-rug-active]');
+
+        if (!container) {
+          return;
+        }
+
+        container.textContent = '';
+        container.hidden = active === 0;
+
+        if (active === 0) {
+          return;
+        }
+
+        const icon = this.querySelector('template[data-rug-close-icon]');
+        const seen = new Set();
+
+        inputs.forEach((input) => {
+          const key = `${input.dataset.facet}:${input.value}`;
+
+          if (!input.checked || seen.has(key)) {
+            return;
+          }
+
+          seen.add(key);
+
+          const chip = document.createElement('div');
+          const button = document.createElement('button');
+          const label = document.createElement('span');
+
+          chip.className = 'removable-facet';
+
+          button.type = 'button';
+          button.className = 'tap-area link-faded';
+          button.dataset.rugRemove = '';
+          button.dataset.facet = input.dataset.facet;
+          button.dataset.value = input.value;
+          button.setAttribute('aria-label', this.text('textRemove', { '%n': input.dataset.label }));
+
+          if (icon) {
+            button.appendChild(icon.content.cloneNode(true));
+          }
+
+          label.className = 'text-subdued';
+          label.textContent = `${input.dataset.group}: ${input.dataset.label}`;
+
+          chip.append(button, label);
+          container.appendChild(chip);
+        });
+
+        if (active > 1) {
+          const clear = document.createElement('button');
+
+          clear.type = 'button';
+          clear.className = 'facets-clear-all text-subdued';
+          clear.dataset.rugClear = this.sectionId;
+          clear.innerHTML = '<span class="link"></span>';
+          clear.firstChild.textContent = this.dataset.textClear || '';
+
+          container.appendChild(clear);
+        }
+      }
+    });
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Rug list",
+  "class": "shopify-section--main-collection",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["collection"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows every rug of the collection on one page. Filters and sorting act at once, without reloading. The facts come from the rug fields of each product: craft level, materials, pile and colour family."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "List"
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "Rugs per row on phones",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "products_size_desktop",
+      "label": "Rug size on computers",
+      "options": [
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_card_meta",
+      "label": "Show collection and materials under each rug",
+      "default": true
+    },
+    {
+      "type": "range",
+      "min": 0.2,
+      "max": 2,
+      "step": 0.1,
+      "id": "horizontal_spacing_factor",
+      "label": "Horizontal spacing",
+      "default": 0.2
+    },
+    {
+      "type": "range",
+      "min": 0.2,
+      "max": 2,
+      "step": 0.1,
+      "id": "vertical_spacing_factor",
+      "label": "Vertical spacing",
+      "default": 0.2
+    },
+    {
+      "type": "header",
+      "content": "Filters"
+    },
+    {
+      "type": "select",
+      "id": "filter_layout",
+      "label": "Filters on computers",
+      "options": [
+        {
+          "value": "sidebar",
+          "label": "Always visible, beside the list"
+        },
+        {
+          "value": "drawer",
+          "label": "Behind a Filter button"
+        }
+      ],
+      "default": "sidebar"
+    },
+    {
+      "type": "range",
+      "id": "min_products_for_filters",
+      "label": "Show filters from this many rugs",
+      "info": "Smaller collections show sorting only.",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "link_list",
+      "id": "collection_menu",
+      "label": "Collections for the Collection filter",
+      "info": "Sets which collections are offered, and their order.",
+      "default": "main-menu"
+    },
+    {
+      "type": "header",
+      "content": "When no rug matches"
+    },
+    {
+      "type": "text",
+      "id": "empty_link_text",
+      "label": "Button text",
+      "default": "Tailor your rug"
+    },
+    {
+      "type": "url",
+      "id": "empty_link",
+      "label": "Button link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "filter",
+      "name": "Filter group",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "select",
+          "id": "source",
+          "label": "Filter by",
+          "options": [
+            {
+              "value": "collection",
+              "label": "Collection"
+            },
+            {
+              "value": "level",
+              "label": "Craft level"
+            },
+            {
+              "value": "material",
+              "label": "Material"
+            },
+            {
+              "value": "pile",
+              "label": "Pile"
+            },
+            {
+              "value": "colour",
+              "label": "Colour family"
+            }
+          ],
+          "default": "material"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Title",
+          "info": "Leave empty to use the standard title."
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Note under the options"
+        },
+        {
+          "type": "checkbox",
+          "id": "open",
+          "label": "Open at the start",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rug list",
+      "blocks": [
+        {
+          "type": "filter",
+          "settings": {
+            "source": "collection"
+          }
+        },
+        {
+          "type": "filter",
+          "settings": {
+            "source": "level"
+          }
+        },
+        {
+          "type": "filter",
+          "settings": {
+            "source": "material"
+          }
+        },
+        {
+          "type": "filter",
+          "settings": {
+            "source": "pile"
+          }
+        },
+        {
+          "type": "filter",
+          "settings": {
+            "source": "colour"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

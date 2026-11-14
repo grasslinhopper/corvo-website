@@ -22,31 +22,81 @@
       }
     },
     "main": {
-      "type": "main-collection",
+      "type": "rug-list",
+      "blocks": {
+        "filter-collection": {
+          "type": "filter",
+          "settings": {
+            "source": "collection",
+            "label": "",
+            "note": "",
+            "open": true
+          }
+        },
+        "filter-level": {
+          "type": "filter",
+          "settings": {
+            "source": "level",
+            "label": "",
+            "note": "How demanding the design is to make. It sets the price per m².",
+            "open": true
+          }
+        },
+        "filter-material": {
+          "type": "filter",
+          "settings": {
+            "source": "material",
+            "label": "",
+            "note": "",
+            "open": true
+          }
+        },
+        "filter-pile": {
+          "type": "filter",
+          "settings": {
+            "source": "pile",
+            "label": "",
+            "note": "",
+            "open": true
+          }
+        },
+        "filter-colour": {
+          "type": "filter",
+          "settings": {
+            "source": "colour",
+            "label": "Colour as shown",
+            "note": "Every rug can be made in any colour.",
+            "open": true
+          }
+        }
+      },
+      "block_order": [
+        "filter-collection",
+        "filter-level",
+        "filter-material",
+        "filter-pile",
+        "filter-colour"
+      ],
       "settings": {
         "color_scheme": "scheme-1",
-        "hide_product_information": false,
-        "products_per_page": 24,
         "products_per_row_mobile": "1",
         "products_size_desktop": "large",
-        "show_grid_mode_selector": false,
+        "show_card_meta": true,
         "horizontal_spacing_factor": 0.2,
         "vertical_spacing_factor": 0.2,
-        "filter_layout": "drawer",
-        "quick_links_menu": "collection-links",
-        "show_sort_by": true,
-        "show_filters": true,
-        "show_results_count": true,
-        "show_filter_group_name": true,
-        "show_filter_values_count": false,
-        "open_filters_by_default": false
+        "filter_layout": "sidebar",
+        "min_products_for_filters": 10,
+        "collection_menu": "collection-links",
+        "empty_link_text": "Tailor your rug",
+        "empty_link": "shopify://pages/tailor-your-rug"
       }
     },
     "subnav-tabs": {
       "type": "page-subnav",
       "settings": {
         "menu": "site-menu",
-        "style": "tabs"
+        "style": "tabs",
+        "sticky": false
       }
     }
   },

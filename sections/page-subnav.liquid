@@ -51,7 +51,7 @@
 
 {%- if siblings != null and siblings.size > 1 -%}
   {%- if section.settings.style == 'tabs' -%}
-    <nav class="subnav subnav--tabs" aria-label="{{ group_title | escape }}">
+    <nav class="subnav subnav--tabs{% unless section.settings.sticky %} subnav--static{% endunless %}" aria-label="{{ group_title | escape }}">
       <div class="subnav__inner">
         <p class="subnav__title">{{ group_title | escape }}</p>
 
@@ -110,7 +110,7 @@
 
 {% stylesheet %}
   /* The tab bar sticks under the header and follows it when the header hides on scroll */
-  .shopify-section--page-subnav:has(.subnav--tabs) {
+  .shopify-section--page-subnav:has(.subnav--tabs:not(.subnav--static)) {
     position: sticky;
     inset-block-start: var(--sticky-area-height, 0px);
     z-index: 2;
@@ -279,7 +279,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .shopify-section--page-subnav:has(.subnav--tabs),
+    .shopify-section--page-subnav:has(.subnav--tabs:not(.subnav--static)),
     .subnav__link,
     .subnav-pager__link {
       transition: none;
@@ -321,6 +321,13 @@
         }
       ],
       "default": "tabs"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Keep the tab bar in view while scrolling",
+      "info": "Switch off on pages that have their own bar, such as the rug list.",
+      "default": true
     },
     {
       "type": "text",

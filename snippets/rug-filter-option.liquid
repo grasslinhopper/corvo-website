@@ -1,0 +1,37 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+RUG FILTER OPTION (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+One tick box of a filter group in the rug list.
+
+********************************************
+Supported variables
+********************************************
+
+* facet: the key of the group (collection, level, material, pile or colour)
+* value: the value this box stands for, as stored in the rug data
+* label: the text shown
+* group: the title of the group, used in the chips of active filters
+* swatch: an optional colour (or "multi") shown as a dot before the label
+* section_id: the ID of the rug list section
+
+"RUGCTX" in the ID is replaced by the section with "sidebar" or "drawer", because the groups are printed twice.
+{%- endcomment -%}
+
+{%- capture id -%}rug-RUGCTX-{{ section_id }}-{{ facet }}-{{ value | handleize }}{%- endcapture -%}
+
+<div class="checkbox-control rug-filter__option">
+  <input type="checkbox" class="checkbox" id="{{ id }}" value="{{ value | escape }}" data-rug-list="{{ section_id }}" data-facet="{{ facet }}" data-label="{{ label | escape }}" data-group="{{ group | escape }}">
+
+  <label for="{{ id }}">
+    {%- if swatch == 'multi' -%}
+      <span class="rug-filter__swatch rug-filter__swatch--multi"></span>
+    {%- elsif swatch != blank -%}
+      <span class="rug-filter__swatch" style="--swatch: {{ swatch }}"></span>
+    {%- endif -%}
+
+    <span>{{ label | escape }}</span>
+    <span class="rug-filter__count" data-rug-option-count></span>
+  </label>
+</div>
