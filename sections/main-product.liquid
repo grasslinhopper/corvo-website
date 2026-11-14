@@ -637,6 +637,22 @@ quick buy information in a template, that will be extracted in JS, which ensures
     display: block;
   }
 
+  /* "Order a sample" and its price: side by side where there is room, on two lines where there is not */
+  .rug-sample__label {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 .75em;
+    display: flex;
+  }
+
+  .rug-sample__label > * {
+    white-space: nowrap;
+  }
+
+  .rug-sample__price {
+    opacity: .65;
+  }
+
   .button[data-rug-blocked] {
     opacity: .35;
     cursor: not-allowed;

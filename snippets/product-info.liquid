@@ -286,13 +286,14 @@ Supported variables
                   assign rug_sample_colours = product.metafields.rug.colour_refs.value | join: ', '
                   assign rug_design_label = 'rug_page.design' | t
                   assign rug_colours_label = 'rug_page.colours' | t
-
-                  capture rug_sample_label
-                    echo block.settings.link_1_text | escape
-                    echo ' · '
-                    render 'rug-money', amount: rug_sample_variant.price
-                  endcapture
                 -%}
+
+                {%- capture rug_sample_label -%}
+                  <span class="rug-sample__label">
+                    <span>{{ block.settings.link_1_text | escape }}</span>
+                    <span class="rug-sample__price">{%- render 'rug-money', amount: rug_sample_variant.price -%}</span>
+                  </span>
+                {%- endcapture -%}
 
                 <product-form class="rug-sample">
                   <form method="post" action="{{ routes.cart_add_url }}" id="{{ rug_sample_form_id }}" accept-charset="UTF-8">
