@@ -129,14 +129,19 @@
     padding-inline: var(--container-gutter);
   }
 
+  /* The group name is a label, not a tab: full strength, set apart by a rule */
   .subnav__title {
     display: none;
     flex: none;
+    align-self: stretch;
+    align-items: center;
     margin: 0;
+    padding-inline-end: 2rem;
+    border-inline-end: 1px solid rgb(var(--text-color) / 0.12);
     font-size: 0.6875rem;
+    font-weight: 600;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    opacity: 0.55;
   }
 
   .subnav__list {
@@ -234,7 +239,7 @@
 
   @media (min-width: 1000px) {
     .subnav__title {
-      display: block;
+      display: flex;
     }
 
     .subnav__list {

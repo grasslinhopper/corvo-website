@@ -53,14 +53,6 @@
             "button_background": "",
             "button_text_color": ""
           }
-        },
-        "image_rXLggt": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/PRR_5ab2072d-44f8-414c-97d0-f43010e9aeea.png",
-            "image_width": 100,
-            "link": "https://www.dropbox.com/scl/fi/l4901c6ljq5n6icn7kezz/SIQualifica-o-Ficha-de-projeto-2021.pdf?rlkey=4rml1bcnm3zh1nupbeg0l93mu&e=1&dl=0"
-          }
         }
       },
       "block_order": [
@@ -69,8 +61,7 @@
         "links-bespoke",
         "links-resources",
         "links-corvo",
-        "newsletter",
-        "image_rXLggt"
+        "newsletter"
       ],
       "custom_css": [],
       "settings": {

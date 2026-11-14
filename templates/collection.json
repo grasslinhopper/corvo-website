@@ -16,7 +16,9 @@
         "show_breadcrumb": false,
         "content_width": "xs",
         "overlay_color": "#000000",
-        "overlay_opacity": 50
+        "overlay_opacity": 50,
+        "plain_color_scheme": "scheme-1",
+        "all_products_title": "All rugs"
       }
     },
     "main": {
