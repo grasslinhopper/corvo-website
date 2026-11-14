@@ -1,160 +1,257 @@
 {
   "sections": {
-    "slideshow": {
-      "type": "slideshow",
+    "hero": {
+      "type": "hero-films",
       "blocks": {
-        "slide-1": {
-          "type": "image",
+        "film-1": {
+          "type": "film",
           "settings": {
-            "image": "shopify://shop_images/RamiroRelvas_Pintura1.jpg",
-            "subheading": "New collection",
-            "title": "from ink to thread",
-            "mobile_text_position": "place-self-center text-center",
-            "desktop_text_position": "sm:place-self-center sm:text-center",
-            "content_max_width": 740,
-            "button_1_text": "Discover More",
-            "button_1_link": "shopify://collections/from-ink-to-thread",
-            "button_1_style": "link",
-            "button_1_background": "#ffffff",
-            "button_1_text_color": "#1c1c1c",
-            "button_2_text": "",
-            "button_2_link": "",
-            "button_2_style": "solid",
-            "button_2_background": "#1c1c1c",
-            "button_2_text_color": "#ffffff",
-            "background": "",
-            "background_opacity": 50,
-            "text_color": "#ffffff",
-            "border_color": "",
-            "gradient_overlay": "linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0) 100%)"
+            "video": "shopify://files/videos/R11 V2.mov",
+            "trim_end": 2.7
           }
         },
-        "slide-2": {
-          "type": "image",
-          "disabled": true,
+        "film-2": {
+          "type": "film",
           "settings": {
-            "subheading": "Our bag",
-            "title": "Elegant & Timeless",
-            "mobile_text_position": "place-self-center text-center",
-            "desktop_text_position": "sm:place-self-center sm:text-center",
-            "content_max_width": 400,
-            "button_1_text": "View collection",
-            "button_1_link": "",
-            "button_1_style": "solid",
-            "button_1_background": "#ffffff",
-            "button_1_text_color": "#000000",
-            "button_2_text": "",
-            "button_2_link": "",
-            "button_2_style": "outline",
-            "button_2_background": "#ffffff",
-            "button_2_text_color": "#000000",
-            "background": "",
-            "background_opacity": 50,
-            "text_color": "#ffffff",
-            "border_color": "#ffffff",
-            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.1), rgba(4, 4, 4, 0.45) 100%)"
+            "video": "shopify://files/videos/R15 V2.mov",
+            "trim_end": 2.9
+          }
+        },
+        "film-3": {
+          "type": "film",
+          "settings": {
+            "video": "shopify://files/videos/R17 V2.mov",
+            "trim_end": 2.7
           }
         }
       },
       "block_order": [
-        "slide-1",
-        "slide-2"
+        "film-1",
+        "film-2",
+        "film-3"
       ],
       "settings": {
+        "eyebrow": "Rug atelier · Real family heritage",
+        "heading": "Any rug, made to your design",
+        "text": "Any size, shape and colour. Designed and made in Portugal by Corvo, the atelier of the Sorema group.",
+        "button_1_text": "Explore the collections",
+        "button_1_link": "shopify://collections",
+        "button_2_text": "Tailor your rug",
+        "button_2_link": "shopify://pages/tailor-your-rug",
+        "text_color": "#ffffff",
+        "overlay_opacity": 40,
+        "mobile_film": "1",
         "allow_transparent_header": true,
-        "show_next_section_button": true,
-        "media_size": "fill",
-        "show_initial_transition": true,
-        "autoplay": true,
-        "autoplay_pause_on_video": true,
-        "cycle_speed": 5,
-        "background": "#000000",
-        "controls_color": "#ffffff"
+        "pause_label": "Pause the films",
+        "play_label": "Play the films"
       }
     },
-    "wf-hero": {
-      "type": "wireframe",
+    "doors": {
+      "type": "media-grid",
+      "blocks": {
+        "door-collections": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/CORVO_FINAL-43-19mb.jpg",
+            "column_count": "4",
+            "row_count": 2,
+            "title": "Collections",
+            "heading_tag": "h2",
+            "content": "<p>Six collections, designed in our studio</p>",
+            "link_text": "Explore the collections",
+            "link_url": "shopify://collections",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 35
+          }
+        },
+        "door-bespoke": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/CORVO_11.jpg",
+            "column_count": "4",
+            "row_count": 2,
+            "title": "Bespoke",
+            "heading_tag": "h2",
+            "content": "<p>Your design, your size, your colours</p>",
+            "link_text": "How bespoke works",
+            "link_url": "shopify://pages/bespoke",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 35
+          }
+        },
+        "door-portfolio": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/VERTIS-4.png",
+            "column_count": "4",
+            "row_count": 2,
+            "title": "Portfolio",
+            "heading_tag": "h2",
+            "content": "<p>Corvo rugs in homes and public spaces</p>",
+            "link_text": "See the projects",
+            "link_url": "shopify://pages/portfolio",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 35
+          }
+        }
+      },
+      "block_order": [
+        "door-collections",
+        "door-bespoke",
+        "door-portfolio"
+      ],
       "settings": {
-        "label": "Hero film",
-        "is_page_title": false,
-        "description": "Replaces the slideshow above: a silent 10 to 20 second loop of the atelier and a finished rug in a house, one line of text and two buttons, Explore collections and Tailor your rug.",
-        "needs": "The film, or approval to animate photos until one exists. The positioning line.",
-        "phase": "Phase 1",
-        "layout": "text",
-        "columns": 3,
-        "size": "small"
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "desktop_row_height": 330,
+        "mobile_row_height": 200,
+        "section_width": "lg",
+        "spacing": "xs",
+        "subheading": "",
+        "title": "",
+        "content": ""
       }
     },
-    "wf-doors": {
-      "type": "wireframe",
+    "collections": {
+      "type": "collection-list",
+      "blocks": {
+        "collection-1": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "from-ink-to-thread",
+            "title": "From Ink To Thread",
+            "button_text": "Discover",
+            "button_style": "link"
+          }
+        },
+        "collection-2": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "colecao-ultra-fixe",
+            "title": "Priming",
+            "button_text": "Discover",
+            "button_style": "link"
+          }
+        },
+        "collection-3": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "contour",
+            "title": "Contour",
+            "button_text": "Discover",
+            "button_style": "link"
+          }
+        },
+        "collection-4": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "shading",
+            "title": "Shading",
+            "button_text": "Discover",
+            "button_style": "link"
+          }
+        },
+        "collection-5": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "watered-layer",
+            "title": "Watered Layer",
+            "button_text": "Discover",
+            "button_style": "link"
+          }
+        },
+        "collection-6": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "textured-touch",
+            "title": "Textured Touch",
+            "button_text": "Discover",
+            "button_style": "link"
+          }
+        }
+      },
+      "block_order": [
+        "collection-1",
+        "collection-2",
+        "collection-3",
+        "collection-4",
+        "collection-5",
+        "collection-6"
+      ],
       "settings": {
-        "label": "Three doors",
-        "is_page_title": false,
-        "description": "Collections, Bespoke and Portfolio as three large images, so every visitor finds a way in.",
-        "needs": "",
-        "phase": "Phase 1",
-        "layout": "grid",
-        "columns": 3,
-        "size": "medium"
-      }
-    },
-    "wf-collections": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Collections strip",
-        "is_page_title": false,
-        "description": "The six collections in one row that slides sideways.",
-        "needs": "",
-        "phase": "Phase 1",
-        "layout": "grid",
-        "columns": 6,
-        "size": "small"
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "image_size": "lg",
+        "show_text_outside": true,
+        "space_items": true,
+        "stack_collections": false,
+        "collections_per_row_desktop": 3,
+        "stack_collections_mobile": false,
+        "collections_per_row_mobile": "1",
+        "subheading": "Collections",
+        "title": "Our luxury collections",
+        "content": "<p>Each collection is designed in our studio and made in our atelier.</p>"
       }
     },
     "images-with-text-scroll": {
       "type": "images-with-text-scroll",
       "blocks": {
-        "image-with-text-1": {
+        "step-materials": {
           "type": "image_with_text",
           "settings": {
-            "image": "shopify://shop_images/DSCF8626_copy.jpg",
+            "image": "shopify://shop_images/CORVO_FINAL-19.jpg",
             "subheading": "",
-            "title": "materials",
+            "title": "Raw materials",
             "content": "<p>In the world of high-end luxury rugs, the difference between good and extraordinary begins with material. At Corvo, we take time with this choice. Every fiber is selected for how it feels, how it wears over time, and how it lives in a space, not just how it looks.</p><p>We work with a wide range of exceptional fibers, from soft silks and refined plant-based yarns to natural wools chosen for their strength and comfort. Each rug is built as a balanced composition, where texture, weight, and light come together naturally. </p>",
-            "link_text": "",
-            "link_url": "",
+            "link_text": "Raw materials",
+            "link_url": "shopify://pages/raw-materials",
             "link_style": "link"
           }
         },
-        "image-with-text-2": {
+        "step-colours": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/CORVO_FINAL-22.jpg",
+            "subheading": "",
+            "title": "Colours",
+            "content": "<p>Choose from our Open Palette or develop a tone of your own through Infinite Colours. In our colour laboratory every hue is engineered, and every batch of yarn is tested in-house for colourfastness and consistency.</p>",
+            "link_text": "Colours",
+            "link_url": "shopify://pages/colours",
+            "link_style": "link"
+          }
+        },
+        "step-service": {
           "type": "image_with_text",
           "settings": {
             "image": "shopify://shop_images/WhatsApp_Image_2026-01-05_at_20.18.57_4.jpg",
             "subheading": "",
-            "title": "Design",
-            "content": "<p>Every product is imagined and developed in our studio, with a focus on both form and function. Design begins with proportion, texture, and purpose, ensuring each piece feels intentional rather than decorative.</p><p>We consider how a rug will be used, how it will age, and how it will sit within a space. From the first sketch to the final weave, every decision is guided by balance, durability, and comfort underfoot.</p>",
-            "link_text": "",
-            "link_url": "",
-            "link_style": "link"
-          }
-        },
-        "image_with_text_TEk6dP": {
-          "type": "image_with_text",
-          "settings": {
-            "image": "shopify://shop_images/IMG_5756.jpg",
-            "subheading": "",
-            "title": "Know-How",
-            "content": "<p>Since the beginning of our production, morE than 50 years ago, responsibility has been a core value. It defines how we design, how we source our materials, and how we think about the longevity of our products, rather than trends.</p><p>We work with trusted partners and choose materials deliberately, aiming to reduce waste while maintaining the highest standards of quality </p><p>The result is a collection of pieces designed to live well in your space, today and for years to come.</p>",
-            "link_text": "",
-            "link_url": "",
+            "title": "Service",
+            "content": "<p>It starts with a personal consultation, where our team works with you on fibres, structure, pile height, colours and shape. Then come the artwork for your approval, a sample, production and delivery.</p>",
+            "link_text": "Our service",
+            "link_url": "shopify://pages/bespoke-service",
             "link_style": "link"
           }
         }
       },
       "block_order": [
-        "image-with-text-1",
-        "image-with-text-2",
-        "image_with_text_TEk6dP"
+        "step-materials",
+        "step-colours",
+        "step-service"
       ],
       "settings": {
         "color_scheme": "scheme-3",
@@ -165,46 +262,139 @@
         "overlay_opacity": 20
       }
     },
-    "wf-bespoke": {
-      "type": "wireframe",
+    "projects": {
+      "type": "media-grid",
+      "blocks": {
+        "project-comporta": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/NOISY-1.png",
+            "column_count": "4",
+            "row_count": 2,
+            "title": "House in Comporta",
+            "heading_tag": "h3",
+            "content": "<p>Private residence · Portugal</p>",
+            "link_text": "",
+            "link_url": "shopify://pages/portfolio",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 35
+          }
+        },
+        "project-foz": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/BORDER-2_8cea2702-fb6b-44ea-a616-d26f116f3bed.png",
+            "column_count": "4",
+            "row_count": 2,
+            "title": "House in Foz",
+            "heading_tag": "h3",
+            "content": "<p>Private residence · Portugal</p>",
+            "link_text": "",
+            "link_url": "shopify://pages/portfolio",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 35
+          }
+        },
+        "project-london": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/VERDANT-transferir_4.png",
+            "column_count": "4",
+            "row_count": 2,
+            "title": "Restaurant in London",
+            "heading_tag": "h3",
+            "content": "<p>Restaurant · United Kingdom</p>",
+            "link_text": "",
+            "link_url": "shopify://pages/portfolio",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 35
+          }
+        }
+      },
+      "block_order": [
+        "project-comporta",
+        "project-foz",
+        "project-london"
+      ],
       "settings": {
-        "label": "Bespoke in three steps",
-        "is_page_title": false,
-        "description": "The scrolling story above becomes Raw Materials, Colours and Service, each linking to its page.",
-        "needs": "",
-        "phase": "Phase 1",
-        "layout": "text",
-        "columns": 3,
-        "size": "small"
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "desktop_row_height": 300,
+        "mobile_row_height": 190,
+        "section_width": "lg",
+        "spacing": "xs",
+        "subheading": "Portfolio",
+        "title": "Selected projects",
+        "content": "<p><a href=\"/pages/portfolio\">See all projects</a></p>"
       }
     },
-    "wf-portfolio": {
-      "type": "wireframe",
+    "professionals": {
+      "type": "image-with-text",
+      "blocks": {
+        "subheading": {
+          "type": "subheading",
+          "settings": {
+            "text": "For professionals"
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "text": "Working with interior designers, architects and retailers",
+            "heading_tag": "h2"
+          }
+        },
+        "richtext": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>We work with studios and specifiers in the UK, New York and beyond on bespoke sizes, colourways and project quantities. Tell us about your project and our atelier will be in touch.</p>"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "Resources for professionals",
+            "url": "shopify://pages/resources",
+            "background": "",
+            "text_color": ""
+          }
+        },
+        "link": {
+          "type": "link",
+          "settings": {
+            "text": "Order samples",
+            "url": "shopify://pages/samples"
+          }
+        }
+      },
+      "block_order": [
+        "subheading",
+        "heading",
+        "richtext",
+        "button",
+        "link"
+      ],
       "settings": {
-        "label": "Portfolio highlights",
-        "is_page_title": false,
-        "description": "Three projects with location and designer.",
-        "needs": "Real project photos and credits.",
-        "phase": "Phase 1",
-        "layout": "grid",
-        "columns": 3,
-        "size": "medium"
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": true,
+        "image": "shopify://shop_images/CORVO_FINAL-28.jpg",
+        "reveal_on_scroll": true,
+        "image_position": "start",
+        "content_width": "sm",
+        "remove_vertical_spacing": true
       }
     },
-    "wf-professionals": {
-      "type": "wireframe",
-      "settings": {
-        "label": "For professionals",
-        "is_page_title": false,
-        "description": "What Corvo offers designers and architects, with links to Resources and Samples.",
-        "needs": "",
-        "phase": "Phase 1",
-        "layout": "split",
-        "columns": 3,
-        "size": "small"
-      }
-    },
-    "multiple-media-with-text": {
+    "atelier": {
       "type": "multiple-media-with-text",
       "blocks": {
         "image-1": {
@@ -237,28 +427,15 @@
         "media_alignment_offset": 86,
         "media_mobile_alignment_offset": 40,
         "text_alignment": "center",
-        "subheading": "",
-        "title": "Refined Luxury and Craftsmanship",
-        "content": "<p>Beyond mere textiles, our rugs are living legacies of Portugal's artistic and sustainable soul. Handcrafted by skilled artisans, every Corvo rug harmonizes tradition with innovation.</p><p>Our dedication to eco-friendly practices ensures that each piece not only enriches your space with luxury but also champions the preservation of our planet.</p>",
-        "button_1_text": "Bespoke Services",
-        "button_1_link": "shopify://pages/bespoke",
+        "subheading": "The atelier",
+        "title": "Real people, real craft",
+        "content": "<p>Corvo is the production atelier of the Sorema group, working alongside our premium mill in Portugal. Every rug passes through the hands of the people who make it: people, not production lines.</p><p>From the first sketch to the choice of yarn and the final hand-finishing, each stage is overseen in-house, so we know where every piece comes from and who made it.</p>",
+        "button_1_text": "Our story",
+        "button_1_link": "shopify://pages/about-us",
         "button_1_style": "link",
-        "button_2_text": "",
-        "button_2_link": "",
+        "button_2_text": "The Sorema Group",
+        "button_2_link": "shopify://pages/sorema-group",
         "button_2_style": "link"
-      }
-    },
-    "wf-sorema": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Sorema and made in Portugal",
-        "is_page_title": false,
-        "description": "The section above becomes the heritage block: the Sorema Group, since 1974, made in Portugal.",
-        "needs": "",
-        "phase": "Phase 1",
-        "layout": "text",
-        "columns": 3,
-        "size": "small"
       }
     },
     "wf-proof": {
@@ -280,46 +457,84 @@
         "color_scheme": "scheme-3",
         "separate_section_with_border": true,
         "blog": "news",
-        "posts_count": 9,
+        "posts_count": 3,
         "stack_on_mobile": false,
         "show_category": false,
         "show_date": false,
         "show_excerpt": true,
         "show_read_more": false,
-        "subheading": "",
-        "title": "",
+        "subheading": "Journal",
+        "title": "Notes from the atelier",
         "content": "",
         "button_link": "shopify://blogs/news",
-        "button_text": ""
+        "button_text": "Read the Journal"
       }
     },
-    "wf-meeting": {
-      "type": "wireframe",
+    "meeting": {
+      "type": "image-with-text-overlay",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "text": "Turn your ideas into reality",
+            "heading_tag": "h2"
+          }
+        },
+        "richtext": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>The perfect rug for every space</p>"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "Book a meeting",
+            "url": "shopify://pages/contact",
+            "background": "#ffffff",
+            "text_color": "#1c1c1c"
+          }
+        },
+        "link": {
+          "type": "link",
+          "settings": {
+            "text": "Tailor your rug",
+            "url": "shopify://pages/tailor-your-rug"
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "richtext",
+        "button",
+        "link"
+      ],
       "settings": {
-        "label": "Book a meeting",
-        "is_page_title": false,
-        "description": "A closing line with one button to book a call or a visit to the atelier.",
-        "needs": "",
-        "phase": "Phase 1",
-        "layout": "text",
-        "columns": 3,
-        "size": "small"
+        "color_scheme": "",
+        "image_size": "lg",
+        "image": "shopify://shop_images/CORVO_FINAL-66.jpg",
+        "allow_transparent_header": false,
+        "reveal_on_scroll": true,
+        "remove_vertical_spacing": true,
+        "content_width": "md",
+        "mobile_text_position": "place-self-center text-center",
+        "desktop_text_position": "sm:place-self-center sm:text-center",
+        "overlay_color": "#000000",
+        "overlay_opacity": 45
       }
     }
   },
   "order": [
-    "slideshow",
-    "wf-hero",
-    "wf-doors",
-    "wf-collections",
+    "hero",
+    "doors",
+    "collections",
     "images-with-text-scroll",
-    "wf-bespoke",
-    "wf-portfolio",
-    "wf-professionals",
-    "multiple-media-with-text",
-    "wf-sorema",
+    "projects",
+    "professionals",
+    "atelier",
     "wf-proof",
     "blog-posts",
-    "wf-meeting"
+    "meeting"
   ]
 }

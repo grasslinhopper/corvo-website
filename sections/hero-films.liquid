@@ -1,0 +1,539 @@
+{%- comment -%}
+  Hero films (Corvo addition)
+
+  A full-height hero made of up to three vertical films playing side by side, silent and looping, with one line of
+  text and two buttons over them. On phones a single film fills the screen.
+
+  - Films are Shopify-hosted videos (vertical 9:16 works best). The 720p version is used to keep data use reasonable.
+  - "Trim the end" stops a film before its closing logo card and starts it again.
+  - Films only load and play while the hero is on screen. They do not start for visitors who asked their device to
+    reduce motion or save data, and a pause button is always available.
+  - A panel with a photo and no film shows the photo with a slow drift, so the hero also works before films exist.
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --hero-columns: {{ section.blocks.size | at_least: 1 }};
+    --hero-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --hero-text: {{ section.settings.text_color.rgb }};
+  }
+</style>
+
+<hero-films class="hero-films" {% if section.settings.allow_transparent_header %}allow-transparent-header{% endif %}>
+  <div class="hero-films__panels">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign video = block.settings.video
+        assign poster = block.settings.poster | default: video.preview_image
+        assign source_url = ''
+
+        for source in video.sources
+          if source.format == 'mp4' and source.url contains '720p'
+            assign source_url = source.url
+          endif
+        endfor
+
+        if source_url == ''
+          for source in video.sources
+            if source.format == 'mp4'
+              assign source_url = source.url
+              break
+            endif
+          endfor
+        endif
+
+        assign mobile_index = section.settings.mobile_film | plus: 0
+      -%}
+
+      <div class="hero-films__panel {% if forloop.index == mobile_index %}hero-films__panel--mobile{% endif %} {% if source_url == '' %}hero-films__panel--still{% endif %}" {{ block.shopify_attributes }}>
+        {%- if poster != blank -%}
+          {%- if forloop.index == mobile_index -%}
+            {{- poster | image_url: width: 1080 | image_tag: class: 'hero-films__poster', alt: '', loading: 'eager', fetchpriority: 'high', sizes: '(max-width: 699px) 100vw, 34vw', widths: '360,540,720,900,1080' -}}
+          {%- else -%}
+            {%- comment -%}Lazy, so phones never download the photos of the panels they do not show{%- endcomment -%}
+            {{- poster | image_url: width: 1080 | image_tag: class: 'hero-films__poster', alt: '', loading: 'lazy', sizes: '(max-width: 699px) 100vw, 34vw', widths: '360,540,720,900,1080' -}}
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- if source_url != '' -%}
+          <video class="hero-films__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="{{ source_url }}" data-trim-end="{{ block.settings.trim_end }}"></video>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+
+  <div class="hero-films__shade"></div>
+
+  <div class="hero-films__content">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="hero-films__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h1 class="hero-films__heading">{{ section.settings.heading | escape }}</h1>
+    {%- endif -%}
+
+    {%- if section.settings.text != blank -%}
+      <p class="hero-films__text">{{ section.settings.text | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.button_1_text != blank or section.settings.button_2_text != blank -%}
+      <div class="hero-films__buttons">
+        {%- if section.settings.button_1_text != blank and section.settings.button_1_link != blank -%}
+          <a href="{{ section.settings.button_1_link }}" class="button hero-films__button">{{ section.settings.button_1_text | escape }}</a>
+        {%- endif -%}
+
+        {%- if section.settings.button_2_text != blank and section.settings.button_2_link != blank -%}
+          <a href="{{ section.settings.button_2_link }}" class="button button--outline hero-films__button">{{ section.settings.button_2_text | escape }}</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <button type="button" class="hero-films__toggle" hidden data-pause-label="{{ section.settings.pause_label | escape }}" data-play-label="{{ section.settings.play_label | escape }}" aria-label="{{ section.settings.pause_label | escape }}">
+    <svg class="hero-films__icon hero-films__icon--pause" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false"><path d="M2.5 1.5v9M9.5 1.5v9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+    <svg class="hero-films__icon hero-films__icon--play" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false"><path d="M3 1.5v9l7-4.5z" fill="currentColor"/></svg>
+  </button>
+</hero-films>
+
+{% stylesheet %}
+  .hero-films {
+    position: relative;
+    display: block;
+    height: calc(100vh - var(--sticky-area-height, 0px));
+    min-height: 32rem;
+    overflow: hidden;
+    background: rgb(28 28 28);
+    color: rgb(var(--hero-text));
+  }
+
+  @supports (height: 100svh) {
+    .hero-films {
+      height: calc(100svh - var(--sticky-area-height, 0px));
+    }
+  }
+
+  /* When the hero sits under a transparent header it takes the whole screen */
+  .shopify-section:first-child .hero-films[allow-transparent-header] {
+    height: calc(100vh - var(--announcement-bar-height, 0px));
+  }
+
+  @supports (height: 100svh) {
+    .shopify-section:first-child .hero-films[allow-transparent-header] {
+      height: calc(100svh - var(--announcement-bar-height, 0px));
+    }
+  }
+
+  .hero-films__panels {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-films__panel {
+    position: relative;
+    display: none;
+    overflow: hidden;
+  }
+
+  .hero-films__panel--mobile {
+    display: block;
+  }
+
+  .hero-films__poster,
+  .hero-films__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-films__video {
+    opacity: 0;
+    transition: opacity 0.9s ease;
+  }
+
+  .hero-films__video.is-playing {
+    opacity: 1;
+  }
+
+  .hero-films__shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgb(0 0 0 / calc(var(--hero-overlay) * 0.85)) 0%,
+      rgb(0 0 0 / calc(var(--hero-overlay) * 0.6)) 40%,
+      rgb(0 0 0 / var(--hero-overlay)) 100%
+    );
+    pointer-events: none;
+  }
+
+  .hero-films__content {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 1.5rem;
+    padding: calc(var(--header-height, 4rem) + 2rem) var(--container-gutter) 5rem;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .hero-films__eyebrow {
+    margin: 0;
+    font-size: 0.6875rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  .hero-films__heading {
+    max-width: 20ch;
+    margin: 0;
+    font-family: var(--heading-font-family);
+    font-weight: var(--heading-font-weight);
+    font-style: var(--heading-font-style);
+    font-size: clamp(1.875rem, 5.2vw, 4.5rem);
+    line-height: 1.12;
+    letter-spacing: var(--heading-letter-spacing);
+    text-transform: var(--heading-text-transform);
+    text-wrap: balance;
+  }
+
+  .hero-films__text {
+    max-width: 34rem;
+    margin: 0;
+    font-size: clamp(0.9375rem, 1.2vw, 1.125rem);
+    line-height: 1.7;
+    text-wrap: balance;
+  }
+
+  .hero-films__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1rem;
+    margin-block-start: 0.75rem;
+    pointer-events: auto;
+  }
+
+  .hero-films__button {
+    --button-background: var(--hero-text);
+    --button-outline-color: var(--hero-text);
+    --button-text-color: 28 28 28;
+    min-width: 12.5rem;
+  }
+
+  .hero-films__toggle {
+    position: absolute;
+    inset-block-end: 1.25rem;
+    inset-inline-end: var(--container-gutter);
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 1px solid rgb(var(--hero-text) / 0.6);
+    border-radius: 50%;
+    background: rgb(0 0 0 / 0.2);
+    color: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .hero-films__toggle[hidden] {
+    display: none;
+  }
+
+  .hero-films__icon--play,
+  .hero-films__toggle.is-paused .hero-films__icon--pause {
+    display: none;
+  }
+
+  .hero-films__toggle.is-paused .hero-films__icon--play {
+    display: block;
+  }
+
+  @media (hover: hover) {
+    .hero-films__toggle:hover {
+      background: rgb(0 0 0 / 0.45);
+    }
+  }
+
+  @media (min-width: 700px) {
+    .hero-films__panels {
+      grid-template-columns: repeat(var(--hero-columns), minmax(0, 1fr));
+      gap: 1px;
+    }
+
+    .hero-films__panel {
+      display: block;
+    }
+
+    .hero-films__eyebrow {
+      font-size: 0.75rem;
+    }
+  }
+
+  /* Photo-only panels drift slowly, so the hero has movement before films exist */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-films__panel--still .hero-films__poster {
+      animation: hero-films-drift 26s ease-in-out infinite alternate;
+    }
+
+    .hero-films__panel--still:nth-child(2n) .hero-films__poster {
+      animation-duration: 32s;
+      animation-direction: alternate-reverse;
+    }
+  }
+
+  @keyframes hero-films-drift {
+    from {
+      transform: scale(1);
+    }
+
+    to {
+      transform: scale(1.12);
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('hero-films')) {
+    customElements.define(
+      'hero-films',
+      class HeroFilms extends HTMLElement {
+        connectedCallback() {
+          this.videos = Array.from(this.querySelectorAll('video[data-src]'));
+          this.toggle = this.querySelector('.hero-films__toggle');
+          this.inView = false;
+
+          // Respect the visitor's device settings: no automatic films with reduced motion or data saver
+          const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const saveData = navigator.connection && navigator.connection.saveData;
+          this.paused = Boolean(reducedMotion || saveData);
+
+          this.videos.forEach((video) => {
+            const trimEnd = parseFloat(video.dataset.trimEnd) || 0;
+
+            video.addEventListener('timeupdate', () => {
+              if (trimEnd > 0 && video.duration && video.currentTime >= video.duration - trimEnd) {
+                video.currentTime = 0;
+              }
+            });
+
+            video.addEventListener('playing', () => video.classList.add('is-playing'), { once: true });
+          });
+
+          if (this.videos.length > 0 && this.toggle) {
+            this.toggle.hidden = false;
+            this.toggle.addEventListener('click', () => {
+              this.paused = !this.paused;
+              this.sync();
+            });
+          }
+
+          this.observer = new IntersectionObserver(
+            (entries) => {
+              this.inView = entries[0].isIntersecting;
+              this.sync();
+            },
+            { threshold: 0.05 }
+          );
+          this.observer.observe(this);
+
+          this.breakpoint = window.matchMedia('(min-width: 700px)');
+          this.onBreakpointChange = () => this.sync();
+          this.breakpoint.addEventListener('change', this.onBreakpointChange);
+
+          this.sync();
+        }
+
+        disconnectedCallback() {
+          if (this.observer) this.observer.disconnect();
+          if (this.breakpoint) this.breakpoint.removeEventListener('change', this.onBreakpointChange);
+        }
+
+        sync() {
+          const shouldPlay = this.inView && !this.paused;
+
+          this.videos.forEach((video) => {
+            // Panels hidden on this screen size never load their film
+            const visible = video.offsetParent !== null;
+
+            if (shouldPlay && visible) {
+              if (!video.getAttribute('src')) video.setAttribute('src', video.dataset.src);
+              const attempt = video.play();
+              if (attempt) attempt.catch(() => {});
+            } else {
+              video.pause();
+            }
+          });
+
+          if (this.toggle) {
+            this.toggle.classList.toggle('is-paused', this.paused);
+            this.toggle.setAttribute('aria-label', this.paused ? this.toggle.dataset.playLabel : this.toggle.dataset.pauseLabel);
+          }
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Hero films",
+  "class": "shopify-section--hero-films",
+  "tag": "section",
+  "max_blocks": 3,
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Up to three vertical films side by side. On phones only one is shown. Films play silently and stop when the hero is off screen."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small text above the heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "button_1_text",
+      "label": "First button text"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "First button link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_text",
+      "label": "Second button text"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Second button link"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Darkening over the films",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "mobile_film",
+      "label": "Film shown on phones",
+      "options": [
+        {
+          "value": "1",
+          "label": "First"
+        },
+        {
+          "value": "2",
+          "label": "Second"
+        },
+        {
+          "value": "3",
+          "label": "Third"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_transparent_header",
+      "label": "Show the header transparently over the hero",
+      "info": "Only applies when this is the first section of the page.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "pause_label",
+      "label": "Pause button label (for screen readers)",
+      "default": "Pause the films"
+    },
+    {
+      "type": "text",
+      "id": "play_label",
+      "label": "Play button label (for screen readers)",
+      "default": "Play the films"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "film",
+      "name": "Film",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Film",
+          "info": "A vertical film works best. Leave empty to show the photo below instead."
+        },
+        {
+          "type": "image_picker",
+          "id": "poster",
+          "label": "Photo",
+          "info": "Shown while the film loads, or on its own when there is no film. Leave empty to use the film's first frame."
+        },
+        {
+          "type": "range",
+          "id": "trim_end",
+          "label": "Trim the end",
+          "info": "Seconds to cut from the end of the film, for example to skip a closing logo.",
+          "min": 0,
+          "max": 6,
+          "step": 0.1,
+          "unit": "s",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero films",
+      "blocks": [
+        {
+          "type": "film"
+        },
+        {
+          "type": "film"
+        },
+        {
+          "type": "film"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

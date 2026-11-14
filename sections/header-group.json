@@ -29,9 +29,10 @@
         "show_country_name": true,
         "show_country_flag": false,
         "show_locale_selector": false,
-        "transparent_header_text_color": "#1c1c1c",
+        "transparent_header_text_color": "#ffffff",
         "cta_text": "Tailor your rug",
-        "cta_link": "shopify://pages/tailor-your-rug"
+        "cta_link": "shopify://pages/tailor-your-rug",
+        "transparent_logo": "shopify://shop_images/CorvoBranco.png"
       },
       "blocks": {
         "mega-collections": {
