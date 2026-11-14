@@ -82,7 +82,7 @@
             "show_below_gallery": false,
             "icon": "none",
             "title": "Shipment Details",
-            "content": "<p>Prices are shown exclusive of shipping and applicable taxes. Following the initial payment, shipping arrangements and final costs are confirmed in consultation with our design concierge, ensuring each detail is handled with care and precision.</p>",
+            "content": "<p>Prices include VAT and are shown exclusive of shipping. Following the initial payment, shipping arrangements and final costs are confirmed in consultation with our design concierge, ensuring each detail is handled with care and precision.</p>",
             "liquid": "",
             "page": ""
           }
@@ -162,16 +162,6 @@
     "text_with_icons_3YdCmt": {
       "type": "text-with-icons",
       "blocks": {
-        "item_yCc7cR": {
-          "type": "item",
-          "settings": {
-            "icon": "picto-delivery-truck",
-            "icon_width": 24,
-            "mobile_icon_width": 24,
-            "title": "Free shipping",
-            "content": "<p>Free worldwide shipping and returns - customs and duties taxes included</p>"
-          }
-        },
         "item_QekUQd": {
           "type": "item",
           "settings": {
@@ -194,7 +184,6 @@
         }
       },
       "block_order": [
-        "item_yCc7cR",
         "item_QekUQd",
         "item_DYbJe8"
       ],
