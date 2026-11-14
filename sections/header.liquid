@@ -124,6 +124,13 @@
     height: 100%;
   }
 
+  /* On a small laptop the pictures need the room: the name of the tab is already in view above the panel */
+  @media screen and (max-width: 1199px) {
+    .mega-menu__intro {
+      display: none;
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .header__menu-disclosure[open] .mega-menu__intro > *,
     .header__menu-disclosure[open] .mega-menu__promo > * {
