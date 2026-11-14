@@ -209,7 +209,7 @@
                               {%- assign token = '|' | append: link.object.handle | append: '|' -%}
 
                               {%- if present_collections contains token -%}
-                                {%- render 'rug-filter-option', facet: facet, value: link.object.handle, label: link.title, group: group_label, section_id: section.id -%}
+                                {%- render 'rug-filter-option', facet: facet, value: link.object.handle, label: link.object.title, group: group_label, section_id: section.id -%}
                               {%- endif -%}
                             {%- endif -%}
                           {%- endfor -%}
@@ -470,6 +470,15 @@
 
   .rug-filter__option .checkbox:disabled ~ label {
     cursor: default;
+  }
+
+  /* The theme fades the label of an unticked box; here only the words fade, so the colour dots keep their colour */
+  .rug-filter__option .checkbox:not(:disabled, :checked) ~ label {
+    opacity: 1;
+  }
+
+  .rug-filter__option .checkbox:not(:disabled, :checked) ~ label > span:not(.rug-filter__swatch) {
+    opacity: 0.7;
   }
 
   .rug-filter__count {

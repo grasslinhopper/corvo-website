@@ -371,6 +371,70 @@
         "step": 1,
         "unit": "%",
         "default": 0.0
+      },
+      {
+        "type": "header",
+        "content": "Brand fonts (Adobe Fonts)"
+      },
+      {
+        "type": "paragraph",
+        "content": "Corvo's brand fonts, IvyMode and IvyEpic, are served by Adobe Fonts. Enter the ID of the Adobe Fonts web project to switch every page to them. Leave it empty to keep the fonts chosen above."
+      },
+      {
+        "type": "text",
+        "id": "adobe_fonts_id",
+        "label": "Adobe Fonts project ID",
+        "info": "Seven letters and digits, shown in Adobe Fonts under Web Projects."
+      },
+      {
+        "type": "text",
+        "id": "adobe_heading_family",
+        "label": "Title font name",
+        "default": "ivymode",
+        "info": "The font-family name Adobe gives for the title font."
+      },
+      {
+        "type": "select",
+        "id": "adobe_heading_weight",
+        "label": "Title weight",
+        "options": [
+          {
+            "value": "300",
+            "label": "Light"
+          },
+          {
+            "value": "400",
+            "label": "Regular"
+          },
+          {
+            "value": "600",
+            "label": "Semibold"
+          }
+        ],
+        "default": "400"
+      },
+      {
+        "type": "text",
+        "id": "adobe_text_family",
+        "label": "Text font name",
+        "default": "ivyepic",
+        "info": "The font-family name Adobe gives for the text font."
+      },
+      {
+        "type": "select",
+        "id": "adobe_text_weight",
+        "label": "Text weight",
+        "options": [
+          {
+            "value": "300",
+            "label": "Light"
+          },
+          {
+            "value": "400",
+            "label": "Regular"
+          }
+        ],
+        "default": "400"
       }
     ]
   },

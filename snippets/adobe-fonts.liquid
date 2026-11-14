@@ -1,0 +1,31 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+BRAND FONTS FROM ADOBE FONTS (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+The brand guidelines name IvyMode for titles and IvyEpic for text. Both are served by Adobe Fonts through a "web
+project". When the ID of that project is entered in the theme settings (Typography), this snippet loads its
+stylesheet and points the theme's font variables at the two families. With no ID, nothing is printed and the theme
+keeps the fonts chosen in the font pickers.
+
+The web project must contain the weights used here: the title weight, the text weight and Bold (700) for text.
+{%- endcomment -%}
+
+{%- assign adobe_fonts_id = settings.adobe_fonts_id | strip -%}
+
+{%- if adobe_fonts_id != blank -%}
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+  <link rel="preconnect" href="https://p.typekit.net" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/{{ adobe_fonts_id | url_encode }}.css">
+
+  <style>
+    :root {
+      --heading-font-family: "{{ settings.adobe_heading_family | strip | escape }}", {{ settings.heading_font.fallback_families }};
+      --heading-font-weight: {{ settings.adobe_heading_weight }};
+      --heading-font-style: normal;
+      --text-font-family: "{{ settings.adobe_text_family | strip | escape }}", {{ settings.text_font.fallback_families }};
+      --text-font-weight: {{ settings.adobe_text_weight }};
+      --text-font-style: normal;
+    }
+  </style>
+{%- endif -%}

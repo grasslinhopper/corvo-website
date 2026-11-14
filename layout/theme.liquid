@@ -19,19 +19,23 @@
     {%- endif -%}
 
     {%- comment -%}Few prefetch to increase performance on commonly used third-parties{%- endcomment -%}
-    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {%- comment -%}The fonts of the font pickers are preloaded only while the brand fonts (Adobe Fonts) are off{%- endcomment -%}
+    {%- if settings.adobe_fonts_id == blank -%}
+      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
 
-    {%- unless settings.heading_font.system? -%}
-      <link rel="preload" href="{{ settings.heading_font | font_url }}" as="font" type="font/woff2" crossorigin>
-    {%- endunless -%}
+      {%- unless settings.heading_font.system? -%}
+        <link rel="preload" href="{{ settings.heading_font | font_url }}" as="font" type="font/woff2" crossorigin>
+      {%- endunless -%}
 
-    {%- unless settings.text_font.system? -%}
-      <link rel="preload" href="{{ settings.text_font | font_url }}" as="font" type="font/woff2" crossorigin>
-    {%- endunless -%}
+      {%- unless settings.text_font.system? -%}
+        <link rel="preload" href="{{ settings.text_font | font_url }}" as="font" type="font/woff2" crossorigin>
+      {%- endunless -%}
+    {%- endif -%}
 
     {%- render 'social-meta-tags' -%}
     {%- render 'microdata-schema' -%}
     {%- render 'css-variables' -%}
+    {%- render 'adobe-fonts' -%}
     {%- render 'js-variables' -%}
 
     {%- if request.page_type == 'gift_card' -%}
