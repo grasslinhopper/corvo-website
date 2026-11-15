@@ -38,6 +38,14 @@
         "tailor_your_rug": {
           "title": "Tailor your rug: price guide for a custom rug",
           "description": "Design a custom rug with Corvo: any design, any colour, any size up to [max_size]. See a price guide from [from_price] per m² and ask for a proposal."
+        },
+        "care_faq": {
+          "title": "Rug care and questions answered",
+          "description": "How to care for a Corvo rug, and plain answers on prices, sizes, materials, colours, the lead time of [lead_weeks] weeks, delivery, changes and returns."
+        },
+        "craftmanship": {
+          "title": "Craftsmanship: how a Corvo rug is made",
+          "description": "How a Corvo rug is made in Portugal: yarn dyed in our colour laboratory, tufting, a latex backing, and a final inspection and finish by hand."
         }
       },
       "parent": "Sorema"
