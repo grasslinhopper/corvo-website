@@ -2,31 +2,41 @@
 {%- comment -%}
   Corvo addition: a guide to the site for AI assistants, in plain text (the "llms.txt" convention, llmstxt.org).
 
-  It is written from the shop's own data, so it never falls out of date: the rugs, their materials, sizes and prices
-  are read as the page is served. To publish it, create a page that uses this template and redirect /llms.txt to it.
+  It is written from the shop's own data, so it never falls out of date: the rugs, the materials, the craft levels,
+  the prices and the rules are read as the page is served. The rules come from the theme settings ("Corvo: prices and
+  rules") through the "corvo-fill" and "corvo-fact" snippets, like every other page.
+
+  To publish it, create a page that uses this template and redirect /llms.txt to it.
 {%- endcomment -%}
 {%- liquid
   assign rugs = collections.all.products
   assign sample = all_products['rug-sample']
+  assign vat_percent = settings.rug_vat_percent | default: 23
+  assign vat_plus = vat_percent | plus: 100
+
+  capture fx
+    render 'rug-fx'
+  endcapture
 -%}
 # Corvo
 
-> {{ 'general.corvo.description' | t }}
+> {% render 'corvo-fact', fact: 'description' %}
 
 ## Key facts
 
 - Who: Corvo, a maker of bespoke and made-to-order rugs in {{ 'general.corvo.locality' | t }}, Portugal. Part of the {{ 'general.corvo.parent' | t }} Group.
-- What: {{ collections.all.products_count }} rug designs in six collections. Every rug is made to order by hand in Portugal.
-- Sizes: each design comes in five standard sizes, and is made to measure in any size up to 12 × 7 m.
-- Colours: every colour of a design can be changed, to a colour of the Open Palette or to a custom colour.
-- Prices: shown on each rug page in euros, VAT included. A made-to-measure price is calculated on the rug page from the price per m² of the design.
+- What: {{ collections.all.products_count }} rug designs in six collections. Every rug is hand-tufted to order in Portugal.
+- Sizes: each design comes in five standard sizes, and is made to measure in any size up to {% render 'corvo-fill', text: '[max_size]' %}.
+- Materials: {% render 'corvo-fill', text: '[materials_count] materials. [materials_standard] are included in the price; [materials_plus] add a supplement; [materials_premium] are premium fibres.' %}
+- Colours: every colour of a design can be changed, {% render 'corvo-fill', text: 'to one of the [palette_count] colours of the Open Palette at no extra cost, or to any custom colour for [colour_price] per colour.' %}
+- Prices: shown on each rug page in the shop's currency, VAT of {{ vat_percent }}% included. A made-to-measure price is calculated on the rug page from the price per m² of the design. {% render 'corvo-fill', text: 'A design of your own starts at [from_price] per m².' %}
 {%- if sample.available %}
-- Samples: a {{ sample.selected_or_first_available_variant.title | replace: 'x', ' × ' }} sample of any rug costs {{ sample.selected_or_first_available_variant.price | money }}.
+- Samples: {% render 'corvo-fill', text: 'a [sample_size] sample of any rug costs [sample_price].' %}
 {%- endif %}
-- Lead time: {{ 'general.corvo.lead_time' | t }}.
-- Delivery: worldwide. {{ 'general.corvo.delivery' | t }}.
-- Orders: an order can be changed or cancelled up to 48 business hours after Corvo confirms it. A defect must be reported in writing within 10 business days of receiving the rug, with photographs.
-- Returns: {{ 'general.corvo.returns' | t }}.
+- Lead time: {% render 'corvo-fact', fact: 'lead_time' %}.
+- Delivery: worldwide. {% render 'corvo-fact', fact: 'delivery' %}.
+- Orders: {% render 'corvo-fact', fact: 'orders' %}. {% render 'corvo-fact', fact: 'defects' %}.
+- Returns: {% render 'corvo-fact', fact: 'returns' %}.
 - Website: {{ shop.url }}
 
 ## Main pages
@@ -37,12 +47,47 @@
 - [{{ link.title }} collection]({{ shop.url }}{{ link.url }}){% if link.object.description != blank %}: {{ link.object.description | strip_html | strip_newlines | truncate: 160 }}{% endif %}
 {% endif -%}
 {%- endfor -%}
-- [Bespoke]({{ shop.url }}/pages/bespoke): how a rug is designed and made for one project.
+- [Bespoke]({{ shop.url }}/pages/bespoke): what can be chosen in a rug made for one project.
+- [Raw materials]({{ shop.url }}/pages/raw-materials): each material, its fibre, what it adds to the price and the rugs made with it.
+- [Colours]({{ shop.url }}/pages/colours): the Open Palette and the Infinite Colours matching service.
+- [Service]({{ shop.url }}/pages/bespoke-service): the five steps of a bespoke project and the rules of an order.
+- [Tailor your rug]({{ shop.url }}/pages/tailor-your-rug): a price guide for a design of your own, and the form to ask for a proposal.
 - [Samples]({{ shop.url }}/pages/samples): order a sample of any rug.
 - [Care and questions]({{ shop.url }}/pages/care-faq): care, delivery and the questions asked most often.
 - [Story]({{ shop.url }}/pages/about-us): where Corvo comes from.
 - [Contact]({{ shop.url }}/pages/contact): start a project or book a meeting.
 
+## Price guide for a bespoke rug
+
+The price per m² follows the craft level of the design, which measures how demanding the design is to make. Prices per m² with VAT, and without VAT in brackets:
+
+{% for level in shop.metaobjects.craft_level.values -%}
+{%- liquid
+  assign level_net = level.retail_per_m2.value | times: 100 | round
+  assign level_gross = level.retail_per_m2.value | times: vat_plus | round
+-%}
+- Craft level {{ level.label.value }}: {{ level.description.value | downcase }}; colours: {{ level.colours.value }}; {% render 'rug-money', amount: level_gross, fx: fx %} per m² ({% render 'rug-money', amount: level_net, fx: fx %}).
+{% endfor %}
+What adds to the price per m²:
+
+{% for material in shop.metaobjects.rug_material.values -%}
+{%- unless material.group.value == 'Standard' -%}
+- Material {{ material.name.value }}: {{ material.supplement.value }}.
+{% endunless -%}
+{%- endfor -%}
+{% render 'corvo-fill', text: '- A rug under [small_area] m²: +[small_percent]%.' %}
+{% render 'corvo-fill', text: '- A rug over [large_size]: +[large_percent]%.' %}
+{% render 'corvo-fill', text: '- A pile above [pile_limit] mm: +[pile_percent]%.' %}
+{% render 'corvo-fill', text: '- Carving: +[carving_percent]%.' %}
+{% render 'corvo-fill', text: '- Round corners: +[corners_percent]%.' %}
+{% render 'corvo-fill', text: '- Each custom colour: [colour_price].' %}
+{% render 'corvo-fill', text: '- Priority production, in [priority_weeks] weeks instead of [lead_weeks]: +[priority_percent]% on the whole price.' %}
+
+## Materials
+
+{% for material in shop.metaobjects.rug_material.values -%}
+- {{ material.name.value }} (fibre: {{ material.fibre.value }}; price: {{ material.supplement.value | downcase }}){% if material.description.value != blank %}: {{ material.description.value }}{% endif %}
+{% endfor %}
 ## Rugs
 
 {% for rug in rugs -%}
@@ -53,7 +98,7 @@
   endif
   assign materials = rug.metafields.rug.materials.value | map: 'name' | map: 'value' | join: ', '
   assign own_factor = rug.metafields.rug.supplement.value | default: 0 | plus: 100 | divided_by: 100.0
-  assign per_m2 = craft.retail_per_m2.value | times: own_factor | times: 1.23 | times: 100 | round
+  assign per_m2 = craft.retail_per_m2.value | times: own_factor | times: vat_plus | round
 -%}
-- [{{ rug.title }}]({{ shop.url }}{{ rug.url }}): {{ craft.label.value }}{% if materials != blank %}; {{ materials }}{% endif %}{% if rug.metafields.rug.pile_height.value != blank %}; pile {{ rug.metafields.rug.pile_height.value }}{% endif %}; standard sizes from {{ rug.price_min | money }} to {{ rug.price_max | money }}; made to measure at {{ per_m2 | money }} per m², VAT included.
+- [{{ rug.title }}]({{ shop.url }}{{ rug.url }}): craft level {{ craft.label.value }}{% if materials != blank %}; {{ materials }}{% endif %}{% if rug.metafields.rug.pile_height.value != blank %}; pile {{ rug.metafields.rug.pile_height.value | downcase }}{% endif %}; standard sizes from {{ rug.price_min | money }} to {{ rug.price_max | money }}; made to measure at {% render 'rug-money', amount: per_m2, fx: fx %} per m², VAT included.
 {% endfor %}

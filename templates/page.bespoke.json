@@ -440,11 +440,20 @@
           "settings": {
             "content": "<p>The perfect rug for every space<br/><br/></p>"
           }
+        },
+        "button_tailor": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "Tailor your rug",
+            "url": "shopify://pages/tailor-your-rug"
+          }
         }
       },
       "block_order": [
         "heading_RJVtXX",
-        "richtext_eVT9cD"
+        "richtext_eVT9cD",
+        "button_tailor"
       ],
       "name": "t:sections.image_with_text_overlay.presets.image_with_text_overlay.name",
       "settings": {
@@ -500,19 +509,6 @@
         "remove_vertical_spacing": true
       }
     },
-    "wf-doors": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Three doors",
-        "is_page_title": false,
-        "description": "Raw Materials, Colours and Service as three large cards, each leading to its page.",
-        "needs": "One image for each.",
-        "phase": "Phase 4",
-        "layout": "grid",
-        "columns": 3,
-        "size": "medium"
-      }
-    },
     "subnav-tabs": {
       "type": "page-subnav",
       "settings": {
@@ -527,13 +523,156 @@
         "menu": "site-menu",
         "style": "pager"
       }
+    },
+    "doors": {
+      "type": "page-cards",
+      "blocks": {
+        "card_1": {
+          "type": "card",
+          "settings": {
+            "title": "Raw materials",
+            "text": "<p>[materials_count] materials, from wool and eucalyptus fibre to mohair and vicuña.</p>",
+            "image": "shopify://shop_images/CORVO_FINAL-19.jpg",
+            "image_alt": "Hanks of undyed yarn, the raw material of a Corvo rug",
+            "link_url": "shopify://pages/raw-materials"
+          }
+        },
+        "card_2": {
+          "type": "card",
+          "settings": {
+            "title": "Colours",
+            "text": "<p>[palette_count] colours in the Open Palette, or any colour matched to your reference.</p>",
+            "image": "shopify://shop_images/CORVO_FINAL-22.jpg",
+            "image_alt": "A technician measuring red dye in the colour laboratory",
+            "link_url": "shopify://pages/colours"
+          }
+        },
+        "card_3": {
+          "type": "card",
+          "settings": {
+            "title": "Service",
+            "text": "<p>Consultation, artwork, sampling, production and delivery, by one team.</p>",
+            "image": "shopify://shop_images/CORVO_FINAL-28.jpg",
+            "image_alt": "A mood board of rug samples, patterns and colour references",
+            "link_url": "shopify://pages/bespoke-service"
+          }
+        },
+        "card_4": {
+          "type": "card",
+          "settings": {
+            "title": "Tailor your rug",
+            "text": "<p>A price guide for the rug you have in mind, and a proposal.</p>",
+            "image": "shopify://shop_images/CORVO_FINAL-72.jpg",
+            "image_alt": "A designer painting the colours of a rug on a tablet",
+            "link_url": "shopify://pages/tailor-your-rug"
+          }
+        }
+      },
+      "block_order": [
+        "card_1",
+        "card_2",
+        "card_3",
+        "card_4"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "subheading": "Bespoke",
+        "title": "Any rug, made to your design",
+        "text": "<p>Choose the design, the size, the materials and the colours. We make the rug by hand in Portugal.</p>",
+        "text_alignment": "center",
+        "columns": 4,
+        "columns_mobile": "2",
+        "image_ratio": "portrait",
+        "numbered": false
+      }
+    },
+    "facts": {
+      "type": "page-facts",
+      "blocks": {
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "label": "What",
+            "value": "<p>Any design, in any size up to [max_size], hand-tufted in Portugal.</p>"
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "label": "Design",
+            "value": "<p>One of our [rug_count] designs, a pattern from the <a href=\"/pages/gallery\">design library</a>, or a design of your own.</p>"
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "label": "Materials",
+            "value": "<p>[materials_count] materials. [materials_standard] are included in the price.</p>"
+          }
+        },
+        "fact_4": {
+          "type": "fact",
+          "settings": {
+            "label": "Colours",
+            "value": "<p>[palette_count] Open Palette colours at no extra cost, or any colour for [colour_price] per colour.</p>"
+          }
+        },
+        "fact_5": {
+          "type": "fact",
+          "settings": {
+            "label": "Price",
+            "value": "<p>From [from_price] per m², VAT included. It follows the craft level of the design.</p>"
+          }
+        },
+        "fact_6": {
+          "type": "fact",
+          "settings": {
+            "label": "Lead time",
+            "value": "<p>[lead_weeks] weeks, or [priority_weeks] with priority production.</p>"
+          }
+        },
+        "fact_7": {
+          "type": "fact",
+          "settings": {
+            "label": "Delivery",
+            "value": "<p>Worldwide. Quoted for each order.</p>"
+          }
+        },
+        "fact_8": {
+          "type": "fact",
+          "settings": {
+            "label": "Samples",
+            "value": "<p>A [sample_size] sample of any rug costs [sample_price].</p>"
+          }
+        }
+      },
+      "block_order": [
+        "fact_1",
+        "fact_2",
+        "fact_3",
+        "fact_4",
+        "fact_5",
+        "fact_6",
+        "fact_7",
+        "fact_8"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "title": "Bespoke in short",
+        "text": "<p>The facts of a Corvo rug made for one project.</p>",
+        "button_text": "See the price guide",
+        "button_link": "/pages/tailor-your-rug#price-guide"
+      }
     }
   },
   "order": [
     "subnav-tabs",
     "main",
     "image_with_text_block_kGx3f6",
-    "wf-doors",
+    "doors",
+    "facts",
     "images_with_text_scroll_dpdKE8",
     "rich_text_7ABDAE",
     "multiple_media_with_text_DmWJGn",

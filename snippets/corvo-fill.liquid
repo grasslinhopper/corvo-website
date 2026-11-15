@@ -1,0 +1,243 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+CORVO FILL (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Prints a text with the shop's own facts filled in.
+
+A lead time, a size limit or a price is written in many texts: answers, notes, page openings. Typed by hand, those
+numbers drift apart. Here each one is a marker in square brackets, filled in from the theme settings ("Corvo: prices
+and rules"), the craft levels, the materials and the sample product. Change the fact once and every text follows.
+
+  [lead_weeks]          weeks of standard production
+  [priority_weeks]      weeks of priority production
+  [priority_percent]    what priority production adds, in %
+  [max_size]            the largest rug, as "12 × 7 m"
+  [min_side]            the shortest side, as "100 cm"
+  [vat]                 VAT, in %
+  [from_price]          the lowest price per m², VAT included
+  [from_price_net]      the same without VAT
+  [colour_price]        a custom colour, VAT included
+  [colour_price_net]    the same without VAT
+  [small_area]          below this area in m², a rug is a small format
+  [small_percent]       what a small format adds, in %
+  [large_size]          above this size, a rug is a large format, as "9 × 4 m"
+  [large_percent]       what a large format adds, in %
+  [pile_limit]          above this height in mm, a pile is a high pile
+  [pile_percent]        what a high pile adds, in %
+  [carving_percent]     what carving adds, in %
+  [corners_percent]     what round corners add, in %
+  [change_hours]        business hours in which an order can still be changed
+  [claim_days]          business days to report a defect
+  [palette_count]       colours in the Open Palette
+  [rug_count]           rug designs
+  [level_count]         craft levels
+  [materials_count]     materials
+  [materials_standard]  the materials included in the price, by name
+  [materials_plus]      the materials with a supplement, by name
+  [materials_premium]   the premium materials, by name
+  [sample_size]         the size of a sample, as "20 × 20 cm"
+  [sample_price]        the price of a sample
+  [cut_pile_range]      the lowest and highest cut pile among the rugs, as "11 to 45 mm"
+  [loop_pile_range]     the lowest and highest loop pile among the rugs, as "5 to 12 mm"
+
+********************************************
+Supported variables
+********************************************
+
+* text: the text to print (required). HTML passes through untouched.
+{%- endcomment -%}
+
+{%- liquid
+  assign filled = text
+
+  if filled contains '['
+    assign vat_plus = settings.rug_vat_percent | plus: 100
+
+    comment
+      Plain numbers
+    endcomment
+
+    assign filled = filled | replace: '[lead_weeks]', settings.rug_lead_weeks | replace: '[priority_weeks]', settings.rug_priority_weeks | replace: '[priority_percent]', settings.rug_priority_percent
+    assign filled = filled | replace: '[vat]', settings.rug_vat_percent | replace: '[small_area]', settings.rug_small_area | replace: '[small_percent]', settings.rug_small_percent | replace: '[large_percent]', settings.rug_large_percent
+    assign filled = filled | replace: '[pile_limit]', settings.rug_pile_limit | replace: '[pile_percent]', settings.rug_pile_percent | replace: '[carving_percent]', settings.rug_carving_percent | replace: '[corners_percent]', settings.rug_corners_percent
+    assign filled = filled | replace: '[change_hours]', settings.rug_change_hours | replace: '[claim_days]', settings.rug_claim_days
+
+    comment
+      Sizes: centimetres written as metres, without needless zeros ("12 × 7 m")
+    endcomment
+
+    if filled contains '_size]' or filled contains '[min_side]'
+      capture max_size
+        render 'rug-metres', long: settings.rug_max_long, short: settings.rug_max_short
+      endcapture
+
+      capture large_size
+        render 'rug-metres', long: settings.rug_large_long, short: settings.rug_large_short
+      endcapture
+
+      assign min_side = settings.rug_min_side | append: ' cm'
+      assign filled = filled | replace: '[max_size]', max_size | replace: '[large_size]', large_size | replace: '[min_side]', min_side
+    endif
+
+    comment
+      Prices: worked out in the shop's currency, then shown in the visitor's
+    endcomment
+
+    if filled contains '_price'
+      capture fx
+        render 'rug-fx'
+      endcapture
+
+      assign lowest_rate = 0
+
+      for level in shop.metaobjects.craft_level.values
+        assign level_rate = level.retail_per_m2.value | times: 1
+
+        if lowest_rate == 0 or level_rate < lowest_rate
+          assign lowest_rate = level_rate
+        endif
+      endfor
+
+      assign from_net_cents = lowest_rate | times: 100 | round
+      assign from_cents = lowest_rate | times: vat_plus | round
+      assign colour_net_cents = settings.rug_colour_price | times: 100 | round
+      assign colour_cents = settings.rug_colour_price | times: vat_plus | round
+
+      capture from_price
+        render 'rug-money', amount: from_cents, fx: fx
+      endcapture
+
+      capture from_price_net
+        render 'rug-money', amount: from_net_cents, fx: fx
+      endcapture
+
+      capture colour_price
+        render 'rug-money', amount: colour_cents, fx: fx
+      endcapture
+
+      capture colour_price_net
+        render 'rug-money', amount: colour_net_cents, fx: fx
+      endcapture
+
+      assign filled = filled | replace: '[from_price]', from_price | replace: '[from_price_net]', from_price_net | replace: '[colour_price]', colour_price | replace: '[colour_price_net]', colour_price_net
+    endif
+
+    comment
+      The sample: its size and its price come from the hidden sample product
+    endcomment
+
+    if filled contains '[sample_'
+      assign sample_product = all_products['rug-sample']
+      assign sample_variant = sample_product.selected_or_first_available_variant
+      assign sample_size = sample_variant.title | downcase | remove: 'cm' | strip | replace: 'x', ' × ' | append: ' cm'
+
+      capture sample_price
+        render 'rug-money', amount: sample_variant.price
+      endcapture
+
+      assign filled = filled | replace: '[sample_size]', sample_size | replace: '[sample_price]', sample_price
+    endif
+
+    comment
+      Counts and names
+    endcomment
+
+    if filled contains '_count]'
+      assign palette_count = 0
+      assign palette_lines = settings.rug_palette | newline_to_br | strip_newlines | split: '<br />'
+
+      for palette_line in palette_lines
+        assign palette_code = palette_line | split: '|' | first | strip
+
+        if palette_code != blank
+          assign palette_count = palette_count | plus: 1
+        endif
+      endfor
+
+      assign level_count = shop.metaobjects.craft_level.values | size
+      assign materials_count = shop.metaobjects.rug_material.values | size
+      assign filled = filled | replace: '[palette_count]', palette_count | replace: '[rug_count]', collections.all.products_count | replace: '[level_count]', level_count | replace: '[materials_count]', materials_count
+    endif
+
+    comment
+      Pile heights: read from the "Pile height" field of the rugs, written as "Cut 16 mm · Loop 5 and 10 mm"
+    endcomment
+
+    if filled contains '_pile_range]'
+      assign cut_low = 0
+      assign cut_high = 0
+      assign loop_low = 0
+      assign loop_high = 0
+
+      for rug in collections.all.products
+        assign rug_heights = rug.metafields.rug.pile_height.value
+
+        if rug_heights == blank
+          continue
+        endif
+
+        assign height_parts = rug_heights | split: ' · '
+
+        for height_part in height_parts
+          assign height_kind = height_part | strip | split: ' ' | first | downcase
+          assign height_numbers = height_part | downcase | remove: 'cut' | remove: 'loop' | remove: 'mm' | replace: ' and ', ',' | split: ','
+
+          for height_number in height_numbers
+            assign height_value = height_number | strip | plus: 0
+
+            if height_value > 0
+              if height_kind == 'cut'
+                if cut_low == 0 or height_value < cut_low
+                  assign cut_low = height_value
+                endif
+
+                if height_value > cut_high
+                  assign cut_high = height_value
+                endif
+              elsif height_kind == 'loop'
+                if loop_low == 0 or height_value < loop_low
+                  assign loop_low = height_value
+                endif
+
+                if height_value > loop_high
+                  assign loop_high = height_value
+                endif
+              endif
+            endif
+          endfor
+        endfor
+      endfor
+
+      assign cut_range = cut_low | append: ' to ' | append: cut_high | append: ' mm'
+      assign loop_range = loop_low | append: ' to ' | append: loop_high | append: ' mm'
+      assign filled = filled | replace: '[cut_pile_range]', cut_range | replace: '[loop_pile_range]', loop_range
+    endif
+
+    if filled contains '[materials_'
+      assign names_standard = ''
+      assign names_plus = ''
+      assign names_premium = ''
+
+      for material in shop.metaobjects.rug_material.values
+        assign material_name = material.name.value | append: '|'
+
+        case material.group.value
+          when 'Standard'
+            assign names_standard = names_standard | append: material_name
+          when 'Plus'
+            assign names_plus = names_plus | append: material_name
+          when 'Premium'
+            assign names_premium = names_premium | append: material_name
+        endcase
+      endfor
+
+      assign names_standard = names_standard | split: '|' | join: ', ' | replace_last: ', ', ' and ' | escape
+      assign names_plus = names_plus | split: '|' | join: ', ' | replace_last: ', ', ' and ' | escape
+      assign names_premium = names_premium | split: '|' | join: ', ' | replace_last: ', ', ' and ' | escape
+      assign filled = filled | replace: '[materials_standard]', names_standard | replace: '[materials_plus]', names_plus | replace: '[materials_premium]', names_premium
+    endif
+  endif
+
+  echo filled
+-%}

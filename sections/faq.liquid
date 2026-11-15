@@ -39,9 +39,10 @@
 
                 {%- when 'question' -%}
                   {%- if block.settings.question != blank and block.settings.answer != blank -%}
+                    {%- comment -%}Corvo addition: an answer may hold markers such as [lead_weeks], filled in from the shop's own facts{%- endcomment -%}
                     {%- capture answer -%}
                       <div class="prose">
-                        {{- block.settings.answer -}}
+                        {%- render 'corvo-fill', text: block.settings.answer -%}
                       </div>
                     {%- endcapture -%}
 
@@ -65,12 +66,13 @@
       "@type": "FAQPage",
       "mainEntity": [
         {%- for block in question_blocks -%}
+          {%- capture answer_text -%}{%- render 'corvo-fill', text: block.settings.answer -%}{%- endcapture -%}
           {
             "@type": "Question",
             "name": {{ block.settings.question | json }},
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": {{ block.settings.answer | json }}
+              "text": {{ answer_text | strip | json }}
             }
           }{% unless forloop.last %},{% endunless %}
         {%- endfor -%}

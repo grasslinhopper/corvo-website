@@ -1,0 +1,38 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+RUG FX (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Prints the factor that turns an amount in the shop's currency into the visitor's currency. It is 1 in the shop's own
+currency.
+
+A price worked out from the price list (a price per m², the price of a custom colour) is in the shop's currency, and
+Liquid has no exchange rate. The factor is read from the hidden price-step product instead: each of its variants is
+named after its amount in the shop's currency, and is priced at that amount in the visitor's currency.
+
+Use it through a capture: capture the output of this snippet in a variable, then multiply an amount by it with the
+"times" filter, or pass it to the "rug-money" snippet as "fx".
+
+********************************************
+Supported variables
+********************************************
+
+* handle: the handle of the price-step product ("made-to-measure-rug" when left out)
+{%- endcomment -%}
+
+{%- liquid
+  assign factor = 1
+
+  if cart.currency.iso_code != shop.currency
+    assign price_handle = handle | default: 'made-to-measure-rug'
+    assign price_product = all_products[price_handle]
+    assign reference_variant = price_product.variants | last
+    assign reference_amount = reference_variant.option1 | plus: 0
+
+    if reference_amount > 0 and reference_variant.price > 0
+      assign factor = reference_variant.price | divided_by: 100.0 | divided_by: reference_amount
+    endif
+  endif
+
+  echo factor
+-%}

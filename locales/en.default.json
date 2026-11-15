@@ -12,14 +12,34 @@
     "corvo": {
       "home_title": "Corvo: bespoke rugs, made to order by hand in Portugal",
       "all_rugs_title": "All rugs",
-      "description": "Corvo makes bespoke and made-to-order hand-tufted rugs in Espinho, Portugal. Every design can be made in any size up to 12 × 7 m and in custom colours, in 5 weeks. Corvo is part of the Sorema Group.",
-      "all_rugs_description": "All {{ count }} Corvo rugs in one place. Each is made to order by hand in Portugal, in five standard sizes or made to measure up to 12 × 7 m, with prices shown per size.",
+      "description": "Corvo makes bespoke and made-to-order hand-tufted rugs in Espinho, Portugal. Every design can be made in any size up to [max_size] and in custom colours, in [lead_weeks] weeks. Corvo is part of the Sorema Group.",
+      "all_rugs_description": "All {{ count }} Corvo rugs in one place. Each is made to order by hand in Portugal, in five standard sizes or made to measure up to [max_size], with prices shown per size.",
       "collections_description": "The six Corvo rug collections. Every rug is made to order by hand in Portugal, in standard sizes or made to measure, and in custom colours.",
       "locality": "Silvalde, Espinho",
-      "lead_time": "5 weeks; 3 weeks with priority production, for 25% more",
+      "lead_time": "[lead_weeks] weeks; [priority_weeks] weeks with priority production, for [priority_percent]% more",
+      "orders": "An order can be changed or cancelled up to [change_hours] business hours after Corvo confirms it",
+      "defects": "A defect must be reported in writing within [claim_days] business days of receiving the rug, with photographs",
       "delivery": "Not included in the price; quoted for each order",
       "returns": "Every rug is made to order, so it cannot be returned or exchanged",
       "slogan": "Rug Atelier",
+      "seo": {
+        "raw_materials": {
+          "title": "Rug materials: wool, eucalyptus fibre, cotton, mohair and vicuña",
+          "description": "The [materials_count] materials Corvo makes rugs in, from wool and eucalyptus fibre to mohair and vicuña: what each one is, how it feels and what it adds to the price."
+        },
+        "colours": {
+          "title": "Rug colours: the Open Palette and custom colour matching",
+          "description": "Every colour of a Corvo rug can be changed: [palette_count] Open Palette colours at no extra cost, or any colour matched to your reference for [colour_price] per colour."
+        },
+        "bespoke_service": {
+          "title": "Bespoke rug service: from first idea to delivery",
+          "description": "How a bespoke Corvo rug is made: consultation, artwork, sampling, production in [lead_weeks] weeks and delivery worldwide. Designed and made by hand in Portugal."
+        },
+        "tailor_your_rug": {
+          "title": "Tailor your rug: price guide for a custom rug",
+          "description": "Design a custom rug with Corvo: any design, any colour, any size up to [max_size]. See a price guide from [from_price] per m² and ask for a proposal."
+        }
+      },
       "parent": "Sorema"
     },
     "page": "Page {{ page }}",
@@ -546,6 +566,43 @@
       "colour": "Colour"
     }
   },
+  "price_guide": {
+    "summary_title": "Your price guide",
+    "total": "Price guide",
+    "without_vat": "Without VAT",
+    "per_m2_label": "Per m², VAT included",
+    "per_m2": "{{ price }} per m²",
+    "about_amount": "about {{ amount }}",
+    "craft_level": "Craft level {{ label }}",
+    "colours_range": "{{ range }} colours",
+    "material": "Material",
+    "options": "Options",
+    "none": "None",
+    "high_pile": "High pile",
+    "high_pile_note": "Any pile above {{ limit }} mm",
+    "carving": "Carving",
+    "carving_note": "A relief cut into the pile",
+    "corners": "Round corners",
+    "corners_note": "Corners cut to a curve",
+    "custom_colours": "Custom colours",
+    "custom_colours_note": "Colours matched to your reference, outside the Open Palette",
+    "each": "{{ price }} each",
+    "colours_each": "{{ count }} × {{ price }}",
+    "fewer": "One custom colour fewer",
+    "more": "One custom colour more",
+    "size_rules": "Any size from {{ min }} cm a side up to {{ max }}. Under {{ small }} m² adds {{ small_percent }}%. Over {{ large }} adds {{ large_percent }}%.",
+    "standard_note": "Standard production",
+    "express_note": "Priority production",
+    "express": "{{ label }} (+{{ percent }}%)",
+    "invalid": "Enter a size to see the price guide.",
+    "request_subject_label": "Request",
+    "request_subject": "Proposal for a bespoke rug, from the Tailor your rug page",
+    "recap_title": "Sent with your request",
+    "form_phone": "Phone (optional)",
+    "form_country": "Country",
+    "form_link": "Link to drawings or photos (optional)",
+    "form_message": "Your project: the room, the design, the colours"
+  },
   "rug_page": {
     "collection": "{{ collection }} collection",
     "craft_level": "Craft level {{ number }}",
@@ -562,7 +619,7 @@
     "error_short": "The shorter side can be up to {{ max }} cm.",
     "error_step": "Sizes go in steps of {{ step }} cm.",
     "small_format": "Under {{ area }} m²: +{{ percent }}%",
-    "large_format": "Over 9 × 4 m: +{{ percent }}%",
+    "large_format": "Over {{ size }}: +{{ percent }}%",
     "supplement": "Supplement",
     "colour": "Colour",
     "colours": "Colours",
@@ -583,6 +640,7 @@
     "colours_other": "{{ count }} colours",
     "references": "References: {{ list }}",
     "shipping": "Shipping",
+    "shipping_in": "Shipping in {{ weeks }} weeks",
     "included": "Included",
     "surcharge": "+ {{ amount }}",
     "percent_more": "+{{ percent }}%",
@@ -603,10 +661,10 @@
       "colours_one": "1 colour.",
       "colours_other": "{{ count }} colours.",
       "sizes": "{{ count }} standard sizes, from {{ smallest }} at {{ low }} to {{ largest }} at {{ high }}, VAT included.",
-      "measure": "Made to measure: {{ limit }} The price is {{ price }} per m², VAT included.",
-      "limit": "Any size up to 12 × 7 m",
-      "lead_time": "Lead time: {{ text }}",
-      "delivery": "Delivery: {{ text }}"
+      "measure": "Made to measure: {{ limit }}. The price is {{ price }} per m², VAT included.",
+      "limit": "Any size up to [max_size]",
+      "lead_time": "Lead time: {{ text }}.",
+      "delivery": "Delivery: {{ text }}."
     },
     "spec": {
       "per_m2": "{{ price }} per m², VAT included",

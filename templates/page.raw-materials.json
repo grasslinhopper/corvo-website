@@ -7,69 +7,168 @@
         "style": "tabs"
       }
     },
-    "wf-1": {
-      "type": "wireframe",
+    "intro": {
+      "type": "page-intro",
       "settings": {
-        "label": "Raw Materials",
-        "is_page_title": true,
-        "description": "Opening image or short film of yarn, with one line on Corvo's command of fibre.",
-        "needs": "A close-up photo or a 10-second loop of yarn.",
-        "phase": "Phase 4",
-        "layout": "banner",
-        "columns": 3,
-        "size": "large"
-      }
+        "color_scheme": "scheme-1",
+        "eyebrow": "Bespoke",
+        "title": "Raw materials",
+        "heading_tag": "h1",
+        "text": "<p>A Corvo rug can be made in [materials_count] materials, from wool and eucalyptus fibre to mohair and vicuña. A rug can be made in one material or mix several.</p>",
+        "image": "shopify://shop_images/CORVO_FINAL-19.jpg",
+        "image_alt": "Hanks of undyed yarn, the raw material of a Corvo rug",
+        "image_focus": "--focus: center",
+        "image_position": "end",
+        "button_1_text": "Order a sample",
+        "button_1_link": "shopify://pages/samples",
+        "button_2_text": "Tailor your rug",
+        "button_2_link": "shopify://pages/tailor-your-rug"
+      },
+      "blocks": {
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "label": "Included in the price",
+            "value": "[materials_standard]"
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "label": "With a supplement",
+            "value": "[materials_plus]"
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "label": "Premium fibres",
+            "value": "[materials_premium]"
+          }
+        }
+      },
+      "block_order": [
+        "fact_1",
+        "fact_2",
+        "fact_3"
+      ]
     },
-    "wf-2": {
-      "type": "wireframe",
+    "materials": {
+      "type": "rug-materials",
       "settings": {
-        "label": "The materials",
-        "is_page_title": false,
-        "description": "One card per material, in three groups: Standard (Eucalyptus, Fine Wool, Wool, Viscose), Contract (Contract Eucalyptus, Contract PET, Giza Cotton) and Premium (Mohair, Sea Island Cotton, Vicuña). Each card opens to a close-up photo, how it feels, how it wears and where it works best.",
-        "needs": "A close-up photo of each material and two lines on each.",
-        "phase": "Phase 4",
-        "layout": "grid",
-        "columns": 5,
-        "size": "medium"
-      }
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "fibre_label": "Fibre",
+        "price_label": "Price",
+        "rugs_label": "Rugs made with it:",
+        "no_rugs_text": "Made on request.",
+        "thumbnails": 4,
+        "note": "<p>The price per m² follows the craft level of the design. The <a href=\"/pages/tailor-your-rug#price-guide\">price guide</a> shows it for each level and material.</p>",
+        "schema_name": "Materials of Corvo rugs"
+      },
+      "blocks": {
+        "group_1": {
+          "type": "group",
+          "settings": {
+            "group": "Standard",
+            "title": "Included in the price",
+            "text": "<p>Part of the price per m² of every rug.</p>"
+          }
+        },
+        "group_2": {
+          "type": "group",
+          "settings": {
+            "group": "Plus",
+            "title": "With a supplement",
+            "text": "<p>These add a percentage to the price per m².</p>"
+          }
+        },
+        "group_3": {
+          "type": "group",
+          "settings": {
+            "group": "Premium",
+            "title": "Premium fibres",
+            "text": "<p>Rare fibres, priced as a multiple of the price per m².</p>"
+          }
+        }
+      },
+      "block_order": [
+        "group_1",
+        "group_2",
+        "group_3"
+      ]
     },
-    "wf-3": {
-      "type": "wireframe",
+    "pile": {
+      "type": "page-facts",
       "settings": {
-        "label": "Pile types and heights",
-        "is_page_title": false,
-        "description": "Cut pile, loop pile and the two combined, shown side by side with the pile heights offered.",
-        "needs": "Close-up photos and the pile heights you offer.",
-        "phase": "Phase 4",
-        "layout": "split",
-        "columns": 3,
-        "size": "small"
-      }
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "anchor": "pile",
+        "title": "Pile and texture",
+        "text": "<p>The pile is the surface of a rug: the yarn you see and walk on. How it is cut, and how high it stands, changes the look and the feel.</p>",
+        "image": "shopify://shop_images/CORVO_FINAL-43-19mb.jpg",
+        "image_alt": "Close view of a rug that combines cut pile and loop pile in blue, green and white"
+      },
+      "blocks": {
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "label": "Cut pile",
+            "value": "<p>The loops of yarn are cut open, for a soft, even surface. In our collections, from [cut_pile_range].</p>"
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "label": "Loop pile",
+            "value": "<p>The loops are left closed, for a firmer, more textured surface. In our collections, from [loop_pile_range].</p>"
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "label": "Cut and loop",
+            "value": "<p>Both in one rug, at different heights, so that the design stands in relief.</p>"
+          }
+        },
+        "fact_4": {
+          "type": "fact",
+          "settings": {
+            "label": "High pile",
+            "value": "<p>A pile above [pile_limit] mm adds [pile_percent]% to the price.</p>"
+          }
+        },
+        "fact_5": {
+          "type": "fact",
+          "settings": {
+            "label": "Carving",
+            "value": "<p>A relief cut into the pile once the rug is tufted. It adds [carving_percent]% to the price.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "fact_1",
+        "fact_2",
+        "fact_3",
+        "fact_4",
+        "fact_5"
+      ]
     },
-    "wf-4": {
-      "type": "wireframe",
+    "closing": {
+      "type": "page-intro",
       "settings": {
-        "label": "Yarn concepts",
-        "is_page_title": false,
-        "description": "Corvo's own yarn developments. Five are already listed in Shopify.",
-        "needs": "One line on each.",
-        "phase": "Phase 4",
-        "layout": "grid",
-        "columns": 5,
-        "size": "small"
-      }
-    },
-    "wf-5": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Order samples",
-        "is_page_title": false,
-        "description": "A closing line with one button: order a yarn or pile sample.",
-        "needs": "",
-        "phase": "Phase 4",
-        "layout": "text",
-        "columns": 3,
-        "size": "small"
+        "color_scheme": "scheme-2",
+        "title": "See and touch before you decide",
+        "heading_tag": "h2",
+        "text": "<p>A [sample_size] sample of any rug costs [sample_price]. It shows the real material, pile and colours.</p>",
+        "image": "shopify://shop_images/CORVO_FINAL-57.jpg",
+        "image_alt": "A Corvo sample box beside a terracotta vase, on a cream rug",
+        "image_focus": "--focus: center",
+        "image_position": "start",
+        "button_1_text": "Order a sample",
+        "button_1_link": "shopify://pages/samples",
+        "button_2_text": "Tailor your rug",
+        "button_2_link": "shopify://pages/tailor-your-rug"
       }
     },
     "subnav-pager": {
@@ -82,11 +181,10 @@
   },
   "order": [
     "subnav-tabs",
-    "wf-1",
-    "wf-2",
-    "wf-3",
-    "wf-4",
-    "wf-5",
+    "intro",
+    "materials",
+    "pile",
+    "closing",
     "subnav-pager"
   ]
 }

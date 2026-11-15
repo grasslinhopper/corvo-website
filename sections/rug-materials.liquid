@@ -1,0 +1,463 @@
+{%- comment -%}
+  Rug materials (Corvo addition)
+
+  The Raw Materials page: every material a rug can be made in, by price group.
+
+  Nothing is typed here twice. The materials, their fibre, their description and what they add to the price are the
+  "Rug material" entries in Shopify (Content > Metaobjects). The rugs listed under a material are the rugs that carry
+  it in their "Materials" field. Add a material or a rug in Shopify and this page follows.
+
+  Each "Group" block shows the materials of one price group ("Standard", "Plus" or "Premium" in the entry's "Group"
+  field), under a title and a line of its own. A material may carry a picture: add a file field with the key "image"
+  to the "Rug material" definition and it is shown.
+
+  The same list is also given to search engines and AI assistants as structured data (a schema.org DefinedTermSet).
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign group_blocks = section.blocks | where: 'type', 'group'
+  assign materials = shop.metaobjects.rug_material.values
+  assign page_address = shop.url | append: page.url
+-%}
+
+{%- paginate collections.all.products by 250 -%}
+  {%- liquid
+    assign rugs = collections.all.products
+
+    comment
+      Which materials each rug is made of, as one text per rug ("|eucalyptus|fine-wool|"), in the order of the rugs
+    endcomment
+
+    capture rug_materials
+      for rug in rugs
+        echo '|'
+
+        for rug_material in rug.metafields.rug.materials.value
+          echo rug_material.system.handle | append: '|'
+        endfor
+
+        echo '§'
+      endfor
+    endcapture
+
+    assign rug_materials = rug_materials | split: '§'
+  -%}
+
+  <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+    <div class="container container--lg">
+      <div class="rug-materials">
+        {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank -%}
+          <div class="rug-materials__header prose">
+            {%- if section.settings.subheading != blank -%}
+              <p class="h6 text-subdued">{{ section.settings.subheading | escape }}</p>
+            {%- endif -%}
+
+            {%- if section.settings.title != blank -%}
+              <h2 class="h2">{{ section.settings.title | escape }}</h2>
+            {%- endif -%}
+
+            {%- if section.settings.text != blank -%}
+              {%- render 'corvo-fill', text: section.settings.text -%}
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- for block in group_blocks -%}
+          {%- liquid
+            assign group_name = block.settings.group | strip
+            assign group_size = 0
+
+            for material in materials
+              if material.group.value == group_name
+                assign group_size = group_size | plus: 1
+              endif
+            endfor
+          -%}
+
+          {%- if group_size > 0 -%}
+            <div class="rug-materials__group" {{ block.shopify_attributes }}>
+              <div class="rug-materials__group-header prose">
+                {%- if block.settings.title != blank -%}
+                  <h2 class="h3">{{ block.settings.title | escape }}</h2>
+                {%- endif -%}
+
+                {%- if block.settings.text != blank -%}
+                  {%- render 'corvo-fill', text: block.settings.text -%}
+                {%- endif -%}
+              </div>
+
+              <ul class="rug-materials__list unstyled-list" role="list">
+                {%- for material in materials -%}
+                  {%- if material.group.value != group_name -%}
+                    {%- continue -%}
+                  {%- endif -%}
+
+                  {%- liquid
+                    assign material_handle = material.system.handle
+                    assign material_token = '|' | append: material_handle | append: '|'
+                    assign material_image = material.image.value
+                    assign rug_count = 0
+
+                    for rug in rugs
+                      if rug_materials[forloop.index0] contains material_token
+                        assign rug_count = rug_count | plus: 1
+                      endif
+                    endfor
+                  -%}
+
+                  <li class="rug-material" id="material-{{ material_handle }}">
+                    <div class="rug-material__text">
+                      <h3 class="h5">{{ material.name.value | escape }}</h3>
+
+                      <dl class="rug-material__facts text-sm">
+                        {%- if material.fibre.value != blank -%}
+                          <div>
+                            <dt>{{ section.settings.fibre_label | escape }}</dt>
+                            <dd>{{ material.fibre.value | escape }}</dd>
+                          </div>
+                        {%- endif -%}
+
+                        {%- if material.supplement.value != blank -%}
+                          <div>
+                            <dt>{{ section.settings.price_label | escape }}</dt>
+                            <dd>{{ material.supplement.value | escape }}</dd>
+                          </div>
+                        {%- endif -%}
+                      </dl>
+
+                      {%- if material.description.value != blank -%}
+                        <p class="rug-material__description">{{ material.description.value | escape }}</p>
+                      {%- endif -%}
+                    </div>
+
+                    <div class="rug-material__rugs">
+                      {%- if material_image != blank -%}
+                        <div class="rug-material__photo">
+                          {{- material_image | image_url: width: 1000 | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 100vw, 30vw', widths: '300,400,600,800,1000', alt: material.name.value -}}
+                        </div>
+                      {%- endif -%}
+
+                      {%- if rug_count > 0 -%}
+                        {%- if material_image == blank and section.settings.thumbnails > 0 -%}
+                          <div class="rug-material__thumbs">
+                            {%- assign shown = 0 -%}
+
+                            {%- for rug in rugs -%}
+                              {%- if rug_materials[forloop.index0] contains material_token and rug.featured_media != blank and shown < section.settings.thumbnails -%}
+                                {%- assign shown = shown | plus: 1 -%}
+
+                                <a href="{{ rug.url }}" class="rug-material__thumb" tabindex="-1" aria-hidden="true">
+                                  {{- rug.featured_media | image_url: width: 400 | image_tag: loading: 'lazy', sizes: '120px', widths: '120,240,400', alt: rug.title -}}
+                                </a>
+                              {%- endif -%}
+                            {%- endfor -%}
+                          </div>
+                        {%- endif -%}
+
+                        <p class="rug-material__names text-sm">
+                          <span class="text-subdued">{{ section.settings.rugs_label | escape }}</span>
+
+                          {% for rug in rugs -%}
+                            {%- if rug_materials[forloop.index0] contains material_token -%}
+                              {%- assign rug_count = rug_count | minus: 1 -%}
+                              <a href="{{ rug.url }}" class="link">{{ rug.title | escape }}</a>{% if rug_count > 0 %}, {% endif %}
+                            {%- endif -%}
+                          {%- endfor -%}
+                        </p>
+                      {%- elsif section.settings.no_rugs_text != blank -%}
+                        <p class="rug-material__names text-sm text-subdued">{{ section.settings.no_rugs_text | escape }}</p>
+                      {%- endif -%}
+                    </div>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- if section.settings.note != blank -%}
+          <div class="rug-materials__note prose text-sm text-subdued">
+            {%- render 'corvo-fill', text: section.settings.note -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endpaginate -%}
+
+{%- comment -%}The materials as structured data{%- endcomment -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTermSet",
+    "@id": {{ page_address | append: '#materials' | json }},
+    "name": {{ section.settings.schema_name | json }},
+    "url": {{ page_address | json }},
+    "hasDefinedTerm": [
+      {%- for material in materials -%}
+        {
+          "@type": "DefinedTerm",
+          "name": {{ material.name.value | json }},
+          "termCode": {{ material.system.handle | json }},
+          {%- if material.description.value != blank -%}
+            "description": {{ material.description.value | json }},
+          {%- endif -%}
+          "additionalProperty": [
+            { "@type": "PropertyValue", "name": "Fibre", "value": {{ material.fibre.value | json }} },
+            { "@type": "PropertyValue", "name": "Price group", "value": {{ material.group.value | json }} },
+            { "@type": "PropertyValue", "name": "Effect on the price per square metre", "value": {{ material.supplement.value | json }} }
+          ],
+          "url": {{ page_address | append: '#material-' | append: material.system.handle | json }}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  }
+</script>
+
+{% stylesheet %}
+  .rug-materials {
+    gap: 4rem;
+    display: grid;
+  }
+
+  .rug-materials__header {
+    max-width: 44rem;
+  }
+
+  .rug-materials__group {
+    gap: 1.5rem;
+    display: grid;
+  }
+
+  .rug-materials__group-header {
+    max-width: 44rem;
+  }
+
+  .rug-materials__list {
+    border-block-start: 1px solid rgb(var(--border-color));
+    display: grid;
+  }
+
+  .rug-material {
+    border-block-end: 1px solid rgb(var(--border-color));
+    gap: 1.5rem;
+    padding-block: 2rem;
+    scroll-margin-block-start: calc(var(--sticky-area-height, 0px) + 5rem);
+    display: grid;
+  }
+
+  .rug-material__text,
+  .rug-material__rugs {
+    align-content: start;
+    gap: .875rem;
+    min-width: 0;
+    display: grid;
+  }
+
+  .rug-material__facts {
+    flex-wrap: wrap;
+    gap: .375rem 2rem;
+    margin: 0;
+    display: flex;
+  }
+
+  .rug-material__facts > div {
+    gap: .5rem;
+    display: flex;
+  }
+
+  .rug-material__facts dt {
+    color: rgb(var(--text-color) / .65);
+  }
+
+  .rug-material__facts dd {
+    margin: 0;
+  }
+
+  .rug-material__description {
+    max-width: 36rem;
+  }
+
+  .rug-material__photo {
+    background: rgb(var(--text-color) / .05);
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+  }
+
+  .rug-material__photo img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .rug-material__thumbs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .5rem;
+    max-width: 26rem;
+    display: grid;
+  }
+
+  .rug-material__thumb {
+    background: rgb(var(--text-color) / .05);
+    aspect-ratio: 4 / 5;
+    display: block;
+    overflow: hidden;
+  }
+
+  .rug-material__thumb img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    transition: transform .6s;
+    display: block;
+  }
+
+  .rug-material__thumb:hover img {
+    transform: scale(1.05);
+  }
+
+  .rug-material__names {
+    line-height: 1.9;
+  }
+
+  .rug-material__names > .text-subdued {
+    margin-inline-end: .5rem;
+  }
+
+  @media screen and (min-width: 1000px) {
+    .rug-material {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+      gap: 4rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Rug materials",
+  "class": "shopify-section--rug-materials",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["page"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Every material a rug can be made in, by price group. The materials are the \"Rug material\" entries in Shopify, under Content > Metaobjects, and the rugs under each one are the rugs that carry it."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Each material"
+    },
+    {
+      "type": "text",
+      "id": "fibre_label",
+      "label": "Name of the fibre line",
+      "default": "Fibre"
+    },
+    {
+      "type": "text",
+      "id": "price_label",
+      "label": "Name of the price line",
+      "default": "Price"
+    },
+    {
+      "type": "text",
+      "id": "rugs_label",
+      "label": "Words before the rugs",
+      "default": "Rugs made with it:"
+    },
+    {
+      "type": "text",
+      "id": "no_rugs_text",
+      "label": "Text for a material no rug of the collections uses",
+      "default": "Made on request."
+    },
+    {
+      "type": "range",
+      "id": "thumbnails",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "label": "Pictures of rugs under a material",
+      "info": "Shown until the material has a picture of its own.",
+      "default": 4
+    },
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "Note under the list"
+    },
+    {
+      "type": "text",
+      "id": "schema_name",
+      "label": "Name of the list, for search engines",
+      "default": "Materials of Corvo rugs"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "group",
+      "name": "Group",
+      "settings": [
+        {
+          "type": "text",
+          "id": "group",
+          "label": "Price group",
+          "info": "As written in the \"Group\" field of the materials: Standard, Plus or Premium.",
+          "default": "Standard"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Included in the price"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Rug materials",
+      "blocks": [
+        { "type": "group" }
+      ]
+    }
+  ]
+}
+{% endschema %}

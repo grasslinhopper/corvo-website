@@ -1,0 +1,23 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+CORVO FACT (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Prints one of the shop's standard sentences, with its numbers filled in: the lead time, the delivery rule, the rule on
+changes, on defects, on returns, or the description of Corvo. The sentences are in the locale file, under
+"general.corvo", so the same words are used on every page, in the structured data and in the guide for AI assistants.
+
+********************************************
+Supported variables
+********************************************
+
+* fact: the name of the sentence under "general.corvo", such as "lead_time", "delivery", "orders", "defects",
+  "returns" or "description" (required)
+{%- endcomment -%}
+
+{%- liquid
+  assign fact_key = 'general.corvo.' | append: fact
+  assign fact_text = fact_key | t
+
+  render 'corvo-fill', text: fact_text
+-%}

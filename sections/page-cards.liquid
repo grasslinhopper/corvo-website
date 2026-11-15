@@ -1,0 +1,366 @@
+{%- comment -%}
+  Cards (Corvo addition)
+
+  A row of cards, each with a picture, a title, a short text and an optional link. It serves as:
+
+  - doors to other pages (the whole picture is a link),
+  - the steps of a process (switch on the numbers: the cards become an ordered list),
+  - a row of pictures with captions.
+
+  Every card is plain HTML: a heading, a paragraph and a link, with a description on its picture. Texts may hold
+  markers such as [lead_weeks], filled in from the shop's own facts (see snippets/corvo-fill.liquid).
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign card_blocks = section.blocks | where: 'type', 'card'
+  assign list_tag = 'ul'
+
+  if section.settings.numbered
+    assign list_tag = 'ol'
+  endif
+
+  # On a tablet: two cards in a row, or three when that leaves no card alone
+  assign columns_tablet = 2
+
+  if section.settings.columns == 3 or section.settings.columns == 5
+    assign columns_tablet = 3
+  endif
+-%}
+
+{%- if card_blocks.size > 0 -%}
+  <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+    <div class="container">
+      <div class="section-stack">
+        {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank -%}
+          <div class="section-header justify-self-{{ section.settings.text_alignment }} text-{{ section.settings.text_alignment }}">
+            <div class="prose">
+              {%- if section.settings.subheading != blank -%}
+                <p class="h6">{{ section.settings.subheading | escape }}</p>
+              {%- endif -%}
+
+              {%- if section.settings.title != blank -%}
+                <h2 class="h2">{{ section.settings.title | escape }}</h2>
+              {%- endif -%}
+
+              {%- if section.settings.text != blank -%}
+                {%- render 'corvo-fill', text: section.settings.text -%}
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <{{ list_tag }} class="page-cards page-cards--{{ section.settings.image_ratio }} unstyled-list" role="list" style="--page-cards-columns: {{ section.settings.columns }}; --page-cards-columns-tablet: {{ columns_tablet }}; --page-cards-columns-mobile: {{ section.settings.columns_mobile }};">
+          {%- for block in card_blocks -%}
+            {%- liquid
+              assign card_image = block.settings.image
+              assign card_alt = block.settings.image_alt | default: card_image.alt | default: block.settings.title
+              assign card_link = block.settings.link_url
+            -%}
+
+            <li class="page-card" {{ block.shopify_attributes }}>
+              {%- if card_image != blank -%}
+                {%- capture card_picture -%}
+                  {{- card_image | image_url: width: card_image.width | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 100vw, (max-width: 999px) 50vw, 33vw', widths: '300,400,500,600,800,1000,1200,1600', alt: card_alt -}}
+                {%- endcapture -%}
+
+                {%- if card_link != blank -%}
+                  <a href="{{ card_link }}" class="page-card__media" tabindex="-1" aria-hidden="true">{{ card_picture }}</a>
+                {%- else -%}
+                  <div class="page-card__media">{{ card_picture }}</div>
+                {%- endif -%}
+              {%- endif -%}
+
+              <div class="page-card__text">
+                {%- if section.settings.numbered -%}
+                  <span class="page-card__number smallcaps text-subdued" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+                {%- endif -%}
+
+                {%- if block.settings.title != blank -%}
+                  <h3 class="h5">
+                    {%- if card_link != blank and block.settings.link_text == blank -%}
+                      <a href="{{ card_link }}">{{ block.settings.title | escape }}</a>
+                    {%- else -%}
+                      {{- block.settings.title | escape -}}
+                    {%- endif -%}
+                  </h3>
+                {%- endif -%}
+
+                {%- if block.settings.text != blank -%}
+                  <div class="page-card__body prose text-subdued">
+                    {%- render 'corvo-fill', text: block.settings.text -%}
+                  </div>
+                {%- endif -%}
+
+                {%- if card_link != blank and block.settings.link_text != blank -%}
+                  <a href="{{ card_link }}" class="link">{{ block.settings.link_text | escape }}</a>
+                {%- endif -%}
+              </div>
+            </li>
+          {%- endfor -%}
+        </{{ list_tag }}>
+
+        {%- if section.settings.button_text != blank -%}
+          <div class="justify-self-center">
+            {%- render 'button', content: section.settings.button_text, href: section.settings.button_link, style: 'outline' -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .page-cards {
+    grid-template-columns: repeat(var(--page-cards-columns-mobile, 1), minmax(0, 1fr));
+    gap: 2.5rem 1rem;
+    display: grid;
+  }
+
+  @media screen and (min-width: 700px) {
+    .page-cards {
+      grid-template-columns: repeat(var(--page-cards-columns-tablet, 2), minmax(0, 1fr));
+      column-gap: 1.5rem;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .page-cards {
+      grid-template-columns: repeat(var(--page-cards-columns, 3), minmax(0, 1fr));
+      column-gap: 2rem;
+    }
+  }
+
+  .page-card {
+    align-content: start;
+    gap: 1.25rem;
+    min-width: 0;
+    display: grid;
+  }
+
+  .page-card__media {
+    background: rgb(var(--text-color) / .05);
+    aspect-ratio: 4 / 5;
+    display: block;
+    overflow: hidden;
+  }
+
+  .page-cards--square .page-card__media {
+    aspect-ratio: 1;
+  }
+
+  .page-cards--landscape .page-card__media {
+    aspect-ratio: 3 / 2;
+  }
+
+  .page-card__media img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    transition: transform .8s cubic-bezier(.2, .7, .2, 1);
+    display: block;
+  }
+
+  .page-card:hover .page-card__media img {
+    transform: scale(1.04);
+  }
+
+  .page-card__text {
+    align-content: start;
+    justify-items: start;
+    gap: .625rem;
+    display: grid;
+  }
+
+  .page-card__text h3 a {
+    text-decoration: none;
+  }
+
+  .page-card__body > :last-child {
+    margin-block-end: 0;
+  }
+
+  /* Cards come into view one after the other, where the browser can follow the scroll */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .page-card {
+        animation: page-card-rise linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 55%;
+      }
+    }
+  }
+
+  @keyframes page-card-rise {
+    from {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Cards",
+  "class": "shopify-section--page-cards",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A row of cards with a picture, a title, a text and a link: doors to other pages, the steps of a process, or pictures with captions. Markers in square brackets, such as [lead_weeks], are filled in from the theme settings."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Title and text",
+      "options": [
+        { "value": "center", "label": "Centred" },
+        { "value": "start", "label": "At the start" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Cards"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Cards in a row, on a computer",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Cards in a row, on a phone",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Shape of the pictures",
+      "options": [
+        { "value": "portrait", "label": "Upright (4:5)" },
+        { "value": "square", "label": "Square" },
+        { "value": "landscape", "label": "Wide (3:2)" }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "checkbox",
+      "id": "numbered",
+      "label": "Number the cards",
+      "info": "For the steps of a process. The cards become a numbered list.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Button under the cards"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Picture"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Description of the picture",
+          "info": "Read by screen readers, search engines and AI assistants. Say what the picture shows."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link text",
+          "info": "Leave empty to make the title the link."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Cards",
+      "blocks": [
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" }
+      ]
+    }
+  ]
+}
+{% endschema %}

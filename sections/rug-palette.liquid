@@ -1,0 +1,272 @@
+{%- comment -%}
+  Rug palette (Corvo addition)
+
+  The Open Palette on the Colours page: every colour as a swatch with its code and, when it has one, its name.
+
+  The colours are the theme setting "Open Palette colours" (Theme settings > Corvo: prices and rules), one per line as
+  "code | name | #hex". The rug pages offer the same list in their colour step, so the two can never differ.
+
+  A colour without a colour value is drawn as a hatched swatch. On an unpublished theme a note says so; on the
+  published theme the note is left out.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign palette_lines = settings.rug_palette | newline_to_br | strip_newlines | split: '<br />'
+  assign image = section.settings.image
+  assign image_alt = section.settings.image_alt | default: image.alt | default: section.settings.title
+  assign colour_count = 0
+  assign missing_values = 0
+
+  for palette_line in palette_lines
+    assign palette_parts = palette_line | split: '|'
+    assign palette_code = palette_parts[0] | strip
+    assign palette_hex = palette_parts[2] | strip
+
+    if palette_code != blank
+      assign colour_count = colour_count | plus: 1
+
+      if palette_hex == blank
+        assign missing_values = missing_values | plus: 1
+      endif
+    endif
+  endfor
+-%}
+
+{%- if colour_count > 0 -%}
+  <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" id="open-palette">
+    <div class="container container--lg">
+      <div class="rug-palette-section {% if image != blank %}rug-palette-section--with-image{% endif %}">
+        <div class="rug-palette-section__intro">
+          <div class="prose">
+            {%- if section.settings.subheading != blank -%}
+              <p class="h6 text-subdued">{{ section.settings.subheading | escape }}</p>
+            {%- endif -%}
+
+            {%- if section.settings.title != blank -%}
+              <h2 class="h3">{{ section.settings.title | escape }}</h2>
+            {%- endif -%}
+
+            {%- if section.settings.text != blank -%}
+              {%- render 'corvo-fill', text: section.settings.text -%}
+            {%- endif -%}
+          </div>
+
+          {%- if image != blank -%}
+            <div class="rug-palette-section__media">
+              {{- image | image_url: width: image.width | image_tag: loading: 'lazy', sizes: '(max-width: 999px) 100vw, 40vw', widths: '400,600,800,1000,1200,1600', alt: image_alt -}}
+            </div>
+          {%- endif -%}
+        </div>
+
+        <div class="rug-palette-section__body">
+          <ul class="rug-swatches unstyled-list" role="list">
+            {%- for palette_line in palette_lines -%}
+              {%- liquid
+                assign palette_parts = palette_line | split: '|'
+                assign palette_code = palette_parts[0] | strip
+                assign palette_name = palette_parts[1] | strip
+                assign palette_hex = palette_parts[2] | strip
+              -%}
+
+              {%- if palette_code != blank -%}
+                <li class="rug-swatch">
+                  <span class="rug-swatch__colour {% if palette_hex == blank %}rug-swatch__colour--pending{% endif %}" {% if palette_hex != blank %}style="--swatch: {{ palette_hex | escape }};"{% endif %} aria-hidden="true"></span>
+
+                  <span class="rug-swatch__text">
+                    <span class="rug-swatch__code">{{ palette_code | escape }}</span>
+
+                    {%- if palette_name != blank -%}
+                      <span class="rug-swatch__name text-sm text-subdued">{{ palette_name | escape }}</span>
+                    {%- endif -%}
+                  </span>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+
+          {%- if missing_values > 0 and section.settings.pending_text != blank -%}
+            {%- unless theme.role == 'main' -%}
+              <p class="rug-palette-section__pending text-sm">{{ section.settings.pending_text | escape }}</p>
+            {%- endunless -%}
+          {%- endif -%}
+
+          {%- if section.settings.note != blank -%}
+            <div class="prose text-sm text-subdued">
+              {%- render 'corvo-fill', text: section.settings.note -%}
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.button_text != blank -%}
+            <div>
+              {%- render 'button', content: section.settings.button_text, href: section.settings.button_link, style: 'outline' -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .rug-palette-section {
+    gap: 2.5rem;
+    display: grid;
+  }
+
+  .rug-palette-section__intro,
+  .rug-palette-section__body {
+    align-content: start;
+    gap: 1.5rem;
+    min-width: 0;
+    display: grid;
+  }
+
+  .rug-palette-section__media {
+    background: rgb(var(--text-color) / .05);
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .rug-palette-section__media img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .rug-swatches {
+    grid-template-columns: repeat(auto-fill, minmax(5.25rem, 1fr));
+    gap: 1.25rem .75rem;
+    display: grid;
+  }
+
+  .rug-swatch {
+    justify-items: start;
+    gap: .5rem;
+    display: grid;
+  }
+
+  .rug-swatch__colour {
+    background: var(--swatch, transparent);
+    border: 1px solid rgb(var(--text-color) / .12);
+    aspect-ratio: 1;
+    width: 100%;
+    display: block;
+  }
+
+  .rug-swatch__colour--pending {
+    background: repeating-linear-gradient(135deg, rgb(var(--text-color) / .1) 0 1px, transparent 1px 7px);
+  }
+
+  .rug-swatch__text {
+    gap: .125rem;
+    display: grid;
+  }
+
+  .rug-swatch__code {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .04em;
+  }
+
+  .rug-palette-section__pending {
+    border-inline-start: 2px solid rgb(var(--text-color));
+    padding-inline-start: .75rem;
+  }
+
+  @media screen and (min-width: 1000px) {
+    .rug-palette-section {
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      align-items: start;
+      gap: 5rem;
+    }
+
+    .rug-swatches {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Rug palette",
+  "class": "shopify-section--rug-palette",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The Open Palette as swatches. The colours are kept once, in Theme settings > Corvo: prices and rules, and the rug pages offer the same list."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "The Open Palette"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>[palette_count] colours, ready to use in any rug at no extra cost.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Picture"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Description of the picture",
+      "info": "Read by screen readers, search engines and AI assistants. Say what the picture shows."
+    },
+    {
+      "type": "text",
+      "id": "pending_text",
+      "label": "Note while colours have no colour value",
+      "info": "Shown on an unpublished theme only.",
+      "default": "Preview note: the swatches take their colours once the colour list is loaded. Until then the palette shows the codes only."
+    },
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "Note under the colours"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rug palette"
+    }
+  ]
+}
+{% endschema %}

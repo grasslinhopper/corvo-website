@@ -856,25 +856,6 @@ quick buy information in a template, that will be extracted in JS, which ensures
         },
         {
           "type": "number",
-          "id": "min_side",
-          "label": "Shortest side allowed (cm)",
-          "default": 100
-        },
-        {
-          "type": "number",
-          "id": "max_long",
-          "label": "Longest side allowed (cm)",
-          "default": 1200
-        },
-        {
-          "type": "number",
-          "id": "max_short",
-          "label": "Longest shorter side allowed (cm)",
-          "info": "A rug can be up to the longest side by this side: 1200 by 700 cm is 12 × 7 m.",
-          "default": 700
-        },
-        {
-          "type": "number",
           "id": "size_step",
           "label": "Sizes go in steps of (cm)",
           "default": 1
@@ -883,7 +864,8 @@ quick buy information in a template, that will be extracted in JS, which ensures
           "type": "text",
           "id": "size_text",
           "label": "Line under the size",
-          "default": "Made to measure: any size up to 12 × 7 m."
+          "info": "[max_size] is filled in from the theme settings.",
+          "default": "Made to measure: any size up to [max_size]."
         },
         {
           "type": "text",
@@ -897,43 +879,7 @@ quick buy information in a template, that will be extracted in JS, which ensures
         },
         {
           "type": "paragraph",
-          "content": "The price per m² comes from the rug's craft level, and the rug's own supplement from its \"Price supplement (%)\" field. Change these rules only when the price list changes."
-        },
-        {
-          "type": "number",
-          "id": "vat_percent",
-          "label": "VAT (%)",
-          "default": 23
-        },
-        {
-          "type": "number",
-          "id": "small_area",
-          "label": "Small rugs: below this area (m²)",
-          "default": 3
-        },
-        {
-          "type": "number",
-          "id": "small_percent",
-          "label": "Small rugs: supplement (%)",
-          "default": 30
-        },
-        {
-          "type": "number",
-          "id": "large_long",
-          "label": "Large rugs: longer than (cm)",
-          "default": 900
-        },
-        {
-          "type": "number",
-          "id": "large_short",
-          "label": "Large rugs: or wider than (cm)",
-          "default": 400
-        },
-        {
-          "type": "number",
-          "id": "large_percent",
-          "label": "Large rugs: supplement (%)",
-          "default": 15
+          "content": "The price per m² comes from the rug's craft level, and the rug's own supplement from its \"Price supplement (%)\" field. The rules of the price list (VAT, size limits, supplements, lead times, the price of a custom colour and the Open Palette) are theme settings, under \"Corvo: prices and rules\", because other pages use them too."
         },
         {
           "type": "header",
@@ -958,12 +904,6 @@ quick buy information in a template, that will be extracted in JS, which ensures
           "default": "Included"
         },
         {
-          "type": "textarea",
-          "id": "palette",
-          "label": "Palette colours",
-          "info": "One colour per line: the code, then optionally a name and a colour value, separated by |. Example: 284 | Sand | #d9c8a9"
-        },
-        {
           "type": "text",
           "id": "custom_colour_title",
           "label": "Custom colour, title",
@@ -974,13 +914,6 @@ quick buy information in a template, that will be extracted in JS, which ensures
           "id": "custom_colour_text",
           "label": "Custom colour, text",
           "default": "Infinite Colours: any colour, matched to your reference."
-        },
-        {
-          "type": "number",
-          "id": "custom_colour_price",
-          "label": "Custom colour: price per colour, with VAT",
-          "info": "In the shop's currency. Leave at 0 for no supplement.",
-          "default": 0
         },
         {
           "type": "text",
@@ -996,42 +929,32 @@ quick buy information in a template, that will be extracted in JS, which ensures
           "type": "checkbox",
           "id": "show_shipping_step",
           "label": "Show the shipping step",
+          "info": "It is also hidden when the priority supplement of the theme settings is 0.",
           "default": true
         },
         {
           "type": "text",
           "id": "standard_label",
           "label": "Standard, title",
-          "default": "Standard"
+          "info": "Leave empty for \"Shipping in 5 weeks\", with the weeks of the theme settings."
         },
         {
           "type": "text",
           "id": "standard_note",
           "label": "Standard, text",
-          "default": "Production time is confirmed with your order."
+          "default": "Standard production."
         },
         {
           "type": "text",
           "id": "express_label",
           "label": "Priority, title",
-          "default": "Shipping in 3 weeks"
+          "info": "Leave empty for \"Shipping in 3 weeks\", with the weeks of the theme settings."
         },
         {
           "type": "text",
           "id": "express_note",
           "label": "Priority, text",
           "default": "Priority production."
-        },
-        {
-          "type": "range",
-          "id": "express_percent",
-          "min": 0,
-          "max": 100,
-          "step": 5,
-          "unit": "%",
-          "label": "Priority supplement",
-          "info": "Added to the whole price. At 0 the shipping step is hidden.",
-          "default": 25
         },
         {
           "type": "header",

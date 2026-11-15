@@ -1,0 +1,33 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+RUG METRES (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Prints a size given in centimetres as metres, without needless zeros: 1200 and 700 read "12 × 7 m".
+
+********************************************
+Supported variables
+********************************************
+
+* long: the longer side, in centimetres (required)
+* short: the shorter side, in centimetres (required)
+{%- endcomment -%}
+
+{%- liquid
+  assign long_cm = long | round
+  assign short_cm = short | round
+  assign long_text = long_cm | divided_by: 100
+  assign short_text = short_cm | divided_by: 100
+  assign long_rest = long_cm | modulo: 100
+  assign short_rest = short_cm | modulo: 100
+
+  if long_rest != 0
+    assign long_text = long_cm | divided_by: 100.0
+  endif
+
+  if short_rest != 0
+    assign short_text = short_cm | divided_by: 100.0
+  endif
+
+  echo long_text | append: ' × ' | append: short_text | append: ' m'
+-%}

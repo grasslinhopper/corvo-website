@@ -29,7 +29,8 @@ Supported variables
 
 * product: the rug (required)
 * form_id: the ID of the product form (required)
-* block: the "rug_steps" block, for its settings (required)
+* block: the "rug_steps" block, for its settings (required). The rules of the price list (VAT, size limits,
+  supplements, lead times, the Open Palette) are theme settings, under "Corvo: prices and rules".
 * context: "main_product" or "featured_product"
 {%- endcomment -%}
 
@@ -77,11 +78,51 @@ Supported variables
   {%- render 'variant-picker', product: product, form_id: form_id, context: context, hide_sold_out_variants: false, selector_style: 'block', swatch_selector_style: 'none' -%}
 {%- else -%}
   {%- liquid
-    assign min_side = block.settings.min_side | default: 100
-    assign max_long = block.settings.max_long | default: 1200
-    assign max_short = block.settings.max_short | default: 700
+    # The rules of the price list are theme settings ("Corvo: prices and rules"), shared with the other pages
+    assign min_side = settings.rug_min_side | default: 100
+    assign max_long = settings.rug_max_long | default: 1200
+    assign max_short = settings.rug_max_short | default: 700
     assign size_step = block.settings.size_step | default: 1
-    assign custom_colour_cents = block.settings.custom_colour_price | default: 0 | times: 100 | round
+    assign vat_percent = settings.rug_vat_percent | default: 23
+    assign vat_plus = vat_percent | plus: 100
+    assign custom_colour_cents = settings.rug_colour_price | default: 0 | times: vat_plus | round
+    assign express_percent = settings.rug_priority_percent | default: 0
+
+    # The two shipping choices are named after the lead times, unless the block gives them a name of its own
+    assign standard_label = block.settings.standard_label
+    assign express_label = block.settings.express_label
+
+    if standard_label == blank
+      assign standard_label = 'rug_page.shipping_in' | t: weeks: settings.rug_lead_weeks
+    endif
+
+    if express_label == blank
+      assign express_label = 'rug_page.shipping_in' | t: weeks: settings.rug_priority_weeks
+    endif
+
+    # Texts may hold markers such as [max_size]: see the "corvo-fill" snippet
+    assign size_text_escaped = block.settings.size_text | escape
+    assign colour_text_escaped = block.settings.colour_text | escape
+
+    capture size_text
+      render 'corvo-fill', text: size_text_escaped
+    endcapture
+
+    capture colour_text
+      render 'corvo-fill', text: colour_text_escaped
+    endcapture
+
+    capture custom_text
+      render 'corvo-fill', text: block.settings.custom_colour_text
+    endcapture
+
+    capture summary_note
+      render 'corvo-fill', text: block.settings.summary_note
+    endcapture
+
+    capture large_size
+      render 'rug-metres', long: settings.rug_large_long, short: settings.rug_large_short
+    endcapture
     assign is_base_currency = false
 
     if cart.currency.iso_code == shop.currency
@@ -158,7 +199,7 @@ Supported variables
 
   {%- comment -%}The palette: one colour per line, written as "code", "code | name" or "code | name | #hex"{%- endcomment -%}
   {%- capture palette_json -%}
-    {%- assign palette_lines = block.settings.palette | newline_to_br | strip_newlines | split: '<br />' -%}
+    {%- assign palette_lines = settings.rug_palette | newline_to_br | strip_newlines | split: '<br />' -%}
 
     {%- for palette_line in palette_lines -%}
       {%- liquid
@@ -188,15 +229,15 @@ Supported variables
         "title": {{ product.title | json }},
         "rate": {{ rate }},
         "supplement": {{ own_supplement }},
-        "vat": {{ block.settings.vat_percent | default: 23 }},
-        "small": { "below": {{ block.settings.small_area | default: 3 }}, "percent": {{ block.settings.small_percent | default: 0 }} },
-        "large": { "long": {{ block.settings.large_long | default: 900 }}, "short": {{ block.settings.large_short | default: 400 }}, "percent": {{ block.settings.large_percent | default: 0 }} },
+        "vat": {{ vat_percent }},
+        "small": { "below": {{ settings.rug_small_area | default: 3 }}, "percent": {{ settings.rug_small_percent | default: 0 }} },
+        "large": { "long": {{ settings.rug_large_long | default: 900 }}, "short": {{ settings.rug_large_short | default: 400 }}, "percent": {{ settings.rug_large_percent | default: 0 }} },
         "limits": { "min": {{ min_side }}, "long": {{ max_long }}, "short": {{ max_short }}, "step": {{ size_step }} },
         "sizes": [{{ sizes | join: ',' }}],
         "colours": [{{ colours_json | strip | split: '|' | join: ',' }}],
         "palette": [{{ palette_json | strip | split: '|' | join: ',' }}],
         "customColour": {{ custom_colour_cents }},
-        "expressPercent": {{ block.settings.express_percent | default: 0 }},
+        "expressPercent": {{ express_percent }},
         "steps": {
           "handle": {{ block.settings.price_product | default: 'made-to-measure-rug' | json }},
           "option": "Reference",
@@ -227,18 +268,18 @@ Supported variables
           "paletteNote": {{ block.settings.palette_note | json }},
           "palettePreview": {{ 'rug_page.palette_preview' | t | json }},
           "customTitle": {{ block.settings.custom_colour_title | json }},
-          "customText": {{ block.settings.custom_colour_text | json }},
+          "customText": {{ custom_text | strip | json }},
           "customPlaceholder": {{ 'rug_page.custom_placeholder' | t | json }},
           "customPrice": {{ custom_colour_text | strip | json }},
           "perColour": {{ 'rug_page.per_colour' | t: amount: '[amount]' | json }},
           "supplementApplies": {{ 'rug_page.supplement_applies' | t | json }},
-          "small": {{ 'rug_page.small_format' | t: area: block.settings.small_area, percent: block.settings.small_percent | json }},
-          "large": {{ 'rug_page.large_format' | t: percent: block.settings.large_percent | json }},
-          "standard": {{ block.settings.standard_label | json }},
-          "express": {{ block.settings.express_label | json }},
+          "small": {{ 'rug_page.small_format' | t: area: settings.rug_small_area, percent: settings.rug_small_percent | json }},
+          "large": {{ 'rug_page.large_format' | t: size: large_size, percent: settings.rug_large_percent | json }},
+          "standard": {{ standard_label | json }},
+          "express": {{ express_label | json }},
           "included": {{ 'rug_page.included' | t | json }},
           "surcharge": {{ 'rug_page.surcharge' | t: amount: '[amount]' | json }},
-          "percent": {{ 'rug_page.percent_more' | t: percent: block.settings.express_percent | json }},
+          "percent": {{ 'rug_page.percent_more' | t: percent: express_percent | json }},
           "onRequest": {{ 'rug_page.on_request' | t | json }},
           "failed": {{ 'rug_page.price_failed' | t | json }},
           "propertyDesign": {{ 'rug_page.design' | t | json }},
@@ -308,7 +349,7 @@ Supported variables
 
       {%- if block.settings.size_text != blank -%}
         <p class="rug-step__more text-sm text-subdued">
-          {{- block.settings.size_text | escape -}}
+          {{- size_text | strip -}}
 
           {%- if block.settings.custom_link != blank and block.settings.size_link_text != blank %}
             <a href="{{ block.settings.custom_link }}" class="link">{{ block.settings.size_link_text | escape }}</a>
@@ -367,7 +408,7 @@ Supported variables
         </ul>
 
         {%- if block.settings.colour_text != blank -%}
-          <p class="rug-step__more text-sm text-subdued">{{ block.settings.colour_text | escape }}</p>
+          <p class="rug-step__more text-sm text-subdued">{{ colour_text | strip }}</p>
         {%- endif -%}
       </div>
     {%- endif -%}
@@ -378,7 +419,7 @@ Supported variables
     ------------------------------------------------------------------------------------------------------------------
     {%- endcomment -%}
 
-    {%- if block.settings.show_shipping_step and block.settings.express_percent > 0 -%}
+    {%- if block.settings.show_shipping_step and express_percent > 0 -%}
       {%- liquid
         assign step = step | plus: 1
         assign shipping_name = 'rug-shipping-' | append: uid
@@ -397,7 +438,7 @@ Supported variables
             <span class="rug-choice__mark" aria-hidden="true"></span>
 
             <span class="rug-choice__text rug-choice__text--stacked">
-              <span class="rug-choice__title">{{ block.settings.standard_label | escape }}</span>
+              <span class="rug-choice__title">{{ standard_label | escape }}</span>
 
               {%- if block.settings.standard_note != blank -%}
                 <span class="rug-choice__note text-subdued">{{ block.settings.standard_note | escape }}</span>
@@ -413,14 +454,14 @@ Supported variables
             <span class="rug-choice__mark" aria-hidden="true"></span>
 
             <span class="rug-choice__text rug-choice__text--stacked">
-              <span class="rug-choice__title">{{ block.settings.express_label | escape }}</span>
+              <span class="rug-choice__title">{{ express_label | escape }}</span>
 
               {%- if block.settings.express_note != blank -%}
                 <span class="rug-choice__note text-subdued">{{ block.settings.express_note | escape }}</span>
               {%- endif -%}
             </span>
 
-            <span class="rug-choice__price" data-rug-express-extra>{{ 'rug_page.percent_more' | t: percent: block.settings.express_percent }}</span>
+            <span class="rug-choice__price" data-rug-express-extra>{{ 'rug_page.percent_more' | t: percent: express_percent }}</span>
           </label>
         </div>
       </fieldset>
@@ -458,12 +499,12 @@ Supported variables
           </div>
         {%- endif -%}
 
-        {%- if block.settings.show_shipping_step and block.settings.express_percent > 0 -%}
+        {%- if block.settings.show_shipping_step and express_percent > 0 -%}
           <div>
             <dt>{{ 'rug_page.shipping' | t }}</dt>
             {%- comment -%}"Shipping in 5 weeks" under the word "Shipping" reads "In 5 weeks"{%- endcomment -%}
             {%- assign shipping_word = 'rug_page.shipping' | t -%}
-            <dd data-rug-summary-shipping>{{ block.settings.standard_label | remove_first: shipping_word | strip | capitalize | escape }}</dd>
+            <dd data-rug-summary-shipping>{{ standard_label | remove_first: shipping_word | strip | capitalize | escape }}</dd>
           </div>
         {%- endif -%}
       </dl>
@@ -501,7 +542,7 @@ Supported variables
 
       {%- if block.settings.summary_note != blank -%}
         <div class="rug-summary__note prose text-sm text-subdued">
-          {{- block.settings.summary_note -}}
+          {{- summary_note | strip -}}
         </div>
       {%- endif -%}
     </div>

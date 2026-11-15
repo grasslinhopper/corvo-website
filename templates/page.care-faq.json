@@ -61,7 +61,7 @@
           "type": "question",
           "settings": {
             "question": "How do I start a bespoke project?",
-            "answer": "<p>Write to our design concierge through our <a href=\"/pages/contact\">contact page</a>. From there, the path is simple: consultation, design, sampling, production.</p>"
+            "answer": "<p>On the <a href=\"/pages/tailor-your-rug\">Tailor your rug page</a>: see a price guide for your idea and ask for a proposal. You can also write to us through the <a href=\"/pages/contact\">contact page</a>. From there, the path is simple: consultation, design, sampling, production.</p>"
           }
         },
         "cat_materials": {
@@ -75,7 +75,7 @@
           "type": "question",
           "settings": {
             "question": "What materials do you use?",
-            "answer": "<p>Natural wools — including New Zealand wool — alongside Lyocell and jute. Each is chosen for its feel, its wear and the way it holds light.</p>"
+            "answer": "<p>[materials_count] materials. [materials_standard] are included in the price of every rug. [materials_plus] add a supplement. [materials_premium] are rare fibres with a price of their own. The <a href=\"/pages/raw-materials\">Raw materials page</a> describes each one and what it adds to the price.</p>"
           }
         },
         "cat_orders": {
@@ -96,7 +96,7 @@
           "type": "question",
           "settings": {
             "question": "How long does a rug take?",
-            "answer": "<p>A rug is made to order and ships in 5 weeks. With priority production it ships in 3 weeks, for 25% more. A custom colour, design or shape can take longer, and we confirm the date with your order.</p>"
+            "answer": "<p>A rug is made to order and ships in [lead_weeks] weeks. With priority production it ships in [priority_weeks] weeks, for [priority_percent]% more. A custom colour, design or shape can take longer, and we confirm the date with your order.</p>"
           }
         },
         "cat_trade": {
@@ -117,28 +117,28 @@
           "type": "question",
           "settings": {
             "question": "How is the price of a rug worked out?",
-            "answer": "<p>By area. Each design has a craft level, which sets its price per m². Every rug page shows the price of its five standard sizes and works out the price of any other size, up to 12 × 7 m, as you type it. Prices include VAT.</p>"
+            "answer": "<p>By area. Each design has a craft level, which sets its price per m², from [from_price] per m². Every rug page shows the price of its five standard sizes and works out the price of any other size, up to [max_size], as you type it. Prices include VAT.</p>"
           }
         },
         "q_samples": {
           "type": "question",
           "settings": {
             "question": "Can I see a sample first?",
-            "answer": "<p>Yes. A sample of any rug can be ordered from its page or from the <a href=\"/pages/samples\">Samples page</a>.</p>"
+            "answer": "<p>Yes. A [sample_size] sample of any rug costs [sample_price]. Order it from the page of the rug or from the <a href=\"/pages/samples\">Samples page</a>.</p>"
           }
         },
         "q_change": {
           "type": "question",
           "settings": {
             "question": "Can I change or cancel an order?",
-            "answer": "<p>Yes, up to 48 business hours after we confirm your order.</p>"
+            "answer": "<p>Yes, up to [change_hours] business hours after we confirm your order.</p>"
           }
         },
         "q_defect": {
           "type": "question",
           "settings": {
             "question": "What if something is wrong with my rug?",
-            "answer": "<p>Every rug passes a quality control and is photographed before it leaves us. If you find a defect, tell us in writing within 10 business days of receiving the rug, with photographs.</p>"
+            "answer": "<p>Every rug passes a quality control and is photographed before it leaves us. If you find a defect, tell us in writing within [claim_days] business days of receiving the rug, with photographs.</p>"
           }
         },
         "q_colour": {
@@ -152,7 +152,28 @@
           "type": "question",
           "settings": {
             "question": "Can I return a rug?",
-            "answer": "<p>No. Every rug is made to order for its buyer, so it cannot be returned or exchanged. An order can still be changed or cancelled up to 48 business hours after we confirm it.</p>"
+            "answer": "<p>No. Every rug is made to order for its buyer, so it cannot be returned or exchanged. An order can still be changed or cancelled up to [change_hours] business hours after we confirm it.</p>"
+          }
+        },
+        "q_colours": {
+          "type": "question",
+          "settings": {
+            "question": "Which colours can I choose?",
+            "answer": "<p>Any colour. Every colour of a design can be changed: to one of the [palette_count] colours of the Open Palette at no extra cost, or to any other colour, matched to your reference, for [colour_price] per colour. The <a href=\"/pages/colours\">Colours page</a> shows how.</p>"
+          }
+        },
+        "q_size": {
+          "type": "question",
+          "settings": {
+            "question": "What is the largest rug you can make?",
+            "answer": "<p>[max_size]. Every design can be made to measure in any size up to that, and its rug page works out the price as you type the size.</p>"
+          }
+        },
+        "q_bespoke_price": {
+          "type": "question",
+          "settings": {
+            "question": "How much does a bespoke rug cost?",
+            "answer": "<p>From [from_price] per m², VAT included. The price per m² follows the craft level of the design, on a scale of 1 to [level_count]. The material, the pile, the size and custom colours can add to it. The <a href=\"/pages/tailor-your-rug\">Tailor your rug page</a> works out a price guide for your idea.</p>"
           }
         }
       },
@@ -160,6 +181,9 @@
         "cat_bespoke",
         "q_made_to_order",
         "q_customization",
+        "q_colours",
+        "q_size",
+        "q_bespoke_price",
         "q_start_bespoke",
         "cat_materials",
         "q_materials",

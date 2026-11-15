@@ -1,0 +1,1057 @@
+{%- comment -%}
+  Rug price guide (Corvo addition)
+
+  The heart of the "Tailor your rug" page: a price guide for a rug that does not exist yet, and the form that asks for
+  a proposal.
+
+  The visitor chooses a craft level, a material, a size, options and a shipping time. The <rug-price-guide> element
+  (assets/rug-price-guide.js) works the price out in the browser, the same way a rug page does:
+
+    price per m² of the craft level, without VAT ("Craft level" entries in Shopify)
+    × the multiplier of a premium material ("Rug material" entries)
+    × (1 + the supplements: material, high pile, carving, round corners, small or large format)
+    × area × VAT, rounded to the euro
+    + the price of each custom colour
+    × the priority supplement when the faster shipping is chosen
+
+  Every number is read from the theme settings ("Corvo: prices and rules") and from the two kinds of entries, never
+  typed here. Every choice and every rule is also written in the page as plain text, so a reader that does not run
+  scripts (a search engine, an AI assistant) sees the whole price list.
+
+  The form is Shopify's own contact form: it sends the request, with the price guide as one of its lines, to the
+  shop's e-mail address.
+
+  The steps, the fields, the choices and the summary are drawn with the styles of the rug page (the ".rug-step",
+  ".rug-field", ".rug-choice" and ".rug-summary" rules in sections/main-product.liquid), so the two pages look and
+  behave alike. Shopify serves the styles of every section on every page.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign levels = shop.metaobjects.craft_level.values
+  assign materials = shop.metaobjects.rug_material.values
+  assign uid = section.id
+  assign form_id = 'proposal-form-' | append: section.id
+
+  assign vat_percent = settings.rug_vat_percent | default: 23
+  assign vat_plus = vat_percent | plus: 100
+  assign min_side = settings.rug_min_side | default: 100
+  assign max_long = settings.rug_max_long | default: 1200
+  assign max_short = settings.rug_max_short | default: 700
+  assign express_percent = settings.rug_priority_percent | default: 0
+  assign colour_net_cents = settings.rug_colour_price | default: 0 | times: 100 | round
+  assign colour_cents = settings.rug_colour_price | default: 0 | times: vat_plus | round
+  assign default_level = section.settings.default_level
+  assign default_width = section.settings.default_width
+  assign default_length = section.settings.default_length
+  assign is_base_currency = false
+
+  if cart.currency.iso_code == shop.currency
+    assign is_base_currency = true
+  endif
+
+  if settings.currency_code_enabled
+    assign money_format = shop.money_with_currency_format
+  else
+    assign money_format = shop.money_format
+  endif
+
+  capture fx
+    render 'rug-fx'
+  endcapture
+
+  assign fx = fx | strip
+
+  capture max_size
+    render 'rug-metres', long: max_long, short: max_short
+  endcapture
+
+  capture large_size
+    render 'rug-metres', long: settings.rug_large_long, short: settings.rug_large_short
+  endcapture
+
+  capture colour_price
+    render 'rug-money', amount: colour_cents, fx: fx
+  endcapture
+
+  assign colour_price = colour_price | strip
+  assign standard_label = 'rug_page.shipping_in' | t: weeks: settings.rug_lead_weeks
+  assign express_label = 'rug_page.shipping_in' | t: weeks: settings.rug_priority_weeks
+  assign step = 0
+
+  comment
+    The price of the opening example, worked out here so that the page shows a figure before any script runs
+  endcomment
+
+  assign default_rate = 0
+  assign default_level_label = ''
+  assign default_material_name = ''
+
+  for material in materials
+    if material.group.value == 'Standard' and default_material_name == blank
+      assign default_material_name = material.name.value
+    endif
+  endfor
+
+  for level in levels
+    if level.number.value == default_level
+      assign default_rate = level.retail_per_m2.value | times: 100 | round
+      assign default_level_label = level.label.value
+    endif
+  endfor
+
+  assign default_net = default_rate | times: default_width | times: default_length | divided_by: 1000000.0 | round | times: 100
+  assign default_total = default_rate | times: default_width | times: default_length | times: vat_plus | divided_by: 100000000.0 | round | times: 100
+  assign default_per_m2 = default_rate | times: vat_plus | divided_by: 100.0 | round
+
+  capture default_total_text
+    render 'rug-money', amount: default_total, fx: fx
+  endcapture
+
+  capture default_net_text
+    render 'rug-money', amount: default_net, fx: fx
+  endcapture
+
+  capture default_per_m2_text
+    render 'rug-money', amount: default_per_m2, fx: fx
+  endcapture
+-%}
+
+{%- capture levels_json -%}
+  {%- for level in levels -%}
+    {"number":{{ level.number.value | json }},"label":{{ level.label.value | json }},"rate":{{ level.retail_per_m2.value | times: 100 | round }}}{% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- capture materials_json -%}
+  {%- for material in materials -%}
+    {%- liquid
+      assign material_percent = 0
+      assign material_times = 100
+
+      if material.group.value == 'Premium'
+        assign material_times = material.factor.value | times: 100 | round
+      else
+        assign material_percent = material.factor.value | times: 100 | round | minus: 100
+      endif
+    -%}
+
+    {"handle":{{ material.system.handle | json }},"name":{{ material.name.value | json }},"note":{{ material.supplement.value | json }},"percent":{{ material_percent }},"times":{{ material_times }}}{% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+{%- endcapture -%}
+
+<div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" id="price-guide">
+  <div class="container container--lg">
+    <div class="section-stack">
+      {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank -%}
+        <div class="section-header justify-self-center text-center">
+          <div class="prose">
+            {%- if section.settings.subheading != blank -%}
+              <p class="h6">{{ section.settings.subheading | escape }}</p>
+            {%- endif -%}
+
+            {%- if section.settings.title != blank -%}
+              <h2 class="h2">{{ section.settings.title | escape }}</h2>
+            {%- endif -%}
+
+            {%- if section.settings.text != blank -%}
+              {%- render 'corvo-fill', text: section.settings.text -%}
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      <rug-price-guide class="price-guide" form="{{ form_id }}">
+        <script type="application/json" data-guide-config>
+          {
+            "vat": {{ vat_percent }},
+            "limits": { "min": {{ min_side }}, "long": {{ max_long }}, "short": {{ max_short }} },
+            "small": { "below": {{ settings.rug_small_area | default: 3 }}, "percent": {{ settings.rug_small_percent | default: 0 }} },
+            "large": { "long": {{ settings.rug_large_long | default: 900 }}, "short": {{ settings.rug_large_short | default: 400 }}, "percent": {{ settings.rug_large_percent | default: 0 }} },
+            "pile": {{ settings.rug_pile_percent | default: 0 }},
+            "carving": {{ settings.rug_carving_percent | default: 0 }},
+            "corners": {{ settings.rug_corners_percent | default: 0 }},
+            "colour": {{ colour_cents }},
+            "colourNet": {{ colour_net_cents }},
+            "expressPercent": {{ express_percent }},
+            "levels": [{{ levels_json | strip }}],
+            "materials": [{{ materials_json | strip }}],
+            "fx": {{ fx | default: 1 }},
+            "baseCurrency": {{ is_base_currency | json }},
+            "moneyFormat": {{ money_format | json }},
+            "strings": {
+              "area": {{ 'rug_page.area' | t: area: '[area]' | json }},
+              "about": {{ 'rug_page.about' | t: size: '[size]' | json }},
+              "aboutAmount": {{ 'price_guide.about_amount' | t: amount: '[amount]' | json }},
+              "errorNumber": {{ 'rug_page.error_number' | t | json }},
+              "errorMin": {{ 'rug_page.error_min' | t: min: min_side | json }},
+              "errorLong": {{ 'rug_page.error_long' | t: max: max_long | json }},
+              "errorShort": {{ 'rug_page.error_short' | t: max: max_short | json }},
+              "small": {{ 'rug_page.small_format' | t: area: settings.rug_small_area, percent: settings.rug_small_percent | json }},
+              "large": {{ 'rug_page.large_format' | t: size: large_size, percent: settings.rug_large_percent | json }},
+              "craftLevel": {{ 'price_guide.craft_level' | t: label: '[label]' | json }},
+              "none": {{ 'price_guide.none' | t | json }},
+              "pile": {{ 'price_guide.high_pile' | t | json }},
+              "carving": {{ 'price_guide.carving' | t | json }},
+              "corners": {{ 'price_guide.corners' | t | json }},
+              "colours": {{ 'price_guide.colours_each' | t: count: '[count]', price: colour_price | json }},
+              "standard": {{ standard_label | json }},
+              "express": {{ 'price_guide.express' | t: label: express_label, percent: express_percent | json }},
+              "shippingWord": {{ 'rug_page.shipping' | t | json }},
+              "perM2": {{ 'price_guide.per_m2' | t: price: '[price]' | json }},
+              "invalid": {{ 'price_guide.invalid' | t | json }},
+              "summaryDesign": {{ 'rug_page.design' | t | json }},
+              "summaryMaterial": {{ 'price_guide.material' | t | json }},
+              "summarySize": {{ 'rug_page.size' | t | json }},
+              "summaryOptions": {{ 'price_guide.options' | t | json }},
+              "summaryColours": {{ 'price_guide.custom_colours' | t | json }},
+              "summaryShipping": {{ 'rug_page.shipping' | t | json }},
+              "summaryTotal": {{ 'price_guide.total' | t | json }},
+              "vatIncluded": {{ 'rug_page.vat_included' | t | json }},
+              "withoutVat": {{ 'price_guide.without_vat' | t | json }}
+            }
+          }
+        </script>
+
+        <div class="price-guide__steps rug-steps">
+          {%- comment -%}
+          ------------------------------------------------------------------------------------------------------------
+          DESIGN: the craft level
+          ------------------------------------------------------------------------------------------------------------
+          {%- endcomment -%}
+
+          {%- assign step = step | plus: 1 -%}
+
+          <fieldset class="rug-step">
+            <legend class="rug-step__legend">
+              <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+              <span class="rug-step__title h6">{{ 'rug_page.design' | t }}</span>
+            </legend>
+
+            {%- if section.settings.design_text != blank -%}
+              <p class="price-guide__lead text-sm text-subdued">{{ section.settings.design_text | escape }}</p>
+            {%- endif -%}
+
+            <div class="rug-step__choices">
+              {%- for level in levels -%}
+                {%- liquid
+                  assign level_id = 'guide-level-' | append: uid | append: '-' | append: level.number.value
+                  assign level_cents = level.retail_per_m2.value | times: vat_plus | round
+
+                  capture level_price
+                    render 'rug-money', amount: level_cents, fx: fx
+                  endcapture
+
+                  if level.colours.value == '1'
+                    assign level_colours = 'rug_page.colours_one' | t
+                  else
+                    assign level_colours = 'price_guide.colours_range' | t: range: level.colours.value
+                  endif
+                -%}
+
+                <input class="sr-only" type="radio" id="{{ level_id }}" name="guide-level-{{ uid }}" value="{{ level.number.value }}" {% if level.number.value == default_level %}checked{% endif %} autocomplete="off" data-guide-level>
+
+                <label class="rug-choice" for="{{ level_id }}">
+                  <span class="rug-choice__mark" aria-hidden="true"></span>
+
+                  <span class="rug-choice__text rug-choice__text--stacked">
+                    <span class="rug-choice__title">{{ level.label.value | escape }}</span>
+                    <span class="rug-choice__note text-subdued">{{ level.description.value | escape }}. {{ level_colours | capitalize }}.</span>
+                  </span>
+
+                  <span class="rug-choice__price">{{ 'price_guide.per_m2' | t: price: level_price | strip }}</span>
+                </label>
+              {%- endfor -%}
+            </div>
+
+            {%- if section.settings.design_note != blank -%}
+              <p class="rug-step__more text-sm text-subdued">{{ section.settings.design_note | escape }}</p>
+            {%- endif -%}
+          </fieldset>
+
+          {%- comment -%}
+          ------------------------------------------------------------------------------------------------------------
+          MATERIAL
+          ------------------------------------------------------------------------------------------------------------
+          {%- endcomment -%}
+
+          {%- assign step = step | plus: 1 -%}
+
+          <fieldset class="rug-step">
+            <legend class="rug-step__legend">
+              <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+              <span class="rug-step__title h6">{{ 'price_guide.material' | t }}</span>
+            </legend>
+
+            <div class="price-guide__groups">
+              {%- assign group_names = 'Standard|Plus|Premium' | split: '|' -%}
+              {%- assign first_material = true -%}
+
+              {%- for group_name in group_names -%}
+                {%- liquid
+                  case group_name
+                    when 'Standard'
+                      assign group_title = section.settings.group_standard
+                    when 'Plus'
+                      assign group_title = section.settings.group_plus
+                    else
+                      assign group_title = section.settings.group_premium
+                  endcase
+                -%}
+
+                <div class="price-guide__group">
+                  <p class="text-sm text-subdued">{{ group_title | escape }}</p>
+
+                  <div class="price-guide__chips">
+                    {%- for material in materials -%}
+                      {%- if material.group.value == group_name -%}
+                        {%- assign material_id = 'guide-material-' | append: uid | append: '-' | append: material.system.handle -%}
+
+                        <input class="sr-only" type="radio" id="{{ material_id }}" name="guide-material-{{ uid }}" value="{{ material.system.handle }}" {% if first_material %}checked{% endif %} autocomplete="off" data-guide-material>
+
+                        <label class="price-chip" for="{{ material_id }}">
+                          <span>{{ material.name.value | escape }}</span>
+
+                          {%- unless group_name == 'Standard' -%}
+                            <span class="price-chip__note text-subdued">{{ material.supplement.value | escape }}</span>
+                          {%- endunless -%}
+                        </label>
+
+                        {%- assign first_material = false -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
+
+            {%- if section.settings.material_link != blank and section.settings.material_link_text != blank -%}
+              <p class="rug-step__more text-sm text-subdued">
+                {{- section.settings.material_text | escape }}
+                <a href="{{ section.settings.material_link }}" class="link">{{ section.settings.material_link_text | escape }}</a>
+              </p>
+            {%- endif -%}
+          </fieldset>
+
+          {%- comment -%}
+          ------------------------------------------------------------------------------------------------------------
+          SIZE
+          ------------------------------------------------------------------------------------------------------------
+          {%- endcomment -%}
+
+          {%- assign step = step | plus: 1 -%}
+
+          <fieldset class="rug-step">
+            <legend class="rug-step__legend">
+              <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+              <span class="rug-step__title h6">{{ 'rug_page.size' | t }}</span>
+            </legend>
+
+            {%- assign shortcut_sizes = section.settings.sizes | split: ',' -%}
+
+            {%- if shortcut_sizes.size > 0 -%}
+              <div class="rug-sizes" role="group" aria-label="{{ 'rug_page.standard_sizes' | t | escape }}">
+                {%- for shortcut_size in shortcut_sizes -%}
+                  {%- liquid
+                    assign dimensions = shortcut_size | downcase | remove: 'cm' | remove: ' ' | split: 'x'
+                    assign size_width = dimensions[0] | plus: 0
+                    assign size_length = dimensions[1] | plus: 0
+                  -%}
+
+                  {%- if dimensions.size == 2 and size_width > 0 and size_length > 0 -%}
+                    <button type="button" class="rug-size" data-guide-size data-width="{{ size_width }}" data-length="{{ size_length }}" aria-pressed="{% if size_width == default_width and size_length == default_length %}true{% else %}false{% endif %}">
+                      {{- size_width }}&nbsp;×&nbsp;{{ size_length -}}
+                    </button>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+
+            <div class="rug-dimensions">
+              <label class="rug-field" for="guide-width-{{ uid }}">
+                <span class="rug-field__label text-sm text-subdued">{{ 'rug_page.width' | t }}</span>
+
+                <span class="rug-field__control">
+                  <input class="rug-field__input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" id="guide-width-{{ uid }}" value="{{ default_width }}" data-guide-width aria-describedby="guide-size-error-{{ uid }}">
+                  <span class="rug-field__unit text-subdued" aria-hidden="true">cm</span>
+                </span>
+              </label>
+
+              <span class="rug-dimensions__times text-subdued" aria-hidden="true">×</span>
+
+              <label class="rug-field" for="guide-length-{{ uid }}">
+                <span class="rug-field__label text-sm text-subdued">{{ 'rug_page.length' | t }}</span>
+
+                <span class="rug-field__control">
+                  <input class="rug-field__input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" id="guide-length-{{ uid }}" value="{{ default_length }}" data-guide-length aria-describedby="guide-size-error-{{ uid }}">
+                  <span class="rug-field__unit text-subdued" aria-hidden="true">cm</span>
+                </span>
+              </label>
+            </div>
+
+            <p class="rug-step__error text-sm" id="guide-size-error-{{ uid }}" data-guide-size-error role="alert" hidden></p>
+            <p class="rug-step__more text-sm" data-guide-size-info>{{ default_width }} × {{ default_length }} cm</p>
+            <p class="rug-step__note text-sm" data-guide-size-note hidden></p>
+
+            <p class="rug-step__more text-sm text-subdued">
+              {{- 'price_guide.size_rules' | t: min: min_side, max: max_size, small: settings.rug_small_area, small_percent: settings.rug_small_percent, large: large_size, large_percent: settings.rug_large_percent -}}
+
+              {%- if section.settings.shape_text != blank %}
+                {{ section.settings.shape_text | escape }}
+              {%- endif -%}
+            </p>
+          </fieldset>
+
+          {%- comment -%}
+          ------------------------------------------------------------------------------------------------------------
+          OPTIONS
+          ------------------------------------------------------------------------------------------------------------
+          {%- endcomment -%}
+
+          {%- assign step = step | plus: 1 -%}
+
+          <fieldset class="rug-step">
+            <legend class="rug-step__legend">
+              <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+              <span class="rug-step__title h6">{{ 'price_guide.options' | t }}</span>
+            </legend>
+
+            <div class="rug-step__choices">
+              {%- if settings.rug_pile_percent > 0 -%}
+                <input class="sr-only" type="checkbox" id="guide-pile-{{ uid }}" autocomplete="off" data-guide-option="pile">
+
+                <label class="rug-choice" for="guide-pile-{{ uid }}">
+                  <span class="rug-choice__mark rug-choice__mark--box" aria-hidden="true"></span>
+
+                  <span class="rug-choice__text rug-choice__text--stacked">
+                    <span class="rug-choice__title">{{ 'price_guide.high_pile' | t }}</span>
+                    <span class="rug-choice__note text-subdued">{{ 'price_guide.high_pile_note' | t: limit: settings.rug_pile_limit }}</span>
+                  </span>
+
+                  <span class="rug-choice__price">{{ 'rug_page.percent_more' | t: percent: settings.rug_pile_percent }}</span>
+                </label>
+              {%- endif -%}
+
+              {%- if settings.rug_carving_percent > 0 -%}
+                <input class="sr-only" type="checkbox" id="guide-carving-{{ uid }}" autocomplete="off" data-guide-option="carving">
+
+                <label class="rug-choice" for="guide-carving-{{ uid }}">
+                  <span class="rug-choice__mark rug-choice__mark--box" aria-hidden="true"></span>
+
+                  <span class="rug-choice__text rug-choice__text--stacked">
+                    <span class="rug-choice__title">{{ 'price_guide.carving' | t }}</span>
+                    <span class="rug-choice__note text-subdued">{{ 'price_guide.carving_note' | t }}</span>
+                  </span>
+
+                  <span class="rug-choice__price">{{ 'rug_page.percent_more' | t: percent: settings.rug_carving_percent }}</span>
+                </label>
+              {%- endif -%}
+
+              {%- if settings.rug_corners_percent > 0 -%}
+                <input class="sr-only" type="checkbox" id="guide-corners-{{ uid }}" autocomplete="off" data-guide-option="corners">
+
+                <label class="rug-choice" for="guide-corners-{{ uid }}">
+                  <span class="rug-choice__mark rug-choice__mark--box" aria-hidden="true"></span>
+
+                  <span class="rug-choice__text rug-choice__text--stacked">
+                    <span class="rug-choice__title">{{ 'price_guide.corners' | t }}</span>
+                    <span class="rug-choice__note text-subdued">{{ 'price_guide.corners_note' | t }}</span>
+                  </span>
+
+                  <span class="rug-choice__price">{{ 'rug_page.percent_more' | t: percent: settings.rug_corners_percent }}</span>
+                </label>
+              {%- endif -%}
+
+              {%- if colour_cents > 0 -%}
+                <div class="rug-choice price-guide__count">
+                  <label class="rug-choice__text rug-choice__text--stacked" for="guide-colours-{{ uid }}">
+                    <span class="rug-choice__title">{{ 'price_guide.custom_colours' | t }}</span>
+                    <span class="rug-choice__note text-subdued">{{ 'price_guide.custom_colours_note' | t }}</span>
+                  </label>
+
+                  <span class="price-guide__stepper">
+                    <button type="button" class="price-guide__stepper-button" data-guide-colours-less aria-label="{{ 'price_guide.fewer' | t | escape }}">−</button>
+                    <input class="price-guide__stepper-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" id="guide-colours-{{ uid }}" value="0" data-guide-colours>
+                    <button type="button" class="price-guide__stepper-button" data-guide-colours-more aria-label="{{ 'price_guide.more' | t | escape }}">+</button>
+                  </span>
+
+                  <span class="rug-choice__price">{{ 'price_guide.each' | t: price: colour_price }}</span>
+                </div>
+              {%- endif -%}
+            </div>
+          </fieldset>
+
+          {%- comment -%}
+          ------------------------------------------------------------------------------------------------------------
+          SHIPPING
+          ------------------------------------------------------------------------------------------------------------
+          {%- endcomment -%}
+
+          {%- if express_percent > 0 -%}
+            {%- assign step = step | plus: 1 -%}
+
+            <fieldset class="rug-step">
+              <legend class="rug-step__legend">
+                <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+                <span class="rug-step__title h6">{{ 'rug_page.shipping' | t }}</span>
+              </legend>
+
+              <div class="rug-step__choices">
+                <input class="sr-only" type="radio" id="guide-shipping-{{ uid }}-standard" name="guide-shipping-{{ uid }}" value="standard" checked autocomplete="off" data-guide-shipping>
+
+                <label class="rug-choice" for="guide-shipping-{{ uid }}-standard">
+                  <span class="rug-choice__mark" aria-hidden="true"></span>
+
+                  <span class="rug-choice__text rug-choice__text--stacked">
+                    <span class="rug-choice__title">{{ standard_label | escape }}</span>
+                    <span class="rug-choice__note text-subdued">{{ 'price_guide.standard_note' | t }}</span>
+                  </span>
+
+                  <span class="rug-choice__price">{{ 'rug_page.included' | t }}</span>
+                </label>
+
+                <input class="sr-only" type="radio" id="guide-shipping-{{ uid }}-express" name="guide-shipping-{{ uid }}" value="express" autocomplete="off" data-guide-shipping>
+
+                <label class="rug-choice" for="guide-shipping-{{ uid }}-express">
+                  <span class="rug-choice__mark" aria-hidden="true"></span>
+
+                  <span class="rug-choice__text rug-choice__text--stacked">
+                    <span class="rug-choice__title">{{ express_label | escape }}</span>
+                    <span class="rug-choice__note text-subdued">{{ 'price_guide.express_note' | t }}</span>
+                  </span>
+
+                  <span class="rug-choice__price">{{ 'rug_page.percent_more' | t: percent: express_percent }}</span>
+                </label>
+              </div>
+
+              {%- if section.settings.shipping_text != blank -%}
+                {%- assign shipping_text = section.settings.shipping_text | escape -%}
+                <p class="rug-step__more text-sm text-subdued">{%- render 'corvo-fill', text: shipping_text -%}</p>
+              {%- endif -%}
+            </fieldset>
+          {%- endif -%}
+        </div>
+
+        {%- comment -%}
+        --------------------------------------------------------------------------------------------------------------
+        SUMMARY
+        --------------------------------------------------------------------------------------------------------------
+        {%- endcomment -%}
+
+        <div class="price-guide__aside">
+          <div class="rug-summary" data-guide-summary>
+            <p class="rug-summary__title smallcaps text-subdued">{{ 'price_guide.summary_title' | t }}</p>
+
+            <dl class="rug-summary__list">
+              <div>
+                <dt>{{ 'rug_page.design' | t }}</dt>
+                <dd data-guide-summary-design>{{ 'price_guide.craft_level' | t: label: default_level_label }}</dd>
+              </div>
+
+              <div>
+                <dt>{{ 'price_guide.material' | t }}</dt>
+                <dd data-guide-summary-material>{{ default_material_name | escape }}</dd>
+              </div>
+
+              <div>
+                <dt>{{ 'rug_page.size' | t }}</dt>
+                <dd data-guide-summary-size>{{ default_width }} × {{ default_length }} cm</dd>
+              </div>
+
+              <div>
+                <dt>{{ 'price_guide.options' | t }}</dt>
+                <dd data-guide-summary-options>{{ 'price_guide.none' | t }}</dd>
+              </div>
+
+              {%- if express_percent > 0 -%}
+                <div>
+                  <dt>{{ 'rug_page.shipping' | t }}</dt>
+                  {%- assign shipping_word = 'rug_page.shipping' | t -%}
+                  <dd data-guide-summary-shipping>{{ standard_label | remove_first: shipping_word | strip | capitalize | escape }}</dd>
+                </div>
+              {%- endif -%}
+            </dl>
+
+            <div class="rug-summary__total">
+              <span class="h6">{{ 'price_guide.total' | t }}</span>
+
+              <span class="rug-summary__amount">
+                <span class="h4" data-guide-total aria-live="polite">{{ default_total_text | strip }}</span>
+                <span class="text-sm text-subdued">{{ 'rug_page.vat_included' | t }}</span>
+              </span>
+            </div>
+
+            <dl class="rug-summary__split text-sm">
+              <div>
+                <dt>{{ 'price_guide.without_vat' | t }}</dt>
+                <dd data-guide-net>{{ default_net_text | strip }}</dd>
+              </div>
+
+              <div>
+                <dt>{{ 'price_guide.per_m2_label' | t }}</dt>
+                <dd data-guide-per-m2>{{ default_per_m2_text | strip }}</dd>
+              </div>
+            </dl>
+
+            <p class="rug-summary__message text-sm" data-guide-message role="status" hidden></p>
+
+            {%- if section.settings.summary_note != blank -%}
+              <div class="rug-summary__note prose text-sm text-subdued">
+                {%- render 'corvo-fill', text: section.settings.summary_note -%}
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.summary_button != blank -%}
+              {%- render 'button', content: section.settings.summary_button, href: '#proposal', stretch: true -%}
+            {%- endif -%}
+          </div>
+        </div>
+      </rug-price-guide>
+    </div>
+  </div>
+</div>
+
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+THE REQUEST
+----------------------------------------------------------------------------------------------------------------------
+{%- endcomment -%}
+
+<div class="section-spacing color-scheme color-scheme--{{ section.settings.form_color_scheme.id }} color-scheme--bg-{{ section.settings.form_color_scheme.settings.background_gradient | default: section.settings.form_color_scheme.settings.background | md5 }} bordered-section" id="proposal">
+  <div class="container container--xs">
+    <div class="section-stack">
+      <div class="section-header justify-self-center text-center">
+        <div class="prose">
+          {%- if section.settings.form_subheading != blank -%}
+            <p class="h6">{{ section.settings.form_subheading | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.form_title != blank -%}
+            <h2 class="h2">{{ section.settings.form_title | escape }}</h2>
+          {%- endif -%}
+
+          {%- if section.settings.form_text != blank -%}
+            {%- render 'corvo-fill', text: section.settings.form_text -%}
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- form 'contact', id: form_id, class: 'form' -%}
+        {%- if form.posted_successfully? -%}
+          {%- assign default_success = 'contact.form.success_message' | t -%}
+          {%- assign content = section.settings.form_success | default: default_success | escape -%}
+          {%- render 'banner', status: 'success', content: content -%}
+        {%- endif -%}
+
+        {%- if form.errors -%}
+          {%- capture content -%}{{ form.errors.translated_fields[form.errors.first] | capitalize }} {{ form.errors.messages[form.errors.first] }}{%- endcapture -%}
+          {%- render 'banner', status: 'error', content: content -%}
+        {%- endif -%}
+
+        <input type="hidden" name="contact[{{ 'price_guide.request_subject_label' | t | escape }}]" value="{{ 'price_guide.request_subject' | t | escape }}">
+        <input type="hidden" name="contact[{{ 'price_guide.total' | t | escape }}]" value="" data-guide-field>
+
+        <div class="price-guide__recap text-sm" data-guide-recap hidden>
+          <p class="smallcaps text-subdued">{{ 'price_guide.recap_title' | t }}</p>
+          <p data-guide-recap-text></p>
+        </div>
+
+        <div class="fieldset">
+          <div class="fieldset-row">
+            {%- assign label = 'contact.form.name' | t -%}
+            {%- render 'input', type: 'text', name: 'contact[name]', label: label, value: customer.name, required: true, autocomplete: 'name', form: form_id -%}
+
+            {%- assign label = 'contact.form.email' | t -%}
+            {%- render 'input', type: 'email', name: 'contact[email]', label: label, value: customer.email, required: true, autocomplete: 'email', form: form_id -%}
+          </div>
+
+          <div class="fieldset-row">
+            {%- assign label = 'price_guide.form_phone' | t -%}
+            {%- assign name = 'contact[' | append: label | append: ']' -%}
+            {%- render 'input', type: 'tel', name: name, label: label, autocomplete: 'tel', form: form_id -%}
+
+            {%- assign label = 'price_guide.form_country' | t -%}
+            {%- assign name = 'contact[' | append: label | append: ']' -%}
+            {%- render 'input', type: 'text', name: name, label: label, autocomplete: 'country-name', form: form_id -%}
+          </div>
+
+          {%- assign label = 'price_guide.form_link' | t -%}
+          {%- assign name = 'contact[' | append: label | append: ']' -%}
+          {%- render 'input', type: 'text', name: name, label: label, form: form_id -%}
+
+          {%- assign label = 'price_guide.form_message' | t -%}
+          {%- render 'input', name: 'contact[body]', label: label, multiline: 5, required: true, form: form_id -%}
+        </div>
+
+        {%- if section.settings.form_note != blank -%}
+          <div class="prose text-sm text-subdued">
+            {%- render 'corvo-fill', text: section.settings.form_note -%}
+          </div>
+        {%- endif -%}
+
+        {%- assign default_button = 'contact.form.submit' | t -%}
+        {%- assign button_content = section.settings.form_button | default: default_button | escape -%}
+        {%- render 'button', content: button_content, type: 'submit' -%}
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+<script src="{{ 'rug-price-guide.js' | asset_url }}" defer></script>
+
+{% stylesheet %}
+  .price-guide {
+    gap: 2.5rem;
+    display: grid;
+  }
+
+  .price-guide__steps {
+    min-width: 0;
+  }
+
+  .price-guide__lead {
+    margin-block-end: .875rem;
+  }
+
+  .price-guide__groups {
+    gap: 1.125rem;
+    display: grid;
+  }
+
+  .price-guide__group {
+    gap: .5rem;
+    display: grid;
+  }
+
+  .price-guide__chips {
+    flex-wrap: wrap;
+    gap: .5rem;
+    display: flex;
+  }
+
+  .price-chip {
+    color: rgb(var(--text-color) / .7);
+    border: 1px solid rgb(var(--border-color));
+    border-radius: var(--input-border-radius, 0);
+    cursor: pointer;
+    align-items: baseline;
+    gap: .5rem;
+    padding: .5rem .875rem;
+    transition: border-color .2s, color .2s;
+    display: flex;
+  }
+
+  .price-chip:hover {
+    border-color: rgb(var(--text-color) / .45);
+  }
+
+  :checked + .price-chip {
+    color: rgb(var(--text-color));
+    border-color: rgb(var(--text-color));
+    box-shadow: inset 0 0 0 1px rgb(var(--text-color));
+  }
+
+  :focus-visible + .price-chip {
+    outline: 2px solid rgb(var(--text-color));
+    outline-offset: 2px;
+  }
+
+  .price-chip__note {
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* A choice that can be ticked: a square mark instead of a round one */
+  .rug-choice__mark--box {
+    border-radius: 0;
+  }
+
+  :checked + .rug-choice .rug-choice__mark--box:after {
+    border-radius: 0;
+  }
+
+  .price-guide__count {
+    cursor: default;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  .price-guide__count .rug-choice__text {
+    cursor: pointer;
+  }
+
+  .price-guide__stepper {
+    border: 1px solid rgb(var(--border-color));
+    border-radius: var(--input-border-radius, 0);
+    align-items: center;
+    display: flex;
+  }
+
+  .price-guide__stepper:focus-within {
+    border-color: rgb(var(--text-color));
+  }
+
+  .price-guide__stepper-button {
+    color: rgb(var(--text-color));
+    cursor: pointer;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.125rem;
+    line-height: 1;
+  }
+
+  .price-guide__stepper-input {
+    font: inherit;
+    color: rgb(var(--text-color));
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    outline: none;
+    width: 2rem;
+    padding: 0;
+    /* 16px at least, so that phones do not zoom in when the field is tapped */
+    font-size: max(1rem, 16px);
+  }
+
+  .price-guide__recap {
+    background: rgb(var(--text-color) / .03);
+    border: 1px solid rgb(var(--border-color));
+    text-align: start;
+    gap: .375rem;
+    padding: 1rem 1.25rem;
+    display: grid;
+  }
+
+  .price-guide__recap[hidden] {
+    display: none;
+  }
+
+  @media screen and (max-width: 699px) {
+    .price-guide .rug-choice__price {
+      font-size: var(--text-sm);
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .price-guide {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr);
+      align-items: start;
+      gap: 4rem;
+    }
+
+    .price-guide__aside {
+      position: sticky;
+      inset-block-start: calc(var(--sticky-area-height, 0px) + 4.5rem);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Rug price guide",
+  "class": "shopify-section--rug-price-guide",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["page"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A price guide for a rug made from scratch, and the form that asks for a proposal. The prices and the rules come from the craft levels and the materials in Shopify (Content > Metaobjects) and from Theme settings > Corvo: prices and rules."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Price guide"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Design"
+    },
+    {
+      "type": "text",
+      "id": "design_text",
+      "label": "Line above the craft levels",
+      "default": "The craft level measures how demanding a design is to make. It sets the price per m²."
+    },
+    {
+      "type": "text",
+      "id": "design_note",
+      "label": "Line under the craft levels",
+      "default": "Not sure which level your design is? Choose the closest: we confirm it when we see the design."
+    },
+    {
+      "type": "number",
+      "id": "default_level",
+      "label": "Craft level chosen when the page opens",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Material"
+    },
+    {
+      "type": "text",
+      "id": "group_standard",
+      "label": "Name of the Standard group",
+      "default": "Included in the price"
+    },
+    {
+      "type": "text",
+      "id": "group_plus",
+      "label": "Name of the Plus group",
+      "default": "With a supplement"
+    },
+    {
+      "type": "text",
+      "id": "group_premium",
+      "label": "Name of the Premium group",
+      "default": "Premium fibres"
+    },
+    {
+      "type": "text",
+      "id": "material_text",
+      "label": "Line under the materials",
+      "default": "One material sets the guide. A rug can mix several."
+    },
+    {
+      "type": "url",
+      "id": "material_link",
+      "label": "Link under the materials"
+    },
+    {
+      "type": "text",
+      "id": "material_link_text",
+      "label": "Link text",
+      "default": "About the materials"
+    },
+    {
+      "type": "header",
+      "content": "Size"
+    },
+    {
+      "type": "text",
+      "id": "sizes",
+      "label": "Sizes offered as shortcuts",
+      "info": "Width x length in cm, separated by commas.",
+      "default": "150x200, 170x240, 200x300, 250x350, 300x400"
+    },
+    {
+      "type": "number",
+      "id": "default_width",
+      "label": "Width when the page opens (cm)",
+      "default": 200
+    },
+    {
+      "type": "number",
+      "id": "default_length",
+      "label": "Length when the page opens (cm)",
+      "default": 300
+    },
+    {
+      "type": "text",
+      "id": "shape_text",
+      "label": "Line on shapes",
+      "default": "For a round or irregular shape, give the size of the rectangle it fits in."
+    },
+    {
+      "type": "header",
+      "content": "Shipping"
+    },
+    {
+      "type": "text",
+      "id": "shipping_text",
+      "label": "Line under the shipping choices",
+      "default": "Artwork and sampling come before production. Delivery is quoted for each order."
+    },
+    {
+      "type": "header",
+      "content": "Summary"
+    },
+    {
+      "type": "richtext",
+      "id": "summary_note",
+      "label": "Note",
+      "default": "<p>A guide, not a quote. We confirm the price when we have seen your design.</p>"
+    },
+    {
+      "type": "text",
+      "id": "summary_button",
+      "label": "Button",
+      "default": "Ask for a proposal"
+    },
+    {
+      "type": "header",
+      "content": "Request form"
+    },
+    {
+      "type": "color_scheme",
+      "id": "form_color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "form_subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Title",
+      "default": "Ask for a proposal"
+    },
+    {
+      "type": "richtext",
+      "id": "form_text",
+      "label": "Text"
+    },
+    {
+      "type": "richtext",
+      "id": "form_note",
+      "label": "Note above the button"
+    },
+    {
+      "type": "text",
+      "id": "form_button",
+      "label": "Button",
+      "default": "Send my request"
+    },
+    {
+      "type": "text",
+      "id": "form_success",
+      "label": "Message once the request is sent",
+      "default": "Thank you. Your request has been sent, and we will answer by e-mail."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rug price guide"
+    }
+  ]
+}
+{% endschema %}

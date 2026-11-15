@@ -884,6 +884,163 @@
     ]
   },
   {
+    "name": "Corvo: prices and rules",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "The rules of the price list, in one place. The rug pages, the price guide on Tailor your rug, the answers on Care & FAQ and the guide for AI assistants all read them from here, so a change is made once. The price per m² of each craft level and the supplement of each material are kept in Shopify, under Content > Metaobjects."
+      },
+      {
+        "type": "header",
+        "content": "Lead time"
+      },
+      {
+        "type": "number",
+        "id": "rug_lead_weeks",
+        "label": "Standard production (weeks)",
+        "default": 5
+      },
+      {
+        "type": "number",
+        "id": "rug_priority_weeks",
+        "label": "Priority production (weeks)",
+        "default": 3
+      },
+      {
+        "type": "range",
+        "id": "rug_priority_percent",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "Priority production: supplement",
+        "info": "Added to the whole price. At 0 the faster shipping is not offered.",
+        "default": 25
+      },
+      {
+        "type": "header",
+        "content": "Sizes"
+      },
+      {
+        "type": "number",
+        "id": "rug_min_side",
+        "label": "Shortest side allowed (cm)",
+        "default": 100
+      },
+      {
+        "type": "number",
+        "id": "rug_max_long",
+        "label": "Longest side allowed (cm)",
+        "default": 1200
+      },
+      {
+        "type": "number",
+        "id": "rug_max_short",
+        "label": "Longest shorter side allowed (cm)",
+        "info": "A rug can be up to the longest side by this side: 1200 by 700 cm is 12 × 7 m.",
+        "default": 700
+      },
+      {
+        "type": "header",
+        "content": "Price"
+      },
+      {
+        "type": "number",
+        "id": "rug_vat_percent",
+        "label": "VAT (%)",
+        "default": 23
+      },
+      {
+        "type": "number",
+        "id": "rug_small_area",
+        "label": "Small rugs: below this area (m²)",
+        "default": 3
+      },
+      {
+        "type": "number",
+        "id": "rug_small_percent",
+        "label": "Small rugs: supplement (%)",
+        "default": 30
+      },
+      {
+        "type": "number",
+        "id": "rug_large_long",
+        "label": "Large rugs: longer than (cm)",
+        "default": 900
+      },
+      {
+        "type": "number",
+        "id": "rug_large_short",
+        "label": "Large rugs: or wider than (cm)",
+        "default": 400
+      },
+      {
+        "type": "number",
+        "id": "rug_large_percent",
+        "label": "Large rugs: supplement (%)",
+        "default": 15
+      },
+      {
+        "type": "number",
+        "id": "rug_pile_limit",
+        "label": "High pile: above this height (mm)",
+        "default": 18
+      },
+      {
+        "type": "number",
+        "id": "rug_pile_percent",
+        "label": "High pile: supplement (%)",
+        "default": 10
+      },
+      {
+        "type": "number",
+        "id": "rug_carving_percent",
+        "label": "Carving: supplement (%)",
+        "default": 10
+      },
+      {
+        "type": "number",
+        "id": "rug_corners_percent",
+        "label": "Round corners: supplement (%)",
+        "default": 5
+      },
+      {
+        "type": "number",
+        "id": "rug_colour_price",
+        "label": "Custom colour: price per colour, without VAT",
+        "info": "In the shop's currency. VAT is added on the page. Leave at 0 for no supplement.",
+        "default": 50
+      },
+      {
+        "type": "header",
+        "content": "Orders"
+      },
+      {
+        "type": "number",
+        "id": "rug_change_hours",
+        "label": "Changes and cancellations: business hours after we confirm an order",
+        "default": 48
+      },
+      {
+        "type": "number",
+        "id": "rug_claim_days",
+        "label": "Defects: business days to report one after delivery",
+        "default": 10
+      },
+      {
+        "type": "header",
+        "content": "Colours"
+      },
+      {
+        "type": "textarea",
+        "id": "rug_palette",
+        "label": "Open Palette colours",
+        "info": "One colour per line: the code, then optionally a name and a colour value, separated by |. Example: 284 | Sand | #d9c8a9",
+        "default": "284\n283\n314\n287\n346\n316\n208\n351\n212\n237\n348\n344\n290\n343\n342\n137\n182\n155\n345\n350\n132\n179\n184\n193\n289\n349\n347\n213\n174\n175"
+      }
+    ]
+  },
+  {
     "name": "t:theme_settings.favicon.name",
     "settings": [
       {

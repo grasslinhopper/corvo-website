@@ -5,11 +5,30 @@ RUG MONEY (Corvo addition)
 
 Prints an amount the way the theme prints prices, so the rug page and the price list agree.
 
+********************************************
+Supported variables
+********************************************
+
 * amount: the amount in cents (required)
+* fx: for an amount worked out in the shop's currency, the factor printed by the "rug-fx" snippet. The amount is
+  converted to the visitor's currency and, being approximate, rounded to a whole unit. Leave it out for a price that
+  Shopify already gives in the visitor's currency, such as the price of a variant.
 {%- endcomment -%}
 
+{%- liquid
+  assign printed_amount = amount
+
+  if fx != blank
+    assign fx_factor = fx | times: 1
+
+    if fx_factor != 1
+      assign printed_amount = amount | times: fx_factor | divided_by: 100.0 | round | times: 100
+    endif
+  endif
+-%}
+
 {%- if settings.currency_code_enabled -%}
-  {{- amount | money_with_currency -}}
+  {{- printed_amount | money_with_currency -}}
 {%- else -%}
-  {{- amount | money -}}
+  {{- printed_amount | money -}}
 {%- endif -%}

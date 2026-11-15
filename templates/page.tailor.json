@@ -7,57 +7,185 @@
         "style": "tabs"
       }
     },
-    "wf-1": {
-      "type": "wireframe",
+    "intro": {
+      "type": "page-intro",
       "settings": {
-        "label": "Tailor your rug",
-        "is_page_title": true,
-        "description": "The start of the step-by-step page. One line: any design, any colour, any size.",
-        "needs": "",
-        "phase": "Phase 4",
-        "layout": "banner",
+        "color_scheme": "scheme-1",
+        "eyebrow": "Bespoke",
+        "title": "Tailor your rug",
+        "heading_tag": "h1",
+        "text": "<p>Any design, any colour, any size up to [max_size]. Start from one of our designs or bring your own, see a price guide at once, and ask for a proposal.</p>",
+        "image": "shopify://shop_images/CORVO_FINAL-71_742c0d97-042d-4efa-849a-45845d38c986.jpg",
+        "image_alt": "A designer drawing a rug on a tablet",
+        "image_focus": "--focus: center",
+        "image_position": "end",
+        "button_1_text": "See the price guide",
+        "button_1_link": "#price-guide",
+        "button_2_text": "Ask for a proposal",
+        "button_2_link": "#proposal"
+      },
+      "blocks": {
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "label": "Price",
+            "value": "From [from_price] per m², VAT included"
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "label": "Largest size",
+            "value": "[max_size]"
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "label": "Production",
+            "value": "[lead_weeks] weeks, or [priority_weeks] with priority production"
+          }
+        }
+      },
+      "block_order": [
+        "fact_1",
+        "fact_2",
+        "fact_3"
+      ]
+    },
+    "start": {
+      "type": "page-cards",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "subheading": "Three ways in",
+        "title": "Choose a starting point",
+        "text_alignment": "center",
         "columns": 3,
-        "size": "large"
+        "columns_mobile": "1",
+        "image_ratio": "portrait",
+        "numbered": false
+      },
+      "blocks": {
+        "card_1": {
+          "type": "card",
+          "settings": {
+            "title": "A Corvo design",
+            "text": "<p>[rug_count] designs. Change the size and the colours on the page of the rug, see the price and order online.</p>",
+            "image": "shopify://shop_images/RAMIRO_-_4.png",
+            "image_alt": "The Ramiro rug in a living room",
+            "link_url": "shopify://collections/all",
+            "link_text": "See all rugs"
+          }
+        },
+        "card_2": {
+          "type": "card",
+          "settings": {
+            "title": "A design from the library",
+            "text": "<p>Patterns from our design library, ready to be redrawn in your colours and your size.</p>",
+            "image": "shopify://shop_images/Kunlun.webp",
+            "image_alt": "A green geometric pattern from the Corvo design library",
+            "link_url": "shopify://pages/gallery",
+            "link_text": "Open the design library"
+          }
+        },
+        "card_3": {
+          "type": "card",
+          "settings": {
+            "title": "Your own design",
+            "text": "<p>A drawing, a photograph or an idea. We draw the artwork and send it to you for approval.</p>",
+            "image": "shopify://shop_images/CORVO_FINAL-72.jpg",
+            "image_alt": "A designer painting the colours of a rug on a tablet",
+            "link_url": "#proposal",
+            "link_text": "Ask for a proposal"
+          }
+        }
+      },
+      "block_order": [
+        "card_1",
+        "card_2",
+        "card_3"
+      ]
+    },
+    "guide": {
+      "type": "rug-price-guide",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "subheading": "For a design of your own",
+        "title": "Price guide",
+        "text": "<p>Choose a craft level, a material and a size to see what your rug would cost. Prices include [vat]% VAT.</p>",
+        "design_text": "The craft level measures how demanding a design is to make. It sets the price per m².",
+        "design_note": "Not sure which level your design is? Choose the closest: we confirm it when we have seen the design.",
+        "default_level": 3,
+        "group_standard": "Included in the price",
+        "group_plus": "With a supplement",
+        "group_premium": "Premium fibres",
+        "material_text": "One material sets the guide. A rug can mix several.",
+        "material_link": "shopify://pages/raw-materials",
+        "material_link_text": "About the materials",
+        "sizes": "150x200, 170x240, 200x300, 250x350, 300x400",
+        "default_width": 200,
+        "default_length": 300,
+        "shape_text": "For a round or irregular shape, give the size of the rectangle it fits in.",
+        "shipping_text": "Artwork and sampling come before production. Delivery is quoted for each order.",
+        "summary_note": "<p>A guide, not a quote. We confirm the price when we have seen your design.</p>",
+        "summary_button": "Ask for a proposal",
+        "form_color_scheme": "scheme-2",
+        "form_subheading": "The next step",
+        "form_title": "Ask for a proposal",
+        "form_text": "<p>Tell us about your project. We answer by e-mail, with questions or with a proposal: the artwork of your rug, its price and its production time.</p>",
+        "form_note": "<p>You can send drawings and photographs by e-mail once we reply. We use your details only to answer this request.</p>",
+        "form_button": "Send my request",
+        "form_success": "Thank you. Your request has been sent, and we will answer by e-mail."
       }
     },
-    "wf-2": {
-      "type": "wireframe",
+    "next": {
+      "type": "page-facts",
       "settings": {
-        "label": "Choose a starting point",
-        "is_page_title": false,
-        "description": "Three doors: a design from a collection, a design from the Design library, or your own drawing.",
-        "needs": "",
-        "phase": "Phase 4",
-        "layout": "grid",
-        "columns": 3,
-        "size": "medium"
-      }
-    },
-    "wf-3": {
-      "type": "wireframe",
-      "settings": {
-        "label": "The steps",
-        "is_page_title": false,
-        "description": "Craft level of the design, material, colours, then size and shape, with options such as carving, round corners, a higher pile or shipping in 3 weeks. One choice per screen, with the image and the price guide updating as you go.",
-        "needs": "",
-        "phase": "Phase 4",
-        "layout": "split",
-        "columns": 3,
-        "size": "medium"
-      }
-    },
-    "wf-4": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Summary",
-        "is_page_title": false,
-        "description": "Price guide per m², lead time, then Order for a collection design or Request a proposal for anything else.",
-        "needs": "Size limits, the shapes offered and what a proposal includes.",
-        "phase": "Phase 4",
-        "layout": "text",
-        "columns": 3,
-        "size": "small"
-      }
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "title": "After your request",
+        "text": "<p>A bespoke rug is drawn, sampled and approved before it is made.</p>",
+        "button_text": "How the service works",
+        "button_link": "shopify://pages/bespoke-service"
+      },
+      "blocks": {
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "label": "Artwork",
+            "value": "<p>We draw your rug and send you the artwork to approve.</p>"
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "label": "Sample",
+            "value": "<p>You approve the design, the texture and the colours on a sample.</p>"
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "label": "Production",
+            "value": "<p>[lead_weeks] weeks, or [priority_weeks] with priority production, for [priority_percent]% more.</p>"
+          }
+        },
+        "fact_4": {
+          "type": "fact",
+          "settings": {
+            "label": "Delivery",
+            "value": "<p>Worldwide. Quoted for each order.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "fact_1",
+        "fact_2",
+        "fact_3",
+        "fact_4"
+      ]
     },
     "subnav-pager": {
       "type": "page-subnav",
@@ -69,10 +197,10 @@
   },
   "order": [
     "subnav-tabs",
-    "wf-1",
-    "wf-2",
-    "wf-3",
-    "wf-4",
+    "intro",
+    "start",
+    "guide",
+    "next",
     "subnav-pager"
   ]
 }

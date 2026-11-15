@@ -1,0 +1,388 @@
+{%- comment -%}
+  Page opening (Corvo addition)
+
+  Opens a page: the name of its group, the page's main heading, a few lines that state what the page is about in plain
+  facts, and a picture. Short facts can follow as a list, and one or two buttons.
+
+  The heading is the page's only <h1>. Used a second time, to close a page with a line and its buttons, the heading is
+  set to a section heading instead. The text and the facts may hold markers such as [lead_weeks] or [max_size],
+  which are filled in from the shop's own facts (see snippets/corvo-fill.liquid), so the numbers on this page are the
+  numbers of every other page.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign image = section.settings.image
+  assign image_alt = section.settings.image_alt | default: image.alt | default: section.settings.title
+  assign fact_blocks = section.blocks | where: 'type', 'fact'
+-%}
+
+<div class="color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }}">
+  <div class="page-intro {% if image == blank %}page-intro--text-only{% endif %} {% if section.settings.image_position == 'start' %}page-intro--reverse{% endif %}">
+    <div class="page-intro__text">
+      <div class="page-intro__content prose">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="h6 text-subdued">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.title != blank -%}
+          {%- if section.settings.heading_tag == 'h2' -%}
+            <h2 class="h2">{{ section.settings.title | escape }}</h2>
+          {%- else -%}
+            <h1 class="h1">{{ section.settings.title | escape }}</h1>
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <div class="page-intro__lead">
+            {%- render 'corvo-fill', text: section.settings.text -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if fact_blocks.size > 0 -%}
+        <dl class="page-intro__facts">
+          {%- for block in fact_blocks -%}
+            {%- if block.settings.label != blank and block.settings.value != blank -%}
+              {%- assign fact_value = block.settings.value | escape -%}
+
+              <div class="page-intro__fact" {{ block.shopify_attributes }}>
+                <dt class="text-sm text-subdued">{{ block.settings.label | escape }}</dt>
+                <dd>{%- render 'corvo-fill', text: fact_value -%}</dd>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </dl>
+      {%- endif -%}
+
+      {%- if section.settings.button_1_text != blank or section.settings.button_2_text != blank -%}
+        <div class="page-intro__buttons">
+          {%- if section.settings.button_1_text != blank -%}
+            {%- render 'button', content: section.settings.button_1_text, href: section.settings.button_1_link, style: 'solid' -%}
+          {%- endif -%}
+
+          {%- if section.settings.button_2_text != blank -%}
+            {%- render 'button', content: section.settings.button_2_text, href: section.settings.button_2_link, style: 'outline' -%}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if image != blank -%}
+      <div class="page-intro__media">
+        {%- liquid
+          assign image_loading = 'eager'
+          assign image_priority = 'high'
+
+          if section.settings.heading_tag == 'h2'
+            assign image_loading = 'lazy'
+            assign image_priority = 'auto'
+          endif
+        -%}
+
+        {{- image | image_url: width: image.width | image_tag: loading: image_loading, fetchpriority: image_priority, sizes: '(max-width: 999px) 100vw, 50vw', widths: '400,600,800,1000,1200,1400,1600,2000,2400', alt: image_alt, style: section.settings.image_focus -}}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .page-intro {
+    display: grid;
+  }
+
+  .page-intro__text {
+    align-content: center;
+    gap: 2rem;
+    padding: clamp(2.5rem, 7vw, 6rem) var(--container-gutter);
+    display: grid;
+  }
+
+  .page-intro__content {
+    max-width: 34rem;
+  }
+
+  .page-intro--text-only .page-intro__text {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .page-intro--text-only .page-intro__content {
+    max-width: 44rem;
+  }
+
+  .page-intro__lead {
+    font-size: var(--text-lg, 1.125rem);
+  }
+
+  .page-intro__facts {
+    border-block-start: 1px solid rgb(var(--border-color));
+    max-width: 34rem;
+    margin: 0;
+  }
+
+  .page-intro__fact {
+    border-block-end: 1px solid rgb(var(--border-color));
+    grid-template-columns: minmax(0, 9rem) minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: .75rem;
+    display: grid;
+  }
+
+  .page-intro__fact dd {
+    margin: 0;
+  }
+
+  .page-intro--text-only .page-intro__fact {
+    text-align: start;
+  }
+
+  .page-intro__buttons {
+    flex-wrap: wrap;
+    gap: .75rem;
+    display: flex;
+  }
+
+  .page-intro--text-only .page-intro__buttons {
+    justify-content: center;
+  }
+
+  .page-intro__media {
+    background: rgb(var(--text-color) / .05);
+    aspect-ratio: 4 / 3;
+    order: -1;
+    overflow: hidden;
+  }
+
+  .page-intro__media img {
+    object-fit: cover;
+    object-position: var(--focus, center);
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  @media screen and (min-width: 1000px) {
+    .page-intro:not(.page-intro--text-only) {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      min-height: min(46rem, calc(100vh - var(--sticky-area-height, 0px) - 3rem));
+    }
+
+    .page-intro__text {
+      padding-inline: var(--container-gutter) clamp(2rem, 5vw, 5rem);
+    }
+
+    .page-intro:not(.page-intro--text-only) .page-intro__text {
+      justify-items: end;
+    }
+
+    .page-intro:not(.page-intro--text-only) .page-intro__content,
+    .page-intro:not(.page-intro--text-only) .page-intro__facts,
+    .page-intro:not(.page-intro--text-only) .page-intro__buttons {
+      width: 100%;
+      max-width: 32rem;
+    }
+
+    .page-intro__media {
+      aspect-ratio: auto;
+      order: 0;
+      min-height: 100%;
+      position: relative;
+    }
+
+    .page-intro__media img {
+      position: absolute;
+      inset: 0;
+    }
+
+    .page-intro--reverse .page-intro__media {
+      order: -1;
+    }
+
+    .page-intro--reverse .page-intro__text {
+      justify-items: start;
+      padding-inline: clamp(2rem, 5vw, 5rem) var(--container-gutter);
+    }
+  }
+
+  /* The opening settles into place as the page loads */
+  @media (prefers-reduced-motion: no-preference) {
+    .page-intro__text > * {
+      animation: page-intro-rise .7s cubic-bezier(.2, .7, .2, 1) both;
+    }
+
+    .page-intro__text > :nth-child(2) {
+      animation-delay: .08s;
+    }
+
+    .page-intro__text > :nth-child(3) {
+      animation-delay: .16s;
+    }
+
+    .page-intro__media img {
+      animation: page-intro-settle 1.4s cubic-bezier(.2, .7, .2, 1) both;
+    }
+  }
+
+  @keyframes page-intro-rise {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes page-intro-settle {
+    from {
+      opacity: 0;
+      transform: scale(1.04);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Page opening or closing",
+  "class": "shopify-section--page-intro",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Opens a page with its main heading, a few factual lines and a picture. Markers in square brackets, such as [lead_weeks], [max_size] or [from_price], are filled in from the theme settings under \"Corvo: prices and rules\"."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Line above the heading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Page title"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "This heading is",
+      "info": "A page has one main heading. Use this section a second time, to close a page, with a section heading.",
+      "options": [
+        { "value": "h1", "label": "The main heading of the page" },
+        { "value": "h2", "label": "A section heading" }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Picture"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Picture"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Description of the picture",
+      "info": "Read by screen readers, search engines and AI assistants. Say what the picture shows."
+    },
+    {
+      "type": "select",
+      "id": "image_focus",
+      "label": "Part of the picture to keep in view",
+      "options": [
+        { "value": "--focus: center", "label": "Centre" },
+        { "value": "--focus: top", "label": "Top" },
+        { "value": "--focus: bottom", "label": "Bottom" },
+        { "value": "--focus: left", "label": "Left" },
+        { "value": "--focus: right", "label": "Right" }
+      ],
+      "default": "--focus: center"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Picture on a computer",
+      "options": [
+        { "value": "end", "label": "After the text" },
+        { "value": "start", "label": "Before the text" }
+      ],
+      "default": "end"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_1_text",
+      "label": "Button 1"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Button 1 link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_text",
+      "label": "Button 2"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Button 2 link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "fact",
+      "name": "Fact",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Name",
+          "default": "Lead time"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Fact",
+          "default": "[lead_weeks] weeks"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Page opening"
+    }
+  ]
+}
+{% endschema %}

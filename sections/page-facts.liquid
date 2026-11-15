@@ -1,0 +1,253 @@
+{%- comment -%}
+  Facts (Corvo addition)
+
+  A title, a short text and a table of facts: one name and one answer per row. It is the plainest way to state how
+  something works, for a person who scans and for a search engine or an AI assistant that reads the page as text.
+
+  The answers may hold markers such as [lead_weeks] or [colour_price], filled in from the shop's own facts (see
+  snippets/corvo-fill.liquid). A picture can stand beside the table.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign fact_blocks = section.blocks | where: 'type', 'fact'
+  assign image = section.settings.image
+  assign image_alt = section.settings.image_alt | default: image.alt | default: section.settings.title
+-%}
+
+<div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" {% if section.settings.anchor != blank %}id="{{ section.settings.anchor | handleize }}"{% endif %}>
+  <div class="container container--lg">
+    <div class="page-facts {% if image != blank %}page-facts--with-image{% endif %}">
+      <div class="page-facts__intro">
+        <div class="prose">
+          {%- if section.settings.subheading != blank -%}
+            <p class="h6 text-subdued">{{ section.settings.subheading | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.title != blank -%}
+            <h2 class="h3">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+
+          {%- if section.settings.text != blank -%}
+            {%- render 'corvo-fill', text: section.settings.text -%}
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.button_text != blank -%}
+          <div>
+            {%- render 'button', content: section.settings.button_text, href: section.settings.button_link, style: 'outline' -%}
+          </div>
+        {%- endif -%}
+
+        {%- if image != blank -%}
+          <div class="page-facts__media">
+            {{- image | image_url: width: image.width | image_tag: loading: 'lazy', sizes: '(max-width: 999px) 100vw, 40vw', widths: '400,600,800,1000,1200,1600', alt: image_alt -}}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="page-facts__body">
+        {%- if fact_blocks.size > 0 -%}
+          <dl class="page-facts__table">
+            {%- for block in fact_blocks -%}
+              {%- if block.settings.label != blank and block.settings.value != blank -%}
+                <div class="page-facts__row" {{ block.shopify_attributes }}>
+                  <dt>{{ block.settings.label | escape }}</dt>
+                  <dd class="prose">{%- render 'corvo-fill', text: block.settings.value -%}</dd>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </dl>
+        {%- endif -%}
+
+        {%- if section.settings.note != blank -%}
+          <div class="prose text-sm text-subdued">
+            {%- render 'corvo-fill', text: section.settings.note -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .page-facts {
+    gap: 2.5rem;
+    display: grid;
+  }
+
+  .page-facts__intro,
+  .page-facts__body {
+    align-content: start;
+    gap: 1.5rem;
+    min-width: 0;
+    display: grid;
+  }
+
+  .page-facts__media {
+    background: rgb(var(--text-color) / .05);
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .page-facts__media img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .page-facts__table {
+    border-block-start: 1px solid rgb(var(--border-color));
+    margin: 0;
+  }
+
+  .page-facts__row {
+    border-block-end: 1px solid rgb(var(--border-color));
+    gap: .25rem 1rem;
+    padding-block: .875rem;
+    display: grid;
+  }
+
+  .page-facts__row dt {
+    color: rgb(var(--text-color) / .65);
+  }
+
+  .page-facts__row dd {
+    margin: 0;
+  }
+
+  .page-facts__row dd > :last-child {
+    margin-block-end: 0;
+  }
+
+  @media screen and (min-width: 700px) {
+    .page-facts__row {
+      grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .page-facts {
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      align-items: start;
+      gap: 5rem;
+    }
+
+    .page-facts__intro {
+      position: sticky;
+      inset-block-start: calc(var(--sticky-area-height, 0px) + 5rem);
+    }
+
+    .page-facts--with-image .page-facts__intro {
+      position: static;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Facts",
+  "class": "shopify-section--page-facts",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A title, a short text and a table of facts, one per row. Markers in square brackets, such as [lead_weeks], [max_size] or [colour_price], are filled in from the theme settings under \"Corvo: prices and rules\"."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Name for links",
+      "info": "Optional. With \"lead-time\", a link ending in #lead-time jumps to this section."
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "In short"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Picture"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Description of the picture",
+      "info": "Read by screen readers, search engines and AI assistants. Say what the picture shows."
+    },
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "Note under the table"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "fact",
+      "name": "Fact",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Name",
+          "default": "Lead time"
+        },
+        {
+          "type": "richtext",
+          "id": "value",
+          "label": "Fact",
+          "default": "<p>[lead_weeks] weeks.</p>"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 16,
+  "presets": [
+    {
+      "name": "Facts",
+      "blocks": [
+        { "type": "fact" },
+        { "type": "fact" }
+      ]
+    }
+  ]
+}
+{% endschema %}

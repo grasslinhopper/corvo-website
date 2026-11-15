@@ -81,7 +81,7 @@ A row without a value is left out.
     m² with VAT, the standard sizes with their prices, and the sample
   endcomment
 
-  assign vat_percent = section.settings.vat_percent | default: 23
+  assign vat_percent = settings.rug_vat_percent | default: 23
   assign own_supplement = product.metafields.rug.supplement.value | default: 0
   assign per_m2 = 0
 
@@ -90,6 +90,75 @@ A row without a value is left out.
     assign vat_factor = vat_percent | plus: 100 | divided_by: 100.0
     assign per_m2 = craft.retail_per_m2.value | times: own_factor | times: vat_factor | times: 100 | round
   endif
+
+  comment
+    The price per m² is worked out in the shop's currency: "fx" turns it into the visitor's currency
+  endcomment
+
+  capture fx
+    render 'rug-fx'
+  endcapture
+
+  comment
+    The texts of the table. A text of the section may hold markers such as [max_size] (see the "corvo-fill" snippet).
+    The order facts are the shop's standard sentences, unless the section gives its own words.
+  endcomment
+
+  assign made_to_measure_escaped = section.settings.made_to_measure_text | escape
+  assign lead_time_escaped = section.settings.lead_time_text | escape
+  assign delivery_escaped = section.settings.delivery_text | escape
+  assign orders_escaped = section.settings.orders_text | escape
+  assign returns_escaped = section.settings.returns_text | escape
+
+  capture made_to_measure_text
+    render 'corvo-fill', text: made_to_measure_escaped
+  endcapture
+
+  capture lead_time_text
+    if lead_time_escaped != blank
+      render 'corvo-fill', text: lead_time_escaped
+    else
+      render 'corvo-fact', fact: 'lead_time'
+    endif
+  endcapture
+
+  capture delivery_text
+    if delivery_escaped != blank
+      render 'corvo-fill', text: delivery_escaped
+    else
+      render 'corvo-fact', fact: 'delivery'
+    endif
+  endcapture
+
+  capture orders_text
+    if orders_escaped != blank
+      render 'corvo-fill', text: orders_escaped
+    else
+      render 'corvo-fact', fact: 'orders'
+    endif
+  endcapture
+
+  capture returns_text
+    if returns_escaped != blank
+      render 'corvo-fill', text: returns_escaped
+    else
+      render 'corvo-fact', fact: 'returns'
+    endif
+  endcapture
+
+  assign made_to_measure_text = made_to_measure_text | strip
+  assign lead_time_text = lead_time_text | strip
+  assign delivery_text = delivery_text | strip
+  assign orders_text = orders_text | strip
+  assign returns_text = returns_text | strip
+
+  comment
+    Inside the opening paragraph each fact ends with one full stop, whether or not the text brings its own
+  endcomment
+
+  assign made_to_measure_sentence = made_to_measure_text | append: '§' | remove: '.§' | remove: '§'
+  assign lead_time_sentence = lead_time_text | append: '§' | remove: '.§' | remove: '§'
+  assign delivery_sentence = delivery_text | append: '§' | remove: '.§' | remove: '§'
 
   assign rug_sample = nil
 
@@ -138,7 +207,7 @@ A row without a value is left out.
               endcapture
 
               capture per_m2_price
-                render 'rug-money', amount: per_m2
+                render 'rug-money', amount: per_m2, fx: fx
               endcapture
             -%}
 
@@ -153,9 +222,9 @@ A row without a value is left out.
 
               {%- unless product.has_only_default_variant %} {{ 'rug_page.facts.sizes' | t: count: product.variants.size, smallest: first_size, low: first_price, largest: last_size, high: last_price }}{% endunless -%}
 
-              {%- if per_m2 > 0 and section.settings.made_to_measure_text != blank %} {{ 'rug_page.facts.measure' | t: limit: section.settings.made_to_measure_text, price: per_m2_price }}{% endif -%}
-              {%- if section.settings.lead_time_text != blank %} {{ 'rug_page.facts.lead_time' | t: text: section.settings.lead_time_text }}{% endif -%}
-              {%- if section.settings.delivery_text != blank %} {{ 'rug_page.facts.delivery' | t: text: section.settings.delivery_text }}{% endif -%}
+              {%- if per_m2 > 0 and made_to_measure_text != blank %} {{ 'rug_page.facts.measure' | t: limit: made_to_measure_sentence, price: per_m2_price }}{% endif -%}
+              {%- if lead_time_text != blank %} {{ 'rug_page.facts.lead_time' | t: text: lead_time_sentence }}{% endif -%}
+              {%- if delivery_text != blank %} {{ 'rug_page.facts.delivery' | t: text: delivery_sentence }}{% endif -%}
             </p>
           {%- endif -%}
 
@@ -253,12 +322,12 @@ A row without a value is left out.
               </div>
             {%- endif -%}
 
-            {%- if section.settings.made_to_measure_text != blank -%}
+            {%- if made_to_measure_text != blank -%}
               <div class="rug-spec__row">
                 <dt>{{ 'rug_page.spec.made_to_measure' | t }}</dt>
                 <dd>
                   <span>
-                    {{- section.settings.made_to_measure_text | escape -}}
+                    {{- made_to_measure_text -}}
 
                     {%- if section.settings.custom_link != blank and section.settings.custom_link_text != blank %}
                       <a href="{{ section.settings.custom_link }}" class="link">{{ section.settings.custom_link_text | escape }}</a>
@@ -266,7 +335,7 @@ A row without a value is left out.
                   </span>
 
                   {%- if per_m2 > 0 -%}
-                    {%- capture per_m2_text -%}{%- render 'rug-money', amount: per_m2 -%}{%- endcapture -%}
+                    {%- capture per_m2_text -%}{%- render 'rug-money', amount: per_m2, fx: fx -%}{%- endcapture -%}
                     <span class="text-sm text-subdued">{{ 'rug_page.spec.per_m2' | t: price: per_m2_text }}</span>
                   {%- endif -%}
                 </dd>
@@ -289,31 +358,31 @@ A row without a value is left out.
               </div>
             {%- endif -%}
 
-            {%- if section.settings.lead_time_text != blank -%}
+            {%- if lead_time_text != blank -%}
               <div class="rug-spec__row">
                 <dt>{{ 'rug_page.spec.lead_time' | t }}</dt>
-                <dd>{{ section.settings.lead_time_text | escape }}</dd>
+                <dd>{{ lead_time_text }}</dd>
               </div>
             {%- endif -%}
 
-            {%- if section.settings.delivery_text != blank -%}
+            {%- if delivery_text != blank -%}
               <div class="rug-spec__row">
                 <dt>{{ 'rug_page.spec.delivery' | t }}</dt>
-                <dd>{{ section.settings.delivery_text | escape }}</dd>
+                <dd>{{ delivery_text }}</dd>
               </div>
             {%- endif -%}
 
-            {%- if section.settings.orders_text != blank -%}
+            {%- if orders_text != blank -%}
               <div class="rug-spec__row">
                 <dt>{{ 'rug_page.spec.orders' | t }}</dt>
-                <dd>{{ section.settings.orders_text | escape }}</dd>
+                <dd>{{ orders_text }}</dd>
               </div>
             {%- endif -%}
 
-            {%- if section.settings.returns_text != blank -%}
+            {%- if returns_text != blank -%}
               <div class="rug-spec__row">
                 <dt>{{ 'rug_page.spec.returns' | t }}</dt>
-                <dd>{{ section.settings.returns_text | escape }}</dd>
+                <dd>{{ returns_text }}</dd>
               </div>
             {%- endif -%}
 
@@ -518,7 +587,12 @@ A row without a value is left out.
       "type": "text",
       "id": "made_to_measure_text",
       "label": "Made to measure",
-      "default": "Any size up to 12 × 7 m."
+      "info": "[max_size] is filled in from the theme settings, under \"Corvo: prices and rules\".",
+      "default": "Any size up to [max_size]."
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave the next four empty to show the shop's standard sentences, which follow the theme settings. Fill one in only to say it differently on rug pages."
     },
     {
       "type": "text",
@@ -539,13 +613,6 @@ A row without a value is left out.
       "type": "text",
       "id": "returns_text",
       "label": "Returns"
-    },
-    {
-      "type": "number",
-      "id": "vat_percent",
-      "label": "VAT (%)",
-      "info": "For the price per m², which is worked out from the rug's craft level.",
-      "default": 23
     },
     {
       "type": "text",

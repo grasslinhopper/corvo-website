@@ -13,10 +13,24 @@
       assign seo_title = page_title
       assign seo_description = page_description
 
+      # A page whose search title and description are written in the theme, with the shop's facts filled in
+      assign seo_key = blank
+
+      if request.page_type == 'page'
+        assign seo_handle = page.handle | replace: '-', '_'
+        assign seo_handles = 'raw_materials|colours|bespoke_service|tailor_your_rug' | split: '|'
+
+        if seo_handles contains seo_handle
+          assign seo_key = 'general.corvo.seo.' | append: seo_handle
+        endif
+      endif
+
       if request.page_type == 'index'
         assign seo_title = 'general.corvo.home_title' | t
       elsif request.page_type == 'collection' and collection.handle == 'all'
         assign seo_title = 'general.corvo.all_rugs_title' | t
+      elsif seo_key != blank and page_title == page.title
+        assign seo_title = seo_key | append: '.title' | t
       endif
 
       if seo_title == blank
@@ -30,6 +44,8 @@
       if seo_description == blank
         if request.page_type == 'index'
           assign seo_description = 'general.corvo.description' | t
+        elsif seo_key != blank
+          assign seo_description = seo_key | append: '.description' | t
         elsif request.page_type == 'collection' and collection.handle == 'all'
           assign seo_description = 'general.corvo.all_rugs_description' | t: count: collection.products_count
         elsif request.page_type == 'collection' and collection.description != blank
@@ -39,6 +55,15 @@
         elsif request.page_type == 'list-collections'
           assign seo_description = 'general.corvo.collections_description' | t
         endif
+      endif
+
+      # Markers such as [max_size] are filled in from the shop's own facts: see the "corvo-fill" snippet
+      if seo_description contains '['
+        capture seo_description
+          render 'corvo-fill', text: seo_description
+        endcapture
+
+        assign seo_description = seo_description | strip
       endif
     -%}
 

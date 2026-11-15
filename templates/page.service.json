@@ -7,82 +7,254 @@
         "style": "tabs"
       }
     },
-    "wf-1": {
-      "type": "wireframe",
+    "intro": {
+      "type": "page-intro",
       "settings": {
-        "label": "Service",
-        "is_page_title": true,
-        "description": "One line on what working with Corvo is like, over an image of the atelier.",
-        "needs": "",
-        "phase": "Phase 4",
-        "layout": "banner",
-        "columns": 3,
-        "size": "large"
+        "color_scheme": "scheme-1",
+        "eyebrow": "Bespoke",
+        "title": "Service",
+        "heading_tag": "h1",
+        "text": "<p>From the first conversation to delivery, one team in Portugal designs, samples and makes your rug. Production takes [lead_weeks] weeks, or [priority_weeks] with priority production.</p>",
+        "image": "shopify://shop_images/CORVO_FINAL-28.jpg",
+        "image_alt": "A mood board of rug samples, patterns and colour references",
+        "image_focus": "--focus: center",
+        "image_position": "end",
+        "button_1_text": "Tailor your rug",
+        "button_1_link": "shopify://pages/tailor-your-rug",
+        "button_2_text": "Book a meeting",
+        "button_2_link": "shopify://pages/contact"
       }
     },
-    "wf-2": {
-      "type": "wireframe",
+    "steps": {
+      "type": "page-cards",
       "settings": {
-        "label": "Five steps",
-        "is_page_title": false,
-        "description": "Consultation, design artwork, sampling, production, delivery. The text exists on the Bespoke page today and moves here.",
-        "needs": "",
-        "phase": "Phase 4",
-        "layout": "grid",
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "subheading": "Step by step",
+        "title": "Five steps to your rug",
+        "text_alignment": "center",
         "columns": 5,
-        "size": "medium"
-      }
+        "columns_mobile": "1",
+        "image_ratio": "portrait",
+        "numbered": true
+      },
+      "blocks": {
+        "card_1": {
+          "type": "card",
+          "settings": {
+            "title": "Personalized consultation",
+            "text": "<p>Every bespoke project begins with a personalized design consultation, where we explore your vision in detail. Together, we discuss design, material selection, pile height, and every subtle detail to ensure the rug perfectly suits your space and purpose.</p>",
+            "image": "shopify://shop_images/CORVO_FINAL-47_98151f31-19f0-4c86-a890-fd88dd8ac455.jpg",
+            "image_alt": "A designer touching rug samples on a wall of materials"
+          }
+        },
+        "card_2": {
+          "type": "card",
+          "settings": {
+            "title": "We design your idea",
+            "text": "<p>Your vision is our starting point. Our design team transforms your ideas into tangible proposals, sending exclusive artworks for approval, ensuring every detail aligns with your expectations before we move to production.</p>",
+            "image": "shopify://shop_images/corvo-custom-rugs-interior-designers.jpg",
+            "image_alt": "A designer drawing rug artwork on two screens"
+          }
+        },
+        "card_3": {
+          "type": "card",
+          "settings": {
+            "title": "Sampling process",
+            "text": "<p>Before final production, we offer a meticulous sampling process. You can approve the design, texture, and colours, making certain that every element perfectly reflects the rug you envisioned.</p>",
+            "image": "shopify://shop_images/33b7eb5d-4259-47a0-a077-bfc466503dcb.png",
+            "image_alt": "A square sample of a carved, high-pile rug in beige and brown"
+          }
+        },
+        "card_4": {
+          "type": "card",
+          "settings": {
+            "title": "Rug production",
+            "text": "<p>Every rug is crafted with utmost care and attention to detail, using only the finest materials. Production takes [lead_weeks] weeks, or [priority_weeks] with priority production.</p>",
+            "image": "shopify://shop_images/WhatsApp_Image_2025-11-20_at_14.42.32_2.jpg",
+            "image_alt": "A tufting gun working yarn into a rug by hand"
+          }
+        },
+        "card_5": {
+          "type": "card",
+          "settings": {
+            "title": "Delivery & shipment",
+            "text": "<p>We work with a network of trusted local partners around the world, ensuring each shipment and delivery is handled with care and adapted to the specific needs of every project.</p>",
+            "image": "shopify://shop_images/CORVO_FINAL-66.jpg",
+            "image_alt": "The edge of a finished rug, with the Corvo label, trimmed by hand"
+          }
+        }
+      },
+      "block_order": [
+        "card_1",
+        "card_2",
+        "card_3",
+        "card_4",
+        "card_5"
+      ]
     },
-    "wf-3": {
-      "type": "wireframe",
+    "order": {
+      "type": "page-facts",
       "settings": {
-        "label": "Lead time",
-        "is_page_title": false,
-        "description": "A simple timeline: 4 to 6 weeks from approval to delivery, with what happens in each week.",
-        "needs": "Confirmation of the timing of each step.",
-        "phase": "Phase 4",
-        "layout": "text",
-        "columns": 3,
-        "size": "small"
-      }
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "anchor": "order",
+        "title": "How an order runs",
+        "text": "<p>What we commit to, and what we ask of you, on every order.</p>",
+        "button_text": "Care and questions",
+        "button_link": "shopify://pages/care-faq"
+      },
+      "blocks": {
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "label": "Proposal",
+            "value": "<p>For a design of your own, we send a proposal: the artwork of your rug, its price and its production time.</p>"
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "label": "Confirmation",
+            "value": "<p>We confirm an order within 3 business days. You approve the order confirmation within 2 business days.</p>"
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "label": "Changes",
+            "value": "<p>An order can be changed or cancelled up to [change_hours] business hours after we confirm it.</p>"
+          }
+        },
+        "fact_4": {
+          "type": "fact",
+          "settings": {
+            "label": "Production",
+            "value": "<p>[lead_weeks] weeks. [priority_weeks] weeks with priority production, for [priority_percent]% more. A custom colour, design or shape can take longer: the date is in your order confirmation.</p>"
+          }
+        },
+        "fact_5": {
+          "type": "fact",
+          "settings": {
+            "label": "Delivery",
+            "value": "<p>Worldwide. Delivery is not included in the price: it is quoted for each order.</p>"
+          }
+        },
+        "fact_6": {
+          "type": "fact",
+          "settings": {
+            "label": "Quality",
+            "value": "<p>Every rug passes a quality control and is photographed before it leaves us.</p>"
+          }
+        },
+        "fact_7": {
+          "type": "fact",
+          "settings": {
+            "label": "If something is wrong",
+            "value": "<p>Tell us in writing within [claim_days] business days of receiving the rug, with photographs.</p>"
+          }
+        },
+        "fact_8": {
+          "type": "fact",
+          "settings": {
+            "label": "Returns",
+            "value": "<p>Every rug is made to order, so it cannot be returned or exchanged.</p>"
+          }
+        },
+        "fact_9": {
+          "type": "fact",
+          "settings": {
+            "label": "Your project",
+            "value": "<p>We do not publish photographs of a project without the client's consent.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "fact_1",
+        "fact_2",
+        "fact_3",
+        "fact_4",
+        "fact_5",
+        "fact_6",
+        "fact_7",
+        "fact_8",
+        "fact_9"
+      ]
     },
-    "wf-4": {
-      "type": "wireframe",
+    "professionals": {
+      "type": "page-facts",
       "settings": {
-        "label": "For professionals",
-        "is_page_title": false,
-        "description": "What designers and architects get: sampling, specifications and a named contact.",
-        "needs": "Name and photo of the contact person.",
-        "phase": "Phase 4",
-        "layout": "split",
-        "columns": 3,
-        "size": "small"
-      }
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "anchor": "professionals",
+        "subheading": "Trade",
+        "title": "For architects and designers",
+        "text": "<p>We work with architects and interior designers on residential and contract projects.</p>",
+        "image": "shopify://shop_images/image_7.png",
+        "image_alt": "The Corvo showroom, with rugs and samples displayed along both walls",
+        "button_text": "Book a meeting",
+        "button_link": "shopify://pages/contact"
+      },
+      "blocks": {
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "label": "Trade terms",
+            "value": "<p>Write to us for trade prices and terms.</p>"
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "label": "Samples",
+            "value": "<p>A [sample_size] sample of any rug costs [sample_price]. For a studio library, ask us for the sample box and for the box of colour poms.</p>"
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "label": "Specification",
+            "value": "<p>The page of each rug lists its craft level, materials, pile and pile height. Every rug is made to measure, up to [max_size].</p>"
+          }
+        },
+        "fact_4": {
+          "type": "fact",
+          "settings": {
+            "label": "Showroom",
+            "value": "<p>Rua dos Limites, 145, 4501-860 Espinho, Portugal.</p>"
+          }
+        },
+        "fact_5": {
+          "type": "fact",
+          "settings": {
+            "label": "Contact",
+            "value": "<p><a href=\"mailto:info@corvo-rugs.com\">info@corvo-rugs.com</a><br/><a href=\"tel:+351227330780\">+351 227 330 780</a></p>"
+          }
+        }
+      },
+      "block_order": [
+        "fact_1",
+        "fact_2",
+        "fact_3",
+        "fact_4",
+        "fact_5"
+      ]
     },
-    "wf-5": {
-      "type": "wireframe",
+    "closing": {
+      "type": "page-intro",
       "settings": {
-        "label": "Delivery and aftercare",
-        "is_page_title": false,
-        "description": "How a rug is packed, shipped and installed, and how Corvo looks after it later.",
-        "needs": "",
-        "phase": "Phase 4",
-        "layout": "split",
-        "columns": 3,
-        "size": "small"
-      }
-    },
-    "wf-6": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Start",
-        "is_page_title": false,
-        "description": "Two buttons: Book a meeting and Tailor your rug.",
-        "needs": "",
-        "phase": "Phase 4",
-        "layout": "text",
-        "columns": 3,
-        "size": "small"
+        "color_scheme": "scheme-1",
+        "title": "Start with your idea",
+        "heading_tag": "h2",
+        "text": "<p>See a price guide for the rug you have in mind, or talk to us first.</p>",
+        "image": "shopify://shop_images/CORVO_11.jpg",
+        "image_alt": "A hand letting a ball of yarn fall onto a carved brown rug",
+        "image_focus": "--focus: center",
+        "image_position": "start",
+        "button_1_text": "Tailor your rug",
+        "button_1_link": "shopify://pages/tailor-your-rug",
+        "button_2_text": "Book a meeting",
+        "button_2_link": "shopify://pages/contact"
       }
     },
     "subnav-pager": {
@@ -95,12 +267,11 @@
   },
   "order": [
     "subnav-tabs",
-    "wf-1",
-    "wf-2",
-    "wf-3",
-    "wf-4",
-    "wf-5",
-    "wf-6",
+    "intro",
+    "steps",
+    "order",
+    "professionals",
+    "closing",
     "subnav-pager"
   ]
 }
