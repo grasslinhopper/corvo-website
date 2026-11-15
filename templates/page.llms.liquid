@@ -30,10 +30,8 @@
 - Materials: {% render 'corvo-fill', text: '[materials_count] materials. [materials_standard] are included in the price; [materials_plus] add a supplement; [materials_premium] are premium fibres.' %}
 - Colours: every colour of a design can be changed, {% render 'corvo-fill', text: 'to one of the [palette_count] colours of the Open Palette at no extra cost, or to any custom colour for [colour_price] per colour.' %}
 - Prices: shown on each rug page in the shop's currency, VAT of {{ vat_percent }}% included. A made-to-measure price is calculated on the rug page from the price per m² of the design. {% render 'corvo-fill', text: 'A design of your own starts at [from_price] per m².' %}
-{%- if sample.available %}
-- Samples: {% render 'corvo-fill', text: 'a [sample_size] sample of any rug costs [sample_price].' %}
-{%- endif %}
-- Lead time: {% render 'corvo-fact', fact: 'lead_time' %}.
+{% if sample.available %}- Samples: {% render 'corvo-fill', text: 'a [sample_size] sample of any rug costs [sample_price].' %}
+{% endif %}- Lead time: {% render 'corvo-fact', fact: 'lead_time' %}.
 - Delivery: worldwide. {% render 'corvo-fact', fact: 'delivery' %}.
 - Orders: {% render 'corvo-fact', fact: 'orders' %}. {% render 'corvo-fact', fact: 'defects' %}.
 - Returns: {% render 'corvo-fact', fact: 'returns' %}.
