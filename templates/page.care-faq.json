@@ -147,6 +147,13 @@
             "question": "Will the colours match exactly?",
             "answer": "<p>Colour can vary slightly between dye batches. This is normal in any textile and is not a defect.</p>"
           }
+        },
+        "q_return": {
+          "type": "question",
+          "settings": {
+            "question": "Can I return a rug?",
+            "answer": "<p>No. Every rug is made to order for its buyer, so it cannot be returned or exchanged. An order can still be changed or cancelled up to 48 business hours after we confirm it.</p>"
+          }
         }
       },
       "block_order": [
@@ -162,6 +169,7 @@
         "q_price",
         "q_samples",
         "q_change",
+        "q_return",
         "q_defect",
         "q_colour",
         "cat_trade",
@@ -213,19 +221,6 @@
         "content_width": "sm"
       }
     },
-    "wf-3": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Returns",
-        "is_page_title": false,
-        "description": "What can be returned, and how. The questions above already cover lead time, delivery, changes, cancellations and defects.",
-        "needs": "Your returns rule for private buyers. The price list covers trade orders, and has no returns clause.",
-        "phase": "Phase 3",
-        "layout": "text",
-        "columns": 3,
-        "size": "small"
-      }
-    },
     "wf-4": {
       "type": "wireframe",
       "settings": {
@@ -253,7 +248,6 @@
     "wf-2",
     "faq",
     "faq-cta",
-    "wf-3",
     "wf-4",
     "subnav-pager"
   ]

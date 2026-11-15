@@ -310,6 +310,13 @@ A row without a value is left out.
               </div>
             {%- endif -%}
 
+            {%- if section.settings.returns_text != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.returns' | t }}</dt>
+                <dd>{{ section.settings.returns_text | escape }}</dd>
+              </div>
+            {%- endif -%}
+
             {%- if section.settings.made_in != blank -%}
               <div class="rug-spec__row">
                 <dt>{{ 'rug_page.spec.made_in' | t }}</dt>
@@ -527,6 +534,11 @@ A row without a value is left out.
       "type": "text",
       "id": "orders_text",
       "label": "Changes and cancellations"
+    },
+    {
+      "type": "text",
+      "id": "returns_text",
+      "label": "Returns"
     },
     {
       "type": "number",

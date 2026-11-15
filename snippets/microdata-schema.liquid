@@ -56,6 +56,7 @@ this one adds what it is made of and how, under the same "@id", so that readers 
         ,{ "@type": "PropertyValue", "name": "Made to order", "value": "Yes, hand-tufted in Portugal" }
         ,{ "@type": "PropertyValue", "name": "Lead time", "value": {{ 'general.corvo.lead_time' | t | json }} }
         ,{ "@type": "PropertyValue", "name": "Delivery", "value": {{ 'general.corvo.delivery' | t | json }} }
+        ,{ "@type": "PropertyValue", "name": "Returns", "value": {{ 'general.corvo.returns' | t | json }} }
         ,{ "@type": "PropertyValue", "name": "Made to measure", "value": {{ 'rug_page.facts.limit' | t | json }} }
         ,{ "@type": "PropertyValue", "name": "Made-to-measure price per square metre, VAT included", "value": {{ rug_per_m2 | json }}, "unitText": "EUR" }
       ]
@@ -185,6 +186,9 @@ this one adds what it is made of and how, under the same "@id", so that readers 
       "knowsAbout": ["Bespoke rugs", "Made-to-measure rugs", "Hand-tufted rugs"],
       {%- unless shop.brand.logo -%}
         "logo": {{ 'CorvoPreto.png' | file_url | prepend: 'https:' | json }},
+      {%- endunless -%}
+      {%- unless shop.brand.slogan -%}
+        "slogan": {{ 'general.corvo.slogan' | t | json }},
       {%- endunless -%}
       {%- if shop.brand.metafields.social_links.size == 0 and settings.social_instagram != blank -%}
         "sameAs": [{{ settings.social_instagram | json }}],

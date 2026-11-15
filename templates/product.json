@@ -63,7 +63,7 @@
             "palette": "284\n283\n314\n287\n346\n316\n208\n351\n212\n237\n348\n344\n290\n343\n342\n137\n182\n155\n345\n350\n132\n179\n184\n193\n289\n349\n347\n213\n174\n175",
             "custom_colour_title": "Another colour",
             "custom_colour_text": "Infinite Colours: any colour, matched to your reference. A custom colour can add to the production time; we confirm the date with your order.",
-            "custom_colour_price": 123,
+            "custom_colour_price": 61.5,
             "colour_text": "The photos show the original colours. We confirm your colours with you before production.",
             "show_shipping_step": true,
             "standard_label": "Shipping in 5 weeks",
@@ -163,7 +163,8 @@
         "care_link_text": "Care and FAQ",
         "lead_time_text": "5 weeks. 3 weeks with priority production, for 25% more.",
         "delivery_text": "Not included in the price. Quoted for each order.",
-        "orders_text": "An order can be changed or cancelled up to 48 business hours after we confirm it."
+        "orders_text": "An order can be changed or cancelled up to 48 business hours after we confirm it.",
+        "returns_text": "Made to order: a rug cannot be returned or exchanged."
       }
     },
     "related_products_j3zKUm": {

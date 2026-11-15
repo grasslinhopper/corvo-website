@@ -18,6 +18,8 @@
       "locality": "Silvalde, Espinho",
       "lead_time": "5 weeks; 3 weeks with priority production, for 25% more",
       "delivery": "Not included in the price; quoted for each order",
+      "returns": "Every rug is made to order, so it cannot be returned or exchanged",
+      "slogan": "Rug Atelier",
       "parent": "Sorema"
     },
     "page": "Page {{ page }}",
@@ -119,7 +121,7 @@
       "view_in_space": "View in your space",
       "taxes_included": "VAT included.",
       "taxes_excluded": "Tax excluded.",
-      "shipping_policy_html": "<a href=\"{{ link }}\" class=\"link\">Shipping calculated</a> at checkout",
+      "shipping_policy_html": "<a href=\"{{ link }}\" class=\"link\">Delivery is quoted</a> for each order.",
       "size_chart": "Size chart",
       "available_colors_count": {
         "one": "{{ count }} color available",
@@ -612,6 +614,7 @@
       "lead_time": "Lead time",
       "delivery": "Delivery",
       "orders": "Changes and cancellations",
+      "returns": "Returns",
       "sample_value": "{{ size }}, {{ price }}",
       "collection": "Collection",
       "craft_level": "Craft level",
