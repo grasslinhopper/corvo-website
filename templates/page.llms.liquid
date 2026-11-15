@@ -23,6 +23,9 @@
 {%- if sample.available %}
 - Samples: a {{ sample.selected_or_first_available_variant.title | replace: 'x', ' × ' }} sample of any rug costs {{ sample.selected_or_first_available_variant.price | money }}.
 {%- endif %}
+- Lead time: {{ 'general.corvo.lead_time' | t }}.
+- Delivery: worldwide. {{ 'general.corvo.delivery' | t }}.
+- Orders: an order can be changed or cancelled up to 48 business hours after Corvo confirms it. A defect must be reported in writing within 10 business days of receiving the rug, with photographs.
 - Website: {{ shop.url }}
 
 ## Main pages

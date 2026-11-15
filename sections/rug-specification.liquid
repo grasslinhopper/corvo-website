@@ -154,6 +154,8 @@ A row without a value is left out.
               {%- unless product.has_only_default_variant %} {{ 'rug_page.facts.sizes' | t: count: product.variants.size, smallest: first_size, low: first_price, largest: last_size, high: last_price }}{% endunless -%}
 
               {%- if per_m2 > 0 and section.settings.made_to_measure_text != blank %} {{ 'rug_page.facts.measure' | t: limit: section.settings.made_to_measure_text, price: per_m2_price }}{% endif -%}
+              {%- if section.settings.lead_time_text != blank %} {{ 'rug_page.facts.lead_time' | t: text: section.settings.lead_time_text }}{% endif -%}
+              {%- if section.settings.delivery_text != blank %} {{ 'rug_page.facts.delivery' | t: text: section.settings.delivery_text }}{% endif -%}
             </p>
           {%- endif -%}
 
@@ -284,6 +286,27 @@ A row without a value is left out.
               <div class="rug-spec__row">
                 <dt>{{ 'rug_page.spec.sample' | t }}</dt>
                 <dd>{{ 'rug_page.spec.sample_value' | t: size: sample_size, price: sample_price }}</dd>
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.lead_time_text != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.lead_time' | t }}</dt>
+                <dd>{{ section.settings.lead_time_text | escape }}</dd>
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.delivery_text != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.delivery' | t }}</dt>
+                <dd>{{ section.settings.delivery_text | escape }}</dd>
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.orders_text != blank -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.orders' | t }}</dt>
+                <dd>{{ section.settings.orders_text | escape }}</dd>
               </div>
             {%- endif -%}
 
@@ -489,6 +512,21 @@ A row without a value is left out.
       "id": "made_to_measure_text",
       "label": "Made to measure",
       "default": "Any size up to 12 × 7 m."
+    },
+    {
+      "type": "text",
+      "id": "lead_time_text",
+      "label": "Lead time"
+    },
+    {
+      "type": "text",
+      "id": "delivery_text",
+      "label": "Delivery"
+    },
+    {
+      "type": "text",
+      "id": "orders_text",
+      "label": "Changes and cancellations"
     },
     {
       "type": "number",

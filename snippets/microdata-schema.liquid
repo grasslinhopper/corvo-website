@@ -53,7 +53,9 @@ this one adds what it is made of and how, under the same "@id", so that readers 
         {%- if product.metafields.rug.colour_family.value != blank -%}
           ,{ "@type": "PropertyValue", "name": "Colour family", "value": {{ product.metafields.rug.colour_family.value | join: ', ' | json }} }
         {%- endif -%}
-        ,{ "@type": "PropertyValue", "name": "Made to order", "value": "Yes, by hand in Portugal" }
+        ,{ "@type": "PropertyValue", "name": "Made to order", "value": "Yes, hand-tufted in Portugal" }
+        ,{ "@type": "PropertyValue", "name": "Lead time", "value": {{ 'general.corvo.lead_time' | t | json }} }
+        ,{ "@type": "PropertyValue", "name": "Delivery", "value": {{ 'general.corvo.delivery' | t | json }} }
         ,{ "@type": "PropertyValue", "name": "Made to measure", "value": {{ 'rug_page.facts.limit' | t | json }} }
         ,{ "@type": "PropertyValue", "name": "Made-to-measure price per square metre, VAT included", "value": {{ rug_per_m2 | json }}, "unitText": "EUR" }
       ]
@@ -180,7 +182,13 @@ this one adds what it is made of and how, under the same "@id", so that readers 
       {%- endunless -%}
       "address": { "@type": "PostalAddress", "addressLocality": {{ 'general.corvo.locality' | t | json }}, "addressCountry": "PT" },
       "parentOrganization": { "@type": "Organization", "name": {{ 'general.corvo.parent' | t | json }} },
-      "knowsAbout": ["Bespoke rugs", "Made-to-measure rugs", "Hand-crafted rugs"],
+      "knowsAbout": ["Bespoke rugs", "Made-to-measure rugs", "Hand-tufted rugs"],
+      {%- unless shop.brand.logo -%}
+        "logo": {{ 'CorvoPreto.png' | file_url | prepend: 'https:' | json }},
+      {%- endunless -%}
+      {%- if shop.brand.metafields.social_links.size == 0 and settings.social_instagram != blank -%}
+        "sameAs": [{{ settings.social_instagram | json }}],
+      {%- endif -%}
       {%- if shop.brand.logo -%}
         "logo": {{ shop.brand.logo | image_url: width: shop.brand.logo.width | prepend: "https:" | json }},
       {%- endif -%}
