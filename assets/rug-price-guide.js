@@ -93,6 +93,29 @@
       this.addEventListener('click', (event) => this.onClick(event));
 
       this.update();
+      this.watchBar();
+    }
+
+    /**
+     * On a narrow screen a bar keeps the figure in view while the steps are on the screen and the summary is not
+     */
+    watchBar() {
+      const bar = this.querySelector('[data-guide-bar]'),
+        steps = this.querySelector('.price-guide__steps'),
+        summary = this.querySelector('[data-guide-summary]');
+
+      if (!bar || !steps || !summary || !('IntersectionObserver' in window)) {
+        return;
+      }
+
+      const onScreen = new Map(),
+        observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => onScreen.set(entry.target, entry.isIntersecting));
+          bar.hidden = !(onScreen.get(steps) && !onScreen.get(summary));
+        });
+
+      observer.observe(steps);
+      observer.observe(summary);
     }
 
     onClick(event) {
@@ -199,7 +222,7 @@
 
     /**
      * An amount of the shop's currency as the visitor reads it. In another currency it is approximate, so it is
-     * rounded to a whole unit and said to be "about".
+     * rounded to a whole unit; the page says once, under the total, that the figures are converted.
      */
     money(cents) {
       const { config } = this;
@@ -208,7 +231,7 @@
         return formatMoney(cents, config.moneyFormat);
       }
 
-      return config.strings.aboutAmount.replace('[amount]', formatMoney(Math.round(cents * config.fx / 100) * 100, config.moneyFormat));
+      return formatMoney(Math.round(cents * config.fx / 100) * 100, config.moneyFormat);
     }
 
     update() {
@@ -268,6 +291,7 @@
       set('[data-guide-summary-options]', optionsText);
       set('[data-guide-summary-shipping]', shippingShort);
       set('[data-guide-total]', valid ? this.money(result.gross) : '—');
+      set('[data-guide-bar-total]', valid ? this.money(result.gross) : '—');
       set('[data-guide-net]', valid ? this.money(result.net) : '—');
       set('[data-guide-per-m2]', valid ? this.money(result.perSquareMetre) : '—');
 
@@ -290,6 +314,11 @@
             `${strings.summaryShipping}: ${shippingShort}`,
             `${strings.summaryTotal}: ${strings.recapTotal.replace('[total]', this.money(result.gross)).replace('[net]', this.money(result.net))}`
           ] : [];
+
+        // The team works in the shop's currency: a guide read in another currency also travels in the shop's own
+        if (valid && this.config.fx !== 1) {
+          lines.push(strings.recapBase.replace('[currency]', this.config.shopCurrency).replace('[total]', (result.gross / 100).toFixed(2)).replace('[net]', (result.net / 100).toFixed(2)));
+        }
 
         // The line is sent only when there is a guide to send
         if (field) {

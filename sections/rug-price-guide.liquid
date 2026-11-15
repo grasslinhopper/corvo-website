@@ -178,11 +178,11 @@
             "materials": [{{ materials_json | strip }}],
             "fx": {{ fx | default: 1 }},
             "baseCurrency": {{ is_base_currency | json }},
+            "shopCurrency": {{ shop.currency | json }},
             "moneyFormat": {{ money_format | json }},
             "strings": {
               "area": {{ 'rug_page.area' | t: area: '[area]' | json }},
               "about": {{ 'rug_page.about' | t: size: '[size]' | json }},
-              "aboutAmount": {{ 'price_guide.about_amount' | t: amount: '[amount]' | json }},
               "errorNumber": {{ 'rug_page.error_number' | t | json }},
               "errorMin": {{ 'rug_page.error_min' | t: min: min_side | json }},
               "errorLong": {{ 'rug_page.error_long' | t: max: max_long | json }},
@@ -207,7 +207,8 @@
               "summaryColours": {{ 'price_guide.custom_colours' | t | json }},
               "summaryShipping": {{ 'rug_page.shipping' | t | json }},
               "summaryTotal": {{ 'price_guide.total' | t | json }},
-              "recapTotal": {{ 'price_guide.recap_total' | t: total: '[total]', net: '[net]' | json }}
+              "recapTotal": {{ 'price_guide.recap_total' | t: total: '[total]', net: '[net]' | json }},
+              "recapBase": {{ 'price_guide.recap_base' | t: currency: '[currency]', total: '[total]', net: '[net]' | json }}
             }
           }
         </script>
@@ -577,6 +578,10 @@
               <span class="rug-summary__amount">
                 <span class="h4" data-guide-total aria-live="polite">{{ default_total_text | strip }}</span>
                 <span class="text-sm text-subdued">{{ 'rug_page.vat_included' | t }}</span>
+
+                {%- unless is_base_currency -%}
+                  <span class="text-sm text-subdued">{{ 'price_guide.converted' | t: currency: shop.currency }}</span>
+                {%- endunless -%}
               </span>
             </div>
 
@@ -604,6 +609,21 @@
               {%- render 'button', content: section.settings.summary_button, href: '#proposal', stretch: true -%}
             {%- endif -%}
           </div>
+        </div>
+
+        {%- comment -%}
+        On a phone the summary sits under the steps, out of sight. This bar keeps the figure in view while the
+        choices are made, and steps aside once the summary itself is on the screen.
+        {%- endcomment -%}
+        <div class="price-guide__bar" data-guide-bar hidden>
+          <span class="price-guide__bar-text">
+            <span class="text-sm text-subdued">{{ 'price_guide.total' | t }}</span>
+            <span class="price-guide__bar-total" data-guide-bar-total>{{ default_total_text | strip }}</span>
+          </span>
+
+          {%- if section.settings.summary_button != blank -%}
+            {%- render 'button', content: section.settings.summary_button, href: '#proposal', size: 'sm' -%}
+          {%- endif -%}
         </div>
       </rug-price-guide>
     </div>
@@ -730,6 +750,40 @@
   @media screen and (max-width: 699px) {
     .price-guide .rug-choice__price {
       font-size: var(--text-sm);
+    }
+  }
+
+  .price-guide__bar {
+    background: rgb(var(--background));
+    border-block-start: 1px solid rgb(var(--border-color));
+    z-index: 3;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: .75rem var(--container-gutter) calc(.75rem + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+  }
+
+  .price-guide__bar[hidden] {
+    display: none;
+  }
+
+  .price-guide__bar-text {
+    gap: .125rem;
+    display: grid;
+  }
+
+  .price-guide__bar-total {
+    font-variant-numeric: tabular-nums;
+    font-size: var(--text-lg, 1.125rem);
+  }
+
+  @media screen and (min-width: 1000px) {
+    .price-guide__bar {
+      display: none;
     }
   }
 
