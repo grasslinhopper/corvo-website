@@ -190,9 +190,11 @@ this one adds what it is made of and how, under the same "@id", so that readers 
       {%- unless shop.brand.slogan -%}
         "slogan": {{ 'general.corvo.slogan' | t | json }},
       {%- endunless -%}
-      {%- if shop.brand.metafields.social_links.size == 0 and settings.social_instagram != blank -%}
-        "sameAs": [{{ settings.social_instagram | json }}],
-      {%- endif -%}
+      {%- unless shop.brand.metafields.social_links.size > 0 -%}
+        {%- if settings.social_instagram != blank -%}
+          "sameAs": [{{ settings.social_instagram | json }}],
+        {%- endif -%}
+      {%- endunless -%}
       {%- if shop.brand.logo -%}
         "logo": {{ shop.brand.logo | image_url: width: shop.brand.logo.width | prepend: "https:" | json }},
       {%- endif -%}
