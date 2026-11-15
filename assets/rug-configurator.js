@@ -611,7 +611,7 @@
       }
 
       if (this.querySelector('[data-rug-shipping]')) {
-        properties[strings.propertyShipping] = state.express ? `${afterHeading(strings.express, strings.propertyShipping)} (${strings.percent})` : strings.standard;
+        properties[strings.propertyShipping] = state.express ? `${afterHeading(strings.express, strings.propertyShipping)} (${strings.percent})` : afterHeading(strings.standard, strings.propertyShipping);
       }
 
       // Hidden from the buyer, kept for the team: where the line comes from and how its price was worked out
@@ -870,7 +870,7 @@
       print('[data-rug-summary-supplement]', valid && state.reason ? strings[state.reason] : '');
       this.querySelector('[data-rug-summary-supplement-row]').hidden = !valid || !state.reason;
       print('[data-rug-summary-colours]', state.changed === 0 ? strings.asShown : (state.changed === 1 ? strings.changedOne : strings.changedOther.replace('[count]', state.changed)));
-      print('[data-rug-summary-shipping]', state.express ? afterHeading(strings.express, strings.propertyShipping) : strings.standard);
+      print('[data-rug-summary-shipping]', afterHeading(state.express ? strings.express : strings.standard, strings.propertyShipping));
       print('[data-rug-express-extra]', valid && state.expressExtra > 0 ? strings.surcharge.replace('[amount]', this.money(state.expressExtra)) : strings.percent);
 
       this.showMessage(state.status === 'quote' ? strings.onRequest : '');

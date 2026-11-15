@@ -461,7 +461,9 @@ Supported variables
         {%- if block.settings.show_shipping_step and block.settings.express_percent > 0 -%}
           <div>
             <dt>{{ 'rug_page.shipping' | t }}</dt>
-            <dd data-rug-summary-shipping>{{ block.settings.standard_label | escape }}</dd>
+            {%- comment -%}"Shipping in 5 weeks" under the word "Shipping" reads "In 5 weeks"{%- endcomment -%}
+            {%- assign shipping_word = 'rug_page.shipping' | t -%}
+            <dd data-rug-summary-shipping>{{ block.settings.standard_label | remove_first: shipping_word | strip | capitalize | escape }}</dd>
           </div>
         {%- endif -%}
       </dl>
