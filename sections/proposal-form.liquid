@@ -1,0 +1,196 @@
+{%- comment -%}
+  Proposal form (Corvo addition)
+
+  The form that asks Corvo for a proposal: a name, an e-mail address, a phone number, a country, a link to drawings
+  and a few words on the project.
+
+  It is Shopify's own contact form, so the request arrives at the shop's e-mail address like any other message. Files
+  cannot be attached to it: a link to drawings can be given, and files can follow by e-mail.
+
+  When the page also holds a price guide (sections/rug-price-guide.liquid), the guide is copied into this form: the
+  visitor sees it above the fields, and it is sent as one of the lines of the request.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign form_id = section.settings.form_id | default: 'proposal-form'
+-%}
+
+<div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" id="proposal">
+  <div class="container container--xs">
+    <div class="section-stack">
+      {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank -%}
+        <div class="section-header justify-self-center text-center">
+          <div class="prose">
+            {%- if section.settings.subheading != blank -%}
+              <p class="h6">{{ section.settings.subheading | escape }}</p>
+            {%- endif -%}
+
+            {%- if section.settings.title != blank -%}
+              <h2 class="h2">{{ section.settings.title | escape }}</h2>
+            {%- endif -%}
+
+            {%- if section.settings.text != blank -%}
+              {%- render 'corvo-fill', text: section.settings.text -%}
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- form 'contact', id: form_id, class: 'form' -%}
+        {%- if form.posted_successfully? -%}
+          {%- assign default_success = 'contact.form.success_message' | t -%}
+          {%- assign content = section.settings.success | default: default_success | escape -%}
+          {%- render 'banner', status: 'success', content: content -%}
+        {%- endif -%}
+
+        {%- if form.errors -%}
+          {%- capture content -%}{{ form.errors.translated_fields[form.errors.first] | capitalize }} {{ form.errors.messages[form.errors.first] }}{%- endcapture -%}
+          {%- render 'banner', status: 'error', content: content -%}
+        {%- endif -%}
+
+        <input type="hidden" name="contact[{{ 'price_guide.request_subject_label' | t | escape }}]" value="{{ section.settings.subject | escape }}">
+
+        {%- comment -%}Filled in by the price guide of the page, when there is one{%- endcomment -%}
+        <input type="hidden" value="" data-guide-field data-name="contact[{{ 'price_guide.total' | t | escape }}]">
+
+        <div class="proposal-form__recap text-sm" data-guide-recap hidden>
+          <p class="smallcaps text-subdued">{{ 'price_guide.recap_title' | t }}</p>
+          <p data-guide-recap-text></p>
+        </div>
+
+        <div class="fieldset">
+          <div class="fieldset-row">
+            {%- assign label = 'contact.form.name' | t -%}
+            {%- render 'input', type: 'text', name: 'contact[name]', label: label, value: customer.name, required: true, autocomplete: 'name', id_prefix: 'proposal' -%}
+
+            {%- assign label = 'contact.form.email' | t -%}
+            {%- render 'input', type: 'email', name: 'contact[email]', label: label, value: customer.email, required: true, autocomplete: 'email', id_prefix: 'proposal' -%}
+          </div>
+
+          <div class="fieldset-row">
+            {%- assign label = 'price_guide.form_phone' | t -%}
+            {%- assign name = 'contact[' | append: label | append: ']' -%}
+            {%- render 'input', type: 'tel', name: name, label: label, autocomplete: 'tel', id_prefix: 'proposal' -%}
+
+            {%- assign label = 'price_guide.form_country' | t -%}
+            {%- assign name = 'contact[' | append: label | append: ']' -%}
+            {%- render 'input', type: 'text', name: name, label: label, autocomplete: 'country-name', id_prefix: 'proposal' -%}
+          </div>
+
+          {%- assign label = 'price_guide.form_link' | t -%}
+          {%- assign name = 'contact[' | append: label | append: ']' -%}
+          {%- render 'input', type: 'text', name: name, label: label, id_prefix: 'proposal' -%}
+
+          {%- assign label = 'price_guide.form_message' | t -%}
+          {%- render 'input', name: 'contact[body]', label: label, multiline: 5, required: true, id_prefix: 'proposal' -%}
+        </div>
+
+        {%- if section.settings.note != blank -%}
+          <div class="prose text-sm text-subdued">
+            {%- render 'corvo-fill', text: section.settings.note -%}
+          </div>
+        {%- endif -%}
+
+        {%- assign default_button = 'contact.form.submit' | t -%}
+        {%- assign button_content = section.settings.button | default: default_button | escape -%}
+        {%- render 'button', content: button_content, type: 'submit' -%}
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .proposal-form__recap {
+    background: rgb(var(--text-color) / .03);
+    border: 1px solid rgb(var(--border-color));
+    text-align: start;
+    gap: .375rem;
+    padding: 1rem 1.25rem;
+    display: grid;
+  }
+
+  .proposal-form__recap[hidden] {
+    display: none;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Proposal form",
+  "class": "shopify-section--proposal-form",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The form that asks for a proposal. It is Shopify's contact form: a request arrives at the shop's e-mail address. On a page with a price guide, the guide is sent with the request."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Ask for a proposal"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "Note above the button"
+    },
+    {
+      "type": "text",
+      "id": "button",
+      "label": "Button",
+      "default": "Send my request"
+    },
+    {
+      "type": "text",
+      "id": "success",
+      "label": "Message once the request is sent",
+      "default": "Thank you. Your request has been sent, and we will answer by e-mail."
+    },
+    {
+      "type": "text",
+      "id": "subject",
+      "label": "Line that tells the team where a request comes from",
+      "default": "Proposal for a bespoke rug, from the Tailor your rug page"
+    },
+    {
+      "type": "text",
+      "id": "form_id",
+      "label": "ID of the form",
+      "info": "The price guide looks for the form by this ID. Change it in both sections or not at all.",
+      "default": "proposal-form"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Proposal form"
+    }
+  ]
+}
+{% endschema %}

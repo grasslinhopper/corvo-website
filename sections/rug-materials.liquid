@@ -11,12 +11,16 @@
   field), under a title and a line of its own. A material may carry a picture: add a file field with the key "image"
   to the "Rug material" definition and it is shown.
 
+  A "Text" block gives a description to a material that has none in Shopify yet. It is a place for a draft: once the
+  text is agreed, it belongs in the material's own "Description" field, and the block can go.
+
   The same list is also given to search engines and AI assistants as structured data (a schema.org DefinedTermSet).
 {%- endcomment -%}
 
 {%- liquid
   assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
   assign group_blocks = section.blocks | where: 'type', 'group'
+  assign text_blocks = section.blocks | where: 'type', 'text'
   assign materials = shop.metaobjects.rug_material.values
   assign page_address = shop.url | append: page.url
 -%}
@@ -97,7 +101,16 @@
                     assign material_handle = material.system.handle
                     assign material_token = '|' | append: material_handle | append: '|'
                     assign material_image = material.image.value
+                    assign material_description = material.description.value
                     assign rug_count = 0
+
+                    if material_description == blank
+                      for text_block in text_blocks
+                        if text_block.settings.material == material_handle
+                          assign material_description = text_block.settings.text
+                        endif
+                      endfor
+                    endif
 
                     for rug in rugs
                       if rug_materials[forloop.index0] contains material_token
@@ -126,8 +139,8 @@
                         {%- endif -%}
                       </dl>
 
-                      {%- if material.description.value != blank -%}
-                        <p class="rug-material__description">{{ material.description.value | escape }}</p>
+                      {%- if material_description != blank -%}
+                        <p class="rug-material__description">{{ material_description | escape }}</p>
                       {%- endif -%}
                     </div>
 
@@ -196,12 +209,24 @@
     "url": {{ page_address | json }},
     "hasDefinedTerm": [
       {%- for material in materials -%}
+        {%- liquid
+          assign material_description = material.description.value
+
+          if material_description == blank
+            for text_block in text_blocks
+              if text_block.settings.material == material.system.handle
+                assign material_description = text_block.settings.text
+              endif
+            endfor
+          endif
+        -%}
+
         {
           "@type": "DefinedTerm",
           "name": {{ material.name.value | json }},
           "termCode": {{ material.system.handle | json }},
-          {%- if material.description.value != blank -%}
-            "description": {{ material.description.value | json }},
+          {%- if material_description != blank -%}
+            "description": {{ material_description | json }},
           {%- endif -%}
           "additionalProperty": [
             { "@type": "PropertyValue", "name": "Fibre", "value": {{ material.fibre.value | json }} },
@@ -426,6 +451,27 @@
   ],
   "blocks": [
     {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "A description for a material that has none in Shopify yet. Once it is agreed, move it to the material's own Description field (Content > Metaobjects > Rug material) and remove this block."
+        },
+        {
+          "type": "text",
+          "id": "material",
+          "label": "Handle of the material",
+          "info": "As in Shopify, for example mohair or sea-island-cotton."
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description"
+        }
+      ]
+    },
+    {
       "type": "group",
       "name": "Group",
       "settings": [
@@ -450,7 +496,7 @@
       ]
     }
   ],
-  "max_blocks": 6,
+  "max_blocks": 20,
   "presets": [
     {
       "name": "Rug materials",

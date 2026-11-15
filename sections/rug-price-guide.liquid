@@ -2,7 +2,7 @@
   Rug price guide (Corvo addition)
 
   The heart of the "Tailor your rug" page: a price guide for a rug that does not exist yet, and the form that asks for
-  a proposal.
+  the proposal form that follows it.
 
   The visitor chooses a craft level, a material, a size, options and a shipping time. The <rug-price-guide> element
   (assets/rug-price-guide.js) works the price out in the browser, the same way a rug page does:
@@ -18,8 +18,8 @@
   typed here. Every choice and every rule is also written in the page as plain text, so a reader that does not run
   scripts (a search engine, an AI assistant) sees the whole price list.
 
-  The form is Shopify's own contact form: it sends the request, with the price guide as one of its lines, to the
-  shop's e-mail address.
+  The guide is copied into the request form that follows it on the page (sections/proposal-form.liquid), so the
+  request that reaches the shop says what the visitor saw.
 
   The steps, the fields, the choices and the summary are drawn with the styles of the rug page (the ".rug-step",
   ".rug-field", ".rug-choice" and ".rug-summary" rules in sections/main-product.liquid), so the two pages look and
@@ -31,7 +31,7 @@
   assign levels = shop.metaobjects.craft_level.values
   assign materials = shop.metaobjects.rug_material.values
   assign uid = section.id
-  assign form_id = 'proposal-form-' | append: section.id
+  assign form_id = section.settings.form_id | default: 'proposal-form'
 
   assign vat_percent = settings.rug_vat_percent | default: 23
   assign vat_plus = vat_percent | plus: 100
@@ -207,8 +207,7 @@
               "summaryColours": {{ 'price_guide.custom_colours' | t | json }},
               "summaryShipping": {{ 'rug_page.shipping' | t | json }},
               "summaryTotal": {{ 'price_guide.total' | t | json }},
-              "vatIncluded": {{ 'rug_page.vat_included' | t | json }},
-              "withoutVat": {{ 'price_guide.without_vat' | t | json }}
+              "recapTotal": {{ 'price_guide.recap_total' | t: total: '[total]', net: '[net]' | json }}
             }
           }
         </script>
@@ -611,92 +610,6 @@
   </div>
 </div>
 
-{%- comment -%}
-----------------------------------------------------------------------------------------------------------------------
-THE REQUEST
-----------------------------------------------------------------------------------------------------------------------
-{%- endcomment -%}
-
-<div class="section-spacing color-scheme color-scheme--{{ section.settings.form_color_scheme.id }} color-scheme--bg-{{ section.settings.form_color_scheme.settings.background_gradient | default: section.settings.form_color_scheme.settings.background | md5 }} bordered-section" id="proposal">
-  <div class="container container--xs">
-    <div class="section-stack">
-      <div class="section-header justify-self-center text-center">
-        <div class="prose">
-          {%- if section.settings.form_subheading != blank -%}
-            <p class="h6">{{ section.settings.form_subheading | escape }}</p>
-          {%- endif -%}
-
-          {%- if section.settings.form_title != blank -%}
-            <h2 class="h2">{{ section.settings.form_title | escape }}</h2>
-          {%- endif -%}
-
-          {%- if section.settings.form_text != blank -%}
-            {%- render 'corvo-fill', text: section.settings.form_text -%}
-          {%- endif -%}
-        </div>
-      </div>
-
-      {%- form 'contact', id: form_id, class: 'form' -%}
-        {%- if form.posted_successfully? -%}
-          {%- assign default_success = 'contact.form.success_message' | t -%}
-          {%- assign content = section.settings.form_success | default: default_success | escape -%}
-          {%- render 'banner', status: 'success', content: content -%}
-        {%- endif -%}
-
-        {%- if form.errors -%}
-          {%- capture content -%}{{ form.errors.translated_fields[form.errors.first] | capitalize }} {{ form.errors.messages[form.errors.first] }}{%- endcapture -%}
-          {%- render 'banner', status: 'error', content: content -%}
-        {%- endif -%}
-
-        <input type="hidden" name="contact[{{ 'price_guide.request_subject_label' | t | escape }}]" value="{{ 'price_guide.request_subject' | t | escape }}">
-        <input type="hidden" name="contact[{{ 'price_guide.total' | t | escape }}]" value="" data-guide-field>
-
-        <div class="price-guide__recap text-sm" data-guide-recap hidden>
-          <p class="smallcaps text-subdued">{{ 'price_guide.recap_title' | t }}</p>
-          <p data-guide-recap-text></p>
-        </div>
-
-        <div class="fieldset">
-          <div class="fieldset-row">
-            {%- assign label = 'contact.form.name' | t -%}
-            {%- render 'input', type: 'text', name: 'contact[name]', label: label, value: customer.name, required: true, autocomplete: 'name', form: form_id -%}
-
-            {%- assign label = 'contact.form.email' | t -%}
-            {%- render 'input', type: 'email', name: 'contact[email]', label: label, value: customer.email, required: true, autocomplete: 'email', form: form_id -%}
-          </div>
-
-          <div class="fieldset-row">
-            {%- assign label = 'price_guide.form_phone' | t -%}
-            {%- assign name = 'contact[' | append: label | append: ']' -%}
-            {%- render 'input', type: 'tel', name: name, label: label, autocomplete: 'tel', form: form_id -%}
-
-            {%- assign label = 'price_guide.form_country' | t -%}
-            {%- assign name = 'contact[' | append: label | append: ']' -%}
-            {%- render 'input', type: 'text', name: name, label: label, autocomplete: 'country-name', form: form_id -%}
-          </div>
-
-          {%- assign label = 'price_guide.form_link' | t -%}
-          {%- assign name = 'contact[' | append: label | append: ']' -%}
-          {%- render 'input', type: 'text', name: name, label: label, form: form_id -%}
-
-          {%- assign label = 'price_guide.form_message' | t -%}
-          {%- render 'input', name: 'contact[body]', label: label, multiline: 5, required: true, form: form_id -%}
-        </div>
-
-        {%- if section.settings.form_note != blank -%}
-          <div class="prose text-sm text-subdued">
-            {%- render 'corvo-fill', text: section.settings.form_note -%}
-          </div>
-        {%- endif -%}
-
-        {%- assign default_button = 'contact.form.submit' | t -%}
-        {%- assign button_content = section.settings.form_button | default: default_button | escape -%}
-        {%- render 'button', content: button_content, type: 'submit' -%}
-      {%- endform -%}
-    </div>
-  </div>
-</div>
-
 <script src="{{ 'rug-price-guide.js' | asset_url }}" defer></script>
 
 {% stylesheet %}
@@ -814,19 +727,6 @@ THE REQUEST
     font-size: max(1rem, 16px);
   }
 
-  .price-guide__recap {
-    background: rgb(var(--text-color) / .03);
-    border: 1px solid rgb(var(--border-color));
-    text-align: start;
-    gap: .375rem;
-    padding: 1rem 1.25rem;
-    display: grid;
-  }
-
-  .price-guide__recap[hidden] {
-    display: none;
-  }
-
   @media screen and (max-width: 699px) {
     .price-guide .rug-choice__price {
       font-size: var(--text-sm);
@@ -853,12 +753,14 @@ THE REQUEST
   "class": "shopify-section--rug-price-guide",
   "tag": "section",
   "enabled_on": {
-    "templates": ["page"]
+    "templates": [
+      "page"
+    ]
   },
   "settings": [
     {
       "type": "paragraph",
-      "content": "A price guide for a rug made from scratch, and the form that asks for a proposal. The prices and the rules come from the craft levels and the materials in Shopify (Content > Metaobjects) and from Theme settings > Corvo: prices and rules."
+      "content": "A price guide for a rug made from scratch. The prices and the rules come from the craft levels and the materials in Shopify (Content > Metaobjects) and from Theme settings > Corvo: prices and rules. Put a \"Proposal form\" section after it: the guide is sent with the request."
     },
     {
       "type": "color_scheme",
@@ -1009,43 +911,11 @@ THE REQUEST
       "content": "Request form"
     },
     {
-      "type": "color_scheme",
-      "id": "form_color_scheme",
-      "label": "t:global.colors.scheme",
-      "default": "scheme-1"
-    },
-    {
       "type": "text",
-      "id": "form_subheading",
-      "label": "Line above the title"
-    },
-    {
-      "type": "text",
-      "id": "form_title",
-      "label": "Title",
-      "default": "Ask for a proposal"
-    },
-    {
-      "type": "richtext",
-      "id": "form_text",
-      "label": "Text"
-    },
-    {
-      "type": "richtext",
-      "id": "form_note",
-      "label": "Note above the button"
-    },
-    {
-      "type": "text",
-      "id": "form_button",
-      "label": "Button",
-      "default": "Send my request"
-    },
-    {
-      "type": "text",
-      "id": "form_success",
-      "label": "Message once the request is sent",
-      "default": "Thank you. Your request has been sent, and we will answer by e-mail."
+      "id": "form_id",
+      "label": "ID of the request form on the page",
+      "info": "The price guide is copied into this form. Leave as it is unless the form's ID was changed.",
+      "default": "proposal-form"
     }
   ],
   "presets": [

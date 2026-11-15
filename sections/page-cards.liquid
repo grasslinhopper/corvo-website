@@ -180,25 +180,38 @@
     margin-block-end: 0;
   }
 
-  /* Cards come into view one after the other, where the browser can follow the scroll */
+  /*
+    Cards rise into place as they come into view, where the browser can follow the scroll. They are never hidden: a
+    reader that does not scroll (a print, a full-page capture by an AI assistant) still sees every card.
+  */
   @media (prefers-reduced-motion: no-preference) {
     @supports (animation-timeline: view()) {
       .page-card {
         animation: page-card-rise linear both;
         animation-timeline: view();
-        animation-range: entry 0% entry 55%;
+        animation-range: entry 0% entry 60%;
+      }
+
+      .page-card:nth-child(2) {
+        animation-range: entry 8% entry 68%;
+      }
+
+      .page-card:nth-child(3) {
+        animation-range: entry 16% entry 76%;
+      }
+
+      .page-card:nth-child(n + 4) {
+        animation-range: entry 24% entry 84%;
       }
     }
   }
 
   @keyframes page-card-rise {
     from {
-      opacity: 0;
-      transform: translateY(2rem);
+      transform: translateY(2.5rem);
     }
 
     to {
-      opacity: 1;
       transform: none;
     }
   }

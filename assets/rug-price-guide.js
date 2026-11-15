@@ -11,8 +11,8 @@
  *   + the price of each custom colour
  *   × the priority supplement when the faster shipping is chosen
  *
- * The result is a guide, not a price to pay: nothing is added to the cart. It is copied into the request form, so the
- * request that reaches the shop says what the visitor saw.
+ * The result is a guide, not a price to pay: nothing is added to the cart. It is copied into the proposal form of the
+ * page (sections/proposal-form.liquid), so the request that reaches the shop says what the visitor saw.
  */
 (() => {
   if (window.customElements.get('rug-price-guide')) {
@@ -288,11 +288,18 @@
             `${strings.summarySize}: ${sizeText}`,
             `${strings.summaryOptions}: ${optionsText}`,
             `${strings.summaryShipping}: ${shippingShort}`,
-            `${strings.summaryTotal}: ${this.money(result.gross)} ${strings.vatIncluded.toLowerCase()} (${this.money(result.net)} ${strings.withoutVat.toLowerCase()})`
+            `${strings.summaryTotal}: ${strings.recapTotal.replace('[total]', this.money(result.gross)).replace('[net]', this.money(result.net))}`
           ] : [];
 
+        // The line is sent only when there is a guide to send
         if (field) {
           field.value = lines.join(' | ');
+
+          if (valid) {
+            field.name = field.dataset.name;
+          } else {
+            field.removeAttribute('name');
+          }
         }
 
         if (recap) {

@@ -90,12 +90,52 @@
             "title": "Premium fibres",
             "text": "<p>Rare fibres, priced as a multiple of the price per m².</p>"
           }
+        },
+        "text_contract_eucalyptus": {
+          "type": "text",
+          "settings": {
+            "material": "contract-eucalyptus",
+            "text": "A lyocell yarn made for contract projects such as hotels, offices and shops."
+          }
+        },
+        "text_contract_pet": {
+          "type": "text",
+          "settings": {
+            "material": "contract-pet",
+            "text": "A polyester yarn made for contract projects such as hotels, offices and shops."
+          }
+        },
+        "text_mohair": {
+          "type": "text",
+          "settings": {
+            "material": "mohair",
+            "text": "The fleece of the Angora goat: a lustrous, resilient fibre that takes colour deeply."
+          }
+        },
+        "text_sea_island_cotton": {
+          "type": "text",
+          "settings": {
+            "material": "sea-island-cotton",
+            "text": "An extra-long-staple cotton from the West Indies, among the finest cottons: smooth and soft, with a natural sheen."
+          }
+        },
+        "text_vicuna": {
+          "type": "text",
+          "settings": {
+            "material": "vicuna",
+            "text": "The fleece of the vicuña, a wild relative of the llama from the Andes: one of the finest and rarest natural fibres."
+          }
         }
       },
       "block_order": [
         "group_1",
         "group_2",
-        "group_3"
+        "group_3",
+        "text_contract_eucalyptus",
+        "text_contract_pet",
+        "text_mohair",
+        "text_sea_island_cotton",
+        "text_vicuna"
       ]
     },
     "pile": {

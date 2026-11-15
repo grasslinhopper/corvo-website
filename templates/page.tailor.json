@@ -131,13 +131,7 @@
         "shipping_text": "Artwork and sampling come before production. Delivery is quoted for each order.",
         "summary_note": "<p>A guide, not a quote. We confirm the price when we have seen your design.</p>",
         "summary_button": "Ask for a proposal",
-        "form_color_scheme": "scheme-2",
-        "form_subheading": "The next step",
-        "form_title": "Ask for a proposal",
-        "form_text": "<p>Tell us about your project. We answer by e-mail, with questions or with a proposal: the artwork of your rug, its price and its production time.</p>",
-        "form_note": "<p>You can send drawings and photographs by e-mail once we reply. We use your details only to answer this request.</p>",
-        "form_button": "Send my request",
-        "form_success": "Thank you. Your request has been sent, and we will answer by e-mail."
+        "form_id": "proposal-form"
       }
     },
     "next": {
@@ -193,6 +187,21 @@
         "menu": "site-menu",
         "style": "pager"
       }
+    },
+    "proposal": {
+      "type": "proposal-form",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "subheading": "The next step",
+        "title": "Ask for a proposal",
+        "text": "<p>Tell us about your project. We answer by e-mail, with questions or with a proposal: the artwork of your rug, its price and its production time.</p>",
+        "note": "<p>You can send drawings and photographs by e-mail once we reply. We use your details only to answer this request.</p>",
+        "button": "Send my request",
+        "success": "Thank you. Your request has been sent, and we will answer by e-mail.",
+        "subject": "Proposal for a bespoke rug, from the Tailor your rug page",
+        "form_id": "proposal-form"
+      }
     }
   },
   "order": [
@@ -200,6 +209,7 @@
     "intro",
     "start",
     "guide",
+    "proposal",
     "next",
     "subnav-pager"
   ]
