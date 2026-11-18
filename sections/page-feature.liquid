@@ -1,0 +1,443 @@
+{%- comment -%}
+  Text and picture (Corvo addition)
+
+  A piece of the story of a page: a small line above, a section heading, a few paragraphs, and one or two pictures
+  beside them. A quotation with the name of its author can stand under the text, and one or two links can lead on.
+
+  Everything is plain HTML: a real heading, paragraphs, a quotation marked as one, and pictures whose description is
+  written here, so that a picture never depends on what was typed in Shopify's Files. A caption can say what an old
+  photograph shows. Texts may hold markers such as [lead_weeks], filled in from the shop's own facts (see
+  snippets/corvo-fill.liquid).
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign image = section.settings.image
+  assign image_2 = section.settings.image_2
+  assign image_alt = section.settings.image_alt | default: image.alt | default: section.settings.title
+  assign image_2_alt = section.settings.image_2_alt | default: image_2.alt | default: section.settings.title
+
+  assign feature_classes = 'page-feature page-feature--image-' | append: section.settings.image_position
+
+  if image == blank
+    assign feature_classes = feature_classes | append: ' page-feature--text-only'
+  elsif image_2 != blank
+    assign feature_classes = feature_classes | append: ' page-feature--pair'
+  endif
+-%}
+
+<div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" {% if section.settings.anchor != blank %}id="{{ section.settings.anchor | handleize }}"{% endif %}>
+  <div class="container container--lg">
+    <div class="{{ feature_classes }}">
+      {%- if image != blank -%}
+        <div class="page-feature__media page-feature__media--{{ section.settings.image_shape }} page-reveal">
+          <figure class="page-feature__figure">
+            <div class="page-feature__frame">
+              {{- image | image_url: width: image.width | image_tag: loading: 'lazy', sizes: '(max-width: 999px) 100vw, 50vw', widths: '400,600,800,1000,1200,1400,1600,2000', alt: image_alt -}}
+            </div>
+
+            {%- if section.settings.image_caption != blank -%}
+              <figcaption class="page-feature__caption">{{ section.settings.image_caption | escape }}</figcaption>
+            {%- endif -%}
+          </figure>
+
+          {%- if image_2 != blank -%}
+            <figure class="page-feature__figure page-feature__figure--second">
+              <div class="page-feature__frame">
+                {{- image_2 | image_url: width: image_2.width | image_tag: loading: 'lazy', sizes: '(max-width: 999px) 60vw, 28vw', widths: '300,400,600,800,1000,1200', alt: image_2_alt -}}
+              </div>
+            </figure>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div class="page-feature__text page-reveal">
+        <div class="prose">
+          {%- if section.settings.eyebrow != blank -%}
+            <p class="h6 text-subdued">{{ section.settings.eyebrow | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.title != blank -%}
+            <h2 class="h2">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+
+          {%- if section.settings.text != blank -%}
+            {%- render 'corvo-fill', text: section.settings.text -%}
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.quote != blank -%}
+          <figure class="page-feature__quote">
+            <blockquote>
+              <p>{{ section.settings.quote | escape }}</p>
+            </blockquote>
+
+            {%- if section.settings.quote_by != blank -%}
+              <figcaption>{{ section.settings.quote_by | escape }}</figcaption>
+            {%- endif -%}
+          </figure>
+        {%- endif -%}
+
+        {%- if section.settings.link_1_text != blank or section.settings.link_2_text != blank -%}
+          <p class="page-feature__links">
+            {%- if section.settings.link_1_text != blank and section.settings.link_1_url != blank -%}
+              <a href="{{ section.settings.link_1_url }}" class="link">{{ section.settings.link_1_text | escape }}</a>
+            {%- endif -%}
+
+            {%- if section.settings.link_2_text != blank and section.settings.link_2_url != blank -%}
+              <a href="{{ section.settings.link_2_url }}" class="link">{{ section.settings.link_2_text | escape }}</a>
+            {%- endif -%}
+          </p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .page-feature {
+    align-items: center;
+    gap: 2.5rem;
+    display: grid;
+  }
+
+  .page-feature__text {
+    gap: 1.75rem;
+    max-width: 34rem;
+    display: grid;
+  }
+
+  .page-feature--text-only .page-feature__text {
+    text-align: center;
+    justify-self: center;
+    justify-items: center;
+    max-width: 40rem;
+  }
+
+  .page-feature__figure {
+    margin: 0;
+  }
+
+  .page-feature__frame {
+    background: rgb(var(--text-color) / .05);
+    overflow: hidden;
+  }
+
+  .page-feature__frame img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .page-feature__media--portrait .page-feature__frame {
+    aspect-ratio: 4 / 5;
+  }
+
+  .page-feature__media--landscape .page-feature__frame {
+    aspect-ratio: 3 / 2;
+  }
+
+  .page-feature__media--square .page-feature__frame {
+    aspect-ratio: 1;
+  }
+
+  .page-feature__media:not(.page-feature__media--natural) .page-feature__frame img {
+    object-fit: cover;
+    height: 100%;
+  }
+
+  .page-feature__caption {
+    color: rgb(var(--text-color) / .65);
+    font-size: var(--text-sm);
+    margin-block-start: .75rem;
+  }
+
+  /* Two pictures: the second, smaller, laps over the lower corner of the first */
+  .page-feature--pair .page-feature__media {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    display: grid;
+  }
+
+  .page-feature--pair .page-feature__figure {
+    grid-row: 1;
+  }
+
+  .page-feature--pair .page-feature__figure:first-child {
+    grid-column: 1 / span 7;
+    margin-block-end: 18%;
+  }
+
+  .page-feature--pair .page-feature__figure--second {
+    z-index: 1;
+    grid-column: 6 / span 5;
+    align-self: end;
+    outline: .5rem solid rgb(var(--background));
+  }
+
+  .page-feature__quote {
+    border-inline-start: 1px solid rgb(var(--text-color) / .35);
+    margin: 0;
+    padding-inline-start: 1.25rem;
+  }
+
+  .page-feature__quote blockquote {
+    font-family: var(--heading-font-family);
+    font-size: var(--text-h4);
+    font-style: var(--heading-font-style);
+    font-weight: var(--heading-font-weight);
+    letter-spacing: .04em;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+  }
+
+  .page-feature__quote blockquote p {
+    margin: 0;
+  }
+
+  .page-feature__quote blockquote p::before {
+    content: open-quote;
+  }
+
+  .page-feature__quote blockquote p::after {
+    content: close-quote;
+  }
+
+  .page-feature__quote figcaption {
+    color: rgb(var(--text-color) / .65);
+    font-size: var(--text-sm);
+    margin-block-start: .625rem;
+  }
+
+  .page-feature__links {
+    flex-wrap: wrap;
+    gap: .75rem 2rem;
+    margin: 0;
+    display: flex;
+  }
+
+  .page-feature--text-only .page-feature__links {
+    justify-content: center;
+  }
+
+  @media screen and (min-width: 1000px) {
+    .page-feature {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 0 2rem;
+    }
+
+    .page-feature__media,
+    .page-feature__text {
+      grid-row: 1;
+    }
+
+    .page-feature__media {
+      grid-column: 1 / span 6;
+    }
+
+    .page-feature__text {
+      grid-column: 8 / span 5;
+    }
+
+    .page-feature--image-end .page-feature__media {
+      grid-column: 7 / span 6;
+    }
+
+    .page-feature--image-end .page-feature__text {
+      grid-column: 1 / span 5;
+    }
+
+    .page-feature--text-only .page-feature__text {
+      grid-column: 1 / -1;
+    }
+
+    /* An upright picture does not need half the page */
+    .page-feature:not(.page-feature--pair) .page-feature__media--portrait {
+      grid-column: 2 / span 5;
+    }
+
+    .page-feature--image-end:not(.page-feature--pair) .page-feature__media--portrait {
+      grid-column: 7 / span 5;
+    }
+  }
+
+  /*
+   * A block rises gently into place as it comes into view. This is done by the browser alone, with no script, and only
+   * where the browser can tie an animation to the scroll position: everywhere else, and for visitors who asked their
+   * device for less motion, the block is simply there. Nothing is ever hidden from a reader that does not scroll.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .page-reveal {
+        animation: page-reveal-rise linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 22%;
+      }
+    }
+  }
+
+  @media print {
+    .page-reveal {
+      animation: none !important;
+    }
+  }
+
+  @keyframes page-reveal-rise {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Text and picture",
+  "class": "shopify-section--page-feature",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A section heading, a few paragraphs and one or two pictures beside them. A quotation and links can follow the text."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Name for links",
+      "info": "Optional. A link ending in # and this name leads straight to this block."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Line above the heading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Quotation"
+    },
+    {
+      "type": "textarea",
+      "id": "quote",
+      "label": "Quotation",
+      "info": "Without quotation marks: the page adds them."
+    },
+    {
+      "type": "text",
+      "id": "quote_by",
+      "label": "Who said it"
+    },
+    {
+      "type": "header",
+      "content": "Links"
+    },
+    {
+      "type": "text",
+      "id": "link_1_text",
+      "label": "Link 1"
+    },
+    {
+      "type": "url",
+      "id": "link_1_url",
+      "label": "Link 1 address"
+    },
+    {
+      "type": "text",
+      "id": "link_2_text",
+      "label": "Link 2"
+    },
+    {
+      "type": "url",
+      "id": "link_2_url",
+      "label": "Link 2 address"
+    },
+    {
+      "type": "header",
+      "content": "Pictures"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Picture"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Description of the picture",
+      "info": "Read by screen readers, search engines and AI assistants. Say what the picture shows."
+    },
+    {
+      "type": "text",
+      "id": "image_caption",
+      "label": "Caption under the picture"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Second picture",
+      "info": "Optional. Smaller, it laps over the corner of the first."
+    },
+    {
+      "type": "text",
+      "id": "image_2_alt",
+      "label": "Description of the second picture"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Pictures on a computer",
+      "options": [
+        { "value": "start", "label": "Before the text" },
+        { "value": "end", "label": "After the text" }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "select",
+      "id": "image_shape",
+      "label": "Shape of the pictures",
+      "options": [
+        { "value": "natural", "label": "As they are" },
+        { "value": "portrait", "label": "Upright" },
+        { "value": "landscape", "label": "Lying" },
+        { "value": "square", "label": "Square" }
+      ],
+      "default": "natural"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Text and picture"
+    }
+  ]
+}
+{% endschema %}

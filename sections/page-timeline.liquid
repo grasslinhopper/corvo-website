@@ -1,0 +1,266 @@
+{%- comment -%}
+  Timeline (Corvo addition)
+
+  A few dates in order: for each, the year, a short title, one or two sentences and an optional picture. Every date is
+  on the page at once, side by side on a computer and one under the other on a phone, so nothing waits behind a tab
+  or a slide. In the page it is an ordered list, and each year is marked as a date.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign entry_blocks = section.blocks | where: 'type', 'entry'
+-%}
+
+{%- if entry_blocks.size > 0 -%}
+  <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" {% if section.settings.anchor != blank %}id="{{ section.settings.anchor | handleize }}"{% endif %}>
+    <div class="container container--lg">
+      <div class="section-stack">
+        {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank -%}
+          <div class="section-header justify-self-center text-center">
+            <div class="prose">
+              {%- if section.settings.subheading != blank -%}
+                <p class="h6 text-subdued">{{ section.settings.subheading | escape }}</p>
+              {%- endif -%}
+
+              {%- if section.settings.title != blank -%}
+                <h2 class="h2">{{ section.settings.title | escape }}</h2>
+              {%- endif -%}
+
+              {%- if section.settings.text != blank -%}
+                {%- render 'corvo-fill', text: section.settings.text -%}
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <ol class="page-timeline unstyled-list" role="list" style="--page-timeline-count: {{ entry_blocks.size | at_most: 5 }};">
+          {%- for block in entry_blocks -%}
+            {%- liquid
+              assign entry_year = block.settings.year | strip
+              assign entry_year_number = entry_year | plus: 0
+              assign entry_image = block.settings.image
+              assign entry_alt = block.settings.image_alt | default: entry_image.alt | default: block.settings.title
+            -%}
+
+            <li class="page-timeline__entry page-reveal" {{ block.shopify_attributes }}>
+              {%- if entry_year != blank -%}
+                <p class="page-timeline__year">
+                  {%- if entry_year.size == 4 and entry_year_number > 0 -%}
+                    <time datetime="{{ entry_year }}">{{ entry_year }}</time>
+                  {%- else -%}
+                    {{- entry_year | escape -}}
+                  {%- endif -%}
+                </p>
+              {%- endif -%}
+
+              {%- if entry_image != blank -%}
+                <div class="page-timeline__media">
+                  {{- entry_image | image_url: width: entry_image.width | image_tag: loading: 'lazy', sizes: '(max-width: 999px) 80vw, 30vw', widths: '300,400,600,800,1000,1200', alt: entry_alt -}}
+                </div>
+              {%- endif -%}
+
+              {%- if block.settings.title != blank -%}
+                <h3 class="h5">{{ block.settings.title | escape }}</h3>
+              {%- endif -%}
+
+              {%- if block.settings.text != blank -%}
+                <div class="prose text-subdued">
+                  {%- render 'corvo-fill', text: block.settings.text -%}
+                </div>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ol>
+
+        {%- if section.settings.note != blank -%}
+          <div class="page-timeline__note prose text-sm text-subdued">
+            {%- render 'corvo-fill', text: section.settings.note -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  /* On a phone: one date under the other, along a line that runs down the side */
+  .page-timeline {
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .page-timeline__entry {
+    border-inline-start: 1px solid rgb(var(--text-color) / .25);
+    align-content: start;
+    gap: .875rem;
+    padding-block-end: 2.75rem;
+    padding-inline-start: 1.75rem;
+    display: grid;
+    position: relative;
+  }
+
+  .page-timeline__entry:last-child {
+    padding-block-end: 0;
+  }
+
+  /* The mark of each date, on the line */
+  .page-timeline__entry::before {
+    content: '';
+    background: rgb(var(--text-color));
+    border-radius: 50%;
+    width: .4375rem;
+    height: .4375rem;
+    position: absolute;
+    inset-block-start: .9rem;
+    inset-inline-start: -.25rem;
+  }
+
+  .page-timeline__year {
+    font-family: var(--heading-font-family);
+    font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+    font-style: var(--heading-font-style);
+    font-weight: var(--heading-font-weight);
+    letter-spacing: .06em;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .page-timeline__media {
+    aspect-ratio: 3 / 2;
+    background: rgb(var(--text-color) / .05);
+    overflow: hidden;
+  }
+
+  .page-timeline__media img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .page-timeline__note {
+    text-align: center;
+    justify-self: center;
+    max-width: 44rem;
+  }
+
+  /* On a computer: side by side, along a line that runs across the top */
+  @media screen and (min-width: 1000px) {
+    .page-timeline {
+      grid-template-columns: repeat(var(--page-timeline-count, 3), minmax(0, 1fr));
+    }
+
+    .page-timeline__entry {
+      border-inline-start: 0;
+      border-block-start: 1px solid rgb(var(--text-color) / .25);
+      padding-block: 2.25rem 0;
+      padding-inline: 0 2.5rem;
+    }
+
+    .page-timeline__entry::before {
+      inset-block-start: -.25rem;
+      inset-inline-start: 0;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Timeline",
+  "class": "shopify-section--page-timeline",
+  "tag": "section",
+  "max_blocks": 5,
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Up to five dates in order, each with a year, a title, a short text and an optional picture. All of them show at once."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Name for links"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "Note under the dates"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "entry",
+      "name": "Date",
+      "settings": [
+        {
+          "type": "text",
+          "id": "year",
+          "label": "Year",
+          "default": "1974"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Picture"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Description of the picture",
+          "info": "Read by screen readers, search engines and AI assistants. Say what the picture shows."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Timeline",
+      "blocks": [
+        { "type": "entry" },
+        { "type": "entry" },
+        { "type": "entry" }
+      ]
+    }
+  ]
+}
+{% endschema %}

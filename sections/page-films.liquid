@@ -1,0 +1,448 @@
+{%- comment -%}
+  Films (Corvo addition)
+
+  A row of up to four short, silent films, each with a title and a line of text under it: the dye lab, the tufting, a
+  hand on the finished pile. On a phone the row slides sideways.
+
+  - Films are Shopify-hosted videos (upright, 9:16). The small 480p file is used, which is enough at this size.
+  - A film loads and plays only while it is on screen. No film starts for a visitor who asked the device for less
+    motion or to save data, and a button pauses them all.
+  - "Play until" starts a film again before its closing title card.
+  - The still of each film carries a description, and the title and the text are plain HTML, so the row says what it
+    shows to a reader, a search engine or an AI assistant that plays no film.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign film_blocks = section.blocks | where: 'type', 'film'
+-%}
+
+{%- if film_blocks.size > 0 -%}
+  <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" {% if section.settings.anchor != blank %}id="{{ section.settings.anchor | handleize }}"{% endif %}>
+    <div class="container container--lg">
+      <div class="section-stack">
+        {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank -%}
+          <div class="section-header justify-self-center text-center">
+            <div class="prose">
+              {%- if section.settings.subheading != blank -%}
+                <p class="h6 text-subdued">{{ section.settings.subheading | escape }}</p>
+              {%- endif -%}
+
+              {%- if section.settings.title != blank -%}
+                <h2 class="h2">{{ section.settings.title | escape }}</h2>
+              {%- endif -%}
+
+              {%- if section.settings.text != blank -%}
+                {%- render 'corvo-fill', text: section.settings.text -%}
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <page-films class="page-films" style="--page-films-count: {{ film_blocks.size | at_most: 4 }};">
+          <ul class="page-films__list unstyled-list" role="list">
+            {%- for block in film_blocks -%}
+              {%- liquid
+                assign video = block.settings.video
+                assign poster = block.settings.poster | default: video.preview_image
+                assign poster_alt = block.settings.alt | default: block.settings.title
+                assign source_url = ''
+                assign source_height = 100000
+
+                # The smallest MP4 file Shopify lists for this film
+                for source in video.sources
+                  if source.format == 'mp4' and source.height < source_height
+                    assign source_url = source.url
+                    assign source_height = source.height
+                  endif
+                endfor
+
+                comment
+                  Shopify may list the 1080p file only, though it stores a 480p version at the same address under
+                  another name. That lighter file is tried first; if it is ever missing, the script uses the listed one.
+                endcomment
+                assign light_url = source_url | replace: 'HD-1080p-7.2Mbps', 'SD-480p-1.5Mbps' | replace: 'HD-720p-4.5Mbps', 'SD-480p-1.5Mbps'
+
+                if light_url == source_url
+                  assign light_url = ''
+                endif
+              -%}
+
+              <li class="page-films__item" {{ block.shopify_attributes }}>
+                <figure class="page-films__figure">
+                  <div class="page-films__frame">
+                    {%- if poster != blank -%}
+                      {{- poster | image_url: width: 900 | image_tag: class: 'page-films__poster', alt: poster_alt, loading: 'lazy', sizes: '(max-width: 699px) 64vw, (max-width: 999px) 40vw, 22vw', widths: '240,360,480,600,720,900' -}}
+                    {%- endif -%}
+
+                    {%- if source_url != '' -%}
+                      <video class="page-films__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="{{ source_url }}" {% if light_url != '' %}data-src-light="{{ light_url }}"{% endif %} data-stop-at="{{ block.settings.stop_at }}"></video>
+                    {%- endif -%}
+                  </div>
+
+                  {%- if block.settings.title != blank or block.settings.text != blank -%}
+                    <figcaption class="page-films__caption">
+                      {%- if block.settings.title != blank -%}
+                        <h3 class="h5">{{ block.settings.title | escape }}</h3>
+                      {%- endif -%}
+
+                      {%- if block.settings.text != blank -%}
+                        <p class="text-subdued">{{ block.settings.text | escape }}</p>
+                      {%- endif -%}
+                    </figcaption>
+                  {%- endif -%}
+                </figure>
+              </li>
+            {%- endfor -%}
+          </ul>
+
+          <button type="button" class="page-films__toggle link" hidden data-pause-label="{{ section.settings.pause_label | escape }}" data-play-label="{{ section.settings.play_label | escape }}">{{ section.settings.pause_label | escape }}</button>
+        </page-films>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .page-films {
+    gap: 2rem;
+    display: grid;
+  }
+
+  /* On a phone the films stand in a row that slides sideways, out to the edges of the screen */
+  .page-films__list {
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    grid-auto-columns: min(64vw, 17.5rem);
+    grid-auto-flow: column;
+    gap: 1rem;
+    margin: 0;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding: 0;
+    padding-inline: var(--container-gutter);
+    scroll-padding-inline: var(--container-gutter);
+    display: grid;
+    overflow-x: auto;
+  }
+
+  .page-films__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .page-films__item {
+    scroll-snap-align: start;
+  }
+
+  .page-films__figure {
+    gap: 1.125rem;
+    margin: 0;
+    display: grid;
+  }
+
+  .page-films__frame {
+    aspect-ratio: 9 / 16;
+    background: rgb(var(--text-color) / .08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page-films__poster,
+  .page-films__video {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The film lies over its still, and shows once it plays */
+  .page-films__video {
+    opacity: 0;
+    transition: opacity .6s ease;
+  }
+
+  .page-films__video.is-playing {
+    opacity: 1;
+  }
+
+  .page-films__caption {
+    gap: .375rem;
+    display: grid;
+  }
+
+  .page-films__caption p {
+    margin: 0;
+  }
+
+  .page-films__toggle {
+    justify-self: center;
+    font-size: var(--text-sm);
+  }
+
+  @media screen and (min-width: 700px) {
+    .page-films__list {
+      grid-auto-columns: min(40vw, 17.5rem);
+      gap: 1.5rem;
+    }
+  }
+
+  /* On a computer the films stand side by side, and none grows beyond a comfortable size */
+  @media screen and (min-width: 1000px) {
+    .page-films__list {
+      grid-template-columns: repeat(var(--page-films-count, 3), minmax(0, 19rem));
+      grid-auto-flow: row;
+      justify-content: center;
+      gap: 2.5rem;
+      margin-inline: 0;
+      padding-inline: 0;
+      overflow: visible;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-films__video {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('page-films')) {
+    customElements.define(
+      'page-films',
+      class PageFilms extends HTMLElement {
+        connectedCallback() {
+          this.videos = Array.from(this.querySelectorAll('video[data-src]'));
+          this.toggle = this.querySelector('.page-films__toggle');
+          this.visible = new Set();
+
+          if (this.videos.length === 0) {
+            return;
+          }
+
+          // The visitor's device settings come first: no film starts by itself with reduced motion or data saving on
+          const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const saveData = navigator.connection && navigator.connection.saveData;
+          this.paused = Boolean(reducedMotion || saveData);
+
+          this.videos.forEach((video) => {
+            const stopAt = parseFloat(video.dataset.stopAt) || 0;
+
+            // A film starts again before its closing title card
+            video.addEventListener('timeupdate', () => {
+              if (stopAt > 0 && video.currentTime >= stopAt) {
+                video.currentTime = 0;
+              }
+            });
+
+            video.addEventListener('playing', () => video.classList.add('is-playing'), { once: true });
+          });
+
+          if (this.toggle) {
+            this.toggle.hidden = false;
+            this.toggle.addEventListener('click', () => {
+              this.paused = !this.paused;
+              this.sync();
+            });
+          }
+
+          // Each film is watched on its own: in a row that slides, only the films on screen load and play
+          this.observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  this.visible.add(entry.target);
+                } else {
+                  this.visible.delete(entry.target);
+                }
+              });
+
+              this.sync();
+            },
+            { threshold: 0.35 }
+          );
+
+          this.videos.forEach((video) => this.observer.observe(video));
+          this.sync();
+        }
+
+        disconnectedCallback() {
+          if (this.observer) {
+            this.observer.disconnect();
+          }
+        }
+
+        // Sets the address of a film the first time it is needed: the light file, or the listed one if that fails
+        load(video) {
+          if (video.getAttribute('src')) {
+            return;
+          }
+
+          const light = video.dataset.srcLight;
+
+          if (light) {
+            video.addEventListener(
+              'error',
+              () => {
+                if (video.getAttribute('src') !== light) {
+                  return;
+                }
+
+                video.setAttribute('src', video.dataset.src);
+
+                if (this.visible.has(video) && !this.paused) {
+                  const attempt = video.play();
+
+                  if (attempt) {
+                    attempt.catch(() => {});
+                  }
+                }
+              },
+              { once: true }
+            );
+
+            video.setAttribute('src', light);
+          } else {
+            video.setAttribute('src', video.dataset.src);
+          }
+        }
+
+        sync() {
+          this.videos.forEach((video) => {
+            if (this.visible.has(video) && !this.paused) {
+              this.load(video);
+
+              const attempt = video.play();
+
+              if (attempt) {
+                attempt.catch(() => {});
+              }
+            } else {
+              video.pause();
+            }
+          });
+
+          if (this.toggle) {
+            this.toggle.textContent = this.paused ? this.toggle.dataset.playLabel : this.toggle.dataset.pauseLabel;
+            this.toggle.setAttribute('aria-pressed', this.paused ? 'true' : 'false');
+          }
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Films",
+  "class": "shopify-section--page-films",
+  "tag": "section",
+  "max_blocks": 4,
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Up to four short upright films side by side, silent, each with a title and a line of text. A film plays only while it is on screen."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Name for links"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "pause_label",
+      "label": "Words of the pause button",
+      "default": "Pause the films"
+    },
+    {
+      "type": "text",
+      "id": "play_label",
+      "label": "Words of the play button",
+      "default": "Play the films"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "film",
+      "name": "Film",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Film",
+          "info": "An upright film (9:16), without sound."
+        },
+        {
+          "type": "image_picker",
+          "id": "poster",
+          "label": "Still",
+          "info": "Optional. Shown before the film plays. Without one, the first image of the film is used."
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "What the film shows",
+          "info": "One sentence, read by screen readers, search engines and AI assistants in place of the film."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "number",
+          "id": "stop_at",
+          "label": "Play until (seconds)",
+          "info": "The film starts again at this second, before its closing title card. For example 8.3. Leave at 0 to play it to the end.",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Films",
+      "blocks": [
+        { "type": "film" },
+        { "type": "film" },
+        { "type": "film" }
+      ]
+    }
+  ]
+}
+{% endschema %}

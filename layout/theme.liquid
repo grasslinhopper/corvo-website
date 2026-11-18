@@ -19,7 +19,7 @@
 
       if request.page_type == 'page'
         assign seo_handle = page.handle | replace: '-', '_'
-        assign seo_handles = 'raw_materials|colours|bespoke_service|tailor_your_rug|care_faq|craftmanship|gallery|portfolio|resources|sales_tools|catalogue' | split: '|'
+        assign seo_handles = 'raw_materials|colours|bespoke_service|tailor_your_rug|care_faq|craftmanship|gallery|portfolio|resources|sales_tools|catalogue|about_us|sorema_group' | split: '|'
 
         if seo_handles contains seo_handle
           assign seo_key = 'general.corvo.seo.' | append: seo_handle

@@ -159,6 +159,91 @@ the "Craft level" entries, with the VAT of the theme settings.
 {%- endif -%}
 
 {%- comment -%}
+Corvo addition: who Corvo is, on the pages that tell it. The Story page says when Corvo was founded, where it works and
+whose company it is; the Sorema Group page describes the group and its three brands; the Contact page gives the address
+and the e-mail. The facts are those of the locale file, under "general.corvo", so the pages and this data agree.
+{%- endcomment -%}
+{%- if request.page_type == 'page' -%}
+  {%- liquid
+    assign org_id = shop.url | append: '/#organization'
+    assign org_locality = 'general.corvo.locality' | t
+    assign org_parent = 'general.corvo.parent' | t
+    assign org_parent_founded = 'general.corvo.parent_founded' | t
+  -%}
+
+  {%- case page.handle -%}
+    {%- when 'about-us' -%}
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "url": {{ shop.url | append: page.url | json }},
+          "mainEntity": {
+            "@type": "Organization",
+            "@id": {{ org_id | json }},
+            "name": {{ shop.name | json }},
+            "alternateName": "Corvo Rugs",
+            "url": {{ shop.url | json }},
+            "foundingDate": {{ 'general.corvo.founded' | t | json }},
+            "address": { "@type": "PostalAddress", "addressLocality": {{ org_locality | json }}, "addressCountry": "PT" },
+            "parentOrganization": { "@type": "Organization", "name": {{ org_parent | json }}, "foundingDate": {{ org_parent_founded | json }} },
+            "knowsAbout": ["Bespoke rugs", "Made-to-measure rugs", "Hand-tufted rugs"]
+          }
+        }
+      </script>
+
+    {%- when 'sorema-group' -%}
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "url": {{ shop.url | append: page.url | json }},
+          "mainEntity": {
+            "@type": "Organization",
+            "name": {{ org_parent | json }},
+            "foundingDate": {{ org_parent_founded | json }},
+            "founder": [
+              { "@type": "Person", "name": "Ramiro Relvas" },
+              { "@type": "Person", "name": "Duarte Relvas" },
+              { "@type": "Person", "name": "Henrique Soares" }
+            ],
+            "address": { "@type": "PostalAddress", "addressCountry": "PT" },
+            "brand": [
+              { "@type": "Brand", "name": "Sorema" },
+              { "@type": "Brand", "name": "Graccioza" },
+              { "@type": "Brand", "name": {{ shop.name | json }} }
+            ],
+            "subOrganization": { "@type": "Organization", "@id": {{ org_id | json }}, "name": {{ shop.name | json }}, "url": {{ shop.url | json }} }
+          }
+        }
+      </script>
+
+    {%- when 'contact' -%}
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "url": {{ shop.url | append: page.url | json }},
+          "mainEntity": {
+            "@type": "Organization",
+            "@id": {{ org_id | json }},
+            "name": {{ shop.name | json }},
+            "url": {{ shop.url | json }},
+            "email": {{ 'general.corvo.email' | t | json }},
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": {{ 'general.corvo.street' | t | json }},
+              "postalCode": {{ 'general.corvo.postcode' | t | json }},
+              "addressLocality": {{ org_locality | json }},
+              "addressCountry": "PT"
+            }
+          }
+        }
+      </script>
+  {%- endcase -%}
+{%- endif -%}
+
+{%- comment -%}
 Corvo addition: a page that belongs to a group of the site menu (Bespoke, Resources, About) names that group in its
 breadcrumb.
 {%- endcomment -%}
@@ -290,6 +375,7 @@ breadcrumb.
     {
       "@context": "https://schema.org",
       "@type": "Organization",
+      "@id": {{ shop.url | append: '/#organization' | json }},
       "name": {{ shop.name | json }},
       {%- comment -%}Corvo addition: who Corvo is, where, and whose company it is{%- endcomment -%}
       "alternateName": "Corvo Rugs",

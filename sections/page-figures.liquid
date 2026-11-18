@@ -1,0 +1,211 @@
+{%- comment -%}
+  Figures (Corvo addition)
+
+  A few facts stated as large figures: "50+", "1974", "190+", each with the words that say what it counts. A note under
+  them can say where the figures come from and when they were true.
+
+  In the page it is a list of names and values, as plain text: a search engine or an AI assistant reads "Countries
+  served: 50+" and not a decoration.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign figure_blocks = section.blocks | where: 'type', 'figure'
+-%}
+
+{%- if figure_blocks.size > 0 -%}
+  <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" {% if section.settings.anchor != blank %}id="{{ section.settings.anchor | handleize }}"{% endif %}>
+    <div class="container container--lg">
+      <div class="section-stack">
+        {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank -%}
+          <div class="section-header justify-self-center text-center">
+            <div class="prose">
+              {%- if section.settings.subheading != blank -%}
+                <p class="h6 text-subdued">{{ section.settings.subheading | escape }}</p>
+              {%- endif -%}
+
+              {%- if section.settings.title != blank -%}
+                <h2 class="h2">{{ section.settings.title | escape }}</h2>
+              {%- endif -%}
+
+              {%- if section.settings.text != blank -%}
+                {%- render 'corvo-fill', text: section.settings.text -%}
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <dl class="page-figures" style="--page-figures-count: {{ figure_blocks.size | at_most: 4 }};">
+          {%- for block in figure_blocks -%}
+            {%- if block.settings.value != blank and block.settings.label != blank -%}
+              <div class="page-figures__item page-reveal" {{ block.shopify_attributes }}>
+                <dt class="page-figures__label">{{ block.settings.label | escape }}</dt>
+                <dd class="page-figures__value">{{ block.settings.value | escape }}</dd>
+
+                {%- if block.settings.detail != blank -%}
+                  <dd class="page-figures__detail text-sm text-subdued">{{ block.settings.detail | escape }}</dd>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </dl>
+
+        {%- if section.settings.note != blank -%}
+          <div class="page-figures__note prose text-sm text-subdued">
+            {%- render 'corvo-fill', text: section.settings.note -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .page-figures {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 1.5rem;
+    margin: 0;
+    display: grid;
+  }
+
+  /* The figure stands above its name, though the name comes first in the page */
+  .page-figures__item {
+    border-block-start: 1px solid rgb(var(--text-color) / .25);
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: .625rem;
+    padding-block-start: 1.5rem;
+    display: grid;
+  }
+
+  .page-figures__value {
+    font-family: var(--heading-font-family);
+    font-size: clamp(2.25rem, 1.5rem + 3vw, 4rem);
+    font-style: var(--heading-font-style);
+    font-weight: var(--heading-font-weight);
+    letter-spacing: .04em;
+    line-height: 1.05;
+    order: -1;
+    margin: 0;
+  }
+
+  .page-figures__label {
+    font-family: var(--heading-font-family);
+    font-size: var(--text-h6);
+    letter-spacing: var(--heading-letter-spacing);
+    text-transform: uppercase;
+  }
+
+  .page-figures__detail {
+    margin: 0;
+  }
+
+  .page-figures__note {
+    text-align: center;
+    justify-self: center;
+    max-width: 44rem;
+  }
+
+  @media screen and (min-width: 1000px) {
+    .page-figures {
+      grid-template-columns: repeat(var(--page-figures-count, 4), minmax(0, 1fr));
+      gap: 3rem 2.5rem;
+    }
+
+    .page-figures__item {
+      padding-block-start: 2rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Figures",
+  "class": "shopify-section--page-figures",
+  "tag": "section",
+  "max_blocks": 4,
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Up to four facts shown as large figures, each with the words that say what it counts."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Name for links"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "Note under the figures",
+      "info": "Say where the figures come from, and when they were true."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "figure",
+      "name": "Figure",
+      "settings": [
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Figure",
+          "default": "50+"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "What it counts",
+          "default": "Countries"
+        },
+        {
+          "type": "text",
+          "id": "detail",
+          "label": "One more line",
+          "info": "Optional."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Figures",
+      "blocks": [
+        { "type": "figure" },
+        { "type": "figure" },
+        { "type": "figure" }
+      ]
+    }
+  ]
+}
+{% endschema %}

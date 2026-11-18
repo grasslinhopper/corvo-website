@@ -1,0 +1,132 @@
+{%- comment -%}
+  Quotation (Corvo addition)
+
+  One sentence that someone said, set large and alone, with the name of the person under it. In the page it is marked
+  as a quotation with its author, so a reader, a search engine or an AI assistant knows whose words they are.
+{%- endcomment -%}
+
+{%- assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5 -%}
+
+{%- if section.settings.quote != blank -%}
+  <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+    <div class="container container--sm">
+      <figure class="page-quote page-reveal">
+        <blockquote class="page-quote__text">
+          <p>{{ section.settings.quote | escape }}</p>
+        </blockquote>
+
+        {%- if section.settings.quote_by != blank -%}
+          <figcaption class="page-quote__by">
+            {{- section.settings.quote_by | escape -}}
+
+            {%- if section.settings.quote_role != blank -%}
+              <span class="page-quote__role">{{ section.settings.quote_role | escape }}</span>
+            {%- endif -%}
+          </figcaption>
+        {%- endif -%}
+      </figure>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .page-quote {
+    text-align: center;
+    gap: 1.75rem;
+    margin: 0;
+    padding-block: clamp(.5rem, 2vw, 2rem);
+    display: grid;
+  }
+
+  .page-quote__text {
+    font-family: var(--heading-font-family);
+    font-size: clamp(1.375rem, 1rem + 1.6vw, 2.25rem);
+    font-style: var(--heading-font-style);
+    font-weight: var(--heading-font-weight);
+    letter-spacing: .05em;
+    line-height: 1.4;
+    text-wrap: balance;
+    margin: 0;
+    padding: 0;
+  }
+
+  .page-quote__text p {
+    margin: 0;
+  }
+
+  .page-quote__text p::before {
+    content: open-quote;
+  }
+
+  .page-quote__text p::after {
+    content: close-quote;
+  }
+
+  .page-quote__by {
+    font-family: var(--heading-font-family);
+    font-size: var(--text-h6);
+    letter-spacing: var(--heading-letter-spacing);
+    text-transform: uppercase;
+  }
+
+  .page-quote__role {
+    color: rgb(var(--text-color) / .65);
+    letter-spacing: .03em;
+    text-transform: none;
+    font-family: var(--text-font-family);
+    font-size: var(--text-sm);
+    margin-block-start: .375rem;
+    display: block;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Quotation",
+  "class": "shopify-section--page-quote",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "One sentence someone said, with the name of the person. Use it only for words that person really said or wrote."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-3"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "quote",
+      "label": "Quotation",
+      "info": "Without quotation marks: the page adds them."
+    },
+    {
+      "type": "text",
+      "id": "quote_by",
+      "label": "Who said it"
+    },
+    {
+      "type": "text",
+      "id": "quote_role",
+      "label": "Who that person is",
+      "info": "Optional, for example: founder of the Sorema group."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Quotation"
+    }
+  ]
+}
+{% endschema %}

@@ -1,299 +1,184 @@
 {
   "sections": {
-    "image_with_text_overlay_ANFaAT": {
-      "type": "image-with-text-overlay",
-      "blocks": {
-        "heading_YJ4wEN": {
-          "type": "heading",
-          "settings": {
-            "text": "",
-            "heading_tag": "h4"
-          }
-        },
-        "richtext_i8nkci": {
-          "type": "richtext",
-          "settings": {
-            "content": ""
-          }
-        }
-      },
-      "block_order": [
-        "heading_YJ4wEN",
-        "richtext_i8nkci"
-      ],
-      "name": "t:sections.image_with_text_overlay.presets.image_with_text_overlay.name",
-      "settings": {
-        "color_scheme": "",
-        "image_size": "auto",
-        "image": "shopify://shop_images/HISTORIA_-_IMG_6599.jpg",
-        "allow_transparent_header": true,
-        "reveal_on_scroll": true,
-        "remove_vertical_spacing": true,
-        "content_width": "md",
-        "mobile_text_position": "place-self-center text-center",
-        "desktop_text_position": "sm:place-self-center sm:text-center",
-        "overlay_color": "#000000",
-        "overlay_opacity": 30
-      }
-    },
-    "rich_text_fJ6dgm": {
-      "type": "rich-text",
-      "blocks": {
-        "subheading_QtfGUJ": {
-          "type": "subheading",
-          "settings": {
-            "text": "Origins"
-          }
-        },
-        "heading_3BtEGL": {
-          "type": "heading",
-          "settings": {
-            "text": "Our History",
-            "heading_tag": "h1"
-          }
-        },
-        "richtext_UrLT6B": {
-          "type": "richtext",
-          "settings": {
-            "content": "<p>Born from a rich family heritage, Corvo embodies a legacy of excellence from both sides of its founders’ lineage. Rooted in over a century of craftsmanship with Ferreira de Sá family and Sorema Group, Corvo reflects generations of expertise.</p><p>As part of the Sorema company group, Corvo merges tradition, innovation, and luxury in every creation.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "subheading_QtfGUJ",
-        "heading_3BtEGL",
-        "richtext_UrLT6B"
-      ],
-      "name": "t:sections.rich_text.presets.rich_text.name",
-      "settings": {
-        "color_scheme": "",
-        "separate_section_with_border": true,
-        "content_width": "xs",
-        "text_position": "center",
-        "remove_vertical_spacing": false
-      }
-    },
-    "before_after_eFbFpk": {
-      "type": "before-after",
-      "blocks": {
-        "before_bFfHnd": {
-          "type": "before",
-          "settings": {
-            "color_scheme": "",
-            "image": "shopify://shop_images/HISTORIA_-_IMG_6672.jpg",
-            "text": "Before",
-            "link_text": "",
-            "link_url": "",
-            "link_style": "link"
-          }
-        },
-        "after_6GYgAB": {
-          "type": "after",
-          "settings": {
-            "color_scheme": "",
-            "image": "shopify://shop_images/Sorema5.jpg",
-            "text": "After",
-            "link_text": "",
-            "link_url": "",
-            "link_style": "link"
-          }
-        }
-      },
-      "block_order": [
-        "before_bFfHnd",
-        "after_6GYgAB"
-      ],
-      "disabled": true,
-      "name": "t:sections.before_after.presets.before_after.name",
-      "settings": {
-        "color_scheme": "",
-        "separate_section_with_border": false,
-        "subheading": "",
-        "title": "",
-        "content": "",
-        "cursor_direction": "horizontal",
-        "cursor_initial_position": 50,
-        "cursor_background": "#ffffff",
-        "cursor_arrows_color": "#000000"
-      }
-    },
-    "image_with_text_block_GPhchJ": {
-      "type": "image-with-text-block",
-      "blocks": {
-        "subheading_aweJkE": {
-          "type": "subheading",
-          "settings": {
-            "text": "archipelago"
-          }
-        },
-        "richtext_hABgbM": {
-          "type": "richtext",
-          "settings": {
-            "content": "<p>Sorema built Corvo, inspired on the natural beauty of the Azores. </p>"
-          }
-        }
-      },
-      "block_order": [
-        "subheading_aweJkE",
-        "richtext_hABgbM"
-      ],
-      "name": "t:sections.image_with_text_block.presets.image_with_text_block.name",
-      "settings": {
-        "color_scheme": "",
-        "image_size": "lg",
-        "image": "shopify://shop_images/HISTORIA_-_corvo_island_1_1.jpg",
-        "content_width": "md",
-        "enable_parallax": true,
-        "remove_vertical_spacing": true
-      }
-    },
-    "multiple_media_with_text_NYep8A": {
-      "type": "multiple-media-with-text",
-      "blocks": {
-        "image_F6WzPF": {
-          "type": "image",
-          "disabled": true,
-          "settings": {
-            "rotation": 0
-          }
-        },
-        "image_rPYWPA": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/WhatsApp_Image_2026-01-14_at_22.26.08.jpg",
-            "rotation": 0
-          }
-        }
-      },
-      "block_order": [
-        "image_F6WzPF",
-        "image_rPYWPA"
-      ],
-      "name": "t:sections.multiple_media_with_text.presets.multiple_media_with_text.name",
-      "settings": {
-        "color_scheme": "",
-        "reveal_on_scroll": true,
-        "separate_section_with_border": false,
-        "media_position_desktop": "before_text",
-        "media_position_mobile": "before_text",
-        "media_layout": "overlap",
-        "media_alignment": "start",
-        "media_alignment_offset": 0,
-        "media_mobile_alignment_offset": 0,
-        "text_alignment": "center",
-        "subheading": "family union",
-        "title": "our inspiration",
-        "content": "<p>The CORVO brand was born within a archipelago of brands inspired by the Azores archipelago, the family’s favorite holiday destination. More than a place of rest, the Azores became a source of inspiration, reflecting the founder’s values: family, friendship, trust, and dedication.</p>",
-        "button_1_text": "",
-        "button_1_link": "",
-        "button_1_style": "solid",
-        "button_2_text": "",
-        "button_2_link": "",
-        "button_2_style": "solid"
-      }
-    },
-    "media_grid_pRQqCb": {
-      "type": "media-grid",
-      "blocks": {
-        "image_3tMdEb": {
-          "type": "image",
-          "settings": {
-            "color_scheme": "",
-            "column_count": "8",
-            "row_count": 2,
-            "title": "",
-            "heading_tag": "h4",
-            "content": "",
-            "link_text": "",
-            "link_url": "",
-            "link_style": "link",
-            "text_position": "place-self-center text-center",
-            "overlay_color": "#000000",
-            "overlay_opacity": 0
-          }
-        },
-        "image_9ykNQa": {
-          "type": "image",
-          "settings": {
-            "color_scheme": "",
-            "column_count": "4",
-            "row_count": 1,
-            "title": "",
-            "heading_tag": "h4",
-            "content": "",
-            "link_text": "",
-            "link_url": "",
-            "link_style": "link",
-            "text_position": "place-self-center text-center",
-            "overlay_color": "#000000",
-            "overlay_opacity": 0
-          }
-        },
-        "image_TGtDfR": {
-          "type": "image",
-          "settings": {
-            "color_scheme": "",
-            "column_count": "4",
-            "row_count": 1,
-            "title": "",
-            "heading_tag": "h4",
-            "content": "",
-            "link_text": "",
-            "link_url": "",
-            "link_style": "link",
-            "text_position": "place-self-center text-center",
-            "overlay_color": "#000000",
-            "overlay_opacity": 0
-          }
-        }
-      },
-      "block_order": [
-        "image_3tMdEb",
-        "image_9ykNQa",
-        "image_TGtDfR"
-      ],
-      "disabled": true,
-      "name": "t:sections.media_grid.presets.media_grid.name",
-      "settings": {
-        "color_scheme": "",
-        "separate_section_with_border": false,
-        "desktop_row_height": 190,
-        "mobile_row_height": 140,
-        "section_width": "lg",
-        "spacing": "md",
-        "subheading": "",
-        "title": "",
-        "content": ""
-      }
-    },
-    "main": {
-      "type": "main-page",
-      "disabled": true,
-      "settings": {
-        "color_scheme": "",
-        "show_title": true,
-        "page_width": "xs"
-      }
-    },
-    "wf-timeline": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Fifty years in a timeline",
-        "is_page_title": false,
-        "description": "The dates that matter, from Ramiro Relvas's first project to Corvo today, each with a photo.",
-        "needs": "The dates, one line on each and archive photos.",
-        "phase": "Phase 7",
-        "layout": "grid",
-        "columns": 5,
-        "size": "small"
-      }
-    },
     "subnav-tabs": {
       "type": "page-subnav",
       "settings": {
         "menu": "site-menu",
         "style": "tabs",
-        "current_as_title": true
+        "current_as_title": false
+      }
+    },
+    "intro": {
+      "type": "page-intro",
+      "blocks": {
+        "founded": {
+          "type": "fact",
+          "settings": {
+            "label": "Founded",
+            "value": "2023"
+          }
+        },
+        "group": {
+          "type": "fact",
+          "settings": {
+            "label": "Group",
+            "value": "Sorema, a family business since 1974"
+          }
+        },
+        "made": {
+          "type": "fact",
+          "settings": {
+            "label": "Made in",
+            "value": "Silvalde, Espinho, Portugal"
+          }
+        },
+        "name": {
+          "type": "fact",
+          "settings": {
+            "label": "Named after",
+            "value": "The island of Corvo, in the Azores"
+          }
+        }
+      },
+      "block_order": [
+        "founded",
+        "group",
+        "made",
+        "name"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Our story",
+        "title": "A family legacy, woven anew",
+        "heading_tag": "h1",
+        "text": "<p>Corvo is a rug atelier in the north of Portugal. It was founded in 2023 within the Sorema group, the family business that Ramiro Relvas began in 1974.</p><p>Two families of textile makers meet in it, Ferreira de Sá and Relvas. Corvo is the work of their third generation.</p>",
+        "image": "shopify://shop_images/HISTORIA_-_IMG_6599.jpg",
+        "image_alt": "Black-and-white archive photograph of a man in a suit and glasses writing at his desk, in front of a bookcase",
+        "image_focus": "--focus: center",
+        "image_position": "end"
+      }
+    },
+    "founder": {
+      "type": "page-feature",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "The founder",
+        "title": "The man, the manager and the painter",
+        "text": "<p>Our story is an ode to a man who, fifty years ago, performed an act of courage. With his son Duarte and his friend Henrique Soares, Ramiro Relvas began the project that would grow into the Sorema group. He wanted something of his own.</p><p>Ramiro knew how to reinvent himself. His first venture, car upholstery, had to be rethought after the Portuguese Revolution of 25 April 1974, when assembly lines left the country. He did not give up.</p><p>It is because of him that Corvo exists. His paintings, some made more than half a century ago, still inspire our designs: the rugs of From Ink To Thread come from his studies and sketches.</p>",
+        "link_1_text": "See From Ink To Thread",
+        "link_1_url": "shopify://collections/from-ink-to-thread",
+        "image": "shopify://shop_images/RamiroRelvas_Pintura1.jpg",
+        "image_alt": "Watercolour by Ramiro Relvas: a lake with a wooded island, pines and green hills",
+        "image_caption": "A watercolour by Ramiro Relvas.",
+        "image_position": "start",
+        "image_shape": "natural"
+      }
+    },
+    "quote": {
+      "type": "page-quote",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "scheme-3",
+        "quote": "True luxury creates no noise.",
+        "quote_by": "Ramiro Relvas",
+        "quote_role": "Founder of the Sorema group"
+      }
+    },
+    "lineages": {
+      "type": "page-feature",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Origins",
+        "title": "Two lineages, one atelier",
+        "text": "<p>Corvo was born from a family heritage that reaches back on both sides of its founders' lineage: the Ferreira de Sá family, with rugs in its hands since 1947, and the Relvas family, who founded Sorema in 1974.</p><p>As part of the Sorema group, Corvo puts that experience into one thing only: luxury bespoke rugs, hand-tufted in Portugal.</p>",
+        "image": "shopify://shop_images/HISTORIA_-_IMG_6672.jpg",
+        "image_alt": "Black-and-white archive photograph of a textile workshop, with women finishing tufted rugs at long tables",
+        "image_caption": "The workshop, in a photograph from the family archive.",
+        "image_position": "end",
+        "image_shape": "natural"
+      }
+    },
+    "timeline": {
+      "type": "page-timeline",
+      "blocks": {
+        "y1947": {
+          "type": "entry",
+          "settings": {
+            "year": "1947",
+            "title": "Rugs enter the family",
+            "text": "<p>Joaquim Ferreira de Sá, grandfather of Corvo's owners, founds his rug manufacture. Rugs have been in the family ever since.</p>"
+          }
+        },
+        "y1974": {
+          "type": "entry",
+          "settings": {
+            "year": "1974",
+            "title": "Sorema is founded",
+            "text": "<p>Ramiro Relvas starts the company that becomes the Sorema group. It makes bath linens and accessories, and never stops making tufted rugs.</p>"
+          }
+        },
+        "y2023": {
+          "type": "entry",
+          "settings": {
+            "year": "2023",
+            "title": "Corvo is established",
+            "text": "<p>A sister company of Sorema, with one purpose: luxury bespoke rugs, tufted by hand.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "y1947",
+        "y1974",
+        "y2023"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "subheading": "In three dates",
+        "title": "From 1947 to today"
+      }
+    },
+    "archipelago": {
+      "type": "page-feature",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Archipelago",
+        "title": "A name from the Azores",
+        "text": "<p>Corvo takes its name from the smallest island of the Azores. The archipelago is the family's favourite holiday destination and, more than a place of rest, a source of inspiration.</p><p>The Corvo brand was born within a family of brands inspired by those islands. They reflect the values of the founder: family, friendship, trust and dedication.</p>",
+        "image": "shopify://shop_images/HISTORIA_-_corvo_island_1_1.jpg",
+        "image_alt": "Black-and-white aerial photograph of the island of Corvo, in the Azores, with the lakes of its crater",
+        "image_2": "shopify://shop_images/WhatsApp_Image_2026-01-14_at_22.26.08.jpg",
+        "image_2_alt": "Black-and-white photograph of a group of people standing on the bow of a sailing boat at sea",
+        "image_position": "start",
+        "image_shape": "landscape"
+      }
+    },
+    "wf-letter": {
+      "type": "wireframe",
+      "settings": {
+        "label": "A letter from the founder",
+        "description": "A short signed text on why the family started Corvo. Your 2024 review of the website proposed it.",
+        "needs": "The letter, a portrait and a signature.",
+        "phase": "Phase 7",
+        "layout": "split",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "closing": {
+      "type": "page-intro",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "title": "The craft continues",
+        "heading_tag": "h2",
+        "text": "<p>See how a Corvo rug comes to life, from the dye lab to the final cut.</p>",
+        "image": "shopify://shop_images/IMG_4631_copy_GS.jpg",
+        "image_alt": "Black-and-white photograph of hands trimming with scissors a tufted rug that reads Est. 1974 and Made in Portugal",
+        "image_focus": "--focus: center",
+        "image_position": "start",
+        "button_1_text": "Craftsmanship",
+        "button_1_link": "shopify://pages/craftmanship",
+        "button_2_text": "The Sorema group",
+        "button_2_link": "shopify://pages/sorema-group"
       }
     },
     "subnav-pager": {
@@ -305,15 +190,15 @@
     }
   },
   "order": [
-    "image_with_text_overlay_ANFaAT",
     "subnav-tabs",
-    "rich_text_fJ6dgm",
-    "wf-timeline",
-    "before_after_eFbFpk",
-    "image_with_text_block_GPhchJ",
-    "multiple_media_with_text_NYep8A",
-    "media_grid_pRQqCb",
-    "main",
+    "intro",
+    "founder",
+    "quote",
+    "lineages",
+    "timeline",
+    "archipelago",
+    "wf-letter",
+    "closing",
     "subnav-pager"
   ]
 }

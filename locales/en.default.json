@@ -66,9 +66,22 @@
         "catalogue": {
           "title": "The Corvo catalogue",
           "description": "The Corvo catalogue: the atelier, the collections and the yarns in one book. Ask for it as a PDF or as a printed copy."
+        },
+        "about_us": {
+          "title": "Our story: a family of Portuguese textile makers",
+          "description": "Corvo is a rug atelier founded in 2023 within the Sorema group, the family business Ramiro Relvas began in 1974. Its story, its dates and its name."
+        },
+        "sorema_group": {
+          "title": "Sorema Group: the family group behind Corvo",
+          "description": "Sorema is the Portuguese family group behind Corvo: founded in 1974, in its third generation, with the brands Sorema, Graccioza and Corvo."
         }
       },
       "parent": "Sorema",
+      "parent_founded": "1974",
+      "founded": "2023",
+      "street": "Rua dos Limites, 145",
+      "postcode": "4500-486",
+      "email": "info@corvo-rugs.com",
       "care": "This product should be handled with care. Regular vacuuming without rotating brushes, prompt attention to spills, and periodic rotation will help preserve its appearance and structure. To maintain the quality of the fibres over time, we recommend protecting the rug from prolonged sunlight and relying on professional cleaning when needed.",
       "variation": "The colours shown are indicative. Natural materials and artisanal processes may give variations in colour and texture."
     },
