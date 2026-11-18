@@ -24,7 +24,7 @@
 
 ## Key facts
 
-- Who: Corvo, a maker of bespoke and made-to-order rugs in {{ 'general.corvo.locality' | t }}, Portugal. Part of the {{ 'general.corvo.parent' | t }} Group.
+- Who: Corvo, a maker of bespoke and made-to-order rugs in {{ 'general.corvo.locality' | t }}, Portugal, founded in {{ 'general.corvo.founded' | t }}. Part of the {{ 'general.corvo.parent' | t }} Group, a family business founded in {{ 'general.corvo.parent_founded' | t }}.
 - What: {% render 'corvo-fill', text: '[rug_count] rug designs in [collection_count] collections.' %} Every rug is hand-tufted to order in Portugal.
 - Sizes: each design comes in five standard rectangular sizes, some designs also in two round sizes, and every design is made to measure in any size up to {% render 'corvo-fill', text: '[max_size]' %}.
 - Materials: {% render 'corvo-fill', text: '[materials_count] materials. [materials_standard] are included in the price; [materials_plus] add a supplement; [materials_premium] are premium fibres.' %}
@@ -35,6 +35,7 @@
 - Delivery: worldwide. {% render 'corvo-fact', fact: 'delivery' %}.
 - Orders: {% render 'corvo-fact', fact: 'orders' %}. {% render 'corvo-fact', fact: 'defects' %}.
 - Returns: {% render 'corvo-fact', fact: 'returns' %}.
+- Contact: {% render 'corvo-fill', text: '[address]. E-mail: [email].' %}
 - Website: {{ shop.url }}
 
 ## Main pages
@@ -54,8 +55,11 @@
 - [Portfolio]({{ shop.url }}/pages/portfolio): projects with Corvo rugs, each with its place, its designer and its rugs.
 - [Samples]({{ shop.url }}/pages/samples): order a sample of any rug.
 - [Care and questions]({{ shop.url }}/pages/care-faq): care, delivery and the questions asked most often.
-- [Story]({{ shop.url }}/pages/about-us): where Corvo comes from.
-- [Contact]({{ shop.url }}/pages/contact): start a project or book a meeting.
+- [Story]({{ shop.url }}/pages/about-us): where Corvo comes from: its founder, the two families behind it and its dates.
+- [Craftsmanship]({{ shop.url }}/pages/craftmanship): how a rug is made, in four stages: yarn, tufting, structure and the final touch.
+- [Sorema Group]({{ shop.url }}/pages/sorema-group): the family group Corvo belongs to, and its brands.
+- [Journal]({{ shop.url }}/blogs/news): guides on choosing and caring for a rug, on materials and on craft.
+- [Contact]({{ shop.url }}/pages/contact): write to the atelier, book a meeting or visit the showroom.
 
 ## Price guide for a bespoke rug
 
@@ -190,6 +194,11 @@ Projects with Corvo rugs, from the Portfolio:
 {{ project_line | split: project_key_separator | last }}
 {% endfor -%}
 {%- endif %}
+## Journal
+
+{% for article in blogs.news.articles limit: 30 -%}
+- [{{ article.title }}]({{ shop.url }}{{ article.url }}){% if article.excerpt != blank %}: {{ article.excerpt | strip_html | strip_newlines | strip | truncate: 220 }}{% endif %}
+{% endfor %}
 ## Rugs
 
 {% for rug in rugs -%}

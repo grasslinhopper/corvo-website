@@ -42,7 +42,11 @@
         assign seo_title = shop.name
       endif
 
-      unless seo_title contains shop.name
+      # The name of the shop is added once: a title that already ends in "CORVO" or "Corvo" is left as it is
+      assign seo_title_lower = seo_title | downcase
+      assign shop_name_lower = shop.name | downcase
+
+      unless seo_title_lower contains shop_name_lower
         assign seo_title = seo_title | append: ' | ' | append: shop.name
       endunless
 
