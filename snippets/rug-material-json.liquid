@@ -1,0 +1,31 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+A RAW MATERIAL AS JSON (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+The price of a material comes from its "Price factor": a standard or plus material adds a percentage (1.05 is +5%),
+a premium one multiplies the price (2 is × 2). The rug page and the price guide of "Tailor your rug" both read the
+materials through this snippet, so they price a material the same way.
+
+********************************************
+Supported variables
+********************************************
+
+* material: the "rug_material" entry (required)
+* card: true to add the colour card of the material, as "palette"
+{%- endcomment -%}
+
+{%- liquid
+  assign material_percent = 0
+  assign material_times = 100
+  assign material_premium = false
+
+  if material.group.value == 'Premium'
+    assign material_times = material.factor.value | default: 1 | times: 100 | round
+    assign material_premium = true
+  else
+    assign material_percent = material.factor.value | default: 1 | times: 100 | round | minus: 100
+  endif
+-%}
+
+{"handle":{{ material.system.handle | json }},"name":{{ material.name.value | json }},"note":{{ material.supplement.value | default: '' | json }},"percent":{{ material_percent }},"times":{{ material_times }},"premium":{{ material_premium }}{% if card %},"palette":[{% render 'rug-palette', lines: material.colours.value %}]{% endif %}}

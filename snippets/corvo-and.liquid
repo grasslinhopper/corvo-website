@@ -1,0 +1,27 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+A LIST IN WORDS (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Prints a list the way a sentence says it: "the size", "the size and the shape", "the size, the shape and the colours".
+
+********************************************
+Supported variables
+********************************************
+
+* items: the words, separated by "§" (required)
+{%- endcomment -%}
+
+{%- liquid
+  assign and_items = items | split: '§'
+  assign and_word = 'rug_page.and' | t
+-%}
+
+{%- for and_item in and_items -%}
+  {%- if forloop.first -%}
+    {{- and_item | strip -}}
+  {%- elsif forloop.last %} {{ and_word }} {{ and_item | strip -}}
+  {%- else -%}
+    , {{ and_item | strip -}}
+  {%- endif -%}
+{%- endfor -%}

@@ -284,19 +284,17 @@
         }
       });
 
-      if (config.small.percent > 0 && squareCentimetres < config.small.below * 10000) {
-        percent += config.small.percent;
-        reason = 'small';
-      } else if (config.large.percent > 0 && (longSide > config.large.long || shortSide > config.large.short)) {
-        percent += config.large.percent;
-        reason = 'large';
-      }
+      // The format supplement and the formula are shared with the rug page: see assets/rug-price-core.js
+      const format = window.CorvoRugPrice.format(config, squareCentimetres, longSide, shortSide);
+
+      percent += format.percent;
+      reason = format.reason;
 
       // The rate is in cents per m², without VAT; the material multiplier and the supplements are in hundredths.
       // Each result is rounded half-up to the euro, as the price list is.
-      const base = BigInt(state.level.rate) * BigInt(state.material.times) * BigInt(Math.round(100 + percent)) * BigInt(squareCentimetres),
-        netEuros = Number((base + 5000000000n) / 10000000000n),
-        grossEuros = Number((base * BigInt(Math.round(100 + config.vat)) + 500000000000n) / 1000000000000n),
+      const euros = window.CorvoRugPrice.euros({ rate: state.level.rate, times: state.material.times, percent: percent, units: squareCentimetres * 1000, vat: config.vat }),
+        netEuros = euros.net,
+        grossEuros = euros.gross,
         express = (cents) => state.express ? Math.round(cents * (100 + config.expressPercent) / 100) : cents,
         gross = express(grossEuros * 100 + state.colours * config.colour),
         net = express(netEuros * 100 + state.colours * config.colourNet);

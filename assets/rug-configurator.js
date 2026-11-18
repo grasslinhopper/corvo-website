@@ -1,15 +1,21 @@
 /**
  * Corvo: the rug configurator (see snippets/rug-steps.liquid).
  *
- * It works the price of a rug out in the browser, from the size typed in, the colours changed and the shipping
- * chosen, and keeps the product form pointing at the variant that carries that price:
+ * It works the price of a rug out in the browser, from the material, the pile height, the shape, the size, the
+ * colours and the shipping chosen, and keeps the product form pointing at the variant that carries that price:
  *
- *  - a standard size with standard shipping and no priced extra is the rug's own variant;
+ *  - a listed size, in a listed shape, in the material and the pile height its price was set for, with standard
+ *    shipping and no priced extra, is the rug's own variant;
  *  - anything else is a variant of the hidden price-step product, looked up through the Storefront API.
  *
- * A rug may have one other choice besides its size, a colourway or a frame: the rug's own variant is then the one of
- * the chosen size in the chosen colourway. A round standard size is one of the rug's own variants; its area is the
- * area of the circle.
+ * Which of these a client may choose is decided by the customisation level of the rug: the page prints only the
+ * steps that level allows, and this script works with whatever steps are there.
+ *
+ * A rug may have one other choice besides its size, a colourway, a frame or a material: the rug's own variant is then
+ * the one of the chosen size in that colourway or material. A round standard size is one of the rug's own variants;
+ * its area is the area of the circle. An oval is priced on the rectangle it fits in.
+ *
+ * The formula itself is shared with the price guide of "Tailor your rug": see assets/rug-price-core.js.
  *
  * Nothing here reloads the page. The theme's <product-form> still adds to the cart: this element only decides what.
  */
@@ -119,8 +125,13 @@
       this.controller = new AbortController();
       this.colours = this.config.colours.map((colour) => ({ original: colour.ref, choice: null }));
       this.choice = this.config.choice ? Math.max(0, this.config.choice.selected) : null;
-      this.round = this.config.round === true;
+      this.shape = this.config.round === true ? 'round' : 'rect';
+      this.width = this.config.selected.w;
+      this.length = this.config.selected.l;
+      this.material = this.config.materials ? Math.max(0, this.config.materials.selected) : null;
+      this.pile = this.config.pile ? 0 : null;
       this.applyChoice();
+      this.applyCard();
       this.version = 0;
       this.status = 'idle';
       this.openIndex = null;
@@ -136,6 +147,7 @@
       this.addEventListener('keydown', this.onKeyDown.bind(this), options);
 
       this.colours.forEach((colour, index) => this.renderColour(index));
+      this.syncSize();
 
       // The order buttons are printed after this element: wait until the page has settled before wiring the form
       window.setTimeout(() => {
@@ -170,6 +182,34 @@
       return Array.from(this.form?.elements || []).filter((item) => item.type === 'submit');
     }
 
+    /**
+     * The material the rug is being priced in, when the rug has materials to choose from
+     */
+    get materialValue() {
+      return this.material === null ? null : this.config.materials.values[this.material] || null;
+    }
+
+    /**
+     * A material may carry its own colour card. Without one, the colours come from the Open Palette.
+     */
+    get hasCard() {
+      return (this.materialValue?.palette || []).length > 0;
+    }
+
+    get palette() {
+      return this.hasCard ? this.materialValue.palette : this.config.palette;
+    }
+
+    get pileHeight() {
+      return this.pile === null ? null : this.config.pile.options[this.pile];
+    }
+
+    pilePercent(index) {
+      const { pile } = this.config;
+
+      return pile && pile.options[index] > pile.limit ? pile.percent : 0;
+    }
+
     /* ----------------------------------------------------------------------------------------------------------------
      * EVENTS
      * ------------------------------------------------------------------------------------------------------------- */
@@ -184,8 +224,12 @@
           target.value = digits;
         }
 
-        // A size that is typed in is a rectangle
-        this.round = false;
+        // Without a choice of shape, a size that is typed in is a rectangle
+        if (!this.config.shapes) {
+          this.shape = 'rect';
+        }
+
+        this.readSize();
         this.forceErrors = false;
         this.update();
       } else if (target.matches('[data-rug-colour-custom]') && this.openIndex !== null) {
@@ -212,9 +256,41 @@
       const size = event.target.closest('[data-rug-size]');
 
       if (size) {
-        this.round = 'round' in size.dataset;
-        this.widthInput.value = size.dataset.width;
-        this.lengthInput.value = size.dataset.length;
+        if ('round' in size.dataset) {
+          this.shape = 'round';
+        } else if (this.shape === 'round') {
+          this.shape = 'rect';
+        }
+
+        this.width = parseInt(size.dataset.width, 10);
+        this.length = parseInt(size.dataset.length, 10);
+        this.forceErrors = false;
+        this.syncSize();
+        this.update({ immediate: true });
+
+        return;
+      }
+
+      const shape = event.target.closest('[data-rug-shape]');
+
+      if (shape) {
+        this.setShape(shape.dataset.rugShape);
+
+        return;
+      }
+
+      const material = event.target.closest('[data-rug-material]');
+
+      if (material) {
+        this.setMaterial(parseInt(material.dataset.rugMaterial, 10));
+
+        return;
+      }
+
+      const pile = event.target.closest('[data-rug-pile]');
+
+      if (pile) {
+        this.pile = parseInt(pile.dataset.rugPile, 10);
         this.update({ immediate: true });
 
         return;
@@ -286,7 +362,7 @@
       if (this.status === 'invalid') {
         this.forceErrors = true;
         this.render(this.state);
-        this.widthInput.focus();
+        this.widthInput?.focus();
 
         return;
       }
@@ -306,7 +382,125 @@
     }
 
     /* ----------------------------------------------------------------------------------------------------------------
-     * THE OTHER CHOICE: A COLOURWAY OR A FRAME
+     * SIZE AND SHAPE
+     * ------------------------------------------------------------------------------------------------------------- */
+
+    /**
+     * The size is kept here, not in the fields: a rug whose level allows no size of its own has no fields at all
+     */
+    readSize() {
+      const width = this.widthInput,
+        length = this.lengthInput;
+
+      if (!width || !length) {
+        return;
+      }
+
+      this.width = wholeNumber(width.value);
+      this.length = this.shape === 'round' ? this.width : wholeNumber(length.value);
+    }
+
+    /**
+     * Brings the size fields and the size buttons in line with the size and the shape. With a choice of shape, a
+     * round rug has one field, its diameter, and the buttons are the listed sizes of that shape.
+     */
+    syncSize() {
+      const { shapes, strings } = this.config,
+        width = this.widthInput,
+        length = this.lengthInput,
+        diameterOnly = !!shapes && this.shape === 'round';
+
+      if (width && length) {
+        width.value = this.width > 0 ? this.width : '';
+        length.value = this.length > 0 ? this.length : '';
+
+        this.querySelectorAll('[data-rug-length-part]').forEach((part) => (part.hidden = diameterOnly));
+
+        const label = this.querySelector('[data-rug-width-label]');
+
+        if (label) {
+          label.textContent = diameterOnly ? strings.diameter : strings.width;
+        }
+      }
+
+      if (shapes) {
+        this.querySelectorAll('[data-rug-size]').forEach((size) => (size.hidden = ('round' in size.dataset) !== (this.shape === 'round')));
+      }
+    }
+
+    setShape(shape) {
+      if (!this.config.shapes?.includes(shape) || shape === this.shape) {
+        return;
+      }
+
+      this.shape = shape;
+
+      if (shape === 'round') {
+        // A round rug has one measure, its diameter: it starts from the shorter side
+        const diameter = Math.min(this.width > 0 ? this.width : Infinity, this.length > 0 ? this.length : Infinity);
+
+        this.width = Number.isFinite(diameter) ? diameter : NaN;
+        this.length = this.width;
+      }
+
+      this.forceErrors = false;
+      this.syncSize();
+      this.update({ immediate: true });
+    }
+
+    /* ----------------------------------------------------------------------------------------------------------------
+     * MATERIAL
+     * ------------------------------------------------------------------------------------------------------------- */
+
+    setMaterial(index) {
+      const { materials } = this.config,
+        value = materials?.values[index];
+
+      if (!value || value.premium || index === this.material) {
+        return;
+      }
+
+      this.material = index;
+      this.closePalette();
+      this.applyCard();
+      this.colours.forEach((colour, position) => this.renderColour(position));
+
+      if (materials.source === 'option') {
+        // The material is a choice of the rug itself: its variant and its pictures follow
+        this.setChoice(index);
+      } else {
+        this.update({ immediate: true });
+      }
+    }
+
+    /**
+     * A material with a colour card of its own sets the colours a rug can be made in. A colour the rug has no
+     * reference for in that material (it has none at all, or the material is not the one it is shown in) starts on
+     * a colour of the card, and a colour picked on another card is replaced the same way. Custom colours stay.
+     */
+    applyCard() {
+      const card = this.hasCard ? this.palette : null,
+        shownIn = this.material === null || this.material === 0;
+
+      this.colours.forEach((colour, index) => {
+        const choice = colour.choice;
+
+        colour.fromCard = card !== null && !(shownIn && colour.original !== '');
+
+        if (choice?.type === 'custom') {
+          return;
+        }
+
+        if (choice?.type === 'palette' && this.palette.some((entry) => entry.code === choice.code)) {
+          return;
+        }
+
+        colour.choice = colour.fromCard ? Object.assign({ type: 'palette' }, card[index % card.length]) : null;
+      });
+    }
+
+    /* ----------------------------------------------------------------------------------------------------------------
+     * THE OTHER CHOICE: A COLOURWAY, A FRAME OR A MATERIAL
      * ------------------------------------------------------------------------------------------------------------- */
 
     get choiceValue() {
@@ -378,7 +572,7 @@
     paletteEntry(reference) {
       const number = (reference || '').replace(/^\D+/, '');
 
-      return this.config.palette.find((entry) => entry.code === reference || (number !== '' && entry.code === number));
+      return this.palette.find((entry) => entry.code === reference || (number !== '' && entry.code === number));
     }
 
     describeColour(colour, withOriginal = true) {
@@ -391,7 +585,8 @@
 
       let text = choice.type === 'custom' ? `${strings.custom}: ${choice.text}` : (choice.name ? `${choice.code} ${choice.name}` : choice.code);
 
-      if (withOriginal && colour.original) {
+      // A colour that comes from the card of the material replaces nothing: the rug has no colour of its own there
+      if (withOriginal && colour.original && !colour.fromCard) {
         text += ` (${strings.replaces.replace('[reference]', colour.original)})`;
       }
 
@@ -424,6 +619,8 @@
 
     setColour(index, choice, { keepOpen = false } = {}) {
       this.colours[index].choice = choice;
+      // A colour that comes from the card of the material is never left empty: it goes back to a colour of the card
+      this.applyCard();
       this.renderColour(index);
 
       if (keepOpen) {
@@ -439,11 +636,14 @@
     openPalette(index) {
       this.closePalette();
 
-      const { strings, palette, preview, customColour, baseCurrency } = this.config,
+      const { strings, preview, customColour, baseCurrency } = this.config,
+        palette = this.palette,
+        // The colour card of a material is named after it; the Open Palette keeps its own name
+        paletteTitle = this.hasCard ? strings.cardTitle.replace('[material]', this.materialValue.name) : strings.paletteTitle,
         row = this.querySelector(`[data-rug-colour="${index}"]`),
         colour = this.colours[index],
         panel = element('div', 'rug-palette'),
-        fieldId = `${this.widthInput.id}-colour-${index}`;
+        fieldId = `rug-colour-${this.config.uid}-${index}`;
 
       panel.dataset.rugPalette = '';
 
@@ -451,14 +651,14 @@
         const heading = element('p', 'rug-palette__title text-sm'),
           grid = element('div', 'rug-palette__grid');
 
-        heading.append(element('span', '', strings.paletteTitle));
+        heading.append(element('span', '', paletteTitle));
 
         if (strings.paletteNote) {
           heading.append(element('span', 'text-subdued', strings.paletteNote));
         }
 
         grid.setAttribute('role', 'group');
-        grid.setAttribute('aria-label', strings.paletteTitle);
+        grid.setAttribute('aria-label', paletteTitle);
 
         palette.forEach((entry) => {
           const chip = element('button', 'rug-chip');
@@ -529,7 +729,14 @@
       reset.dataset.rugColourReset = '';
       done.type = 'button';
       done.dataset.rugColourDone = '';
-      actions.append(reset, done);
+
+      // "Keep the original" has no meaning for a colour that comes from the card of the material
+      if (colour.fromCard) {
+        actions.append(done);
+      } else {
+        actions.append(reset, done);
+      }
+
       panel.append(actions);
 
       row.append(panel);
@@ -579,38 +786,58 @@
      * The price of a size. "own" is the rug's own variant (cents in the visitor's currency); "step" is a price step
      * (cents in the shop's currency); "quote" is a price above the last step.
      */
+    /**
+     * The listed size of the rug that this size is, if any: the same sides, the same shape and, when the rug has
+     * another choice (a colourway, a frame, a material), the variant of that choice
+     */
+    standardSize(width, length) {
+      const round = this.shape === 'round';
+
+      return this.config.sizes.find((size) => (this.choice === null || size.c === this.choice) && size.round === round && ((size.w === width && size.l === length) || (size.w === length && size.l === width)));
+    }
+
     amounts(width, length, express) {
       const { config } = this,
-        round = this.round && width === length,
+        shape = this.shape,
+        round = shape === 'round',
         longSide = Math.max(width, length),
         shortSide = Math.min(width, length),
-        // A round rug is priced on the area of its circle
+        // A round rug is priced on the area of its circle; an oval, on the rectangle it fits in
         squareCentimetres = round ? Math.round(Math.PI * width * width / 4) : width * length,
         // The same area in thousandths of a cm²: a circle is not a whole number of cm², and a price can turn on it
-        areaUnits = round ? Math.round(Math.PI * width * width / 4 * 1000) : width * length * 1000;
-
-      let percent = config.supplement,
-        reason = null;
-
-      if (config.small.percent > 0 && squareCentimetres < config.small.below * 10000) {
-        percent += config.small.percent;
-        reason = 'small';
-      } else if (config.large.percent > 0 && (longSide > config.large.long || shortSide > config.large.short)) {
-        percent += config.large.percent;
-        reason = 'large';
-      }
-
-      // The rate is in cents per m², without VAT. The result is rounded half-up to the euro, as the price list is.
-      const numerator = BigInt(config.rate) * BigInt(Math.round(100 + percent)) * BigInt(areaUnits) * BigInt(Math.round(100 + config.vat)),
-        euros = Number((numerator + 5000000000000n) / 10000000000000n),
+        areaUnits = round ? Math.round(Math.PI * width * width / 4 * 1000) : width * length * 1000,
+        material = this.materialValue,
+        // What each choice adds, in percent. A material the shop's list does not know has no percentage (null).
+        parts = {
+          rug: config.supplement,
+          material: material ? (material.percent || 0) : 0,
+          pile: this.pile === null ? 0 : this.pilePercent(this.pile),
+          corners: shape === 'corners' ? config.corners : 0
+        },
+        format = window.CorvoRugPrice.format(config, squareCentimetres, longSide, shortSide),
+        percent = parts.rug + parts.material + parts.pile + parts.corners + format.percent,
+        // The rate is in cents per m², without VAT. The result is rounded half-up to the euro, as the price list is.
+        euros = window.CorvoRugPrice.euros({ rate: config.rate, percent: percent, units: areaUnits, vat: config.vat }).gross,
         custom = this.colours.filter((colour) => colour.choice?.type === 'custom').length,
         list = euros * 100 + custom * config.customColour,
         total = express ? Math.round(list * (100 + config.expressPercent) / 100) : list,
-        standard = config.sizes.find((size) => (this.choice === null || size.c === this.choice) && size.round === round && ((size.w === width && size.l === length) || (size.w === length && size.l === width))),
-        result = { euros: euros, percent: percent, reason: reason, custom: custom };
+        standard = this.standardSize(width, length),
+        result = { euros: euros, percent: percent, reason: format.reason, custom: custom, parts: Object.assign(parts, { format: format.percent }) };
 
-      if (standard && !express && custom * config.customColour === 0) {
+      // The rug's own variant carries the price of a listed size in a listed shape, in the material it belongs to
+      // and at the pile height the rug is priced in. Any other choice has to be priced by the formula, or a Plus
+      // material, a high pile or round corners would be charged at the price of the plain variant.
+      const ownShape = shape === 'rect' || shape === 'round',
+        ownMaterial = !config.materials || config.materials.source === 'option' || this.material === 0,
+        ownPile = this.pile === null || parts.pile === this.pilePercent(0);
+
+      if (standard && ownShape && ownMaterial && ownPile && !express && custom * config.customColour === 0) {
         return Object.assign(result, { mode: 'own', variant: standard.id, cents: standard.price });
+      }
+
+      // The formula cannot price a material it has no percentage for, and a premium material is not sold online
+      if (material && (material.percent === null || material.premium)) {
+        return Object.assign(result, { mode: 'quote', step: null, cents: null });
       }
 
       const step = this.nearestStep(total / 100);
@@ -621,28 +848,32 @@
     calculate() {
       const { config } = this,
         { limits, strings } = config,
-        width = wholeNumber(this.widthInput.value),
-        length = wholeNumber(this.lengthInput.value),
+        round = this.shape === 'round',
+        width = this.width,
+        length = round ? this.width : this.length,
         express = this.querySelector('[data-rug-shipping]:checked')?.value === 'express',
-        state = { width: width, length: length, round: this.round && width === length, express: express, errors: [], changed: this.colours.filter((colour) => colour.choice !== null).length };
+        state = { width: width, length: length, shape: this.shape, round: round, express: express, errors: [], changed: this.colours.filter((colour) => colour.choice !== null).length };
 
       if (!(width > 0) || !(length > 0)) {
-        state.errors.push(strings.errorNumber);
+        state.errors.push(round ? strings.errorDiameter : strings.errorNumber);
       } else {
-        if (Math.min(width, length) < limits.min) {
-          state.errors.push(strings.errorMin);
-        }
+        // The limits are for sizes typed in: a listed size of the rug is always accepted
+        if (!this.standardSize(width, length)) {
+          if (Math.min(width, length) < limits.min) {
+            state.errors.push(round ? strings.errorDiameterMin : strings.errorMin);
+          }
 
-        if (Math.max(width, length) > limits.long) {
-          state.errors.push(strings.errorLong);
-        }
+          if (!round && Math.max(width, length) > limits.long) {
+            state.errors.push(strings.errorLong);
+          }
 
-        if (Math.min(width, length) > limits.short) {
-          state.errors.push(strings.errorShort);
-        }
+          if (Math.min(width, length) > limits.short) {
+            state.errors.push(round ? strings.errorDiameterMax : strings.errorShort);
+          }
 
-        if (limits.step > 1 && (width % limits.step !== 0 || length % limits.step !== 0)) {
-          state.errors.push(strings.errorStep);
+          if (limits.step > 1 && (width % limits.step !== 0 || length % limits.step !== 0)) {
+            state.errors.push(strings.errorStep);
+          }
         }
 
         state.area = Math.round((state.round ? Math.PI * width * width / 4 : width * length) / 100) / 100;
@@ -683,16 +914,44 @@
         properties = {},
         changes = this.colours.map((colour, index) => (colour.choice ? [strings.propertyColour.replace('[number]', index + 1), this.describeColour(colour)] : null)).filter(Boolean);
 
+      const material = config.materials?.step ? this.materialValue : null,
+        pile = this.pile === null ? null : strings.millimetres.replace('[height]', this.pileHeight),
+        parts = state.parts;
+
       if (state.mode === 'own') {
+        // The rug's own variant already says its size and the choice it is a variant of. What it does not say is
+        // written under the line: a material chosen from the rug's list, the pile height, the colours.
+        if (material && config.materials.source === 'list') {
+          properties[strings.propertyMaterial] = material.name;
+        }
+
+        if (pile) {
+          properties[strings.propertyPile] = pile;
+        }
+
         changes.forEach(([name, value]) => (properties[name] = value));
 
         return properties;
       }
 
       properties[strings.propertyDesign] = config.title;
-      properties[strings.propertySize] = `${state.round ? strings.round.replace('[size]', state.width) : `${state.width} × ${state.length} cm`} (${state.area} m²)`;
 
-      if (this.choiceValue) {
+      if (material) {
+        properties[strings.propertyMaterial] = material.name;
+      }
+
+      if (pile) {
+        properties[strings.propertyPile] = pile;
+      }
+
+      if (config.shapes) {
+        properties[strings.propertyShape] = strings.shapeNames[state.shape];
+      }
+
+      properties[strings.propertySize] = `${state.round ? (config.shapes ? `Ø ${state.width} cm` : strings.round.replace('[size]', state.width)) : `${state.width} × ${state.length} cm`} (${state.area} m²)`;
+
+      // The other choice of the rug, unless it is the material, already written above
+      if (this.choiceValue && !(material && config.materials.source === 'option')) {
         properties[config.choice.name] = this.choiceValue.name;
       }
 
@@ -709,8 +968,8 @@
       // Hidden from the buyer, kept for the team: where the line comes from and how its price was worked out
       properties._design = config.handle;
       properties._calculation = [
-        `${state.area} m2 x EUR ${config.rate / 100}/m2`,
-        `supplements +${state.percent}%`,
+        `${state.shape} ${state.area} m2 x EUR ${config.rate / 100}/m2`,
+        `supplements +${state.percent}% (rug ${parts.rug}, material ${parts.material}, pile ${parts.pile}, corners ${parts.corners}, format ${parts.format})`,
         `VAT ${config.vat}%`,
         `= EUR ${state.euros}`,
         `custom colours: ${state.custom}`,
@@ -940,7 +1199,8 @@
       error.textContent = showErrors ? state.errors.join(' ') : '';
       error.hidden = !showErrors;
 
-      [this.widthInput, this.lengthInput].forEach((input) => {
+      // A rug whose level allows no size of its own has no size fields
+      [this.widthInput, this.lengthInput].filter(Boolean).forEach((input) => {
         if (showErrors) {
           input.setAttribute('aria-invalid', 'true');
         } else {
@@ -956,22 +1216,38 @@
           : `${strings.area.replace('[area]', state.area)} · ${strings.about.replace('[size]', `${feetAndInches(state.width)} × ${feetAndInches(state.length)}`)}`;
       }
 
-      note.hidden = !valid || !state.reason;
-      note.textContent = valid && state.reason ? strings[state.reason] : '';
+      // Under the size: the supplement of the format, and how an oval is priced
+      const notes = valid ? [state.reason ? strings[state.reason] : '', state.shape === 'oval' ? strings.oval : ''].filter(Boolean) : [];
+
+      note.hidden = notes.length === 0;
+      note.textContent = notes.join(' ');
+
+      // The choices that are buttons: the one in use is the pressed one
+      this.querySelectorAll('[data-rug-shape]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.rugShape === this.shape)));
+      this.querySelectorAll('[data-rug-material]').forEach((button) => button.setAttribute('aria-pressed', String(parseInt(button.dataset.rugMaterial, 10) === this.material)));
+      this.querySelectorAll('[data-rug-pile]').forEach((button) => button.setAttribute('aria-pressed', String(parseInt(button.dataset.rugPile, 10) === this.pile)));
 
       // Summary
+      print('[data-rug-summary-material]', this.materialValue?.name || '');
+      print('[data-rug-summary-pile]', this.pile === null ? '' : `${strings.millimetres.replace('[height]', this.pileHeight)}${this.pilePercent(this.pile) > 0 ? ` (+${this.pilePercent(this.pile)}%)` : ''}`);
+      print('[data-rug-summary-shape]', `${strings.shapeNames[state.shape]}${state.shape === 'corners' && config.corners > 0 ? ` (+${config.corners}%)` : ''}`);
       print('[data-rug-summary-size]', valid ? `${state.round ? `Ø ${state.width} cm` : `${state.width} × ${state.length} cm`} · ${strings.area.replace('[area]', state.area)}` : '—');
       print('[data-rug-summary-supplement]', valid && state.reason ? strings[state.reason] : '');
       this.querySelector('[data-rug-summary-supplement-row]').hidden = !valid || !state.reason;
+
       const changedText = state.changed === 0 ? '' : (state.changed === 1 ? strings.changedOne : strings.changedOther.replace('[count]', state.changed));
 
-      if (config.choice?.colour) {
+      if (this.colours.some((colour) => colour.fromCard)) {
+        // Colours chosen on the card of the material: the summary names them
+        print('[data-rug-summary-colours]', this.colours.map((colour) => this.describeColour(colour, false)).join(' · '));
+      } else if (config.choice?.colour) {
         // The colourway, then what was changed in it
         print('[data-rug-summary-colours]', [this.choiceValue?.name, changedText].filter(Boolean).join(' · '));
       } else {
         print('[data-rug-summary-colours]', changedText || strings.asShown);
-        print('[data-rug-summary-choice]', this.choiceValue?.name || '');
       }
+
+      print('[data-rug-summary-choice]', this.choiceValue?.name || '');
 
       print('[data-rug-summary-shipping]', afterHeading(state.express ? strings.express : strings.standard, strings.propertyShipping));
       print('[data-rug-express-extra]', valid && state.expressExtra > 0 ? strings.surcharge.replace('[amount]', this.money(state.expressExtra)) : strings.percent);

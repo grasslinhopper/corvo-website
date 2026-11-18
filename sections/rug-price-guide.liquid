@@ -128,19 +128,9 @@
 {%- endcapture -%}
 
 {%- capture materials_json -%}
+  {%- comment -%}Read the same way as on a rug page: see the "rug-material-json" snippet{%- endcomment -%}
   {%- for material in materials -%}
-    {%- liquid
-      assign material_percent = 0
-      assign material_times = 100
-
-      if material.group.value == 'Premium'
-        assign material_times = material.factor.value | times: 100 | round
-      else
-        assign material_percent = material.factor.value | times: 100 | round | minus: 100
-      endif
-    -%}
-
-    {"handle":{{ material.system.handle | json }},"name":{{ material.name.value | json }},"note":{{ material.supplement.value | json }},"percent":{{ material_percent }},"times":{{ material_times }}}{% unless forloop.last %},{% endunless %}
+    {%- render 'rug-material-json', material: material -%}{% unless forloop.last %},{% endunless %}
   {%- endfor -%}
 {%- endcapture -%}
 
@@ -688,6 +678,8 @@
   </div>
 </div>
 
+{%- comment -%}The formula is shared with the rug page (assets/rug-price-core.js){%- endcomment -%}
+<script src="{{ 'rug-price-core.js' | asset_url }}" defer></script>
 <script src="{{ 'rug-price-guide.js' | asset_url }}" defer></script>
 
 {% stylesheet %}

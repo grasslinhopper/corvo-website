@@ -1005,6 +1005,32 @@
         "default": 5
       },
       {
+        "type": "header",
+        "content": "Shapes sold online"
+      },
+      {
+        "type": "paragraph",
+        "content": "A rug whose customisation level allows a choice of shape offers a rectangle and the shapes ticked here. Any other shape goes to a proposal. A round rug is priced on the area of its circle; an oval, on the rectangle it fits in; round corners add the supplement above."
+      },
+      {
+        "type": "checkbox",
+        "id": "rug_shape_round",
+        "label": "Round, in any diameter",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "rug_shape_oval",
+        "label": "Oval",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "rug_shape_corners",
+        "label": "Rectangle with round corners",
+        "default": true
+      },
+      {
         "type": "number",
         "id": "rug_colour_price",
         "label": "Custom colour: price per colour, without VAT",

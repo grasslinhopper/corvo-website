@@ -1,0 +1,35 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+A COLOUR LIST AS JSON (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+One colour per line, written as "code", "code | name" or "code | name | #hex": the Open Palette of the theme settings
+("Corvo: prices and rules"), or the colour card of a raw material. Prints the entries separated by commas, without the
+brackets around them.
+
+********************************************
+Supported variables
+********************************************
+
+* lines: the text (required)
+{%- endcomment -%}
+
+{%- liquid
+  assign palette_lines = lines | newline_to_br | strip_newlines | split: '<br />'
+  assign palette_first = true
+-%}
+
+{%- for palette_line in palette_lines -%}
+  {%- liquid
+    assign palette_parts = palette_line | split: '|'
+    assign palette_code = palette_parts[0] | strip
+    assign palette_name = palette_parts[1] | strip
+    assign palette_hex = palette_parts[2] | strip
+  -%}
+
+  {%- if palette_code != blank -%}
+    {%- unless palette_first -%},{%- endunless -%}
+    {"code":{{ palette_code | json }},"name":{{ palette_name | default: '' | json }},"hex":{{ palette_hex | default: '' | json }}}
+    {%- assign palette_first = false -%}
+  {%- endif -%}
+{%- endfor -%}

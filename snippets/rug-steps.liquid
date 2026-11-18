@@ -3,16 +3,31 @@
 RUG STEPS (Corvo addition)
 ----------------------------------------------------------------------------------------------------------------------
 
-The buying steps of a rug page: size, colours and shipping, then a summary that keeps the price in view.
+The buying steps of a rug page: material, pile height, shape, size, colours and shipping, then a summary that keeps the
+price in view. A rug shows only the steps its customisation level allows.
 
-Every rug is a design that can be made in any size and recoloured, so nothing here reloads the page. The
-<rug-configurator> element (assets/rug-configurator.js) works the price out in the browser:
+THE CUSTOMISATION LEVEL of a rug (rug.customisation) is an entry of the shop's list "Customisation level". It says
+with one yes or no each what a client may change: the size (any size typed in, beyond the listed ones), the shape,
+the colours, the raw material and the pile height. A rug without a level counts as "size only". The ready-made
+versions of a rug (its colourways, its round standard sizes) are not customisation: they stay at every level.
+
+Nothing here reloads the page. The <rug-configurator> element (assets/rug-configurator.js) works the price out in the
+browser, with the formula it shares with the price guide of "Tailor your rug" (assets/rug-price-core.js):
 
   price per m² of the craft level (rug.craft_level > retail_per_m2, without VAT)
-  × (1 + the rug's own supplement + the small-format or large-format supplement)
+  × (1 + the rug's own supplement + the material + the pile height + round corners
+       + the small-format or large-format supplement)
   × area × VAT, rounded to the euro
   + the supplement of each custom colour
   × the priority supplement when the faster shipping is chosen
+
+The area is width × length; a round rug is priced on the area of its circle, an oval on the rectangle it fits in.
+
+THE MATERIALS a client chooses from are, when the rug has a choice named "Material", the values of that choice: each
+is matched by name with an entry of the shop's list of raw materials, and each variant then carries the exact price
+of its material. Otherwise, at a level that allows a choice of material, they are the materials listed on the rug
+(rug.materials), the first being the one the rug is shown in. A premium material is never sold online. A material
+may carry its own colour card: the colours then come from that card, and from the Open Palette when it has none.
 
 How that price reaches the checkout:
 
@@ -55,8 +70,30 @@ Supported variables
   endif
 
   comment
-    The choices of the rug: its sizes and, at most, one other choice (a colourway, a frame). The sizes are the values
-    of the choice named "Size", or of the only choice of the rug.
+    What a client may change on this rug. The fields of a level are named "change_…": "size" alone is a word of
+    Liquid's own. A rug without a level counts as "size only".
+  endcomment
+
+  assign level = product.metafields.rug.customisation.value
+  assign level_number = 1
+  assign can_size = true
+  assign can_shape = false
+  assign can_colours = false
+  assign can_material = false
+  assign can_pile = false
+
+  if level
+    assign level_number = level.number.value | default: 0
+    assign can_size = level.change_size.value | default: false
+    assign can_shape = level.change_shape.value | default: false
+    assign can_colours = level.change_colours.value | default: false
+    assign can_material = level.change_material.value | default: false
+    assign can_pile = level.change_pile.value | default: false
+  endif
+
+  comment
+    The choices of the rug: its sizes and, at most, one other choice (a colourway, a frame, a material). The sizes
+    are the values of the choice named "Size", or of the only choice of the rug.
   endcomment
 
   assign size_position = 0
@@ -83,6 +120,7 @@ Supported variables
   assign size_index = size_position | minus: 1
   assign choice_index = -1
   assign choice_is_colour = false
+  assign choice_is_material = false
   assign choice_count = 0
 
   if choice_option
@@ -92,6 +130,8 @@ Supported variables
 
     if choice_name == 'colour' or choice_name == 'color'
       assign choice_is_colour = true
+    elsif choice_name == 'material' or choice_name == 'raw material'
+      assign choice_is_material = true
     endif
   endif
 
@@ -244,16 +284,208 @@ Supported variables
   if choice_count > 1
     if choice_is_colour
       assign show_colour_choice = true
-    else
+    elsif choice_is_material == false
       assign show_choice = true
     endif
   endif
 
+  comment
+    Single colours can be swapped only at a level that allows it
+  endcomment
+
   assign show_colour_changes = false
 
-  if block.settings.show_colour_step and colour_count > 0
+  if block.settings.show_colour_step and colour_count > 0 and can_colours
     assign show_colour_changes = true
   endif
+
+  comment
+    The pile heights a client chooses from (rug.pile_options, in millimetres): the first is the one the rug is priced
+    in. One height only is a fact of the rug, not a step.
+  endcomment
+
+  assign pile_options = product.metafields.rug.pile_options.value
+  assign pile_limit = settings.rug_pile_limit | default: 18
+  assign pile_percent = settings.rug_pile_percent | default: 0
+  assign show_pile = false
+
+  if can_pile and pile_options.size > 1
+    assign show_pile = true
+  endif
+
+  comment
+    The shapes sold online, switched on or off in the theme settings. A rectangle is always one of them.
+  endcomment
+
+  assign corners_percent = settings.rug_corners_percent | default: 0
+  assign shape_list = 'rect'
+
+  if can_shape and can_size
+    if settings.rug_shape_round
+      assign shape_list = shape_list | append: ',round'
+    endif
+
+    if settings.rug_shape_oval
+      assign shape_list = shape_list | append: ',oval'
+    endif
+
+    if settings.rug_shape_corners
+      assign shape_list = shape_list | append: ',corners'
+    endif
+  endif
+
+  assign shapes = shape_list | split: ','
+  assign show_shape = false
+
+  if shapes.size > 1
+    assign show_shape = true
+  endif
+
+  assign material_source = ''
+  assign material_count = 0
+  assign material_names = ''
+  assign material_notes = ''
+  assign material_states = ''
+  assign premium_names = ''
+  assign shop_materials = shop.metaobjects.rug_material.values
+  assign rug_materials = product.metafields.rug.materials.value
+-%}
+
+{%- comment -%}
+  The materials, as JSON for the script and as three lists for the buttons: the name, the note ("Included", "+5%")
+  and the state of each ("ok"; "premium" when it is not sold online; "unknown" when the shop's list has no material
+  of that name, which blocks a made-to-measure price in it).
+{%- endcomment -%}
+{%- capture materials_json -%}
+  {%- if choice_is_material -%}
+    {%- assign material_source = 'option' -%}
+
+    {%- for choice_value in choice_option.values -%}
+      {%- liquid
+        assign choice_value_name = choice_value.name | default: choice_value | append: ''
+        assign choice_value_key = choice_value_name | downcase | strip
+        assign matched = nil
+
+        for shop_material in shop_materials
+          assign shop_material_key = shop_material.name.value | downcase | strip
+
+          if shop_material_key == choice_value_key
+            assign matched = shop_material
+            break
+          endif
+        endfor
+
+        assign material_names = material_names | append: choice_value_name | append: '§'
+      -%}
+
+      {%- if matched -%}
+        {%- liquid
+          assign material_notes = material_notes | append: matched.supplement.value | append: '§'
+
+          if matched.group.value == 'Premium'
+            assign material_states = material_states | append: 'premium§'
+          else
+            assign material_states = material_states | append: 'ok§'
+            assign material_count = material_count | plus: 1
+          endif
+        -%}
+
+        {%- render 'rug-material-json', material: matched, card: true -%}¦
+      {%- else -%}
+        {%- liquid
+          assign material_notes = material_notes | append: '-§'
+          assign material_states = material_states | append: 'unknown§'
+        -%}
+
+        {"handle":"","name":{{ choice_value_name | json }},"note":"","percent":null,"times":100,"premium":false,"palette":[]}¦
+      {%- endif -%}
+    {%- endfor -%}
+  {%- elsif can_material and rug_materials.size > 0 -%}
+    {%- assign material_source = 'list' -%}
+
+    {%- for rug_material in rug_materials -%}
+      {%- if rug_material.group.value == 'Premium' -%}
+        {%- continue -%}
+      {%- endif -%}
+
+      {%- liquid
+        assign material_names = material_names | append: rug_material.name.value | append: '§'
+        assign material_notes = material_notes | append: rug_material.supplement.value | append: '§'
+        assign material_states = material_states | append: 'ok§'
+        assign material_count = material_count | plus: 1
+      -%}
+
+      {%- render 'rug-material-json', material: rug_material, card: true -%}¦
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- liquid
+  assign material_names = material_names | split: '§'
+  assign material_notes = material_notes | split: '§'
+  assign material_states = material_states | split: '§'
+  assign material_selected = 0
+  assign show_material = false
+
+  if material_source == 'option'
+    assign material_selected = selected_choice
+
+    if choice_count > 1
+      assign show_material = true
+    endif
+  elsif material_source == 'list' and material_count > 1
+    assign show_material = true
+  endif
+
+  for shop_material in shop_materials
+    if shop_material.group.value == 'Premium'
+      assign premium_names = premium_names | append: shop_material.name.value | append: '§'
+    endif
+  endfor
+
+  comment
+    What can be chosen and what stays as shown, in words: the page says it in one plain sentence, which a search
+    engine or an AI assistant reads without running any script.
+  endcomment
+
+  assign can_words = ''
+  assign fixed_words = ''
+
+  if level_number < 5
+    assign fixed_words = 'rug_page.words.design' | t | append: '§'
+  endif
+
+  if show_material
+    assign can_words = 'rug_page.words.material' | t | append: '§' | prepend: can_words
+  else
+    assign fixed_words = 'rug_page.words.material' | t | append: '§' | prepend: fixed_words
+  endif
+
+  if show_pile
+    assign can_words = 'rug_page.words.pile' | t | append: '§' | prepend: can_words
+  else
+    assign fixed_words = 'rug_page.words.pile' | t | append: '§' | prepend: fixed_words
+  endif
+
+  if show_shape
+    assign can_words = 'rug_page.words.shape' | t | append: '§' | prepend: can_words
+  else
+    assign fixed_words = 'rug_page.words.shape' | t | append: '§' | prepend: fixed_words
+  endif
+
+  if can_size
+    assign can_words = 'rug_page.words.size' | t | append: '§' | prepend: can_words
+  endif
+
+  if show_colour_changes
+    assign can_words = 'rug_page.words.colours' | t | append: '§' | prepend: can_words
+  elsif show_colour_choice
+    assign can_words = 'rug_page.words.colourway' | t | append: '§' | prepend: can_words
+  else
+    assign fixed_words = 'rug_page.words.colours' | t | append: '§' | prepend: fixed_words
+  endif
+
+  assign fixed_count = fixed_words | split: '§' | size
 -%}
 
 {%- if rate == 0 or sizes.size == 0 or selected_width == 0 or selected_length == 0 -%}
@@ -374,22 +606,32 @@ Supported variables
     {%- endfor -%}
   {%- endcapture -%}
 
-  {%- comment -%}The palette: one colour per line, written as "code", "code | name" or "code | name | #hex"{%- endcomment -%}
+  {%- comment -%}
+    The Open Palette: one colour per line, written as "code", "code | name" or "code | name | #hex". The colour card
+    of a material is written the same way (see the "rug-palette" snippet).
+  {%- endcomment -%}
   {%- capture palette_json -%}
-    {%- assign palette_lines = settings.rug_palette | newline_to_br | strip_newlines | split: '<br />' -%}
+    {%- render 'rug-palette', lines: settings.rug_palette -%}
+  {%- endcapture -%}
 
-    {%- for palette_line in palette_lines -%}
-      {%- liquid
-        assign palette_parts = palette_line | split: '|'
-        assign palette_code = palette_parts[0] | strip
-        assign palette_name = palette_parts[1] | strip
-        assign palette_hex = palette_parts[2] | strip
-      -%}
+  {%- comment -%}The sentence that says what can be chosen on this rug and what stays as shown{%- endcomment -%}
+  {%- capture scope_text -%}
+    {%- if can_words == blank -%}
+      {{- 'rug_page.scope_none' | t -}}
+    {%- else -%}
+      {%- capture can_list -%}{%- render 'corvo-and', items: can_words -%}{%- endcapture -%}
+      {{- 'rug_page.scope_can' | t: list: can_list -}}
 
-      {%- if palette_code != blank -%}
-        {"code":{{ palette_code | json }},"name":{{ palette_name | default: '' | json }},"hex":{{ palette_hex | default: '' | json }}}|
+      {%- if fixed_words != blank %}
+        {% capture fixed_list -%}{%- render 'corvo-and', items: fixed_words -%}{%- endcapture -%}
+
+        {%- if fixed_count == 1 -%}
+          {{- 'rug_page.scope_fixed_one' | t: list: fixed_list | capitalize -}}
+        {%- else -%}
+          {{- 'rug_page.scope_fixed_other' | t: list: fixed_list | capitalize -}}
+        {%- endif -%}
       {%- endif -%}
-    {%- endfor -%}
+    {%- endif -%}
   {%- endcapture -%}
 
   {%- capture colours_json -%}
@@ -403,8 +645,16 @@ Supported variables
   <rug-configurator class="rug-steps" form="{{ form_id }}" data-rug-steps>
     <script type="application/json" data-rug-config>
       {
+        "uid": {{ uid | json }},
         "handle": {{ product.handle | json }},
         "title": {{ product.title | json }},
+        "level": {{ level_number | default: 0 }},
+        "typed": {% if can_size %}true{% else %}false{% endif %},
+        "selected": { "w": {{ selected_width | default: 0 }}, "l": {{ selected_length | default: 0 }} },
+        "shapes": {% if show_shape %}{{ shapes | json }}{% else %}null{% endif %},
+        "corners": {{ corners_percent | default: 0 }},
+        "materials": {% if material_source != '' %}{ "source": {{ material_source | json }}, "step": {% if show_material %}true{% else %}false{% endif %}, "selected": {{ material_selected | default: 0 }}, "values": [{{ materials_json | strip | split: '¦' | join: ',' }}] }{% else %}null{% endif %},
+        "pile": {% if show_pile %}{ "options": [{{ pile_options | join: ',' }}], "limit": {{ pile_limit | default: 18 }}, "percent": {{ pile_percent | default: 0 }} }{% else %}null{% endif %},
         "rate": {{ rate }},
         "supplement": {{ own_supplement }},
         "vat": {{ vat_percent }},
@@ -415,7 +665,7 @@ Supported variables
         "round": {{ selected_round }},
         "choice": {% if choice_option %}{ "name": {{ choice_option.name | json }}, "colour": {{ choice_is_colour }}, "selected": {{ selected_choice }}, "values": [{{ choices_json | strip | split: '|' | join: ',' }}] }{% else %}null{% endif %},
         "colours": [{{ colours_json | strip | split: '|' | join: ',' }}],
-        "palette": [{{ palette_json | strip | split: '|' | join: ',' }}],
+        "palette": [{{ palette_json | strip }}],
         "customColour": {{ custom_colour_cents }},
         "expressPercent": {{ express_percent }},
         "steps": {
@@ -437,6 +687,10 @@ Supported variables
           "errorLong": {{ 'rug_page.error_long' | t: max: max_long | json }},
           "errorShort": {{ 'rug_page.error_short' | t: max: max_short | json }},
           "errorStep": {{ 'rug_page.error_step' | t: step: size_step | json }},
+          "errorDiameter": {{ 'rug_page.error_diameter' | t | json }},
+          "errorDiameterMin": {{ 'rug_page.error_diameter_min' | t: min: min_side | json }},
+          "errorDiameterMax": {{ 'rug_page.error_diameter_max' | t: max: max_short | json }},
+          "cardTitle": {{ 'rug_page.card_title' | t: material: '[material]' | json }},
           "asShown": {{ 'rug_page.as_shown' | t | json }},
           "change": {{ 'rug_page.change' | t | json }},
           "close": {{ 'rug_page.done' | t | json }},
@@ -463,6 +717,14 @@ Supported variables
           "percent": {{ 'rug_page.percent_more' | t: percent: express_percent | json }},
           "onRequest": {{ 'rug_page.on_request' | t | json }},
           "failed": {{ 'rug_page.price_failed' | t | json }},
+          "width": {{ 'rug_page.width' | t | json }},
+          "diameter": {{ 'rug_page.diameter' | t | json }},
+          "oval": {{ 'rug_page.oval_note' | t | json }},
+          "millimetres": {{ 'rug_page.millimetres' | t: height: '[height]' | json }},
+          "shapeNames": { "rect": {{ 'rug_page.shapes.rect' | t | json }}, "round": {{ 'rug_page.shapes.round' | t | json }}, "oval": {{ 'rug_page.shapes.oval' | t | json }}, "corners": {{ 'rug_page.shapes.corners' | t | json }} },
+          "propertyMaterial": {{ 'rug_page.material' | t | json }},
+          "propertyPile": {{ 'rug_page.pile_height' | t | json }},
+          "propertyShape": {{ 'rug_page.shape' | t | json }},
           "propertyDesign": {{ 'rug_page.design' | t | json }},
           "propertySize": {{ 'rug_page.size' | t | json }},
           "propertyColours": {{ 'rug_page.colours' | t | json }},
@@ -471,6 +733,144 @@ Supported variables
         }
       }
     </script>
+
+    {%- comment -%}What can be chosen on this rug, in one plain sentence{%- endcomment -%}
+    <p class="rug-steps__scope text-sm text-subdued" data-rug-scope>{{ scope_text | strip }}</p>
+
+    {%- comment -%}
+    ------------------------------------------------------------------------------------------------------------------
+    MATERIAL
+    ------------------------------------------------------------------------------------------------------------------
+    {%- endcomment -%}
+
+    {%- if show_material -%}
+      {%- liquid
+        assign step = step | plus: 1
+        assign material_legend_id = 'rug-material-' | append: uid
+      -%}
+
+      <div class="rug-step" role="group" aria-labelledby="{{ material_legend_id }}">
+        <p class="rug-step__legend" id="{{ material_legend_id }}">
+          <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+          <span class="rug-step__title h6">{{ 'rug_page.material' | t }}</span>
+        </p>
+
+        <div class="rug-options" role="group" aria-label="{{ 'rug_page.material' | t | escape }}">
+          {%- for material_name in material_names -%}
+            {%- liquid
+              assign material_state = material_states[forloop.index0]
+              assign material_note = material_notes[forloop.index0]
+
+              if material_state == 'premium'
+                continue
+              endif
+            -%}
+
+            <button type="button" class="rug-option" data-rug-material="{{ forloop.index0 }}" aria-pressed="{% if forloop.index0 == material_selected %}true{% else %}false{% endif %}">
+              <span class="rug-option__name">{{ material_name | escape }}</span>
+
+              {%- if material_state == 'ok' and material_note != blank -%}
+                <span class="rug-option__reference text-subdued">{{ material_note | escape }}</span>
+              {%- endif -%}
+            </button>
+          {%- endfor -%}
+        </div>
+
+        {%- if premium_names != blank -%}
+          <p class="rug-step__more text-sm text-subdued">
+            {%- capture premium_list -%}{%- render 'corvo-and', items: premium_names -%}{%- endcapture -%}
+            {{- 'rug_page.premium_note' | t: materials: premium_list -}}
+
+            {%- if block.settings.custom_link != blank and block.settings.contact_link_text != blank %}
+              <a href="{{ block.settings.custom_link }}" class="link">{{ block.settings.contact_link_text | escape }}</a>
+            {%- endif -%}
+          </p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%}
+    ------------------------------------------------------------------------------------------------------------------
+    PILE HEIGHT
+    ------------------------------------------------------------------------------------------------------------------
+    {%- endcomment -%}
+
+    {%- if show_pile -%}
+      {%- liquid
+        assign step = step | plus: 1
+        assign pile_legend_id = 'rug-pile-' | append: uid
+      -%}
+
+      <div class="rug-step" role="group" aria-labelledby="{{ pile_legend_id }}">
+        <p class="rug-step__legend" id="{{ pile_legend_id }}">
+          <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+          <span class="rug-step__title h6">{{ 'rug_page.pile_height' | t }}</span>
+        </p>
+
+        <div class="rug-options" role="group" aria-label="{{ 'rug_page.pile_height' | t | escape }}">
+          {%- for pile_option in pile_options -%}
+            <button type="button" class="rug-option" data-rug-pile="{{ forloop.index0 }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
+              <span class="rug-option__name">{{ 'rug_page.millimetres' | t: height: pile_option }}</span>
+
+              <span class="rug-option__reference text-subdued">
+                {%- if pile_option > pile_limit and pile_percent > 0 -%}
+                  {{- 'rug_page.percent_more' | t: percent: pile_percent -}}
+                {%- else -%}
+                  {{- 'rug_page.included' | t -}}
+                {%- endif -%}
+              </span>
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%}
+    ------------------------------------------------------------------------------------------------------------------
+    SHAPE
+    ------------------------------------------------------------------------------------------------------------------
+    {%- endcomment -%}
+
+    {%- if show_shape -%}
+      {%- liquid
+        assign step = step | plus: 1
+        assign shape_legend_id = 'rug-shape-' | append: uid
+      -%}
+
+      <div class="rug-step" role="group" aria-labelledby="{{ shape_legend_id }}">
+        <p class="rug-step__legend" id="{{ shape_legend_id }}">
+          <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+          <span class="rug-step__title h6">{{ 'rug_page.shape' | t }}</span>
+        </p>
+
+        <div class="rug-options" role="group" aria-label="{{ 'rug_page.shape' | t | escape }}">
+          {%- for shape in shapes -%}
+            {%- liquid
+              assign shape_key = 'rug_page.shapes.' | append: shape
+              assign shape_pressed = false
+
+              if shape == selected_shape
+                assign shape_pressed = true
+              endif
+            -%}
+
+            <button type="button" class="rug-option" data-rug-shape="{{ shape }}" aria-pressed="{{ shape_pressed }}">
+              <span class="rug-option__name">{{ shape_key | t }}</span>
+
+              {%- if shape == 'corners' and corners_percent > 0 -%}
+                <span class="rug-option__reference text-subdued">{{ 'rug_page.percent_more' | t: percent: corners_percent }}</span>
+              {%- endif -%}
+            </button>
+          {%- endfor -%}
+        </div>
+
+        {%- if block.settings.custom_link != blank and block.settings.size_link_text != blank -%}
+          <p class="rug-step__more text-sm text-subdued">
+            <a href="{{ block.settings.custom_link }}" class="link">{{ block.settings.size_link_text | escape }}</a>
+          </p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
 
     {%- comment -%}
     ------------------------------------------------------------------------------------------------------------------
@@ -531,37 +931,43 @@ Supported variables
         {%- endfor -%}
       </div>
 
-      <div class="rug-dimensions">
-        <label class="rug-field" for="rug-width-{{ uid }}">
-          <span class="rug-field__label text-sm text-subdued">{{ 'rug_page.width' | t }}</span>
+      {%- comment -%}
+        Any size, typed in: only at a level that allows it. With a choice of shape, a round rug asks for one number,
+        its diameter: the second field is then put away by the script.
+      {%- endcomment -%}
+      {%- if can_size -%}
+        <div class="rug-dimensions">
+          <label class="rug-field" for="rug-width-{{ uid }}">
+            <span class="rug-field__label text-sm text-subdued" data-rug-width-label>{{ 'rug_page.width' | t }}</span>
 
-          <span class="rug-field__control">
-            <input class="rug-field__input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" id="rug-width-{{ uid }}" value="{{ selected_width }}" data-rug-width aria-describedby="rug-size-error-{{ uid }}">
-            <span class="rug-field__unit text-subdued" aria-hidden="true">cm</span>
-          </span>
-        </label>
+            <span class="rug-field__control">
+              <input class="rug-field__input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" id="rug-width-{{ uid }}" value="{{ selected_width }}" data-rug-width aria-describedby="rug-size-error-{{ uid }}">
+              <span class="rug-field__unit text-subdued" aria-hidden="true">cm</span>
+            </span>
+          </label>
 
-        <span class="rug-dimensions__times text-subdued" aria-hidden="true">×</span>
+          <span class="rug-dimensions__times text-subdued" aria-hidden="true" data-rug-length-part>×</span>
 
-        <label class="rug-field" for="rug-length-{{ uid }}">
-          <span class="rug-field__label text-sm text-subdued">{{ 'rug_page.length' | t }}</span>
+          <label class="rug-field" for="rug-length-{{ uid }}" data-rug-length-part>
+            <span class="rug-field__label text-sm text-subdued">{{ 'rug_page.length' | t }}</span>
 
-          <span class="rug-field__control">
-            <input class="rug-field__input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" id="rug-length-{{ uid }}" value="{{ selected_length }}" data-rug-length aria-describedby="rug-size-error-{{ uid }}">
-            <span class="rug-field__unit text-subdued" aria-hidden="true">cm</span>
-          </span>
-        </label>
-      </div>
+            <span class="rug-field__control">
+              <input class="rug-field__input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" id="rug-length-{{ uid }}" value="{{ selected_length }}" data-rug-length aria-describedby="rug-size-error-{{ uid }}">
+              <span class="rug-field__unit text-subdued" aria-hidden="true">cm</span>
+            </span>
+          </label>
+        </div>
+      {%- endif -%}
 
       <p class="rug-step__error text-sm" id="rug-size-error-{{ uid }}" data-rug-size-error role="alert" hidden></p>
       <p class="rug-step__more text-sm" data-rug-size-info>{% if selected_round %}{{ selected_size_text }} · {% endif %}{{ 'rug_page.area' | t: area: area_text }}</p>
       <p class="rug-step__note text-sm" data-rug-size-note hidden></p>
 
-      {%- if block.settings.size_text != blank -%}
+      {%- if can_size and block.settings.size_text != blank -%}
         <p class="rug-step__more text-sm text-subdued">
           {{- size_text | strip -}}
 
-          {%- if block.settings.custom_link != blank and block.settings.size_link_text != blank %}
+          {%- if show_shape == false and block.settings.custom_link != blank and block.settings.size_link_text != blank %}
             <a href="{{ block.settings.custom_link }}" class="link">{{ block.settings.size_link_text | escape }}</a>
           {%- endif -%}
         </p>
@@ -742,6 +1148,29 @@ Supported variables
           <dd>{{ product.title | escape }}</dd>
         </div>
 
+        {%- if show_material -%}
+          <div>
+            <dt>{{ 'rug_page.material' | t }}</dt>
+            <dd data-rug-summary-material>{{ material_names[material_selected] | escape }}</dd>
+          </div>
+        {%- endif -%}
+
+        {%- if show_pile -%}
+          <div>
+            <dt>{{ 'rug_page.pile_height' | t }}</dt>
+            <dd data-rug-summary-pile>{{ 'rug_page.millimetres' | t: height: pile_options.first }}</dd>
+          </div>
+        {%- endif -%}
+
+        {%- if show_shape -%}
+          {%- assign selected_shape_key = 'rug_page.shapes.' | append: selected_shape -%}
+
+          <div>
+            <dt>{{ 'rug_page.shape' | t }}</dt>
+            <dd data-rug-summary-shape>{{ selected_shape_key | t }}</dd>
+          </div>
+        {%- endif -%}
+
         <div>
           <dt>{{ 'rug_page.size' | t }}</dt>
           <dd data-rug-summary-size>{{ selected_size_text }} · {{ 'rug_page.area' | t: area: area_text }}</dd>
@@ -752,7 +1181,7 @@ Supported variables
           <dd data-rug-summary-supplement></dd>
         </div>
 
-        {%- if choice_option and choice_is_colour == false -%}
+        {%- if choice_option and choice_is_colour == false and choice_is_material == false -%}
           <div>
             <dt>{{ choice_option.name | escape }}</dt>
             <dd data-rug-summary-choice>{{ selected_choice_name | escape }}</dd>
@@ -815,5 +1244,7 @@ Supported variables
     </div>
   </rug-configurator>
 
+  {%- comment -%}The formula is shared with the price guide of "Tailor your rug" (assets/rug-price-core.js){%- endcomment -%}
+  <script src="{{ 'rug-price-core.js' | asset_url }}" defer></script>
   <script src="{{ 'rug-configurator.js' | asset_url }}" defer></script>
 {%- endif -%}
