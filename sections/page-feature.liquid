@@ -271,7 +271,8 @@
       .page-reveal {
         animation: page-reveal-rise linear both;
         animation-timeline: view();
-        animation-range: entry 0% cover 22%;
+        /* Done by the time half of the block has come into view, so that nothing is read half faded */
+        animation-range: entry 0% entry 50%;
       }
     }
   }
