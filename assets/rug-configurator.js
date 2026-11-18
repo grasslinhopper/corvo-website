@@ -585,7 +585,9 @@
         longSide = Math.max(width, length),
         shortSide = Math.min(width, length),
         // A round rug is priced on the area of its circle
-        squareCentimetres = round ? Math.round(Math.PI * width * width / 4) : width * length;
+        squareCentimetres = round ? Math.round(Math.PI * width * width / 4) : width * length,
+        // The same area in thousandths of a cm²: a circle is not a whole number of cm², and a price can turn on it
+        areaUnits = round ? Math.round(Math.PI * width * width / 4 * 1000) : width * length * 1000;
 
       let percent = config.supplement,
         reason = null;
@@ -599,8 +601,8 @@
       }
 
       // The rate is in cents per m², without VAT. The result is rounded half-up to the euro, as the price list is.
-      const numerator = BigInt(config.rate) * BigInt(Math.round(100 + percent)) * BigInt(squareCentimetres) * BigInt(Math.round(100 + config.vat)),
-        euros = Number((numerator + 5000000000n) / 10000000000n),
+      const numerator = BigInt(config.rate) * BigInt(Math.round(100 + percent)) * BigInt(areaUnits) * BigInt(Math.round(100 + config.vat)),
+        euros = Number((numerator + 5000000000000n) / 10000000000000n),
         custom = this.colours.filter((colour) => colour.choice?.type === 'custom').length,
         list = euros * 100 + custom * config.customColour,
         total = express ? Math.round(list * (100 + config.expressPercent) / 100) : list,
