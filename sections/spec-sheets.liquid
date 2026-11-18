@@ -56,10 +56,14 @@
           <ul class="spec-sheets__list unstyled-list" role="list">
             {%- assign sheets_replaced = '|' -%}
 
-            {%- for rug in rugs -%}
+            {%- comment -%}Every rug, not the first fifty: a list of products is cut at fifty unless it is paginated{%- endcomment -%}
+            {%- paginate collections.all.products by 250 -%}
+            {%- for listed in collections.all.products -%}
               {%- liquid
-                # A rug that another rug replaces (its "Replaced by" field) gives its place to that rug, shown once
-                assign replacement = rug.metafields.rug.replaced_by.value
+                # A rug that another rug replaces (its "Replaced by" field) gives its place to that rug, shown once.
+                # The rug of the list is read under another name: Liquid does not let the variable of a loop be given a new value
+                assign rug = listed
+                assign replacement = listed.metafields.rug.replaced_by.value
 
                 if replacement
                   assign replacement_key = '|' | append: replacement.handle | append: '|'
@@ -99,6 +103,7 @@
                 </a>
               </li>
             {%- endfor -%}
+            {%- endpaginate -%}
           </ul>
 
           <p class="spec-sheets__none text-subdued" data-spec-none hidden>{{ 'spec_sheet.no_match' | t }}</p>

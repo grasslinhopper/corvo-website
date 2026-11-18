@@ -80,10 +80,12 @@
           <ul class="rug-samples__grid unstyled-list" role="list">
             {%- assign samples_replaced = '|' -%}
 
-            {%- for product in source.products -%}
+            {%- for listed in source.products -%}
               {%- comment -%}A rug that another rug replaces gives its place to that rug, shown once{%- endcomment -%}
               {%- liquid
-                assign replacement = product.metafields.rug.replaced_by.value
+                # The rug of the list is read under another name: Liquid does not let the variable of a loop be given a new value
+                assign product = listed
+                assign replacement = listed.metafields.rug.replaced_by.value
 
                 if replacement
                   assign replacement_key = '|' | append: replacement.handle | append: '|'

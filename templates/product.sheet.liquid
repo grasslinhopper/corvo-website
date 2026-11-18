@@ -502,7 +502,7 @@
             {%- for option in product.options_with_values -%}
               {%- assign option_name = option.name | downcase | strip -%}
 
-              {%- unless option_name == 'size' -%}
+              {%- unless option_name == 'size' or option_name == 'material' -%}
                 <div>
                   {%- if option.values.size < 2 -%}
                     {%- comment -%}One value only is a fact of the rug, not a choice{%- endcomment -%}

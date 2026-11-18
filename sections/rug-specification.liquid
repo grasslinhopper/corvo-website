@@ -239,7 +239,7 @@ A row without a value is left out.
               {%- if choice_count > 0 -%}
                 {%- for option in product.options_with_values -%}
                   {%- assign option_name = option.name | downcase | strip -%}
-                  {%- unless option_name == 'size' or option.values.size < 2 %} {{ 'rug_page.facts.choices' | t: name: option.name, count: option.values.size }}{% endunless -%}
+                  {%- unless option_name == 'size' or option_name == 'material' or option.values.size < 2 %} {{ 'rug_page.facts.choices' | t: name: option.name, count: option.values.size }}{% endunless -%}
                 {%- endfor -%}
               {%- endif -%}
 
@@ -346,7 +346,7 @@ A row without a value is left out.
               {%- for option in product.options_with_values -%}
                 {%- assign option_name = option.name | downcase | strip -%}
 
-                {%- unless option_name == 'size' -%}
+                {%- unless option_name == 'size' or option_name == 'material' -%}
                   <div class="rug-spec__row">
                     {%- if option.values.size < 2 -%}
                       {%- comment -%}One value only is a fact of the rug, not a choice{%- endcomment -%}

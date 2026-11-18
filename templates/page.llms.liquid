@@ -212,10 +212,13 @@ Shapes sold online: rectangle{% if settings.rug_shape_round %}; round in any dia
 
 {%- assign llms_replaced = '|' -%}
 {%- assign llms_ids = '|' -%}
-{% for rug in rugs -%}
+{%- paginate collections.all.products by 250 -%}
+{% for listed in collections.all.products -%}
 {%- liquid
-  # A rug that another rug replaces (its "Replaced by" field) gives its place to that rug, listed once
-  assign replacement = rug.metafields.rug.replaced_by.value
+  # A rug that another rug replaces (its "Replaced by" field) gives its place to that rug, listed once.
+  # The rug of the list is read under another name: Liquid does not let the variable of a loop be given a new value
+  assign rug = listed
+  assign replacement = listed.metafields.rug.replaced_by.value
 
   if replacement
     assign replacement_key = '|' | append: replacement.handle | append: '|'
@@ -236,6 +239,7 @@ Shapes sold online: rectangle{% if settings.rug_shape_round %}; round in any dia
 -%}
 {% render 'llms-rug-line', rug: rug, vat_plus: vat_plus, fx: fx -%}
 {% endfor %}
+{%- endpaginate -%}
 {%- comment -%}The fully custom rug is not in the lists until it is on sale: it is named here all the same{%- endcomment -%}
 {%- liquid
   assign full_custom = all_products['tailor-made']
