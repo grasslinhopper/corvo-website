@@ -31,6 +31,7 @@ and rules"), the craft levels, the materials and the sample product. Change the 
   [claim_days]          business days to report a defect
   [palette_count]       colours in the Open Palette
   [rug_count]           rug designs
+  [design_count]        designs in the design library
   [level_count]         craft levels
   [materials_count]     materials
   [materials_standard]  the materials included in the price, by name
@@ -157,7 +158,8 @@ Supported variables
 
       assign level_count = shop.metaobjects.craft_level.values | size
       assign materials_count = shop.metaobjects.rug_material.values | size
-      assign filled = filled | replace: '[palette_count]', palette_count | replace: '[rug_count]', collections.all.products_count | replace: '[level_count]', level_count | replace: '[materials_count]', materials_count
+      assign design_count = shop.metaobjects.rug_design.values_count
+      assign filled = filled | replace: '[palette_count]', palette_count | replace: '[rug_count]', collections.all.products_count | replace: '[level_count]', level_count | replace: '[materials_count]', materials_count | replace: '[design_count]', design_count
     endif
 
     comment

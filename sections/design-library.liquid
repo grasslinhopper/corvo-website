@@ -1,0 +1,542 @@
+{%- comment -%}
+  Design library (Corvo addition)
+
+  Every design of the library, grouped by style, with a filter by style and a link on each design that opens the
+  "Tailor your rug" page with that design chosen.
+
+  The designs are the "Rug design" entries in Shopify (Content > Metaobjects): a name, a style, a picture and,
+  optionally, a description and a craft level. Add an entry there and it appears here, in its style.
+
+  The whole list is plain HTML: a heading per style, and for each design its name, its picture with a description and
+  its link. The filter links are plain links to the styles of the page; the <corvo-filter> element
+  (assets/corvo-filter.js) turns them into a filter for readers that run scripts.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign anchor = section.settings.anchor | default: 'designs' | handleize
+  assign tailor_link = section.settings.tailor_link
+  assign other_style = 'design_library.other' | t
+  assign vat_plus = settings.rug_vat_percent | default: 23 | plus: 100
+  assign style_blocks = section.blocks | where: 'type', 'style'
+
+  capture fx
+    render 'rug-fx'
+  endcapture
+-%}
+
+{%- paginate shop.metaobjects.rug_design.values by 250 -%}
+  {%- liquid
+    assign designs = shop.metaobjects.rug_design.values
+    assign total = 0
+
+    comment
+      The styles: those of the setting, in its order, then any other style found among the designs
+    endcomment
+
+    assign style_list = ''
+    assign style_check = '|'
+    assign asked_styles = section.settings.styles | split: ','
+
+    for asked_style in asked_styles
+      assign style_name = asked_style | strip
+      assign style_token = style_name | append: '|'
+
+      if style_name != blank
+        assign style_list = style_list | append: style_token
+        assign style_check = style_check | append: style_token
+      endif
+    endfor
+
+    for design in designs
+      assign total = total | plus: 1
+      assign style_name = design.style.value | default: other_style
+      assign style_token = style_name | append: '|'
+      assign style_needle = style_token | prepend: '|'
+
+      unless style_check contains style_needle
+        assign style_list = style_list | append: style_token
+        assign style_check = style_check | append: style_token
+      endunless
+    endfor
+
+    assign styles = style_list | split: '|'
+  -%}
+
+  {%- if total > 0 -%}
+    <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" id="{{ anchor }}">
+      <div class="container">
+        <div class="section-stack">
+          {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank -%}
+            <div class="section-header justify-self-center text-center">
+              <div class="prose">
+                {%- if section.settings.subheading != blank -%}
+                  <p class="h6">{{ section.settings.subheading | escape }}</p>
+                {%- endif -%}
+
+                {%- if section.settings.title != blank -%}
+                  <h2 class="h2">{{ section.settings.title | escape }}</h2>
+                {%- endif -%}
+
+                {%- if section.settings.text != blank -%}
+                  {%- render 'corvo-fill', text: section.settings.text -%}
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+
+          <corvo-filter class="design-library" param="style" status="{{ 'design_library.status' | t: count: '[count]' | escape }}">
+            <nav class="corvo-filter__nav" aria-label="{{ 'design_library.filter_label' | t | escape }}">
+              <ul class="corvo-filter__list unstyled-list" role="list">
+                <li>
+                  <a href="#{{ anchor }}" class="corvo-chip" data-filter="" aria-current="true">
+                    {{- section.settings.all_label | escape }}
+                    <span class="corvo-chip__count">{{ total }}</span>
+                  </a>
+                </li>
+
+                {%- for style_name in styles -%}
+                  {%- liquid
+                    assign style_count = 0
+
+                    for design in designs
+                      assign design_style = design.style.value | default: other_style
+
+                      if design_style == style_name
+                        assign style_count = style_count | plus: 1
+                      endif
+                    endfor
+                  -%}
+
+                  {%- if style_count > 0 -%}
+                    <li>
+                      <a href="#style-{{ style_name | handleize }}" class="corvo-chip" data-filter="{{ style_name | handleize }}">
+                        {{- style_name | escape }}
+                        <span class="corvo-chip__count">{{ style_count }}</span>
+                      </a>
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            </nav>
+
+            <p class="sr-only" role="status" data-filter-status></p>
+
+            {%- for style_name in styles -%}
+              {%- liquid
+                assign style_handle = style_name | handleize
+                assign style_lower = style_name | downcase
+                assign style_count = 0
+                assign style_text = ''
+
+                for design in designs
+                  assign design_style = design.style.value | default: other_style
+
+                  if design_style == style_name
+                    assign style_count = style_count | plus: 1
+                  endif
+                endfor
+
+                for block in style_blocks
+                  if block.settings.style == style_name
+                    assign style_text = block.settings.text
+                  endif
+                endfor
+              -%}
+
+              {%- if style_count > 0 -%}
+                <section class="design-library__group" id="style-{{ style_handle }}" data-filter-item="{{ style_handle }}" data-filter-count="{{ style_count }}" aria-labelledby="style-title-{{ style_handle }}">
+                  <header class="design-library__header">
+                    <h2 class="h3" id="style-title-{{ style_handle }}">{{ style_name | escape }}</h2>
+                    <p class="design-library__count smallcaps text-subdued">{{ 'design_library.count' | t: count: style_count }}</p>
+
+                    {%- if style_text != blank -%}
+                      <div class="design-library__about prose text-subdued">{{ style_text }}</div>
+                    {%- endif -%}
+                  </header>
+
+                  <ul class="design-library__grid unstyled-list" role="list">
+                    {%- for design in designs -%}
+                      {%- liquid
+                        assign design_style = design.style.value | default: other_style
+
+                        if design_style != style_name
+                          continue
+                        endif
+
+                        assign design_name = design.name.value
+                        assign design_image = design.image.value
+                        assign design_alt_default = 'design_library.image_alt' | t: name: design_name, style: style_lower
+                        assign design_alt = design_image.alt | default: design_alt_default
+                        assign design_level = design.craft_level.value
+                        assign design_url = ''
+
+                        if tailor_link != blank
+                          assign design_url = tailor_link | append: '?design=' | append: design.system.handle | append: '#price-guide'
+                        endif
+                      -%}
+
+                      <li class="design-card">
+                        {%- if design_image != blank -%}
+                          <div class="design-card__media">
+                            {{- design_image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 50vw, (max-width: 999px) 33vw, 25vw', widths: '200,300,400,500,600,800', alt: design_alt -}}
+                          </div>
+                        {%- endif -%}
+
+                        <div class="design-card__text">
+                          <h3 class="h6">{{ design_name | escape }}</h3>
+
+                          {%- if design.description.value != blank -%}
+                            <p class="text-sm text-subdued">{{ design.description.value | escape }}</p>
+                          {%- endif -%}
+
+                          {%- if design_level != blank -%}
+                            {%- liquid
+                              assign level_cents = design_level.retail_per_m2.value | times: vat_plus | round
+
+                              capture level_price
+                                render 'rug-money', amount: level_cents, fx: fx
+                              endcapture
+
+                              assign level_price = level_price | strip
+                            -%}
+
+                            <p class="text-sm text-subdued">{{ 'design_library.craft_level' | t: label: design_level.label.value, price: level_price }}</p>
+                          {%- endif -%}
+
+                          {%- if design_url != blank and section.settings.button != blank -%}
+                            <a href="{{ design_url }}" class="design-card__link link text-sm">
+                              {{- section.settings.button | escape -}}
+                              <span class="sr-only">: {{ design_name | escape }}</span>
+                            </a>
+                          {%- endif -%}
+                        </div>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </section>
+              {%- endif -%}
+            {%- endfor -%}
+          </corvo-filter>
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%}The designs as structured data: a list of named works, each with its style and its picture{%- endcomment -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": {{ page.title | default: section.settings.title | json }},
+        "numberOfItems": {{ total }},
+        "itemListElement": [
+          {%- for design in designs -%}
+            {
+              "@type": "ListItem",
+              "position": {{ forloop.index }},
+              "item": {
+                "@type": "VisualArtwork",
+                "name": {{ design.name.value | json }},
+                "artform": "Rug design",
+                {%- if design.style.value != blank -%}
+                  "genre": {{ design.style.value | json }},
+                {%- endif -%}
+                {%- if design.description.value != blank -%}
+                  "description": {{ design.description.value | json }},
+                {%- endif -%}
+                {%- if design.image.value != blank -%}
+                  "image": {{ design.image.value | image_url: width: 1200 | prepend: 'https:' | json }},
+                {%- endif -%}
+                "creator": { "@type": "Organization", "name": {{ shop.name | json }}, "url": {{ shop.url | json }} }
+              }
+            }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      }
+    </script>
+
+    <script src="{{ 'corvo-filter.js' | asset_url }}" defer></script>
+  {%- endif -%}
+{%- endpaginate -%}
+
+{% stylesheet %}
+  /* The filter links, shared by the design library and the Portfolio */
+  .corvo-filter__list {
+    scrollbar-width: none;
+    gap: .5rem;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .corvo-filter__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .corvo-chip {
+    color: rgb(var(--text-color) / .7);
+    border: 1px solid rgb(var(--border-color));
+    border-radius: var(--input-border-radius, 0);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    align-items: baseline;
+    gap: .5rem;
+    padding: .625rem 1rem;
+    font-size: .6875rem;
+    text-decoration: none;
+    transition: border-color .2s, color .2s;
+    display: flex;
+  }
+
+  .corvo-chip:hover {
+    border-color: rgb(var(--text-color) / .45);
+  }
+
+  .corvo-chip[aria-current] {
+    color: rgb(var(--text-color));
+    border-color: rgb(var(--text-color));
+    box-shadow: inset 0 0 0 1px rgb(var(--text-color));
+  }
+
+  .corvo-chip__count {
+    font-variant-numeric: tabular-nums;
+    opacity: .6;
+  }
+
+  @media screen and (min-width: 700px) {
+    .corvo-filter__list {
+      flex-wrap: wrap;
+      justify-content: center;
+      overflow: visible;
+    }
+
+    .corvo-chip {
+      font-size: .75rem;
+    }
+  }
+
+  /* The library */
+  .design-library {
+    gap: clamp(2.5rem, 5vw, 4rem);
+    display: grid;
+  }
+
+  .design-library__group {
+    gap: 2rem;
+    display: grid;
+    /* A filter link without scripts jumps to its style: the heading stays clear of the bars that stick to the top */
+    scroll-margin-block-start: calc(var(--sticky-area-height, 0px) + 5rem);
+  }
+
+  .design-library__group[hidden] {
+    display: none;
+  }
+
+  .design-library__header {
+    border-block-end: 1px solid rgb(var(--border-color));
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: .5rem 1.5rem;
+    padding-block-end: 1rem;
+    display: grid;
+  }
+
+  .design-library__header h2 {
+    margin: 0;
+  }
+
+  .design-library__count {
+    margin: 0;
+  }
+
+  .design-library__about {
+    grid-column: 1 / -1;
+    max-width: 44rem;
+  }
+
+  .design-library__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  @media screen and (min-width: 700px) {
+    .design-library__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 3rem 2rem;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .design-library__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 3.5rem 2.5rem;
+    }
+  }
+
+  /* A design: the whole rug, uncropped, lying on the page */
+  .design-card {
+    align-content: start;
+    gap: 1.125rem;
+    min-width: 0;
+    display: grid;
+    position: relative;
+  }
+
+  .design-card__media {
+    aspect-ratio: 5 / 7;
+    filter: drop-shadow(0 .5rem .875rem rgb(0 0 0 / .14));
+    transition: transform .5s cubic-bezier(.2, .7, .2, 1), filter .5s cubic-bezier(.2, .7, .2, 1);
+  }
+
+  .design-card__media img {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .design-card__text {
+    align-content: start;
+    justify-items: start;
+    gap: .375rem;
+    display: grid;
+  }
+
+  .design-card__text h3,
+  .design-card__text p {
+    margin: 0;
+  }
+
+  /* The link of a design covers its whole card, so the picture opens it too */
+  .design-card__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  @media (hover: hover) {
+    .design-card:hover .design-card__media {
+      filter: drop-shadow(0 1rem 1.5rem rgb(0 0 0 / .2));
+      transform: translateY(-.375rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .design-card__media {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Design library",
+  "class": "shopify-section--design-library",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["page"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Every design of the library, by style. The designs are the \"Rug design\" entries in Shopify (Content > Metaobjects): add, change or remove a design there."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Styles"
+    },
+    {
+      "type": "text",
+      "id": "styles",
+      "label": "Order of the styles",
+      "info": "The names of the styles, separated by commas, as they are written on the designs. A style that is not listed here follows at the end.",
+      "default": "Ethnic, Relief, Classic, Cut Loop, Floral, Geometric"
+    },
+    {
+      "type": "text",
+      "id": "all_label",
+      "label": "Name of the link that shows every style",
+      "default": "All"
+    },
+    {
+      "type": "header",
+      "content": "Link on each design"
+    },
+    {
+      "type": "text",
+      "id": "button",
+      "label": "Link text",
+      "default": "Make this design"
+    },
+    {
+      "type": "url",
+      "id": "tailor_link",
+      "label": "Page with the price guide",
+      "info": "The \"Tailor your rug\" page. It opens with the design chosen."
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Name of this part of the page in links",
+      "info": "A button that links to #designs brings the visitor here.",
+      "default": "designs"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "style",
+      "name": "About a style",
+      "settings": [
+        {
+          "type": "text",
+          "id": "style",
+          "label": "Style",
+          "info": "As it is written on the designs, for example: Relief."
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "A line or two about the style"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Design library"
+    }
+  ]
+}
+{% endschema %}

@@ -21,6 +21,10 @@
   The guide is copied into the request form that follows it on the page (sections/proposal-form.liquid), so the
   request that reaches the shop says what the visitor saw.
 
+  A design of the design library can be carried here: the library links to this page with "?design=" and the handle
+  of the design. The design is then shown in the first step, its craft level is chosen when the design has one, and
+  its name is sent with the request.
+
   The steps, the fields, the choices and the summary are drawn with the styles of the rug page (the ".rug-step",
   ".rug-field", ".rug-choice" and ".rug-summary" rules in sections/main-product.liquid), so the two pages look and
   behave alike. Shopify serves the styles of every section on every page.
@@ -140,6 +144,23 @@
   {%- endfor -%}
 {%- endcapture -%}
 
+{%- comment -%}The designs of the design library, for a design carried here from the library{%- endcomment -%}
+{%- capture designs_json -%}
+  {%- paginate shop.metaobjects.rug_design.values by 250 -%}
+    {%- for design in shop.metaobjects.rug_design.values -%}
+      {%- liquid
+        assign design_image_url = ''
+
+        if design.image.value != blank
+          assign design_image_url = design.image.value | image_url: width: 320
+        endif
+      -%}
+
+      {"handle":{{ design.system.handle | json }},"name":{{ design.name.value | json }},"style":{{ design.style.value | json }},"image":{{ design_image_url | json }},"level":{{ design.craft_level.value.number.value | json }}}{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  {%- endpaginate -%}
+{%- endcapture -%}
+
 <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" id="price-guide">
   <div class="container container--lg">
     <div class="section-stack">
@@ -176,6 +197,7 @@
             "expressPercent": {{ express_percent }},
             "levels": [{{ levels_json | strip }}],
             "materials": [{{ materials_json | strip }}],
+            "designs": [{{ designs_json | strip }}],
             "fx": {{ fx | default: 1 }},
             "baseCurrency": {{ is_base_currency | json }},
             "shopCurrency": {{ shop.currency | json }},
@@ -208,7 +230,12 @@
               "summaryShipping": {{ 'rug_page.shipping' | t | json }},
               "summaryTotal": {{ 'price_guide.total' | t | json }},
               "recapTotal": {{ 'price_guide.recap_total' | t: total: '[total]', net: '[net]' | json }},
-              "recapBase": {{ 'price_guide.recap_base' | t: currency: '[currency]', total: '[total]', net: '[net]' | json }}
+              "recapBase": {{ 'price_guide.recap_base' | t: currency: '[currency]', total: '[total]', net: '[net]' | json }},
+              "designFrom": {{ 'price_guide.design_from' | t: name: '[name]' | json }},
+              "designLibrary": {{ 'price_guide.design_library' | t | json }},
+              "designLevel": {{ 'price_guide.design_level' | t: name: '[name]', label: '[label]' | json }},
+              "designUnknown": {{ 'price_guide.design_unknown' | t: name: '[name]' | json }},
+              "designAlt": {{ 'price_guide.design_alt' | t: name: '[name]', style: '[style]' | json }}
             }
           }
         </script>
@@ -227,6 +254,37 @@
               <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
               <span class="rug-step__title h6">{{ 'rug_page.design' | t }}</span>
             </legend>
+
+            {%- comment -%}
+            A design carried from the design library (the address of the page ends with "?design=" and its handle).
+            The element fills this box in; without a design it stays hidden and the line under it shows the way to
+            the library.
+            {%- endcomment -%}
+            <div class="price-guide__design" data-guide-design hidden>
+              <img class="price-guide__design-image" data-guide-design-image alt="" width="120" height="168" hidden>
+
+              <div class="price-guide__design-text">
+                <p class="text-sm text-subdued">{{ 'price_guide.design_starting' | t }}</p>
+                <p class="h6" data-guide-design-name></p>
+                <p class="text-sm text-subdued" data-guide-design-style></p>
+                <p class="text-sm" data-guide-design-note></p>
+              </div>
+
+              <div class="price-guide__design-actions text-sm">
+                {%- if section.settings.library_link != blank -%}
+                  <a href="{{ section.settings.library_link }}" class="link">{{ 'price_guide.design_change' | t }}</a>
+                {%- endif -%}
+
+                <button type="button" class="link" data-guide-design-remove>{{ 'price_guide.design_remove' | t }}</button>
+              </div>
+            </div>
+
+            {%- if section.settings.library_link != blank and section.settings.library_link_text != blank -%}
+              <p class="price-guide__lead text-sm text-subdued" data-guide-design-prompt>
+                {{- section.settings.library_text | escape }}
+                <a href="{{ section.settings.library_link }}" class="link">{{ section.settings.library_link_text | escape }}</a>
+              </p>
+            {%- endif -%}
 
             {%- if section.settings.design_text != blank -%}
               <p class="price-guide__lead text-sm text-subdued">{{ section.settings.design_text | escape }}</p>
@@ -646,6 +704,61 @@
     margin-block-end: .875rem;
   }
 
+  /* A design carried from the design library */
+  .price-guide__design {
+    border: 1px solid rgb(var(--border-color));
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem 1.25rem;
+    margin-block-end: 1.25rem;
+    padding: 1rem;
+    display: grid;
+  }
+
+  .price-guide__design[hidden],
+  .price-guide__design-image[hidden] {
+    display: none;
+  }
+
+  .price-guide__design-image {
+    object-fit: contain;
+    width: 4.5rem;
+    height: auto;
+    max-height: 7rem;
+  }
+
+  .price-guide__design-text {
+    gap: .25rem;
+    display: grid;
+  }
+
+  .price-guide__design-text p {
+    margin: 0;
+  }
+
+  .price-guide__design-text p:empty {
+    display: none;
+  }
+
+  .price-guide__design-actions {
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+    gap: .5rem 1.5rem;
+    display: flex;
+  }
+
+  @media screen and (min-width: 700px) {
+    .price-guide__design {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+
+    .price-guide__design-actions {
+      grid-column: auto;
+      justify-items: end;
+      display: grid;
+    }
+  }
+
   .price-guide__groups {
     gap: 1.125rem;
     display: grid;
@@ -865,6 +978,24 @@
       "id": "default_level",
       "label": "Craft level chosen when the page opens",
       "default": 3
+    },
+    {
+      "type": "text",
+      "id": "library_text",
+      "label": "Line that points to the design library",
+      "default": "Starting from a design of our library?"
+    },
+    {
+      "type": "url",
+      "id": "library_link",
+      "label": "Page of the design library",
+      "info": "A design chosen there is carried into this guide and sent with the request."
+    },
+    {
+      "type": "text",
+      "id": "library_link_text",
+      "label": "Link text",
+      "default": "Choose it in the design library"
     },
     {
       "type": "header",

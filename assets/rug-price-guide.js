@@ -13,6 +13,10 @@
  *
  * The result is a guide, not a price to pay: nothing is added to the cart. It is copied into the proposal form of the
  * page (sections/proposal-form.liquid), so the request that reaches the shop says what the visitor saw.
+ *
+ * A design of the design library is carried here by the address of the page ("?design=" and the handle of the design):
+ * it is shown in the first step, its craft level is chosen when the design has one, and its name is sent with the
+ * request.
  */
 (() => {
   if (window.customElements.get('rug-price-guide')) {
@@ -87,13 +91,73 @@
       this.lengthInput = this.querySelector('[data-guide-length]');
       this.coloursInput = this.querySelector('[data-guide-colours]');
       this.form = document.getElementById(this.getAttribute('form'));
+      this.designBox = this.querySelector('[data-guide-design]');
+      this.designPrompt = this.querySelector('[data-guide-design-prompt]');
+      this.design = null;
 
       this.addEventListener('input', () => this.update());
       this.addEventListener('change', () => this.update());
       this.addEventListener('click', (event) => this.onClick(event));
 
+      this.chooseDesign(new URLSearchParams(window.location.search).get('design'));
       this.update();
       this.watchBar();
+    }
+
+    /**
+     * A design of the design library is carried into the guide, or taken out of it
+     */
+    chooseDesign(handle) {
+      const { strings } = this.config;
+
+      this.design = (handle && (this.config.designs || []).find((design) => design.handle === handle)) || null;
+
+      if (this.designPrompt) {
+        this.designPrompt.hidden = this.design !== null;
+      }
+
+      if (!this.designBox) {
+        return;
+      }
+
+      this.designBox.hidden = this.design === null;
+
+      if (!this.design) {
+        return;
+      }
+
+      const { name, style, image } = this.design,
+        level = this.config.levels.find((candidate) => String(candidate.number) === String(this.design.level)),
+        picture = this.designBox.querySelector('[data-guide-design-image]'),
+        write = (selector, text) => {
+          const element = this.designBox.querySelector(selector);
+
+          if (element) {
+            element.textContent = text;
+          }
+        };
+
+      if (picture) {
+        picture.hidden = !image;
+
+        if (image) {
+          picture.src = image;
+          picture.alt = style ? strings.designAlt.replace('[name]', name).replace('[style]', style.toLowerCase()) : name;
+        }
+      }
+
+      write('[data-guide-design-name]', name);
+      write('[data-guide-design-style]', [style, strings.designLibrary].filter(Boolean).join(' · '));
+      write('[data-guide-design-note]', (level ? strings.designLevel.replace('[label]', level.label) : strings.designUnknown).replace('[name]', name));
+
+      // A design whose craft level is known sets the level of the guide
+      if (level) {
+        const choice = this.querySelector(`[data-guide-level][value="${level.number}"]`);
+
+        if (choice) {
+          choice.checked = true;
+        }
+      }
     }
 
     /**
@@ -119,6 +183,18 @@
     }
 
     onClick(event) {
+      if (event.target.closest('[data-guide-design-remove]')) {
+        const url = new URL(window.location.href);
+
+        url.searchParams.delete('design');
+        window.history.replaceState(window.history.state, '', url);
+
+        this.chooseDesign(null);
+        this.update();
+
+        return;
+      }
+
       const size = event.target.closest('[data-guide-size]');
 
       if (size) {
@@ -158,6 +234,7 @@
         options: Array.from(this.querySelectorAll('[data-guide-option]:checked'), (option) => option.dataset.guideOption),
         colours: colours > 0 ? colours : 0,
         express: this.querySelector('[data-guide-shipping]:checked')?.value === 'express',
+        design: this.design,
         errors: []
       };
 
@@ -283,9 +360,12 @@
       }
 
       const optionsText = optionNames.length > 0 ? optionNames.join(', ').replace(/^./, (letter) => letter.toUpperCase()) : strings.none,
-        shippingShort = shippingText.replace(strings.shippingWord, '').trim().replace(/^./, (letter) => letter.toUpperCase());
+        shippingShort = shippingText.replace(strings.shippingWord, '').trim().replace(/^./, (letter) => letter.toUpperCase()),
+        levelText = strings.craftLevel.replace('[label]', state.level.label),
+        designName = state.design ? strings.designFrom.replace('[name]', state.design.name) : '',
+        designText = state.design ? `${designName} · ${levelText}` : levelText;
 
-      set('[data-guide-summary-design]', strings.craftLevel.replace('[label]', state.level.label));
+      set('[data-guide-summary-design]', designText);
       set('[data-guide-summary-material]', materialText);
       set('[data-guide-summary-size]', sizeText);
       set('[data-guide-summary-options]', optionsText);
@@ -302,29 +382,30 @@
         message.textContent = valid ? '' : strings.invalid;
       }
 
-      // The guide travels with the request
+      // The guide travels with the request. Without a valid size there is no guide to send, but a design carried
+      // from the design library is still named.
       if (this.form) {
         const field = this.form.querySelector('[data-guide-field]'),
           recap = this.form.querySelector('[data-guide-recap]'),
           lines = valid ? [
-            `${strings.summaryDesign}: ${strings.craftLevel.replace('[label]', state.level.label)}`,
+            `${strings.summaryDesign}: ${designText}`,
             `${strings.summaryMaterial}: ${materialText}`,
             `${strings.summarySize}: ${sizeText}`,
             `${strings.summaryOptions}: ${optionsText}`,
             `${strings.summaryShipping}: ${shippingShort}`,
             `${strings.summaryTotal}: ${strings.recapTotal.replace('[total]', this.money(result.gross)).replace('[net]', this.money(result.net))}`
-          ] : [];
+          ] : (state.design ? [`${strings.summaryDesign}: ${designName}`] : []);
 
         // The team works in the shop's currency: a guide read in another currency also travels in the shop's own
         if (valid && this.config.fx !== 1) {
           lines.push(strings.recapBase.replace('[currency]', this.config.shopCurrency).replace('[total]', (result.gross / 100).toFixed(2)).replace('[net]', (result.net / 100).toFixed(2)));
         }
 
-        // The line is sent only when there is a guide to send
+        // The line is sent only when there is something to send
         if (field) {
           field.value = lines.join(' | ');
 
-          if (valid) {
+          if (lines.length > 0) {
             field.name = field.dataset.name;
           } else {
             field.removeAttribute('name');
@@ -332,7 +413,7 @@
         }
 
         if (recap) {
-          recap.hidden = !valid;
+          recap.hidden = lines.length === 0;
           recap.querySelector('[data-guide-recap-text]').textContent = lines.join(' · ');
         }
       }

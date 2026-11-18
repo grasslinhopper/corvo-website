@@ -46,6 +46,14 @@
         "craftmanship": {
           "title": "Craftsmanship: how a Corvo rug is made",
           "description": "How a Corvo rug is made in Portugal: yarn dyed in our colour laboratory, tufting, a latex backing, and a final inspection and finish by hand."
+        },
+        "gallery": {
+          "title": "Rug design library: designs to make in your size and colours",
+          "description": "The Corvo design library: [design_count] rug designs, from ethnic and relief to floral and geometric. Each is made to measure, in any colour, from [from_price] per m²."
+        },
+        "portfolio": {
+          "title": "Portfolio: homes and public spaces with Corvo rugs",
+          "description": "Selected projects with Corvo rugs, in homes and public spaces. Each project shows the place, the designer and the rugs made for it."
         }
       },
       "parent": "Sorema"
@@ -610,7 +618,15 @@
     "form_phone": "Phone (optional)",
     "form_country": "Country",
     "form_link": "Link to drawings or photos (optional)",
-    "form_message": "Your project: the room, the design, the colours"
+    "form_message": "Your project: the room, the design, the colours",
+    "design_starting": "Starting from",
+    "design_library": "Design library",
+    "design_from": "{{ name }}, from the design library",
+    "design_level": "{{ name }} is a craft level {{ label }} design: it is chosen below.",
+    "design_unknown": "We confirm the craft level of {{ name }} with your proposal.",
+    "design_alt": "{{ name }}: {{ style }} rug design",
+    "design_change": "Choose another design",
+    "design_remove": "Remove"
   },
   "rug_page": {
     "collection": "{{ collection }} collection",
@@ -696,5 +712,16 @@
       "made_to_measure": "Made to measure",
       "made_in": "Made in"
     }
+  },
+  "design_library": {
+    "filter_label": "Filter the designs by style",
+    "count": {
+      "one": "{{ count }} design",
+      "other": "{{ count }} designs"
+    },
+    "status": "Designs shown: {{ count }}",
+    "image_alt": "{{ name }}: {{ style }} rug design from the Corvo design library",
+    "craft_level": "Craft level {{ label }}: {{ price }} per m²",
+    "other": "More designs"
   }
 }

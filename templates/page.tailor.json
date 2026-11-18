@@ -82,7 +82,7 @@
           "type": "card",
           "settings": {
             "title": "A design from the library",
-            "text": "<p>Patterns from our design library, ready to be redrawn in your colours and your size.</p>",
+            "text": "<p>[design_count] patterns from our design library, ready to be redrawn in your colours and your size.</p>",
             "image": "shopify://shop_images/Kunlun.webp",
             "image_alt": "A green geometric pattern from the Corvo design library",
             "link_url": "shopify://pages/gallery",
@@ -118,6 +118,9 @@
         "design_text": "The craft level measures how demanding a design is to make. It sets the price per m².",
         "design_note": "Not sure which level your design is? Choose the closest: we confirm it when we have seen the design.",
         "default_level": 3,
+        "library_text": "Starting from a design of our library?",
+        "library_link": "shopify://pages/gallery",
+        "library_link_text": "Choose it in the design library",
         "group_standard": "Included in the price",
         "group_plus": "With a supplement",
         "group_premium": "Premium fibres",
