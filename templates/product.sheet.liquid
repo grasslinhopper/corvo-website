@@ -124,8 +124,8 @@
       body {
         color: var(--ink);
         font-family: var(--text);
-        font-size: 10pt;
-        line-height: 1.45;
+        font-size: 9.5pt;
+        line-height: 1.4;
         margin: 0;
         padding: 1.5rem 1rem 4rem;
       }
@@ -135,7 +135,7 @@
         max-width: 210mm;
         min-height: 297mm;
         margin: 0 auto;
-        padding: 13mm 16mm 10mm;
+        padding: 12mm 15mm 9mm;
         box-shadow: 0 1px 12px rgb(0 0 0 / .08);
         display: flex;
         flex-direction: column;
@@ -201,7 +201,7 @@
         flex: 1 1 0;
         width: 0;
         min-width: 0;
-        height: 52mm;
+        height: 45mm;
         display: block;
       }
 
@@ -214,7 +214,7 @@
         border-bottom: 1px solid var(--line);
         grid-template-columns: 38mm minmax(0, 1fr);
         gap: 4mm;
-        padding: 1.6mm 0;
+        padding: 1.4mm 0;
         display: grid;
         break-inside: avoid;
       }
@@ -229,15 +229,20 @@
 
       dd small {
         color: var(--soft);
-        font-size: 8.5pt;
+        font-size: 8pt;
         display: block;
+      }
+
+      dd .sheet__choices {
+        color: inherit;
+        padding-top: .3mm;
       }
 
       h2 {
         font-family: var(--heading);
         letter-spacing: .14em;
         text-transform: uppercase;
-        margin: 5.5mm 0 2mm;
+        margin: 5mm 0 2mm;
         font-size: 9.5pt;
         font-weight: 400;
         break-after: avoid;
@@ -252,7 +257,7 @@
       td {
         border-bottom: 1px solid var(--line);
         text-align: left;
-        padding: 1.5mm 0;
+        padding: 1.3mm 0;
       }
 
       tr {
@@ -270,7 +275,7 @@
       .sheet__note {
         color: var(--soft);
         margin: 3mm 0 0;
-        font-size: 8.5pt;
+        font-size: 8pt;
       }
 
       .sheet__foot {
@@ -290,7 +295,7 @@
       }
 
       .sheet__spacer {
-        min-height: 5mm;
+        min-height: 3mm;
       }
 
       .toolbar {
@@ -488,14 +493,17 @@
                   {%- else -%}
                     <dt>{{ 'rug_page.spec.choices' | t: name: option.name }}</dt>
                     <dd>
-                      {{ 'rug_page.spec.choices_count' | t: count: option.values.size }}
+                      {%- comment -%}A long list is set small, to keep the sheet on one page{%- endcomment -%}
+                      {%- if option.values.size > 6 -%}<small class="sheet__choices">{%- endif -%}
 
-                      <small>
-                        {%- for option_value in option.values -%}
-                          {{- option_value.name | default: option_value | escape -}}
-                          {%- unless forloop.last -%}, {% endunless -%}
-                        {%- endfor -%}
-                      </small>
+                      {{- 'rug_page.spec.choices_count' | t: count: option.values.size }}:
+
+                      {% for option_value in option.values -%}
+                        {{- option_value.name | default: option_value | escape -}}
+                        {%- unless forloop.last -%}, {% endunless -%}
+                      {%- endfor -%}
+
+                      {%- if option.values.size > 6 -%}</small>{%- endif -%}
                     </dd>
                   {%- endif -%}
                 </div>
