@@ -1,0 +1,261 @@
+{%- comment -%}
+  Request form (Corvo addition)
+
+  A form that asks Corvo for something that is not handed out on the site: a price list, a file, a printed catalogue,
+  a box of samples. The visitor says what they need, who they are and where to send it.
+
+  It is Shopify's own contact form, so a request arrives at the shop's e-mail address like any other message, with a
+  first line that says where it comes from.
+
+  A link anywhere on the page can choose what is asked for: give the link the address of this form (#request) and
+  the attribute data-request-option with the words of one of the choices. The "Cards" section does this through its
+  "Choice made in the request form" setting. Without scripts the link still leads to the form, and the visitor
+  chooses there.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign form_id = section.settings.form_id | default: 'request-form'
+  assign anchor = section.settings.anchor | default: 'request' | handleize
+  assign choice_lines = section.settings.choices | newline_to_br | strip_newlines | split: '<br />'
+  assign choices = ''
+
+  for choice_line in choice_lines
+    assign choice = choice_line | strip
+
+    if choice != blank
+      assign choices = choices | append: choice | append: '|'
+    endif
+  endfor
+
+  assign choices = choices | split: '|'
+-%}
+
+<div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" id="{{ anchor }}">
+  <div class="container container--xs">
+    <div class="section-stack">
+      {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank -%}
+        <div class="section-header justify-self-center text-center">
+          <div class="prose">
+            {%- if section.settings.subheading != blank -%}
+              <p class="h6">{{ section.settings.subheading | escape }}</p>
+            {%- endif -%}
+
+            {%- if section.settings.title != blank -%}
+              <h2 class="h2">{{ section.settings.title | escape }}</h2>
+            {%- endif -%}
+
+            {%- if section.settings.text != blank -%}
+              {%- render 'corvo-fill', text: section.settings.text -%}
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- form 'contact', id: form_id, class: 'form request-form' -%}
+        {%- if form.posted_successfully? -%}
+          {%- assign default_success = 'contact.form.success_message' | t -%}
+          {%- assign content = section.settings.success | default: default_success | escape -%}
+          {%- render 'banner', status: 'success', content: content -%}
+        {%- endif -%}
+
+        {%- if form.errors -%}
+          {%- capture content -%}{{ form.errors.translated_fields[form.errors.first] | capitalize }} {{ form.errors.messages[form.errors.first] }}{%- endcapture -%}
+          {%- render 'banner', status: 'error', content: content -%}
+        {%- endif -%}
+
+        <input type="hidden" name="contact[{{ 'price_guide.request_subject_label' | t | escape }}]" value="{{ section.settings.subject | escape }}">
+
+        <div class="fieldset">
+          {%- if choices.size > 0 -%}
+            {%- liquid
+              assign label = section.settings.choices_label | escape
+              assign name = 'contact[' | append: label | append: ']'
+            -%}
+
+            <div data-request-choices>
+              {%- render 'select', name: name, label: label, option_values: choices, show_label_as_block: true, id_prefix: 'request' -%}
+            </div>
+          {%- endif -%}
+
+          <div class="fieldset-row">
+            {%- assign label = 'contact.form.name' | t -%}
+            {%- render 'input', type: 'text', name: 'contact[name]', label: label, value: customer.name, required: true, autocomplete: 'name', id_prefix: 'request' -%}
+
+            {%- assign label = 'contact.form.email' | t -%}
+            {%- render 'input', type: 'email', name: 'contact[email]', label: label, value: customer.email, required: true, autocomplete: 'email', id_prefix: 'request' -%}
+          </div>
+
+          <div class="fieldset-row">
+            {%- assign label = 'request_form.company' | t -%}
+            {%- assign name = 'contact[' | append: label | append: ']' -%}
+            {%- render 'input', type: 'text', name: name, label: label, autocomplete: 'organization', id_prefix: 'request' -%}
+
+            {%- assign label = 'price_guide.form_country' | t -%}
+            {%- assign name = 'contact[' | append: label | append: ']' -%}
+            {%- render 'input', type: 'text', name: name, label: label, autocomplete: 'country-name', id_prefix: 'request' -%}
+          </div>
+
+          {%- if section.settings.show_address -%}
+            {%- assign label = 'request_form.address' | t -%}
+            {%- assign name = 'contact[' | append: label | append: ']' -%}
+            {%- render 'input', name: name, label: label, multiline: 2, autocomplete: 'street-address', id_prefix: 'request' -%}
+          {%- endif -%}
+
+          {%- assign label = section.settings.message_label | default: 'Message' | escape -%}
+          {%- render 'input', name: 'contact[body]', label: label, multiline: 4, id_prefix: 'request' -%}
+        </div>
+
+        {%- if section.settings.note != blank -%}
+          <div class="prose text-sm text-subdued">
+            {%- render 'corvo-fill', text: section.settings.note -%}
+          </div>
+        {%- endif -%}
+
+        {%- assign default_button = 'contact.form.submit' | t -%}
+        {%- assign button_content = section.settings.button | default: default_button | escape -%}
+        {%- render 'button', content: button_content, type: 'submit' -%}
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+{%- comment -%}A link of the page that names one of the choices sets it in the form{%- endcomment -%}
+{%- if choices.size > 0 -%}
+  <script>
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest('[data-request-option]'),
+        select = document.querySelector('[data-request-choices] select');
+
+      if (!link || !select) {
+        return;
+      }
+
+      const wanted = link.dataset.requestOption.trim().toLowerCase(),
+        option = Array.from(select.options).find((candidate) => candidate.value.trim().toLowerCase() === wanted);
+
+      if (option) {
+        select.value = option.value;
+      }
+    });
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Request form",
+  "class": "shopify-section--request-form",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A form to ask for something that is not handed out on the site: a price list, a file, a printed catalogue, a box. It is Shopify's contact form: a request arrives at the shop's e-mail address."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Ask for it"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "What can be asked for"
+    },
+    {
+      "type": "text",
+      "id": "choices_label",
+      "label": "Question",
+      "default": "What do you need?"
+    },
+    {
+      "type": "textarea",
+      "id": "choices",
+      "label": "Choices",
+      "info": "One per line. Leave empty to drop the question. A card of the \"Cards\" section can choose one of these for the visitor: give the card the same words."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_address",
+      "label": "Ask for a postal address",
+      "info": "For a printed catalogue or a box.",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "message_label",
+      "label": "Name of the message field",
+      "default": "Your project, or anything we should know"
+    },
+    {
+      "type": "header",
+      "content": "Sending"
+    },
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "Note above the button"
+    },
+    {
+      "type": "text",
+      "id": "button",
+      "label": "Button",
+      "default": "Send my request"
+    },
+    {
+      "type": "text",
+      "id": "success",
+      "label": "Message once the request is sent",
+      "default": "Thank you. Your request has been sent, and we will answer by e-mail."
+    },
+    {
+      "type": "text",
+      "id": "subject",
+      "label": "Line that tells the team where a request comes from",
+      "default": "Request from the Resources pages"
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Name of this form in links",
+      "info": "A link to #request brings the visitor here.",
+      "default": "request"
+    },
+    {
+      "type": "text",
+      "id": "form_id",
+      "label": "ID of the form",
+      "default": "request-form"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Request form"
+    }
+  ]
+}
+{% endschema %}

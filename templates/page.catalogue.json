@@ -7,43 +7,42 @@
         "style": "tabs"
       }
     },
-    "wf-1": {
-      "type": "wireframe",
+    "intro": {
+      "type": "page-intro",
       "settings": {
-        "label": "Catalogue",
-        "is_page_title": true,
-        "description": "The current Corvo catalogue.",
-        "needs": "",
-        "phase": "Phase 6",
-        "layout": "banner",
-        "columns": 3,
-        "size": "medium"
+        "color_scheme": "scheme-1",
+        "eyebrow": "Resources",
+        "title": "Catalogue",
+        "heading_tag": "h1",
+        "text": "<p>The atelier, the collections and the yarns in one book.</p><p>Ask for it as a PDF, or as a printed copy sent to your studio.</p>",
+        "image": "shopify://shop_images/graccioza-mood-p06.jpg",
+        "image_alt": "A plain cream rug in a living room with two low sofas",
+        "image_focus": "--focus: center",
+        "image_position": "end",
+        "button_1_text": "Ask for the catalogue",
+        "button_1_link": "#request",
+        "button_2_text": "See all rugs",
+        "button_2_link": "shopify://collections/all"
       }
     },
-    "wf-2": {
-      "type": "wireframe",
+    "request": {
+      "type": "request-form",
       "settings": {
-        "label": "View online",
-        "is_page_title": false,
-        "description": "The catalogue shown page by page on screen.",
-        "needs": "The catalogue as a PDF.",
-        "phase": "Phase 6",
-        "layout": "split",
-        "columns": 3,
-        "size": "medium"
-      }
-    },
-    "wf-3": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Download or request a copy",
-        "is_page_title": false,
-        "description": "A download button and a short form to ask for a printed copy.",
-        "needs": "",
-        "phase": "Phase 6",
-        "layout": "grid",
-        "columns": 2,
-        "size": "small"
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "subheading": "PDF or print",
+        "title": "Ask for the catalogue",
+        "text": "<p>Say which you would like, and where a printed copy should go.</p>",
+        "choices_label": "Which would you like?",
+        "choices": "The catalogue as a PDF\nA printed catalogue",
+        "show_address": true,
+        "message_label": "Your project, or anything we should know",
+        "note": "<p>We use your details only to answer this request.</p>",
+        "button": "Send my request",
+        "success": "Thank you. Your request has been sent, and we will answer by e-mail.",
+        "subject": "Request from the Catalogue page",
+        "anchor": "request",
+        "form_id": "request-form"
       }
     },
     "subnav-pager": {
@@ -56,9 +55,8 @@
   },
   "order": [
     "subnav-tabs",
-    "wf-1",
-    "wf-2",
-    "wf-3",
+    "intro",
+    "request",
     "subnav-pager"
   ]
 }

@@ -7,44 +7,175 @@
         "style": "tabs"
       }
     },
-    "wf-1": {
-      "type": "wireframe",
+    "intro": {
+      "type": "page-intro",
       "settings": {
-        "label": "Resources",
-        "is_page_title": true,
-        "description": "For designers, architects and retailers: everything needed to specify and sell Corvo, open to all.",
-        "needs": "",
-        "phase": "Phase 6",
-        "layout": "banner",
-        "columns": 3,
-        "size": "medium"
-      }
+        "color_scheme": "scheme-1",
+        "eyebrow": "For professionals",
+        "title": "Resources",
+        "heading_tag": "h1",
+        "text": "<p>For designers, architects and retailers: what you need to specify and sell Corvo, open to all.</p>",
+        "image": "shopify://shop_images/graccioza-mood-p29.jpg",
+        "image_alt": "A cream rug with a dark border in a sunlit room, with an armchair and a console table",
+        "image_focus": "--focus: center",
+        "image_position": "end",
+        "button_1_text": "Sales tools",
+        "button_1_link": "shopify://pages/sales-tools",
+        "button_2_text": "Order samples",
+        "button_2_link": "shopify://pages/samples"
+      },
+      "blocks": {
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "label": "Specification sheets",
+            "value": "One for each of the [rug_count] rugs"
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "label": "Samples",
+            "value": "[sample_size], [sample_price]"
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "label": "Made to measure",
+            "value": "Any size up to [max_size]"
+          }
+        },
+        "fact_4": {
+          "type": "fact",
+          "settings": {
+            "label": "Production",
+            "value": "[lead_weeks] weeks, or [priority_weeks] with priority production"
+          }
+        }
+      },
+      "block_order": [
+        "fact_1",
+        "fact_2",
+        "fact_3",
+        "fact_4"
+      ]
     },
-    "wf-2": {
-      "type": "wireframe",
+    "tools": {
+      "type": "page-cards",
       "settings": {
-        "label": "The tools",
-        "is_page_title": false,
-        "description": "Four cards: Sales tools, Catalogue, Samples, Care & FAQ.",
-        "needs": "",
-        "phase": "Phase 6",
-        "layout": "grid",
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "subheading": "",
+        "title": "The tools",
+        "text": "",
+        "text_alignment": "center",
         "columns": 4,
-        "size": "medium"
-      }
+        "columns_mobile": "2",
+        "image_ratio": "portrait",
+        "numbered": false
+      },
+      "blocks": {
+        "card_1": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/graccioza-mood-p10-8.jpg",
+            "image_alt": "A plain cream rug in the lobby of a building, in front of a stone reception desk",
+            "title": "Sales tools",
+            "text": "<p>A specification sheet for every rug, and the catalogue, the image bank and the price list on request.</p>",
+            "link_url": "shopify://pages/sales-tools",
+            "link_text": "Open the sales tools"
+          }
+        },
+        "card_2": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/graccioza-mood-p05.jpg",
+            "image_alt": "A plain cream rug in a quiet living room with a low armchair",
+            "title": "Catalogue",
+            "text": "<p>The atelier, the collections and the yarns in one book.</p>",
+            "link_url": "shopify://pages/catalogue",
+            "link_text": "Ask for the catalogue"
+          }
+        },
+        "card_3": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/graccioza-mood-p09.jpg",
+            "image_alt": "Two cream rug samples, one laid over the other",
+            "title": "Samples",
+            "text": "<p>A [sample_size] sample of any rug, for [sample_price].</p>",
+            "link_url": "shopify://pages/samples",
+            "link_text": "Order samples"
+          }
+        },
+        "card_4": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/graccioza-mood-p10-7.jpg",
+            "image_alt": "The pile of a cream rug seen from close, in sunlight",
+            "title": "Care & FAQ",
+            "text": "<p>How to care for a rug, how to choose its size, and the questions asked most often.</p>",
+            "link_url": "shopify://pages/care-faq",
+            "link_text": "Read the answers"
+          }
+        }
+      },
+      "block_order": [
+        "card_1",
+        "card_2",
+        "card_3",
+        "card_4"
+      ]
     },
-    "wf-3": {
-      "type": "wireframe",
+    "contact": {
+      "type": "page-facts",
       "settings": {
-        "label": "Your contact at Corvo",
-        "is_page_title": false,
-        "description": "A named person with an email address and a link to book a meeting.",
-        "needs": "Name, photo and email of the contact person.",
-        "phase": "Phase 6",
-        "layout": "split",
-        "columns": 3,
-        "size": "small"
-      }
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "anchor": "contact",
+        "subheading": "Your contact at Corvo",
+        "title": "Talk to the atelier",
+        "text": "<p>For a project, a quotation or trade terms, write to us or book a meeting.</p>",
+        "button_text": "Book a meeting",
+        "button_link": "shopify://pages/contact"
+      },
+      "blocks": {
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "label": "E-mail",
+            "value": "<p><a href=\"mailto:info@corvo-rugs.com\">info@corvo-rugs.com</a></p>"
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "label": "Telephone",
+            "value": "<p><a href=\"tel:+351227330780\">+351 227 330 780</a></p>"
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "label": "Showroom",
+            "value": "<p>Rua dos Limites, 145, 4501-860 Espinho, Portugal.</p>"
+          }
+        },
+        "fact_4": {
+          "type": "fact",
+          "settings": {
+            "label": "Trade terms",
+            "value": "<p>Write to us for trade prices and terms.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "fact_1",
+        "fact_2",
+        "fact_3",
+        "fact_4"
+      ]
     },
     "subnav-pager": {
       "type": "page-subnav",
@@ -56,9 +187,9 @@
   },
   "order": [
     "subnav-tabs",
-    "wf-1",
-    "wf-2",
-    "wf-3",
+    "intro",
+    "tools",
+    "contact",
     "subnav-pager"
   ]
 }

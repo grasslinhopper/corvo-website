@@ -7,32 +7,6 @@
         "style": "tabs"
       }
     },
-    "wf-1": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Care & FAQ",
-        "is_page_title": true,
-        "description": "Practical answers in one place: care, delivery, returns and the questions clients ask most.",
-        "needs": "",
-        "phase": "Phase 6",
-        "layout": "banner",
-        "columns": 3,
-        "size": "medium"
-      }
-    },
-    "wf-2": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Care guide",
-        "is_page_title": false,
-        "description": "Vacuuming, spills, rotation, sunlight and professional cleaning. The text exists today in the Journal and on the rug page.",
-        "needs": "",
-        "phase": "Phase 6",
-        "layout": "split",
-        "columns": 3,
-        "size": "small"
-      }
-    },
     "faq": {
       "type": "faq",
       "blocks": {
@@ -245,34 +219,212 @@
         "content_width": "sm"
       }
     },
-    "wf-4": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Rug size guide",
-        "is_page_title": false,
-        "description": "Which size suits which room, shown with simple room drawings.",
-        "needs": "",
-        "phase": "Phase 6",
-        "layout": "split",
-        "columns": 3,
-        "size": "small"
-      }
-    },
     "subnav-pager": {
       "type": "page-subnav",
       "settings": {
         "menu": "site-menu",
         "style": "pager"
       }
+    },
+    "intro": {
+      "type": "page-intro",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Resources",
+        "title": "Care & FAQ",
+        "heading_tag": "h1",
+        "text": "<p>How to care for a rug, how to choose its size, and plain answers on prices, delivery and orders.</p>",
+        "image": "shopify://shop_images/graccioza-mood-p19.jpg",
+        "image_alt": "A plain cream rug in a sunlit room with a wooden chair and a console table",
+        "image_focus": "--focus: center",
+        "image_position": "end",
+        "button_1_text": "Care guide",
+        "button_1_link": "#care",
+        "button_2_text": "Rug size guide",
+        "button_2_link": "#size-guide"
+      }
+    },
+    "care": {
+      "type": "page-facts",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "anchor": "care",
+        "subheading": "Care guide",
+        "title": "Keeping a rug at its best",
+        "text": "<p>A few habits keep a rug in excellent condition over time.</p>",
+        "image": "shopify://shop_images/graccioza-mood-p10-7.jpg",
+        "image_alt": "The pile of a cream rug seen from close, in sunlight",
+        "button_text": "Read the full guide",
+        "button_link": "/blogs/news/rug-maintenance-guide"
+      },
+      "blocks": {
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "label": "Vacuuming",
+            "value": "<p>Once or twice a week, with a vacuum cleaner without rotating brushes, which would damage the fibres. A high pile may need it more often.</p>"
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "label": "A new rug",
+            "value": "<p>A rug in natural materials may pill during its first months. This is normal and lessens with time.</p>"
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "label": "Spills",
+            "value": "<p>Act quickly. Absorb liquids with a highly absorbent cloth and lift solids gently with a spoon. Treat the stain with care so that it does not spread, then press the area dry with an absorbent cloth.</p>"
+          }
+        },
+        "fact_4": {
+          "type": "fact",
+          "settings": {
+            "label": "Rotation",
+            "value": "<p>Turn the rug every 3 to 6 months, so that it wears evenly.</p>"
+          }
+        },
+        "fact_5": {
+          "type": "fact",
+          "settings": {
+            "label": "Sunlight",
+            "value": "<p>Long exposure to sunlight can fade the colours. Use curtains or blinds to limit direct light on the rug.</p>"
+          }
+        },
+        "fact_6": {
+          "type": "fact",
+          "settings": {
+            "label": "Furniture",
+            "value": "<p>Place protectors under the legs of furniture and move it from time to time, to avoid permanent marks.</p>"
+          }
+        },
+        "fact_7": {
+          "type": "fact",
+          "settings": {
+            "label": "Loose threads",
+            "value": "<p>If a thread stands above the surface, cut it level with scissors. Do not pull it: more may come loose.</p>"
+          }
+        },
+        "fact_8": {
+          "type": "fact",
+          "settings": {
+            "label": "Creases",
+            "value": "<p>Creases left by rolling usually go within a few weeks once the rug lies flat. Rolling it the other way speeds this up.</p>"
+          }
+        },
+        "fact_9": {
+          "type": "fact",
+          "settings": {
+            "label": "Odour",
+            "value": "<p>A new rug may have a smell when unpacked. Air the room. If the smell stays, sprinkle baking soda on the rug and vacuum it the next day.</p>"
+          }
+        },
+        "fact_10": {
+          "type": "fact",
+          "settings": {
+            "label": "Storage",
+            "value": "<p>Never fold a rug. Roll it tightly around a cardboard tube, keep it off the floor and check it from time to time, to avoid mould and deformation.</p>"
+          }
+        },
+        "fact_11": {
+          "type": "fact",
+          "settings": {
+            "label": "Professional cleaning",
+            "value": "<p>For a deeper clean, use a specialised professional. Rugs in Eucalyptus or Viscose: injection-extraction, at low temperature and controlled pressure. Rugs in wool: cleaning with water at no more than 30 °C, with a pH-neutral soap or detergent.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "fact_1",
+        "fact_2",
+        "fact_3",
+        "fact_4",
+        "fact_5",
+        "fact_6",
+        "fact_7",
+        "fact_8",
+        "fact_9",
+        "fact_10",
+        "fact_11"
+      ]
+    },
+    "size-guide": {
+      "type": "rug-size-guide",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "subheading": "Rug size guide",
+        "title": "Which size for which room",
+        "text": "<p>Most rooms look better with a rug that is larger than people expect. A rug that is too small leaves the furniture looking as if it is floating.</p>",
+        "sizes_title": "The standard sizes",
+        "sizes_label": "The five standard sizes drawn one inside the other, to scale",
+        "sizes_text": "<p>When no standard size fits the room, every rug is made to measure, in any size up to [max_size]. Its page works out the price as you type the size.</p>",
+        "button_1_text": "See all rugs",
+        "button_1_link": "shopify://collections/all",
+        "button_2_text": "How to choose a rug",
+        "button_2_link": "/blogs/news/how-to-choose-a-luxury-rug",
+        "anchor": "size-guide"
+      },
+      "blocks": {
+        "room_1": {
+          "type": "room",
+          "settings": {
+            "drawing": "living",
+            "drawing_label": "Plan of a living room: a sofa and two armchairs with their front legs on a rug, and a strip of floor between the rug and the walls",
+            "title": "Living room",
+            "rule": "<p>At least the front legs of all seating on the rug, with 20 to 45 cm of floor visible around the edges.</p>",
+            "example": ""
+          }
+        },
+        "room_2": {
+          "type": "room",
+          "settings": {
+            "drawing": "dining",
+            "drawing_label": "Plan of a dining room: a table and eight chairs on a rug that extends beyond the table on every side",
+            "title": "Dining room",
+            "rule": "<p>The rug extends 60 to 75 cm beyond the table on every side, so that the chairs stay on it when pulled out.</p>",
+            "example": "A table of 200 × 100 cm needs a rug of at least 320 × 220 cm."
+          }
+        },
+        "room_3": {
+          "type": "room",
+          "settings": {
+            "drawing": "bedroom",
+            "drawing_label": "Plan of a bedroom: a rug under the lower part of a bed, extending beyond both sides and beyond the foot",
+            "title": "Bedroom",
+            "rule": "<p>The rug extends 50 to 90 cm beyond each side of the bed and past its foot.</p>",
+            "example": "A bed 180 cm wide needs a rug at least 280 cm wide."
+          }
+        },
+        "room_4": {
+          "type": "room",
+          "settings": {
+            "drawing": "open",
+            "drawing_label": "Plan of an open space: one rug under the seating and a second rug under the dining table",
+            "title": "Open-plan space",
+            "rule": "<p>One rug per zone, such as seating, dining or reading, each sized to its group of furniture.</p>",
+            "example": ""
+          }
+        }
+      },
+      "block_order": [
+        "room_1",
+        "room_2",
+        "room_3",
+        "room_4"
+      ]
     }
   },
   "order": [
     "subnav-tabs",
-    "wf-1",
-    "wf-2",
+    "intro",
+    "care",
     "faq",
+    "size-guide",
     "faq-cta",
-    "wf-4",
     "subnav-pager"
   ]
 }

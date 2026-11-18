@@ -54,9 +54,23 @@
         "portfolio": {
           "title": "Portfolio: homes and public spaces with Corvo rugs",
           "description": "Selected projects with Corvo rugs, in homes and public spaces. Each project shows the place, the designer and the rugs made for it."
+        },
+        "resources": {
+          "title": "Resources for designers, architects and retailers",
+          "description": "What professionals need to specify and sell Corvo rugs: a specification sheet for every rug, the catalogue, samples, care advice and a direct line to the atelier."
+        },
+        "sales_tools": {
+          "title": "Sales tools: specification sheets, catalogue and price list",
+          "description": "A specification sheet for each of the [rug_count] Corvo rugs, to print or save as a PDF, with the catalogue, the image bank and the price list on request."
+        },
+        "catalogue": {
+          "title": "The Corvo catalogue",
+          "description": "The Corvo catalogue: the atelier, the collections and the yarns in one book. Ask for it as a PDF or as a printed copy."
         }
       },
-      "parent": "Sorema"
+      "parent": "Sorema",
+      "care": "This product should be handled with care. Regular vacuuming without rotating brushes, prompt attention to spills, and periodic rotation will help preserve its appearance and structure. To maintain the quality of the fibres over time, we recommend protecting the rug from prolonged sunlight and relying on professional cleaning when needed.",
+      "variation": "The colours shown are indicative. Natural materials and artisanal processes may give variations in colour and texture."
     },
     "page": "Page {{ page }}",
     "home": "Home",
@@ -742,5 +756,25 @@
     "unavailable": "This project is not published",
     "seo_title": "{{ title }}: a project with Corvo rugs",
     "seo_description": "a project with rugs made to order by Corvo, by hand, in Portugal."
+  },
+  "spec_sheet": {
+    "title": "Specification sheet",
+    "back": "Back to {{ name }}",
+    "print": "Print or save as PDF",
+    "none": "This product has no specification sheet.",
+    "construction": "Construction",
+    "construction_value": "Hand-tufted, made to order in Portugal",
+    "colours_note": "Every colour can be changed: to one of the [palette_count] colours of the Open Palette at no extra cost, or to a custom colour.",
+    "made_to_measure": "Any size from [min_side] a side up to [max_size]. Other shapes on request.",
+    "area": "Area",
+    "code": "Code",
+    "care": "Care",
+    "search": "Find a rug by name",
+    "status": "Rugs shown: {{ count }}",
+    "no_match": "No rug has that name."
+  },
+  "request_form": {
+    "company": "Company (optional)",
+    "address": "Postal address, for a printed catalogue or a box (optional)"
   }
 }

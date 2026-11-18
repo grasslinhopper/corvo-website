@@ -7,69 +7,176 @@
         "style": "tabs"
       }
     },
-    "wf-1": {
-      "type": "wireframe",
+    "intro": {
+      "type": "page-intro",
       "settings": {
-        "label": "Sales tools",
-        "is_page_title": true,
-        "description": "Files that help professionals present and specify Corvo rugs.",
-        "needs": "",
-        "phase": "Phase 6",
-        "layout": "banner",
-        "columns": 3,
-        "size": "medium"
+        "color_scheme": "scheme-1",
+        "eyebrow": "Resources",
+        "title": "Sales tools",
+        "heading_tag": "h1",
+        "text": "<p>What helps you present and specify Corvo rugs. The specification sheets are here to print; the files and the boxes are sent on request.</p>",
+        "image": "shopify://shop_images/graccioza-mood-p10-8.jpg",
+        "image_alt": "A plain cream rug in the lobby of a building, in front of a stone reception desk",
+        "image_focus": "--focus: center",
+        "image_position": "end",
+        "button_1_text": "Specification sheets",
+        "button_1_link": "#sheets",
+        "button_2_text": "Ask for a file",
+        "button_2_link": "#request"
       }
     },
-    "wf-2": {
-      "type": "wireframe",
+    "sheets": {
+      "type": "spec-sheets",
       "settings": {
-        "label": "Downloads",
-        "is_page_title": false,
-        "description": "Price list, presentation and image bank, each as a card with a download button.",
-        "needs": "The three files, and which price list is public.",
-        "phase": "Phase 6",
-        "layout": "grid",
-        "columns": 3,
-        "size": "small"
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "subheading": "To print or save as a PDF",
+        "title": "Specification sheets",
+        "text": "<p>One sheet for each of the [rug_count] rugs: construction, craft level, materials, pile, colours, standard sizes with their codes, and care.</p>",
+        "link_text": "Open the sheet",
+        "anchor": "sheets"
       }
     },
-    "wf-3": {
-      "type": "wireframe",
+    "files": {
+      "type": "page-cards",
       "settings": {
-        "label": "Boxes to order",
-        "is_page_title": false,
-        "description": "The pom-box (30 colours) and the sample box (15 samples), ordered online.",
-        "needs": "A photo of each box.",
-        "phase": "Phase 6",
-        "layout": "grid",
-        "columns": 2,
-        "size": "small"
-      }
-    },
-    "wf-4": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Specification sheets",
-        "is_page_title": false,
-        "description": "One PDF per rug, generated from the product data and searchable by name.",
-        "needs": "Agreement on what a specification sheet lists.",
-        "phase": "Phase 6",
-        "layout": "grid",
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "subheading": "Sent by e-mail",
+        "title": "Files",
+        "text": "",
+        "text_alignment": "center",
         "columns": 4,
-        "size": "medium"
-      }
+        "columns_mobile": "2",
+        "image_ratio": "portrait",
+        "numbered": false
+      },
+      "blocks": {
+        "card_1": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/graccioza-mood-p05.jpg",
+            "image_alt": "A plain cream rug in a quiet living room with a low armchair",
+            "label": "On request",
+            "title": "Catalogue",
+            "text": "<p>The atelier, the collections and the yarns in one book, as a PDF or in print.</p>",
+            "link_url": "#request",
+            "link_text": "Ask for the catalogue",
+            "request_option": "The catalogue as a PDF"
+          }
+        },
+        "card_2": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/graccioza-mood-p19.jpg",
+            "image_alt": "A plain cream rug in a sunlit room with a wooden chair and a console table",
+            "label": "On request",
+            "title": "Price list",
+            "text": "<p>Prices and trade terms, sent to professionals by e-mail.</p>",
+            "link_url": "#request",
+            "link_text": "Ask for the price list",
+            "request_option": "The price list"
+          }
+        },
+        "card_3": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/graccioza-mood-p23.jpg",
+            "image_alt": "An oval cream rug under two round armchairs and a side table",
+            "label": "On request",
+            "title": "Image bank",
+            "text": "<p>Photographs of the rugs and of the atelier, for your presentations.</p>",
+            "link_url": "#request",
+            "link_text": "Ask for the image bank",
+            "request_option": "The image bank"
+          }
+        },
+        "card_4": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/graccioza-mood-p27.jpg",
+            "image_alt": "A plain cream rug in a tall plastered room with an arched doorway",
+            "label": "On request",
+            "title": "Presentation",
+            "text": "<p>Corvo in a few pages, to show a client.</p>",
+            "link_url": "#request",
+            "link_text": "Ask for the presentation",
+            "request_option": "The presentation"
+          }
+        }
+      },
+      "block_order": [
+        "card_1",
+        "card_2",
+        "card_3",
+        "card_4"
+      ]
     },
-    "wf-5": {
-      "type": "wireframe",
+    "boxes": {
+      "type": "page-cards",
       "settings": {
-        "label": "Need something else?",
-        "is_page_title": false,
-        "description": "A line and a button to contact the team.",
-        "needs": "",
-        "phase": "Phase 6",
-        "layout": "text",
-        "columns": 3,
-        "size": "small"
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "subheading": "For your studio",
+        "title": "Boxes",
+        "text": "",
+        "text_alignment": "center",
+        "columns": 2,
+        "columns_mobile": "1",
+        "image_ratio": "landscape",
+        "numbered": false
+      },
+      "blocks": {
+        "card_1": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/graccioza-mood-p09-5.jpg",
+            "image_alt": "Cones of undyed yarn on a rack",
+            "label": "On request",
+            "title": "Pom box",
+            "text": "<p>The [palette_count] colours of the Open Palette as poms of yarn, to match colours on site.</p>",
+            "link_url": "#request",
+            "link_text": "Ask for the pom box",
+            "request_option": "The pom box"
+          }
+        },
+        "card_2": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/graccioza-mood-p09.jpg",
+            "image_alt": "Two cream rug samples, one laid over the other",
+            "label": "On request",
+            "title": "Sample box",
+            "text": "<p>A box of 15 rug samples for your studio library.</p>",
+            "link_url": "#request",
+            "link_text": "Ask for the sample box",
+            "request_option": "The sample box"
+          }
+        }
+      },
+      "block_order": [
+        "card_1",
+        "card_2"
+      ]
+    },
+    "request": {
+      "type": "request-form",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "subheading": "On request",
+        "title": "Ask for a file or a box",
+        "text": "<p>Tell us what you need and who you are. We answer by e-mail.</p>",
+        "choices_label": "What do you need?",
+        "choices": "The price list\nThe catalogue as a PDF\nA printed catalogue\nThe image bank\nThe presentation\nThe pom box\nThe sample box\nSomething else",
+        "show_address": true,
+        "message_label": "Your project, or anything we should know",
+        "note": "<p>We use your details only to answer this request.</p>",
+        "button": "Send my request",
+        "success": "Thank you. Your request has been sent, and we will answer by e-mail.",
+        "subject": "Request from the Sales tools page",
+        "anchor": "request",
+        "form_id": "request-form"
       }
     },
     "subnav-pager": {
@@ -82,11 +189,11 @@
   },
   "order": [
     "subnav-tabs",
-    "wf-1",
-    "wf-2",
-    "wf-3",
-    "wf-4",
-    "wf-5",
+    "intro",
+    "sheets",
+    "files",
+    "boxes",
+    "request",
     "subnav-pager"
   ]
 }

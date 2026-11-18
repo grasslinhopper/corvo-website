@@ -1,0 +1,268 @@
+{%- comment -%}
+  Specification sheets (Corvo addition)
+
+  One specification sheet per rug, to print or to save as a PDF, with a field to find a rug by name.
+
+  A sheet is the page of a rug in another view (templates/product.sheet.liquid): its address is the address of the
+  rug followed by "?view=sheet". The list is every rug of the shop that has rug facts, read as the page is served, so
+  a new rug has its sheet at once.
+
+  The list is plain HTML: a name, the craft level and the materials of each rug, and a link to its sheet. The search
+  field only hides the rugs that do not match, for readers that run scripts.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign rugs = collections.all.products
+  assign rug_count = 0
+
+  for rug in rugs
+    if rug.metafields.rug.craft_level.value != blank
+      assign rug_count = rug_count | plus: 1
+    endif
+  endfor
+-%}
+
+{%- if rug_count > 0 -%}
+  <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" id="{{ section.settings.anchor | default: 'sheets' | handleize }}">
+    <div class="container">
+      <div class="section-stack">
+        {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank -%}
+          <div class="section-header justify-self-center text-center">
+            <div class="prose">
+              {%- if section.settings.subheading != blank -%}
+                <p class="h6">{{ section.settings.subheading | escape }}</p>
+              {%- endif -%}
+
+              {%- if section.settings.title != blank -%}
+                <h2 class="h2">{{ section.settings.title | escape }}</h2>
+              {%- endif -%}
+
+              {%- if section.settings.text != blank -%}
+                {%- render 'corvo-fill', text: section.settings.text -%}
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="spec-sheets" data-spec-sheets>
+          <label class="spec-sheets__search">
+            <span class="sr-only">{{ 'spec_sheet.search' | t }}</span>
+            <input type="search" class="spec-sheets__input" placeholder="{{ 'spec_sheet.search' | t | escape }}" autocomplete="off" data-spec-search>
+          </label>
+
+          <p class="sr-only" role="status" data-spec-status></p>
+
+          <ul class="spec-sheets__list unstyled-list" role="list">
+            {%- for rug in rugs -%}
+              {%- liquid
+                assign craft = rug.metafields.rug.craft_level.value
+
+                if craft == blank
+                  continue
+                endif
+
+                assign material_names = rug.metafields.rug.materials.value | map: 'name' | map: 'value' | join: ', '
+              -%}
+
+              <li class="spec-sheet" data-spec-item data-name="{{ rug.title | downcase | escape }}">
+                <a href="{{ rug.url }}?view=sheet" class="spec-sheet__link">
+                  <span class="spec-sheet__name h6">{{ rug.title | escape }}</span>
+
+                  <span class="spec-sheet__facts text-sm text-subdued">
+                    {{- 'rug_page.spec.craft_level' | t }} {{ craft.label.value | escape -}}
+                    {%- if material_names != blank %} · {{ material_names | escape }}{% endif -%}
+                  </span>
+
+                  <span class="spec-sheet__open text-sm" aria-hidden="true">{{ section.settings.link_text | escape }}</span>
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+
+          <p class="spec-sheets__none text-subdued" data-spec-none hidden>{{ 'spec_sheet.no_match' | t }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('[data-spec-sheets]').forEach((list) => {
+      const field = list.querySelector('[data-spec-search]'),
+        items = Array.from(list.querySelectorAll('[data-spec-item]')),
+        none = list.querySelector('[data-spec-none]'),
+        status = list.querySelector('[data-spec-status]'),
+        statusText = {{ 'spec_sheet.status' | t: count: '[count]' | json }};
+
+      if (!field || field.dataset.ready) {
+        return;
+      }
+
+      field.dataset.ready = 'true';
+
+      field.addEventListener('input', () => {
+        const words = field.value.trim().toLowerCase();
+        let shown = 0;
+
+        items.forEach((item) => {
+          const match = item.dataset.name.includes(words);
+
+          item.hidden = !match;
+          shown += match ? 1 : 0;
+        });
+
+        none.hidden = shown > 0;
+        status.textContent = statusText.replace('[count]', shown);
+      });
+    });
+  </script>
+{%- endif -%}
+
+{% stylesheet %}
+  .spec-sheets {
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 62rem;
+    margin-inline: auto;
+    display: grid;
+  }
+
+  .spec-sheets__search {
+    display: block;
+  }
+
+  .spec-sheets__input {
+    font: inherit;
+    color: rgb(var(--text-color));
+    background: none;
+    border: 0;
+    border-block-end: 1px solid rgb(var(--text-color) / .35);
+    border-radius: 0;
+    outline: none;
+    width: 100%;
+    padding: .75rem 0;
+    /* 16px at least, so that phones do not zoom in when the field is tapped */
+    font-size: max(1rem, 16px);
+  }
+
+  .spec-sheets__input:focus-visible {
+    border-color: rgb(var(--text-color));
+  }
+
+  .spec-sheets__input::placeholder {
+    color: rgb(var(--text-color) / .55);
+  }
+
+  .spec-sheets__list {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 3rem;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .spec-sheet {
+    border-block-end: 1px solid rgb(var(--border-color));
+  }
+
+  .spec-sheet[hidden] {
+    display: none;
+  }
+
+  .spec-sheet__link {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: .125rem 1rem;
+    padding-block: .875rem;
+    text-decoration: none;
+    display: grid;
+  }
+
+  .spec-sheet__facts {
+    grid-column: 1;
+  }
+
+  .spec-sheet__open {
+    grid-area: 1 / 2 / 3 / 3;
+    align-self: center;
+    opacity: .55;
+    transition: opacity .2s;
+  }
+
+  .spec-sheet__link:hover .spec-sheet__open,
+  .spec-sheet__link:focus-visible .spec-sheet__open {
+    opacity: 1;
+  }
+
+  .spec-sheets__none {
+    margin: 0;
+  }
+
+  @media screen and (min-width: 700px) {
+    .spec-sheets__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Specification sheets",
+  "class": "shopify-section--spec-sheets",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["page"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A specification sheet for every rug, to print or to save as a PDF, with a field to find a rug by name. The sheets are written from the rug facts in Shopify, so they are never out of date."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Specification sheets"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Words at the end of each line",
+      "default": "Open the sheet"
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Name of this part of the page in links",
+      "default": "sheets"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Specification sheets"
+    }
+  ]
+}
+{% endschema %}

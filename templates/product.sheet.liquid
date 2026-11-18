@@ -1,0 +1,502 @@
+{%- layout none -%}
+{%- comment -%}
+  Corvo addition: the specification sheet of a rug, ready to print or to save as a PDF.
+
+  It is the page of the rug in another view: its address is the address of the rug followed by "?view=sheet". The
+  "Specification sheets" section of the Sales tools page lists one for every rug.
+
+  Every fact is read from the rug as the sheet is served: its rug fields (craft level, materials, pile, colours), its
+  standard sizes with their codes, and the shop's rules ("Corvo: prices and rules" in the theme settings). Nothing is
+  typed here, so a sheet never falls out of date.
+
+  The sheet carries no price: prices are on the page of the rug. It is kept out of search engines, which are sent to
+  the page of the rug instead.
+{%- endcomment -%}
+
+{%- liquid
+  assign craft = product.metafields.rug.craft_level.value
+  assign materials = product.metafields.rug.materials.value
+  assign pile = product.metafields.rug.pile.value
+  assign pile_height = product.metafields.rug.pile_height.value
+  assign colour_count = product.metafields.rug.colours.value
+  assign colour_refs = product.metafields.rug.colour_refs.value
+
+  comment
+    The collection of the rug: the first collection of the "Collection" menu that contains it
+  endcomment
+
+  assign rug_collection = nil
+  assign product_collection_handles = product.collections | map: 'handle'
+
+  for link in linklists['collection-links'].links
+    if link.type == 'collection_link' and product_collection_handles contains link.object.handle
+      assign rug_collection = link.object
+      break
+    endif
+  endfor
+
+  assign pile_label = ''
+
+  if pile contains 'Cut' and pile contains 'Loop'
+    assign pile_label = 'rug_page.spec.pile_cut_loop' | t
+  elsif pile contains 'Cut'
+    assign pile_label = 'rug_page.spec.pile_cut' | t
+  elsif pile contains 'Loop'
+    assign pile_label = 'rug_page.spec.pile_loop' | t
+  endif
+
+  assign sheet_title = 'spec_sheet.title' | t
+  assign first_image = product.media[0]
+  assign second_image = product.media[1]
+  assign first_alt = first_image.alt | default: product.title
+  assign second_alt = second_image.alt | default: product.title
+  assign today = 'now' | date: '%-d %B %Y'
+  assign colours_note = 'spec_sheet.colours_note' | t
+  assign made_to_measure_note = 'spec_sheet.made_to_measure' | t
+  assign page_address = shop.url | append: product.url | remove: 'https://' | remove: 'http://'
+-%}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ product.title | escape }}: {{ sheet_title | downcase }} | {{ shop.name | escape }}</title>
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="{{ shop.url }}{{ product.url }}">
+
+    {%- if settings.favicon -%}
+      <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 96 }}">
+    {%- endif -%}
+
+    <style>
+      {{ settings.heading_font | font_face: font_display: 'swap' }}
+      {{ settings.text_font | font_face: font_display: 'swap' }}
+
+      :root {
+        --ink: #1c1c1c;
+        --soft: #6f6f6f;
+        --line: #d9d9d6;
+        --paper: #ffffff;
+        --heading: {{ settings.heading_font.family }}, {{ settings.heading_font.fallback_families }};
+        --text: {{ settings.text_font.family }}, {{ settings.text_font.fallback_families }};
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: #efefec;
+      }
+
+      body {
+        color: var(--ink);
+        font-family: var(--text);
+        font-size: 10.5pt;
+        line-height: 1.5;
+        margin: 0;
+        padding: 1.5rem 1rem 4rem;
+      }
+
+      .sheet {
+        background: var(--paper);
+        max-width: 210mm;
+        min-height: 297mm;
+        margin: 0 auto;
+        padding: 16mm 16mm 12mm;
+        box-shadow: 0 1px 12px rgb(0 0 0 / .08);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sheet__head {
+        border-bottom: 1px solid var(--ink);
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 1rem;
+        padding-bottom: 5mm;
+        display: flex;
+      }
+
+      .sheet__brand {
+        font-family: var(--heading);
+        letter-spacing: .32em;
+        text-transform: uppercase;
+        font-size: 15pt;
+        line-height: 1;
+      }
+
+      .sheet__kind,
+      .sheet__label,
+      .sheet th {
+        color: var(--soft);
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        font-size: 7pt;
+        font-weight: 400;
+      }
+
+      .sheet__intro {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: end;
+        gap: 8mm;
+        margin: 8mm 0 6mm;
+        display: grid;
+      }
+
+      h1 {
+        font-family: var(--heading);
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        margin: 2mm 0 0;
+        font-size: 24pt;
+        font-weight: 400;
+        line-height: 1.1;
+      }
+
+      .sheet__lead {
+        margin: 3mm 0 0;
+      }
+
+      .sheet__pictures {
+        gap: 3mm;
+        display: flex;
+      }
+
+      .sheet__pictures img {
+        object-fit: cover;
+        background: #f3f3f0;
+        flex: 1 1 0;
+        width: 50%;
+        height: 62mm;
+        display: block;
+      }
+
+      .sheet__pictures img:only-child {
+        width: 100%;
+      }
+
+      dl {
+        border-top: 1px solid var(--line);
+        margin: 0;
+      }
+
+      dl > div {
+        border-bottom: 1px solid var(--line);
+        grid-template-columns: 38mm minmax(0, 1fr);
+        gap: 4mm;
+        padding: 2.2mm 0;
+        display: grid;
+        break-inside: avoid;
+      }
+
+      dt {
+        color: var(--soft);
+      }
+
+      dd {
+        margin: 0;
+      }
+
+      dd small {
+        color: var(--soft);
+        font-size: 8.5pt;
+        display: block;
+      }
+
+      h2 {
+        font-family: var(--heading);
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        margin: 7mm 0 2.5mm;
+        font-size: 10pt;
+        font-weight: 400;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        padding: 2mm 0;
+      }
+
+      td {
+        font-variant-numeric: tabular-nums;
+      }
+
+      .sheet__text {
+        margin: 0;
+      }
+
+      .sheet__note {
+        color: var(--soft);
+        margin: 4mm 0 0;
+        font-size: 8.5pt;
+      }
+
+      .sheet__foot {
+        border-top: 1px solid var(--ink);
+        color: var(--soft);
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: auto;
+        padding-top: 4mm;
+        font-size: 8pt;
+        display: flex;
+      }
+
+      .sheet__foot p {
+        margin: 0;
+      }
+
+      .sheet__spacer {
+        min-height: 8mm;
+      }
+
+      .toolbar {
+        justify-content: center;
+        gap: .75rem;
+        max-width: 210mm;
+        margin: 0 auto 1.25rem;
+        display: flex;
+      }
+
+      .toolbar a,
+      .toolbar button {
+        color: var(--ink);
+        font: inherit;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        background: none;
+        border: 1px solid var(--ink);
+        cursor: pointer;
+        padding: .7rem 1.25rem;
+        font-size: 8pt;
+        text-decoration: none;
+      }
+
+      .toolbar button {
+        color: #fff;
+        background: var(--ink);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 1rem 0 3rem;
+        }
+
+        .sheet {
+          min-height: 0;
+          padding: 1.5rem 1.25rem;
+        }
+
+        .sheet__intro {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        dl > div {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 0;
+        }
+
+        .toolbar {
+          flex-wrap: wrap;
+          padding-inline: 1rem;
+        }
+      }
+
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
+      @media print {
+        html,
+        body {
+          background: #fff;
+          padding: 0;
+        }
+
+        .toolbar {
+          display: none;
+        }
+
+        .sheet {
+          box-shadow: none;
+          max-width: none;
+          min-height: 297mm;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="toolbar" aria-label="{{ sheet_title | escape }}">
+      <a href="{{ product.url }}">{{ 'spec_sheet.back' | t: name: product.title }}</a>
+      <button type="button" onclick="window.print()">{{ 'spec_sheet.print' | t }}</button>
+    </nav>
+
+    <main class="sheet">
+      <header class="sheet__head">
+        <span class="sheet__brand">{{ shop.name | escape }}</span>
+        <span class="sheet__kind">{{ sheet_title | escape }}</span>
+      </header>
+
+      {%- if craft == blank -%}
+        <p class="sheet__lead">{{ 'spec_sheet.none' | t }}</p>
+      {%- else -%}
+        <div class="sheet__intro">
+          <div>
+            {%- if rug_collection != blank -%}
+              <p class="sheet__label">{{ 'rug_page.collection' | t: collection: rug_collection.title }}</p>
+            {%- endif -%}
+
+            <h1>{{ product.title | escape }}</h1>
+            <p class="sheet__lead">{{ 'rug_page.facts.intro' | t: name: product.title }}</p>
+          </div>
+
+          {%- if first_image != blank -%}
+            <div class="sheet__pictures">
+              {{- first_image | image_url: width: 900 | image_tag: loading: 'eager', alt: first_alt, widths: '450,900', sizes: '45mm' -}}
+
+              {%- if second_image != blank -%}
+                {{- second_image | image_url: width: 900 | image_tag: loading: 'eager', alt: second_alt, widths: '450,900', sizes: '45mm' -}}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+
+        <dl>
+          <div>
+            <dt>{{ 'spec_sheet.construction' | t }}</dt>
+            <dd>{{ 'spec_sheet.construction_value' | t }}</dd>
+          </div>
+
+          <div>
+            <dt>{{ 'rug_page.spec.craft_level' | t }}</dt>
+            <dd>
+              {{ craft.label.value | escape }}
+
+              {%- if craft.description.value != blank -%}
+                <small>{{ craft.description.value | escape }}</small>
+              {%- endif -%}
+            </dd>
+          </div>
+
+          {%- if materials != blank -%}
+            <div>
+              <dt>{{ 'rug_page.spec.materials' | t }}</dt>
+              <dd>
+                {%- for material in materials -%}
+                  {{- material.name.value | escape -}}
+                  {%- if material.fibre.value != blank %} ({{ material.fibre.value | downcase | escape }}){% endif -%}
+                  {%- unless forloop.last %}, {% endunless -%}
+                {%- endfor -%}
+              </dd>
+            </div>
+          {%- endif -%}
+
+          {%- if pile_label != blank -%}
+            <div>
+              <dt>{{ 'rug_page.spec.pile' | t }}</dt>
+              <dd>{{ pile_label }}</dd>
+            </div>
+          {%- endif -%}
+
+          {%- if pile_height != blank -%}
+            <div>
+              <dt>{{ 'rug_page.spec.pile_height' | t }}</dt>
+              <dd>{{ pile_height | escape }}</dd>
+            </div>
+          {%- endif -%}
+
+          {%- if colour_count != blank -%}
+            <div>
+              <dt>{{ 'rug_page.spec.colours' | t }}</dt>
+              <dd>
+                {%- if colour_count == 1 -%}
+                  {{- 'rug_page.colours_one' | t | capitalize -}}
+                {%- else -%}
+                  {{- 'rug_page.colours_other' | t: count: colour_count | capitalize -}}
+                {%- endif -%}
+
+                {%- if colour_refs != blank -%}
+                  {%- assign colour_list = colour_refs | join: ', ' -%}
+                  . {{ 'rug_page.references' | t: list: colour_list }}
+                {%- endif -%}
+
+                <small>{%- render 'corvo-fill', text: colours_note -%}</small>
+              </dd>
+            </div>
+          {%- endif -%}
+
+          <div>
+            <dt>{{ 'rug_page.spec.made_to_measure' | t }}</dt>
+            <dd>{%- render 'corvo-fill', text: made_to_measure_note -%}</dd>
+          </div>
+
+          <div>
+            <dt>{{ 'rug_page.spec.lead_time' | t }}</dt>
+            <dd>{%- render 'corvo-fact', fact: 'lead_time' -%}</dd>
+          </div>
+
+          <div>
+            <dt>{{ 'rug_page.spec.delivery' | t }}</dt>
+            <dd>{%- render 'corvo-fact', fact: 'delivery' -%}</dd>
+          </div>
+        </dl>
+
+        {%- unless product.has_only_default_variant -%}
+          <h2>{{ 'rug_page.spec.sizes' | t }}</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">{{ 'rug_page.size' | t }}</th>
+                <th scope="col">{{ 'spec_sheet.area' | t }}</th>
+                <th scope="col">{{ 'spec_sheet.code' | t }}</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {%- for variant in product.variants -%}
+                {%- liquid
+                  assign size_parts = variant.title | downcase | remove: 'cm' | remove: ' ' | split: 'x'
+                  assign size_width = size_parts[0] | plus: 0
+                  assign size_length = size_parts[1] | plus: 0
+                  assign size_area = size_width | times: size_length | divided_by: 10000.0 | round: 2
+                -%}
+
+                <tr>
+                  <td>{{ size_width }} × {{ size_length }} cm</td>
+                  <td>{% if size_area > 0 %}{{ 'rug_page.area' | t: area: size_area }}{% endif %}</td>
+                  <td>{{ variant.sku | escape }}</td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+        {%- endunless -%}
+
+        <h2>{{ 'spec_sheet.care' | t }}</h2>
+        <p class="sheet__text">{%- render 'corvo-fact', fact: 'care' -%}</p>
+        <p class="sheet__note">{%- render 'corvo-fact', fact: 'variation' -%}</p>
+      {%- endif -%}
+
+      <div class="sheet__spacer"></div>
+
+      <footer class="sheet__foot">
+        <p>{{ shop.name | escape }} · {{ 'general.corvo.locality' | t }}, Portugal · {{ shop.email | escape }}</p>
+        <p>{{ page_address | escape }} · {{ today }}</p>
+      </footer>
+    </main>
+  </body>
+</html>

@@ -5,7 +5,9 @@
 
   - doors to other pages (the whole picture is a link),
   - the steps of a process (switch on the numbers: the cards become an ordered list),
-  - a row of pictures with captions.
+  - a row of pictures with captions,
+  - files and things to ask for (a small line above the title says what each is; a card can choose, in the "Request
+    form" section of the page, what is asked for).
 
   Every card is plain HTML: a heading, a paragraph and a link, with a description on its picture. Texts may hold
   markers such as [lead_weeks], filled in from the shop's own facts (see snippets/corvo-fill.liquid).
@@ -56,6 +58,11 @@
               assign card_image = block.settings.image
               assign card_alt = block.settings.image_alt | default: card_image.alt | default: block.settings.title
               assign card_link = block.settings.link_url
+              assign card_request = ''
+
+              if block.settings.request_option != blank
+                assign card_request = block.settings.request_option | escape | prepend: 'data-request-option="' | append: '"'
+              endif
             -%}
 
             <li class="page-card" {{ block.shopify_attributes }}>
@@ -65,7 +72,7 @@
                 {%- endcapture -%}
 
                 {%- if card_link != blank -%}
-                  <a href="{{ card_link }}" class="page-card__media" tabindex="-1" aria-hidden="true">{{ card_picture }}</a>
+                  <a href="{{ card_link }}" class="page-card__media" tabindex="-1" aria-hidden="true" {{ card_request }}>{{ card_picture }}</a>
                 {%- else -%}
                   <div class="page-card__media">{{ card_picture }}</div>
                 {%- endif -%}
@@ -76,10 +83,14 @@
                   <span class="page-card__number smallcaps text-subdued" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
                 {%- endif -%}
 
+                {%- if block.settings.label != blank -%}
+                  <p class="page-card__label smallcaps text-xs text-subdued">{{ block.settings.label | escape }}</p>
+                {%- endif -%}
+
                 {%- if block.settings.title != blank -%}
                   <h3 class="h5">
                     {%- if card_link != blank and block.settings.link_text == blank -%}
-                      <a href="{{ card_link }}">{{ block.settings.title | escape }}</a>
+                      <a href="{{ card_link }}" {{ card_request }}>{{ block.settings.title | escape }}</a>
                     {%- else -%}
                       {{- block.settings.title | escape -}}
                     {%- endif -%}
@@ -93,7 +104,7 @@
                 {%- endif -%}
 
                 {%- if card_link != blank and block.settings.link_text != blank -%}
-                  <a href="{{ card_link }}" class="link">{{ block.settings.link_text | escape }}</a>
+                  <a href="{{ card_link }}" class="link" {{ card_request }}>{{ block.settings.link_text | escape }}</a>
                 {%- endif -%}
               </div>
             </li>
@@ -174,6 +185,10 @@
 
   .page-card__text h3 a {
     text-decoration: none;
+  }
+
+  .page-card__label {
+    margin: 0;
   }
 
   .page-card__body > :last-child {
@@ -341,6 +356,12 @@
         },
         {
           "type": "text",
+          "id": "label",
+          "label": "Small line above the title",
+          "info": "Optional. For a file or a thing to ask for: what it is, such as \"PDF\" or \"On request\"."
+        },
+        {
+          "type": "text",
           "id": "title",
           "label": "Title",
           "default": "Title"
@@ -360,6 +381,12 @@
           "id": "link_text",
           "label": "Link text",
           "info": "Leave empty to make the title the link."
+        },
+        {
+          "type": "text",
+          "id": "request_option",
+          "label": "Choice made in the request form",
+          "info": "Optional. When the link leads to the \"Request form\" of the page (#request), write here the words of one of its choices: the form opens with it chosen."
         }
       ]
     }

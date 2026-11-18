@@ -1,0 +1,478 @@
+{%- comment -%}
+  Rug size guide (Corvo addition)
+
+  Which size suits which room: a rule for each kind of room, each with a small plan of the room drawn to scale
+  (snippets/rug-size-drawing.liquid), then the standard sizes shown one inside the other, to compare them.
+
+  The rules are written in the blocks. The standard sizes are not typed: they are read from the rugs themselves
+  (the sizes of the first rug of the shop that has rug facts), so the guide follows the shop when a size changes.
+
+  Every rule and every size is plain text; the drawings only illustrate them.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign room_blocks = section.blocks | where: 'type', 'room'
+
+  comment
+    The standard sizes: those of the first rug that has rug facts and more than one size
+  endcomment
+
+  assign size_source = nil
+
+  for rug in collections.all.products
+    if rug.metafields.rug.craft_level.value != blank
+      unless rug.has_only_default_variant
+        assign size_source = rug
+        break
+      endunless
+    endif
+  endfor
+
+  assign size_list = ''
+  assign largest_width = 0
+  assign largest_length = 0
+
+  for variant in size_source.variants
+    assign size_parts = variant.title | downcase | remove: 'cm' | remove: ' ' | split: 'x'
+    assign size_width = size_parts[0] | plus: 0
+    assign size_length = size_parts[1] | plus: 0
+
+    if size_width > 0 and size_length > 0
+      assign size_list = size_list | append: size_width | append: 'x' | append: size_length | append: '|'
+
+      if size_width > largest_width
+        assign largest_width = size_width
+      endif
+
+      if size_length > largest_length
+        assign largest_length = size_length
+      endif
+    endif
+  endfor
+
+  assign sizes = size_list | split: '|'
+-%}
+
+<div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}" id="{{ section.settings.anchor | default: 'size-guide' | handleize }}">
+  <div class="container">
+    <div class="section-stack">
+      {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank -%}
+        <div class="section-header justify-self-center text-center">
+          <div class="prose">
+            {%- if section.settings.subheading != blank -%}
+              <p class="h6">{{ section.settings.subheading | escape }}</p>
+            {%- endif -%}
+
+            {%- if section.settings.title != blank -%}
+              <h2 class="h2">{{ section.settings.title | escape }}</h2>
+            {%- endif -%}
+
+            {%- if section.settings.text != blank -%}
+              {%- render 'corvo-fill', text: section.settings.text -%}
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if room_blocks.size > 0 -%}
+        <ul class="size-guide unstyled-list" role="list">
+          {%- for block in room_blocks -%}
+            {%- assign drawing_label = block.settings.drawing_label | default: block.settings.title -%}
+
+            <li class="size-room" {{ block.shopify_attributes }}>
+              <div class="size-room__plan">
+                {%- render 'rug-size-drawing', kind: block.settings.drawing, label: drawing_label -%}
+              </div>
+
+              <div class="size-room__text">
+                {%- if block.settings.title != blank -%}
+                  <h3 class="h5">{{ block.settings.title | escape }}</h3>
+                {%- endif -%}
+
+                {%- if block.settings.rule != blank -%}
+                  <div class="prose">
+                    {%- render 'corvo-fill', text: block.settings.rule -%}
+                  </div>
+                {%- endif -%}
+
+                {%- if block.settings.example != blank -%}
+                  <p class="text-sm text-subdued">{{ block.settings.example | escape }}</p>
+                {%- endif -%}
+              </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      {%- if sizes.size > 0 -%}
+        <div class="size-standard">
+          <div class="size-standard__plan">
+            {%- comment -%}The standard sizes drawn one inside the other, from one corner, to scale{%- endcomment -%}
+            <svg class="size-drawing" viewBox="-2 -2 {{ largest_width | plus: 4 }} {{ largest_length | plus: 4 }}" role="img" aria-label="{{ section.settings.sizes_label | escape }}" xmlns="http://www.w3.org/2000/svg">
+              {%- for size in sizes reversed -%}
+                {%- liquid
+                  assign size_parts = size | split: 'x'
+                  assign size_width = size_parts[0] | plus: 0
+                  assign size_length = size_parts[1] | plus: 0
+                  assign rect_y = largest_length | minus: size_length
+                  assign text_x = size_width | minus: 8
+                  assign text_y = rect_y | plus: 20
+                -%}
+
+                <rect class="size-drawing__step" x="0" y="{{ rect_y }}" width="{{ size_width }}" height="{{ size_length }}"/>
+                <text class="size-drawing__label" x="{{ text_x }}" y="{{ text_y }}" text-anchor="end">{{ size_width }} × {{ size_length }}</text>
+              {%- endfor -%}
+            </svg>
+          </div>
+
+          <div class="size-standard__text">
+            {%- if section.settings.sizes_title != blank -%}
+              <h3 class="h5">{{ section.settings.sizes_title | escape }}</h3>
+            {%- endif -%}
+
+            <ul class="size-standard__list unstyled-list" role="list">
+              {%- for size in sizes -%}
+                {%- liquid
+                  assign size_parts = size | split: 'x'
+                  assign size_width = size_parts[0] | plus: 0
+                  assign size_length = size_parts[1] | plus: 0
+                  assign size_area = size_width | times: size_length | divided_by: 10000.0 | round: 2
+                -%}
+
+                <li>
+                  <span>{{ size_width }} × {{ size_length }} cm</span>
+                  <span class="text-subdued">{{ 'rug_page.area' | t: area: size_area }}</span>
+                </li>
+              {%- endfor -%}
+            </ul>
+
+            {%- if section.settings.sizes_text != blank -%}
+              <div class="prose">
+                {%- render 'corvo-fill', text: section.settings.sizes_text -%}
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.button_1_text != blank or section.settings.button_2_text != blank -%}
+              <div class="size-standard__buttons">
+                {%- if section.settings.button_1_text != blank -%}
+                  {%- render 'button', content: section.settings.button_1_text, href: section.settings.button_1_link, style: 'solid' -%}
+                {%- endif -%}
+
+                {%- if section.settings.button_2_text != blank -%}
+                  {%- render 'button', content: section.settings.button_2_text, href: section.settings.button_2_link, style: 'outline' -%}
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  /* The drawings: thin lines in the colour of the text, the rug as a soft tint */
+  .size-drawing {
+    color: rgb(var(--text-color));
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+
+  .size-drawing * {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 1.25px;
+  }
+
+  .size-drawing__wall {
+    fill: none;
+    stroke: currentColor;
+    stroke-opacity: .28;
+  }
+
+  .size-drawing__rug {
+    fill: currentColor;
+    fill-opacity: .1;
+    stroke: currentColor;
+    stroke-opacity: .7;
+  }
+
+  .size-drawing__item {
+    fill: rgb(var(--background));
+    stroke: currentColor;
+  }
+
+  .size-drawing__line {
+    fill: none;
+    stroke: currentColor;
+  }
+
+  .size-drawing__mark {
+    fill: none;
+    stroke: currentColor;
+    stroke-opacity: .7;
+  }
+
+  .size-drawing__step {
+    fill: currentColor;
+    fill-opacity: .045;
+    stroke: currentColor;
+    stroke-opacity: .7;
+  }
+
+  .size-drawing__label {
+    fill: currentColor;
+    stroke: none;
+    letter-spacing: .04em;
+    font-size: 13px;
+  }
+
+  /* The rooms */
+  .size-guide {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem 2.5rem;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .size-room {
+    align-content: start;
+    gap: 1.25rem;
+    min-width: 0;
+    display: grid;
+  }
+
+  .size-room__plan {
+    background: rgb(var(--text-color) / .03);
+    padding: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  .size-room__text {
+    align-content: start;
+    gap: .5rem;
+    display: grid;
+  }
+
+  .size-room__text h3,
+  .size-room__text p {
+    margin: 0;
+  }
+
+  /* The standard sizes */
+  .size-standard {
+    border-block-start: 1px solid rgb(var(--border-color));
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: 2.5rem;
+    padding-block-start: clamp(2.5rem, 5vw, 4rem);
+    display: grid;
+  }
+
+  .size-standard__plan {
+    width: 100%;
+    max-width: 22rem;
+    margin-inline: auto;
+  }
+
+  .size-standard__text {
+    align-content: start;
+    gap: 1.25rem;
+    display: grid;
+  }
+
+  .size-standard__text h3 {
+    margin: 0;
+  }
+
+  .size-standard__list {
+    border-block-start: 1px solid rgb(var(--border-color));
+    margin: 0;
+    padding: 0;
+  }
+
+  .size-standard__list li {
+    border-block-end: 1px solid rgb(var(--border-color));
+    font-variant-numeric: tabular-nums;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: .625rem;
+    display: flex;
+  }
+
+  .size-standard__buttons {
+    flex-wrap: wrap;
+    gap: .75rem;
+    display: flex;
+  }
+
+  @media screen and (min-width: 700px) {
+    .size-guide {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .size-standard {
+      grid-template-columns: minmax(0, 22rem) minmax(0, 28rem);
+      justify-content: center;
+      gap: clamp(3rem, 8vw, 7rem);
+    }
+  }
+
+  @media screen and (min-width: 1150px) {
+    .size-guide {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 2rem;
+    }
+
+    .size-room__plan {
+      padding: 1.25rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Rug size guide",
+  "class": "shopify-section--rug-size-guide",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Which size suits which room, with a small plan of each room, then the standard sizes compared. The standard sizes are read from the rugs of the shop."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Rug size guide"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Standard sizes"
+    },
+    {
+      "type": "text",
+      "id": "sizes_title",
+      "label": "Title",
+      "default": "The standard sizes"
+    },
+    {
+      "type": "text",
+      "id": "sizes_label",
+      "label": "Description of the drawing of the sizes",
+      "info": "Read by screen readers, search engines and AI assistants.",
+      "default": "The standard sizes drawn one inside the other, to scale"
+    },
+    {
+      "type": "richtext",
+      "id": "sizes_text",
+      "label": "Text under the sizes"
+    },
+    {
+      "type": "text",
+      "id": "button_1_text",
+      "label": "Button 1"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Button 1 link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_text",
+      "label": "Button 2"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Button 2 link"
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Name of this part of the page in links",
+      "default": "size-guide"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "room",
+      "name": "Room",
+      "settings": [
+        {
+          "type": "select",
+          "id": "drawing",
+          "label": "Drawing",
+          "options": [
+            { "value": "living", "label": "Living room" },
+            { "value": "dining", "label": "Dining room" },
+            { "value": "bedroom", "label": "Bedroom" },
+            { "value": "open", "label": "Open-plan space" }
+          ],
+          "default": "living"
+        },
+        {
+          "type": "text",
+          "id": "drawing_label",
+          "label": "Description of the drawing",
+          "info": "Read by screen readers, search engines and AI assistants. Say what the drawing shows."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Room",
+          "default": "Living room"
+        },
+        {
+          "type": "richtext",
+          "id": "rule",
+          "label": "Rule"
+        },
+        {
+          "type": "text",
+          "id": "example",
+          "label": "Example",
+          "info": "Optional. A worked example of the rule."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Rug size guide",
+      "blocks": [
+        { "type": "room" }
+      ]
+    }
+  ]
+}
+{% endschema %}

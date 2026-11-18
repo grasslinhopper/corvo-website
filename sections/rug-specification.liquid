@@ -394,11 +394,14 @@ A row without a value is left out.
             {%- endif -%}
           </dl>
 
-          {%- if section.settings.note != blank -%}
-            <div class="prose text-sm text-subdued">
+          {%- comment -%}The note and the care text are the shop's standard sentences, unless the section gives its own words{%- endcomment -%}
+          <div class="prose text-sm text-subdued">
+            {%- if section.settings.note != blank -%}
               {{- section.settings.note -}}
-            </div>
-          {%- endif -%}
+            {%- else -%}
+              <p>{%- render 'corvo-fact', fact: 'variation' -%}</p>
+            {%- endif -%}
+          </div>
         </div>
 
         <div class="rug-spec__texts">
@@ -423,14 +426,18 @@ A row without a value is left out.
             </div>
           {%- endif -%}
 
-          {%- if section.settings.care_text != blank -%}
+          {%- if section.settings.care_title != blank or section.settings.care_text != blank -%}
             <div class="rug-spec__text">
               {%- if section.settings.care_title != blank -%}
                 <h2 class="h3">{{ section.settings.care_title | escape }}</h2>
               {%- endif -%}
 
               <div class="prose">
-                {{- section.settings.care_text -}}
+                {%- if section.settings.care_text != blank -%}
+                  {{- section.settings.care_text -}}
+                {%- else -%}
+                  <p>{%- render 'corvo-fact', fact: 'care' -%}</p>
+                {%- endif -%}
               </div>
 
               {%- if section.settings.care_link != blank and section.settings.care_link_text != blank -%}
@@ -641,7 +648,7 @@ A row without a value is left out.
       "type": "richtext",
       "id": "note",
       "label": "Note under the table",
-      "default": "<p>The colours shown are indicative. Natural materials and artisanal processes may give variations in colour and texture.</p>"
+      "info": "Leave empty to use the shop's standard sentence on colours and natural variation."
     },
     {
       "type": "header",
@@ -678,7 +685,7 @@ A row without a value is left out.
       "type": "richtext",
       "id": "care_text",
       "label": "Text",
-      "default": "<p>Vacuum regularly without rotating brushes, attend to spills promptly and rotate the rug from time to time. Keep it out of prolonged sunlight and rely on professional cleaning when needed.</p>"
+      "info": "Leave empty to use the shop's standard sentence on care, which the specification sheets use too."
     },
     {
       "type": "url",
