@@ -741,6 +741,23 @@
           "label": "Link to the page of the tab"
         },
         {
+          "type": "select",
+          "id": "images_source",
+          "label": "Pictures of the panel",
+          "options": [
+            {
+              "value": "manual",
+              "label": "The pictures chosen below"
+            },
+            {
+              "value": "projects",
+              "label": "The first four projects of the Portfolio"
+            }
+          ],
+          "default": "manual",
+          "info": "With the projects, the panel follows the \"Project\" entries in Shopify (Content > Metaobjects) and the pictures below are not used."
+        },
+        {
           "type": "header",
           "content": "t:sections.header.blocks.mega_menu.image_1"
         },

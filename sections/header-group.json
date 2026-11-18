@@ -63,22 +63,7 @@
             "images_position": "right",
             "intro_text": "Selected projects.",
             "intro_link_text": "See all projects",
-            "image_1": "shopify://shop_images/NOISY-1.png",
-            "image_1_heading": "House in Comporta",
-            "image_1_text": "Private residence · Portugal",
-            "image_1_link": "shopify://pages/portfolio",
-            "image_2": "shopify://shop_images/MOCCAGRADIENT-descarregar_1.png",
-            "image_2_heading": "House in Vale do Lobo",
-            "image_2_text": "Private residence · Portugal",
-            "image_2_link": "shopify://pages/portfolio",
-            "image_3": "shopify://shop_images/BORDER-2_8cea2702-fb6b-44ea-a616-d26f116f3bed.png",
-            "image_3_heading": "House in Foz",
-            "image_3_text": "Private residence · Portugal",
-            "image_3_link": "shopify://pages/portfolio",
-            "image_4": "shopify://shop_images/VERTIS-4.png",
-            "image_4_heading": "House in Marbella",
-            "image_4_text": "Private residence · Spain",
-            "image_4_link": "shopify://pages/portfolio"
+            "images_source": "projects"
           }
         },
         "mega-collections": {

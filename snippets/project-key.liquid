@@ -1,0 +1,36 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+PROJECT KEY (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Prints a key that puts the projects of the Portfolio in order once the keys are sorted as text:
+
+  1. the projects with a number in "Order in the lists", lowest number first,
+  2. then the others, newest first,
+  3. then the projects without a year.
+
+The handle of the project follows the number, so that two projects never share a key.
+
+A list is built by joining, for each project, its key and its HTML, then sorting the pieces: Liquid cannot sort
+entries by one of their fields.
+
+********************************************
+Supported variables
+********************************************
+
+* project: the "Project" entry (required)
+{%- endcomment -%}
+
+{%- liquid
+  assign key_number = 99999
+
+  if project.position.value != blank
+    assign key_number = project.position.value | plus: 0 | at_least: 0 | at_most: 49999
+  elsif project.year.value != blank
+    assign key_number = 60000 | minus: project.year.value
+  endif
+
+  assign key_text = key_number | prepend: '00000' | slice: -5, 5
+
+  echo key_text | append: ':' | append: project.system.handle
+-%}

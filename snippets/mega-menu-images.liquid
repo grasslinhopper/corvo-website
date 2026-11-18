@@ -13,45 +13,115 @@ Supported variables
 * block: the block containing all the information about the menu to render
 {%- endcomment -%}
 
-{%- comment -%}Corvo addition: up to four pictures, where the theme has two{%- endcomment -%}
-{%- for i in (1..4) -%}
-  {%- assign image_setting = 'image_' | append: i -%}
-  {%- assign heading_setting = 'image_' | append: i | append: '_heading' -%}
-  {%- assign text_setting = 'image_' | append: i | append: '_text' -%}
-  {%- assign link_setting = 'image_' | append: i | append: '_link' -%}
+{%- comment -%}
+Corvo addition: the panel of the Portfolio shows the first four projects, read from the "Project" entries in Shopify
+(Content > Metaobjects), in the order of the Portfolio page. Each picture leads to the page of its project. A project
+ticked "Preview only" is never shown on the published theme.
+{%- endcomment -%}
+{%- if block.settings.images_source == 'projects' -%}
+  {%- liquid
+    assign project_items = ''
+    assign project_separator = '<!--project-->'
+    assign project_key_separator = '<!--key-->'
+  -%}
 
-  {%- comment -%}Corvo addition: a picture without a description of its own is described by its heading{%- endcomment -%}
-  {%- assign image_alt = block.settings[image_setting].alt | default: block.settings[heading_setting] | strip_html -%}
+  {%- for project in shop.metaobjects.project.values -%}
+    {%- liquid
+      if project.example.value and theme.role == 'main'
+        continue
+      endif
 
-  {%- capture image_content -%}
-    {%- if block.settings[image_setting] -%}
-      <div class="overflow-hidden">
-        {{- block.settings[image_setting] | image_url: width: block.settings[image_setting].width | image_tag: loading: 'lazy', sizes: '(min-width: 1000px) 21rem, 315px', widths: '315,480,630,800,945', class: 'zoom-image group-hover:zoom', alt: image_alt -}}
-      </div>
-    {%- endif -%}
+      assign project_image = project.main_image.value
 
-    {%- if block.settings[heading_setting] != blank or block.settings[text_setting] != blank -%}
-      <div class="v-stack text-center {% if context == 'menu' %}gap-2.5{% else %}gap-0.5{% endif %}">
-        {%- if block.settings[heading_setting] != blank -%}
-          <p class="h6">{{ block.settings[heading_setting] }}</p>
-        {%- endif -%}
+      if project_image == blank
+        continue
+      endif
 
-        {%- if block.settings[text_setting] != blank -%}
-          <p class="smallcaps text-xs text-subdued">{{ block.settings[text_setting] }}</p>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
-  {%- endcapture -%}
+      assign project_meta_parts = ''
 
-  {%- if image_content != blank -%}
-    {%- if block.settings[link_setting] != blank -%}
-      <a href="{{ block.settings[link_setting] }}" class="v-stack justify-items-center gap-4 sm:gap-5 group">
-        {{- image_content -}}
+      if project.space.value != blank
+        assign project_meta_parts = project_meta_parts | append: project.space.value | append: '|'
+      endif
+
+      if project.location.value != blank
+        assign project_meta_parts = project_meta_parts | append: project.location.value | append: '|'
+      endif
+
+      assign project_meta = project_meta_parts | split: '|' | join: ' · '
+      assign project_alt = project_image.alt | default: project.title.value
+
+      capture project_key
+        render 'project-key', project: project
+      endcapture
+
+      assign project_key = project_key | strip
+    -%}
+
+    {%- capture project_html -%}
+      <a href="{{ project.system.url }}" class="v-stack justify-items-center gap-4 sm:gap-5 group">
+        <div class="overflow-hidden">
+          {{- project_image | image_url: width: 945 | image_tag: loading: 'lazy', sizes: '(min-width: 1000px) 21rem, 315px', widths: '315,480,630,800,945', class: 'zoom-image group-hover:zoom', alt: project_alt -}}
+        </div>
+
+        <div class="v-stack text-center {% if context == 'menu' %}gap-2.5{% else %}gap-0.5{% endif %}">
+          <p class="h6">{{ project.title.value | escape }}</p>
+
+          {%- if project_meta != blank -%}
+            <p class="smallcaps text-xs text-subdued">{{ project_meta | escape }}</p>
+          {%- endif -%}
+        </div>
       </a>
-    {%- else -%}
-      <div class="v-stack justify-items-center gap-4 sm:gap-5 group">
-        {{- image_content -}}
-      </div>
+    {%- endcapture -%}
+
+    {%- assign project_items = project_items | append: project_key | append: project_key_separator | append: project_html | append: project_separator -%}
+  {%- endfor -%}
+
+  {%- assign sorted_projects = project_items | split: project_separator | sort -%}
+
+  {%- for project_item in sorted_projects limit: 4 -%}
+    {{- project_item | split: project_key_separator | last -}}
+  {%- endfor -%}
+{%- else -%}
+  {%- comment -%}Corvo addition: up to four pictures, where the theme has two{%- endcomment -%}
+  {%- for i in (1..4) -%}
+    {%- assign image_setting = 'image_' | append: i -%}
+    {%- assign heading_setting = 'image_' | append: i | append: '_heading' -%}
+    {%- assign text_setting = 'image_' | append: i | append: '_text' -%}
+    {%- assign link_setting = 'image_' | append: i | append: '_link' -%}
+
+    {%- comment -%}Corvo addition: a picture without a description of its own is described by its heading{%- endcomment -%}
+    {%- assign image_alt = block.settings[image_setting].alt | default: block.settings[heading_setting] | strip_html -%}
+
+    {%- capture image_content -%}
+      {%- if block.settings[image_setting] -%}
+        <div class="overflow-hidden">
+          {{- block.settings[image_setting] | image_url: width: block.settings[image_setting].width | image_tag: loading: 'lazy', sizes: '(min-width: 1000px) 21rem, 315px', widths: '315,480,630,800,945', class: 'zoom-image group-hover:zoom', alt: image_alt -}}
+        </div>
+      {%- endif -%}
+
+      {%- if block.settings[heading_setting] != blank or block.settings[text_setting] != blank -%}
+        <div class="v-stack text-center {% if context == 'menu' %}gap-2.5{% else %}gap-0.5{% endif %}">
+          {%- if block.settings[heading_setting] != blank -%}
+            <p class="h6">{{ block.settings[heading_setting] }}</p>
+          {%- endif -%}
+
+          {%- if block.settings[text_setting] != blank -%}
+            <p class="smallcaps text-xs text-subdued">{{ block.settings[text_setting] }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endcapture -%}
+
+    {%- if image_content != blank -%}
+      {%- if block.settings[link_setting] != blank -%}
+        <a href="{{ block.settings[link_setting] }}" class="v-stack justify-items-center gap-4 sm:gap-5 group">
+          {{- image_content -}}
+        </a>
+      {%- else -%}
+        <div class="v-stack justify-items-center gap-4 sm:gap-5 group">
+          {{- image_content -}}
+        </div>
+      {%- endif -%}
     {%- endif -%}
-  {%- endif -%}
-{%- endfor -%}
+  {%- endfor -%}
+{%- endif -%}

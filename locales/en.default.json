@@ -720,8 +720,27 @@
       "other": "{{ count }} designs"
     },
     "status": "Designs shown: {{ count }}",
-    "image_alt": "{{ name }}: {{ style }} rug design from the Corvo design library",
     "craft_level": "Craft level {{ label }}: {{ price }} per m²",
-    "other": "More designs"
+    "other": "More designs",
+    "alt_suffix": "rug design from the Corvo design library"
+  },
+  "portfolio": {
+    "filter_label": "Filter the projects by type of space",
+    "status": "Projects shown: {{ count }}",
+    "example": "Example",
+    "example_note": "Example project: the text and the pictures are placeholders. It is shown in previews of the site only.",
+    "detail_suffix": "detail of the rug",
+    "photograph": "photograph",
+    "place": "Place",
+    "year": "Year",
+    "space": "Type of space",
+    "designer": "Designer or architect",
+    "photographs": "Photographs by",
+    "rugs": "Rugs",
+    "rug_from": "From {{ price }}",
+    "designed_by": "Design: {{ name }}",
+    "unavailable": "This project is not published",
+    "seo_title": "{{ title }}: a project with Corvo rugs",
+    "seo_description": "a project with rugs made to order by Corvo, by hand, in Portugal."
   }
 }

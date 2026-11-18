@@ -1,0 +1,447 @@
+{%- comment -%}
+  Projects (Corvo addition)
+
+  A row of projects of the Portfolio, each linked to its page. One section, four uses:
+
+  - "featured": the projects ticked "Show on the home page" (the home page),
+  - "related": the projects that use the rug being viewed, or a rug of the collection being viewed,
+  - "others": every project except the one being viewed (the foot of a project page),
+  - "all": every project.
+
+  The projects are the "Project" entries in Shopify (Content > Metaobjects). The section shows nothing at all when no
+  project matches, so a rug that is in no project simply has no "Seen in these projects" block. An entry ticked
+  "Preview only" is shown in theme previews and never on the published theme.
+
+  The first 50 projects are read. The Portfolio page itself lists them all.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign source = section.settings.source
+  assign style = section.settings.style
+  assign is_published_theme = false
+  assign wanted_ids = ''
+  assign current_handle = ''
+  assign items = ''
+  assign item_separator = '<!--project-->'
+  assign key_separator = '<!--key-->'
+
+  if theme.role == 'main'
+    assign is_published_theme = true
+  endif
+
+  if source == 'related'
+    if request.page_type == 'product'
+      assign wanted_ids = product.id | append: '|' | prepend: '|'
+    elsif request.page_type == 'collection' and collection.handle != 'all'
+      assign wanted_ids = '|'
+
+      for collection_product in collection.products
+        assign wanted_ids = wanted_ids | append: collection_product.id | append: '|'
+      endfor
+    endif
+  elsif source == 'others' and request.page_type == 'metaobject'
+    assign current_handle = metaobject.system.handle
+  endif
+-%}
+
+{%- for project in shop.metaobjects.project.values -%}
+  {%- liquid
+    if project.example.value and is_published_theme
+      continue
+    endif
+
+    assign matches = false
+
+    case source
+      when 'featured'
+        if project.featured.value
+          assign matches = true
+        endif
+      when 'related'
+        if wanted_ids != ''
+          for project_rug in project.rugs.value
+            assign rug_needle = project_rug.id | append: '|' | prepend: '|'
+
+            if wanted_ids contains rug_needle
+              assign matches = true
+              break
+            endif
+          endfor
+        endif
+      when 'others'
+        if project.system.handle != current_handle
+          assign matches = true
+        endif
+      else
+        assign matches = true
+    endcase
+
+    unless matches
+      continue
+    endunless
+
+    assign project_title = project.title.value
+    assign project_url = project.system.url
+    assign project_image = project.main_image.value
+    assign meta_parts = ''
+
+    if project.space.value != blank
+      assign meta_parts = meta_parts | append: project.space.value | append: '|'
+    endif
+
+    if project.location.value != blank
+      assign meta_parts = meta_parts | append: project.location.value | append: '|'
+    endif
+
+    if project.year.value != blank and style == 'caption'
+      assign meta_parts = meta_parts | append: project.year.value | append: '|'
+    endif
+
+    assign project_meta = meta_parts | split: '|' | join: ' · '
+    assign image_alt_default = project_title
+
+    if project.location.value != blank
+      assign image_alt_default = project_title | append: ', ' | append: project.location.value
+    endif
+
+    assign image_alt = project_image.alt | default: image_alt_default
+
+    capture item_key
+      render 'project-key', project: project
+    endcapture
+
+    assign item_key = item_key | strip
+  -%}
+
+  {%- capture item_html -%}
+    {%- if style == 'overlay' -%}
+      <li class="project-tile">
+        {%- if project_image != blank -%}
+          {{- project_image | image_url: width: 1600 | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 100vw, 33vw', widths: '400,600,800,1000,1200,1600', alt: image_alt -}}
+        {%- endif -%}
+
+        <div class="project-tile__text">
+          {%- if project.example.value -%}
+            <p><span class="pfolio__flag">{{ 'portfolio.example' | t }}</span></p>
+          {%- endif -%}
+
+          <h3 class="h3"><a href="{{ project_url }}" class="project-tile__link">{{ project_title | escape }}</a></h3>
+
+          {%- if project_meta != blank -%}
+            <p class="smallcaps text-xs">{{ project_meta | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.show_designer and project.designer.value != blank -%}
+            <p class="text-sm">{{ 'portfolio.designed_by' | t: name: project.designer.value }}</p>
+          {%- endif -%}
+        </div>
+      </li>
+    {%- else -%}
+      <li class="page-card project-card">
+        {%- if project_image != blank -%}
+          <div class="page-card__media">
+            {{- project_image | image_url: width: 1600 | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 100vw, (max-width: 999px) 50vw, 33vw', widths: '300,400,500,600,800,1000,1200,1600', alt: image_alt -}}
+          </div>
+        {%- endif -%}
+
+        <div class="page-card__text">
+          <h3 class="h5"><a href="{{ project_url }}" class="project-card__link">{{ project_title | escape }}</a></h3>
+
+          {%- if project_meta != blank -%}
+            <p class="text-sm text-subdued">{{ project_meta | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.show_designer and project.designer.value != blank -%}
+            <p class="text-sm text-subdued">{{ 'portfolio.designed_by' | t: name: project.designer.value }}</p>
+          {%- endif -%}
+
+          {%- if project.example.value -%}
+            <p><span class="pfolio__flag project-card__flag">{{ 'portfolio.example' | t }}</span></p>
+          {%- endif -%}
+        </div>
+      </li>
+    {%- endif -%}
+  {%- endcapture -%}
+
+  {%- assign items = items | append: item_key | append: key_separator | append: item_html | append: item_separator -%}
+{%- endfor -%}
+
+{%- liquid
+  assign sorted_items = items | split: item_separator | sort
+  assign shown = sorted_items.size | at_most: section.settings.limit
+  assign columns = shown | at_most: 3
+  assign columns_tablet = shown | at_most: 2
+
+  if shown == 3
+    assign columns_tablet = 3
+  endif
+-%}
+
+{%- if shown > 0 -%}
+  <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+    <div class="container">
+      <div class="section-stack">
+        {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank -%}
+          <div class="section-header justify-self-center text-center">
+            <div class="prose">
+              {%- if section.settings.subheading != blank -%}
+                <p class="h6">{{ section.settings.subheading | escape }}</p>
+              {%- endif -%}
+
+              {%- if section.settings.title != blank -%}
+                <h2 class="h2">{{ section.settings.title | escape }}</h2>
+              {%- endif -%}
+
+              {%- if section.settings.text != blank -%}
+                {%- render 'corvo-fill', text: section.settings.text -%}
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- liquid
+          if style == 'overlay'
+            assign list_class = 'project-tiles'
+            assign list_style = '--project-columns: ' | append: columns | append: ';'
+
+            if shown == 1
+              assign list_class = 'project-tiles project-tiles--single'
+            endif
+          else
+            assign list_class = 'page-cards page-cards--landscape'
+            assign list_style = '--page-cards-columns: ' | append: columns | append: '; --page-cards-columns-tablet: ' | append: columns_tablet | append: '; --page-cards-columns-mobile: 1;'
+          endif
+        -%}
+
+        <ul class="{{ list_class }} unstyled-list" role="list" style="{{ list_style }}">
+          {%- for item in sorted_items limit: section.settings.limit -%}
+            {{- item | split: key_separator | last -}}
+          {%- endfor -%}
+        </ul>
+
+        {%- if section.settings.button_text != blank and section.settings.button_link != blank -%}
+          <div class="justify-self-center">
+            {%- render 'button', content: section.settings.button_text, href: section.settings.button_link, style: 'outline' -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  /* Projects as pictures with their name on them */
+  .project-tiles {
+    gap: .5rem;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .project-tile {
+    aspect-ratio: 1;
+    color: #fff;
+    text-align: center;
+    background: rgb(0 0 0 / .25);
+    place-items: center;
+    display: grid;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-tile > img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    transition: transform 1.6s cubic-bezier(.2, .6, .2, 1);
+    position: absolute;
+    inset: 0;
+  }
+
+  /* A veil over the picture keeps the name readable on any photograph */
+  .project-tile::before {
+    content: "";
+    z-index: 1;
+    background: rgb(0 0 0 / .35);
+    position: absolute;
+    inset: 0;
+  }
+
+  .project-tile__text {
+    z-index: 2;
+    justify-items: center;
+    gap: .625rem;
+    padding: 1.5rem;
+    display: grid;
+    position: relative;
+  }
+
+  .project-tile__text h3,
+  .project-tile__text p {
+    color: inherit;
+    margin: 0;
+  }
+
+  .project-tile__link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* The link of a project covers its whole picture or card */
+  .project-tile__link::after,
+  .project-card__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .project-tile .pfolio__flag {
+    margin: 0;
+    opacity: 1;
+  }
+
+  @media screen and (min-width: 700px) {
+    .project-tiles {
+      grid-template-columns: repeat(var(--project-columns, 3), minmax(0, 1fr));
+    }
+
+    .project-tile {
+      aspect-ratio: 4 / 5;
+    }
+
+    .project-tiles--single .project-tile {
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  @media (hover: hover) {
+    .project-tile:hover > img {
+      transform: scale(1.04);
+    }
+  }
+
+  /* Projects as cards: a picture with the name under it */
+  .project-card {
+    position: relative;
+  }
+
+  .project-card__link {
+    text-decoration: none;
+  }
+
+  .project-card__flag {
+    margin: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-tile > img {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Projects",
+  "class": "shopify-section--project-cards",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A row of projects of the Portfolio. The projects are the \"Project\" entries in Shopify (Content > Metaobjects). Nothing is shown when no project matches."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Selected projects"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Projects"
+    },
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Which projects",
+      "options": [
+        { "value": "featured", "label": "Those ticked \"Show on the home page\"" },
+        { "value": "related", "label": "Those with the rug or the collection being viewed" },
+        { "value": "others", "label": "All but the project being viewed" },
+        { "value": "all", "label": "All" }
+      ],
+      "default": "featured"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "label": "How many at most",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Look",
+      "options": [
+        { "value": "overlay", "label": "The name on the picture" },
+        { "value": "caption", "label": "The name under the picture" }
+      ],
+      "default": "caption"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_designer",
+      "label": "Name the designer or architect",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Button under the projects"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Projects"
+    }
+  ]
+}
+{% endschema %}

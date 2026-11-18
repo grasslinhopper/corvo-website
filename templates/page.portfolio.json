@@ -2,78 +2,35 @@
   "sections": {
     "portfolio": {
       "type": "portfolio",
-      "blocks": {
-        "comporta": {
-          "type": "project",
-          "settings": {
-            "title": "House in Comporta",
-            "meta": "Private residence · Portugal",
-            "text": "",
-            "image": "shopify://shop_images/NOISY-1.png",
-            "image_detail": "shopify://shop_images/NOISY-IMG_E8585.jpg",
-            "link_text": ""
-          }
-        },
-        "vale-do-lobo": {
-          "type": "project",
-          "settings": {
-            "title": "House in Vale do Lobo",
-            "meta": "Private residence · Portugal",
-            "text": "",
-            "image": "shopify://shop_images/MOCCAGRADIENT-descarregar_1.png",
-            "image_detail": "shopify://shop_images/MOCCAGRADIENT-IMG_8505.jpg",
-            "link_text": ""
-          }
-        },
-        "foz": {
-          "type": "project",
-          "settings": {
-            "title": "House in Foz",
-            "meta": "Private residence · Portugal",
-            "text": "",
-            "image": "shopify://shop_images/BORDER-2_8cea2702-fb6b-44ea-a616-d26f116f3bed.png",
-            "image_detail": "shopify://shop_images/BORDER-IMG_8522.jpg",
-            "link_text": ""
-          }
-        },
-        "marbella": {
-          "type": "project",
-          "settings": {
-            "title": "House in Marbella",
-            "meta": "Private residence · Spain",
-            "text": "",
-            "image": "shopify://shop_images/VERTIS-4.png",
-            "image_detail": "shopify://shop_images/VERTIS-IMG_8593_8e2c6121-bf89-4d07-8291-16f7496609f0.jpg",
-            "link_text": ""
-          }
-        },
-        "london": {
-          "type": "project",
-          "settings": {
-            "title": "Restaurant in London",
-            "meta": "Restaurant · United Kingdom",
-            "text": "",
-            "image": "shopify://shop_images/VERDANT-transferir_4.png",
-            "image_detail": "shopify://shop_images/VERDANT-IMG_E8465.jpg",
-            "link_text": ""
-          }
-        }
-      },
-      "block_order": [
-        "comporta",
-        "vale-do-lobo",
-        "foz",
-        "marbella",
-        "london"
-      ],
       "settings": {
         "subheading": "Portfolio",
         "title": "Selected projects",
-        "intro": "Homes and spaces where Corvo rugs are on display."
+        "intro": "Homes and spaces where Corvo rugs are on display.",
+        "spaces": "Residential, Hospitality, Retail, Workplace, Other",
+        "all_label": "All",
+        "link_text": "View the project",
+        "empty_text": "No project is published yet."
+      }
+    },
+    "closing": {
+      "type": "page-intro",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Your project",
+        "title": "Start a project of your own",
+        "heading_tag": "h2",
+        "text": "<p>Any design, in any colour, in any size up to [max_size]. See a price guide at once, or talk it through with our designers.</p>",
+        "image_focus": "--focus: center",
+        "image_position": "end",
+        "button_1_text": "Tailor your rug",
+        "button_1_link": "shopify://pages/tailor-your-rug",
+        "button_2_text": "Book a meeting",
+        "button_2_link": "shopify://pages/contact"
       }
     }
   },
   "order": [
-    "portfolio"
+    "portfolio",
+    "closing"
   ]
 }

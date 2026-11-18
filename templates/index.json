@@ -263,78 +263,19 @@
       }
     },
     "projects": {
-      "type": "media-grid",
-      "blocks": {
-        "project-comporta": {
-          "type": "image",
-          "settings": {
-            "color_scheme": "scheme-4",
-            "image": "shopify://shop_images/NOISY-1.png",
-            "column_count": "4",
-            "row_count": 2,
-            "title": "House in Comporta",
-            "heading_tag": "h3",
-            "content": "<p>Private residence · Portugal</p>",
-            "link_text": "",
-            "link_url": "shopify://pages/portfolio",
-            "link_style": "link",
-            "text_position": "place-self-center text-center",
-            "overlay_color": "#000000",
-            "overlay_opacity": 35
-          }
-        },
-        "project-foz": {
-          "type": "image",
-          "settings": {
-            "color_scheme": "scheme-4",
-            "image": "shopify://shop_images/BORDER-2_8cea2702-fb6b-44ea-a616-d26f116f3bed.png",
-            "column_count": "4",
-            "row_count": 2,
-            "title": "House in Foz",
-            "heading_tag": "h3",
-            "content": "<p>Private residence · Portugal</p>",
-            "link_text": "",
-            "link_url": "shopify://pages/portfolio",
-            "link_style": "link",
-            "text_position": "place-self-center text-center",
-            "overlay_color": "#000000",
-            "overlay_opacity": 35
-          }
-        },
-        "project-london": {
-          "type": "image",
-          "settings": {
-            "color_scheme": "scheme-4",
-            "image": "shopify://shop_images/VERDANT-transferir_4.png",
-            "column_count": "4",
-            "row_count": 2,
-            "title": "Restaurant in London",
-            "heading_tag": "h3",
-            "content": "<p>Restaurant · United Kingdom</p>",
-            "link_text": "",
-            "link_url": "shopify://pages/portfolio",
-            "link_style": "link",
-            "text_position": "place-self-center text-center",
-            "overlay_color": "#000000",
-            "overlay_opacity": 35
-          }
-        }
-      },
-      "block_order": [
-        "project-comporta",
-        "project-foz",
-        "project-london"
-      ],
+      "type": "project-cards",
       "settings": {
         "color_scheme": "scheme-1",
         "separate_section_with_border": true,
-        "desktop_row_height": 300,
-        "mobile_row_height": 190,
-        "section_width": "lg",
-        "spacing": "xs",
         "subheading": "Portfolio",
         "title": "Selected projects",
-        "content": "<p><a href=\"/pages/portfolio\">See all projects</a></p>"
+        "text": "",
+        "source": "featured",
+        "limit": 3,
+        "style": "overlay",
+        "show_designer": true,
+        "button_text": "See all projects",
+        "button_link": "shopify://pages/portfolio"
       }
     },
     "professionals": {

@@ -19,6 +19,7 @@
   assign other_style = 'design_library.other' | t
   assign vat_plus = settings.rug_vat_percent | default: 23 | plus: 100
   assign style_blocks = section.blocks | where: 'type', 'style'
+  assign alt_suffix = 'design_library.alt_suffix' | t
 
   capture fx
     render 'rug-fx'
@@ -166,7 +167,7 @@
 
                         assign design_name = design.name.value
                         assign design_image = design.image.value
-                        assign design_alt_default = 'design_library.image_alt' | t: name: design_name, style: style_lower
+                        assign design_alt_default = design_name | append: ': ' | append: style_lower | append: ' ' | append: alt_suffix
                         assign design_alt = design_image.alt | default: design_alt_default
                         assign design_level = design.craft_level.value
                         assign design_url = ''

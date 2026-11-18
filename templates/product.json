@@ -555,11 +555,28 @@
         "title": "",
         "content": ""
       }
+    },
+    "rug_projects": {
+      "type": "project-cards",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "subheading": "Portfolio",
+        "title": "Seen in these projects",
+        "text": "",
+        "source": "related",
+        "limit": 3,
+        "style": "caption",
+        "show_designer": true,
+        "button_text": "See all projects",
+        "button_link": "shopify://pages/portfolio"
+      }
     }
   },
   "order": [
     "main",
     "rug_specification",
+    "rug_projects",
     "related_products_j3zKUm",
     "text_with_icons_3YdCmt",
     "slideshow_rnEG8i",

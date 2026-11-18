@@ -98,11 +98,28 @@
         "style": "tabs",
         "sticky": false
       }
+    },
+    "related_projects": {
+      "type": "project-cards",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "subheading": "Portfolio",
+        "title": "Projects with these rugs",
+        "text": "",
+        "source": "related",
+        "limit": 3,
+        "style": "caption",
+        "show_designer": true,
+        "button_text": "See all projects",
+        "button_link": "shopify://pages/portfolio"
+      }
     }
   },
   "order": [
     "collection-banner",
     "subnav-tabs",
-    "main"
+    "main",
+    "related_projects"
   ]
 }

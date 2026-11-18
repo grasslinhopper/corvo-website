@@ -1,9 +1,179 @@
 {%- comment -%}
-  Portfolio
-  An editorial list of pieces/projects: a large image, a smaller detail image and a short caption,
-  alternating sides. Each entry can be linked to a product (title, images and link are then filled
-  automatically) or written by hand for a client project.
+  Portfolio (Corvo addition)
+
+  The list of projects: for each one a large photograph, a detail, its name, its type of space, its place and its
+  year, a short summary and a link to its page. The sides alternate down the page.
+
+  The projects are the "Project" entries in Shopify (Content > Metaobjects). Each active entry is listed here and has
+  its own page (templates/metaobject/project.json). An entry ticked "Preview only" is shown in theme previews and
+  never on the published theme: the example projects are ticked.
+
+  The whole list is plain HTML. The filter links are plain links; the <corvo-filter> element (assets/corvo-filter.js)
+  turns them into a filter by type of space for readers that run scripts.
 {%- endcomment -%}
+
+{%- liquid
+  assign is_published_theme = false
+
+  if theme.role == 'main'
+    assign is_published_theme = true
+  endif
+
+  assign items = ''
+  assign total = 0
+  assign space_check = '|'
+  assign item_separator = '<!--project-->'
+  assign key_separator = '<!--key-->'
+  assign detail_suffix = 'portfolio.detail_suffix' | t
+-%}
+
+{%- paginate shop.metaobjects.project.values by 250 -%}
+  {%- for project in shop.metaobjects.project.values -%}
+    {%- liquid
+      if project.example.value and is_published_theme
+        continue
+      endif
+
+      assign total = total | plus: 1
+      assign project_title = project.title.value
+      assign project_url = project.system.url
+      assign project_space = project.space.value
+      assign main_image = project.main_image.value
+      assign detail_image = project.detail_image.value
+
+      if project_space != blank
+        assign space_token = project_space | append: '|'
+        assign space_needle = space_token | prepend: '|'
+
+        unless space_check contains space_needle
+          assign space_check = space_check | append: space_token
+        endunless
+      endif
+
+      assign meta_parts = ''
+
+      if project_space != blank
+        assign meta_parts = meta_parts | append: project_space | append: '|'
+      endif
+
+      if project.location.value != blank
+        assign meta_parts = meta_parts | append: project.location.value | append: '|'
+      endif
+
+      if project.year.value != blank
+        assign meta_parts = meta_parts | append: project.year.value | append: '|'
+      endif
+
+      assign project_meta = meta_parts | split: '|' | join: ' · '
+      assign main_alt_default = project_title
+
+      if project.location.value != blank
+        assign main_alt_default = project_title | append: ', ' | append: project.location.value
+      endif
+
+      assign main_alt = main_image.alt | default: main_alt_default
+      assign detail_alt_default = project_title | append: ': ' | append: detail_suffix
+      assign detail_alt = detail_image.alt | default: detail_alt_default
+
+      capture item_key
+        render 'project-key', project: project
+      endcapture
+
+      assign item_key = item_key | strip
+    -%}
+
+    {%- capture item_html -%}
+      <li class="pfolio__item [[flip]]" data-filter-item="{{ project_space | handleize }}">
+        <div class="pfolio__media pfolio__media--main">
+          {%- if main_image != blank -%}
+            <a href="{{ project_url }}" tabindex="-1" aria-hidden="true">
+              {{- main_image | image_url: width: 1800 | image_tag: sizes: '(max-width: 699px) 100vw, 50vw', widths: '400,600,800,1000,1200,1500,1800', alt: main_alt, loading: 'lazy' -}}
+            </a>
+          {%- endif -%}
+        </div>
+
+        <div class="pfolio__aside">
+          <div class="pfolio__caption">
+            <p class="pfolio__count">
+              <span data-filter-number>[[number]]</span> <span>/ <span data-filter-total>[[total]]</span></span>
+
+              {%- if project.example.value -%}
+                <span class="pfolio__flag">{{ 'portfolio.example' | t }}</span>
+              {%- endif -%}
+            </p>
+
+            <h2 class="pfolio__name"><a href="{{ project_url }}">{{ project_title | escape }}</a></h2>
+
+            {%- if project_meta != blank -%}
+              <p class="pfolio__meta">{{ project_meta | escape }}</p>
+            {%- endif -%}
+
+            {%- if project.summary.value != blank -%}
+              <p class="pfolio__text">{{ project.summary.value | escape | newline_to_br }}</p>
+            {%- endif -%}
+
+            {%- if section.settings.link_text != blank -%}
+              <p>
+                <a href="{{ project_url }}" class="pfolio__link">
+                  {{- section.settings.link_text | escape -}}
+                  <span class="sr-only">: {{ project_title | escape }}</span>
+                </a>
+              </p>
+            {%- endif -%}
+          </div>
+
+          {%- if detail_image != blank -%}
+            <div class="pfolio__media pfolio__media--detail">
+              {{- detail_image | image_url: width: 1200 | image_tag: sizes: '(max-width: 699px) 100vw, 33vw', widths: '300,400,600,800,1000,1200', alt: detail_alt, loading: 'lazy' -}}
+            </div>
+          {%- endif -%}
+        </div>
+      </li>
+    {%- endcapture -%}
+
+    {%- assign items = items | append: item_key | append: key_separator | append: item_html | append: item_separator -%}
+  {%- endfor -%}
+{%- endpaginate -%}
+
+{%- liquid
+  assign sorted_items = items | split: item_separator | sort
+  assign total_text = total
+
+  if total < 10
+    assign total_text = total | prepend: '0'
+  endif
+
+  comment
+    The types of space that have a project, in the order of the setting, then any other type
+  endcomment
+
+  assign space_list = ''
+  assign asked_spaces = section.settings.spaces | split: ','
+
+  for asked_space in asked_spaces
+    assign space_name = asked_space | strip
+    assign space_needle = space_name | append: '|' | prepend: '|'
+
+    if space_name != blank and space_check contains space_needle
+      assign space_list = space_list | append: space_name | append: '|'
+    endif
+  endfor
+
+  assign found_spaces = space_check | split: '|'
+
+  for found_space in found_spaces
+    assign listed_check = space_list | prepend: '|'
+    assign space_needle = found_space | append: '|' | prepend: '|'
+
+    if found_space != blank
+      unless listed_check contains space_needle
+        assign space_list = space_list | append: found_space | append: '|'
+      endunless
+    endif
+  endfor
+
+  assign spaces = space_list | split: '|'
+-%}
 
 <div class="pfolio">
   {%- if section.settings.title != blank or section.settings.intro != blank -%}
@@ -22,71 +192,64 @@
     </header>
   {%- endif -%}
 
-  <ol class="pfolio__list" role="list">
-    {%- for block in section.blocks -%}
-      {%- liquid
-        assign product = block.settings.product
+  {%- if total > 0 -%}
+    <corvo-filter class="pfolio__projects" param="space" alternate="pfolio__item--flip" status="{{ 'portfolio.status' | t: count: '[count]' | escape }}">
+      {%- if spaces.size > 1 -%}
+        <nav class="pfolio__filter" aria-label="{{ 'portfolio.filter_label' | t | escape }}">
+          <ul class="corvo-filter__list unstyled-list" role="list">
+            <li>
+              <a href="#projects" class="corvo-chip" data-filter="" aria-current="true">
+                {{- section.settings.all_label | escape }}
+                <span class="corvo-chip__count">{{ total }}</span>
+              </a>
+            </li>
 
-        assign image = block.settings.image
-        if image == blank
-          assign image = product.featured_media
-        endif
+            {%- for space_name in spaces -%}
+              {%- liquid
+                assign space_handle = space_name | handleize
+                assign space_marker = 'data-filter-item="' | append: space_handle | append: '"'
+                assign space_count = items | split: space_marker | size | minus: 1
+              -%}
 
-        assign image_detail = block.settings.image_detail
-        if image_detail == blank and product.media.size > 1
-          assign image_detail = product.media[1]
-        endif
+              <li>
+                <a href="#projects" class="corvo-chip" data-filter="{{ space_handle }}">
+                  {{- space_name | escape }}
+                  <span class="corvo-chip__count">{{ space_count }}</span>
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </nav>
 
-        assign title = block.settings.title | default: product.title
+        <p class="sr-only" role="status" data-filter-status></p>
+      {%- endif -%}
 
-        assign link_url = block.settings.link_url
-        if link_url == blank
-          assign link_url = product.url
-        endif
+      <ol class="pfolio__list" id="projects" role="list">
+        {%- for item in sorted_items -%}
+          {%- liquid
+            assign item_html = item | split: key_separator | last
+            assign item_number = forloop.index
+            assign item_flip = ''
+            assign item_side = forloop.index | modulo: 2
 
-        assign number = forloop.index | prepend: '0' | slice: -2, 2
-        assign total = forloop.length | prepend: '0' | slice: -2, 2
-      -%}
+            if forloop.index < 10
+              assign item_number = forloop.index | prepend: '0'
+            endif
 
-      <li class="pfolio__item" {{ block.shopify_attributes }}>
-        <div class="pfolio__media pfolio__media--main">
-          {%- if image != blank -%}
-            {%- if link_url != blank -%}<a href="{{ link_url }}" tabindex="-1" aria-hidden="true">{%- endif -%}
-              {{- image | image_url: width: 1800 | image_tag: sizes: '(max-width: 699px) 100vw, 50vw', widths: '400,600,800,1000,1200,1500,1800', alt: image.alt, loading: 'lazy' -}}
-            {%- if link_url != blank -%}</a>{%- endif -%}
-          {%- endif -%}
-        </div>
+            if item_side == 0
+              assign item_flip = 'pfolio__item--flip'
+            endif
+          -%}
 
-        <div class="pfolio__aside">
-          <div class="pfolio__caption">
-            <p class="pfolio__count">{{ number }} <span>/ {{ total }}</span></p>
+          {{- item_html | replace: '[[number]]', item_number | replace: '[[total]]', total_text | replace: '[[flip]]', item_flip -}}
+        {%- endfor -%}
+      </ol>
+    </corvo-filter>
 
-            {%- if title != blank -%}
-              <h2 class="pfolio__name">{{ title | escape }}</h2>
-            {%- endif -%}
-
-            {%- if block.settings.meta != blank -%}
-              <p class="pfolio__meta">{{ block.settings.meta | escape }}</p>
-            {%- endif -%}
-
-            {%- if block.settings.text != blank -%}
-              <p class="pfolio__text">{{ block.settings.text | escape | newline_to_br }}</p>
-            {%- endif -%}
-
-            {%- if link_url != blank and block.settings.link_text != blank -%}
-              <p><a href="{{ link_url }}" class="pfolio__link">{{ block.settings.link_text | escape }}</a></p>
-            {%- endif -%}
-          </div>
-
-          {%- if image_detail != blank -%}
-            <div class="pfolio__media pfolio__media--detail">
-              {{- image_detail | image_url: width: 1200 | image_tag: sizes: '(max-width: 699px) 100vw, 33vw', widths: '300,400,600,800,1000,1200', alt: '', loading: 'lazy' -}}
-            </div>
-          {%- endif -%}
-        </div>
-      </li>
-    {%- endfor -%}
-  </ol>
+    <script src="{{ 'corvo-filter.js' | asset_url }}" defer></script>
+  {%- elsif section.settings.empty_text != blank -%}
+    <p class="pfolio__empty text-subdued">{{ section.settings.empty_text | escape }}</p>
+  {%- endif -%}
 </div>
 
 {% stylesheet %}
@@ -98,7 +261,7 @@
 
   .pfolio__intro {
     max-width: 40rem;
-    margin: 0 auto clamp(4rem, 8vw, 8rem);
+    margin: 0 auto clamp(2.5rem, 5vw, 4rem);
     text-align: center;
   }
 
@@ -135,6 +298,21 @@
     text-wrap: balance;
   }
 
+  .pfolio__empty {
+    text-align: center;
+    margin: 0;
+  }
+
+  /* Filter */
+
+  .pfolio__projects {
+    display: block;
+  }
+
+  .pfolio__filter {
+    margin-block-end: clamp(3rem, 6vw, 5rem);
+  }
+
   /* List */
 
   .pfolio__list {
@@ -144,11 +322,17 @@
     margin: 0 auto;
     padding: 0;
     list-style: none;
+    /* A filter link without scripts jumps to the list: it stays clear of the bars that stick to the top */
+    scroll-margin-block-start: calc(var(--sticky-area-height, 0px) + 2rem);
   }
 
   .pfolio__item {
     display: grid;
     gap: 2rem;
+  }
+
+  .pfolio__item[hidden] {
+    display: none;
   }
 
   .pfolio__media {
@@ -184,8 +368,21 @@
     margin: 0 0 1.5rem;
   }
 
-  .pfolio__count span {
+  .pfolio__count > span + span {
     opacity: 0.45;
+  }
+
+  /* An example project says so, wherever it is listed */
+  .pfolio__count .pfolio__flag,
+  .pfolio__flag {
+    display: inline-block;
+    margin-inline-start: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border: 1px solid currentColor;
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.7;
   }
 
   .pfolio__name {
@@ -197,6 +394,11 @@
     line-height: 1.2;
     letter-spacing: var(--heading-letter-spacing);
     text-transform: var(--heading-text-transform);
+  }
+
+  .pfolio__name a {
+    color: inherit;
+    text-decoration: none;
   }
 
   .pfolio__meta {
@@ -253,17 +455,17 @@
       width: 78%;
     }
 
-    .pfolio__item:nth-child(even) .pfolio__media--main {
+    .pfolio__item--flip .pfolio__media--main {
       grid-column: 7 / span 6;
     }
 
-    .pfolio__item:nth-child(even) .pfolio__aside {
+    .pfolio__item--flip .pfolio__aside {
       grid-column: 1 / span 5;
       justify-items: end;
       text-align: end;
     }
 
-    .pfolio__item:nth-child(even) .pfolio__text {
+    .pfolio__item--flip .pfolio__text {
       margin-inline-start: auto;
     }
 
@@ -292,6 +494,10 @@
   },
   "settings": [
     {
+      "type": "paragraph",
+      "content": "The list of projects. The projects are the \"Project\" entries in Shopify (Content > Metaobjects): add a project there and it appears here, with a page of its own. An entry ticked \"Preview only\" is never shown on the published site."
+    },
+    {
       "type": "text",
       "id": "subheading",
       "label": "Small text above the title",
@@ -301,76 +507,50 @@
       "type": "text",
       "id": "title",
       "label": "Title",
-      "default": "Selected pieces"
+      "default": "Selected projects"
     },
     {
       "type": "textarea",
       "id": "intro",
       "label": "Introduction"
-    }
-  ],
-  "blocks": [
+    },
     {
-      "type": "project",
-      "name": "Entry",
-      "settings": [
-        {
-          "type": "product",
-          "id": "product",
-          "label": "Product",
-          "info": "Optional. Fills in the title, images and link automatically. Leave empty for a client project and fill in the fields below."
-        },
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Title",
-          "info": "Leave empty to use the product name."
-        },
-        {
-          "type": "text",
-          "id": "meta",
-          "label": "Small line under the title",
-          "info": "For example: collection and material, or location and year."
-        },
-        {
-          "type": "textarea",
-          "id": "text",
-          "label": "Description"
-        },
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Main image",
-          "info": "Leave empty to use the product's first image."
-        },
-        {
-          "type": "image_picker",
-          "id": "image_detail",
-          "label": "Detail image",
-          "info": "Leave empty to use the product's second image."
-        },
-        {
-          "type": "text",
-          "id": "link_text",
-          "label": "Link text",
-          "default": "View the rug"
-        },
-        {
-          "type": "url",
-          "id": "link_url",
-          "label": "Link",
-          "info": "Leave empty to link to the product."
-        }
-      ]
+      "type": "header",
+      "content": "Filter by type of space"
+    },
+    {
+      "type": "text",
+      "id": "spaces",
+      "label": "Order of the types of space",
+      "info": "As they are written on the projects, separated by commas. Only the types that have a project are shown, and the filter appears once there are two.",
+      "default": "Residential, Hospitality, Retail, Workplace, Other"
+    },
+    {
+      "type": "text",
+      "id": "all_label",
+      "label": "Name of the link that shows every project",
+      "default": "All"
+    },
+    {
+      "type": "header",
+      "content": "Projects"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link to the page of a project",
+      "default": "View the project"
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "Line shown while there is no project",
+      "default": "No project is published yet."
     }
   ],
   "presets": [
     {
-      "name": "Portfolio",
-      "blocks": [
-        { "type": "project" },
-        { "type": "project" }
-      ]
+      "name": "Portfolio"
     }
   ]
 }

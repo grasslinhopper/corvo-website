@@ -7,7 +7,8 @@
 
     {%- comment -%}
     Corvo addition: every page tells search engines and AI assistants what it is. A title always names Corvo, the list
-    of all rugs is not called "Products", and a page without a description of its own gets a factual one.
+    of all rugs is not called "Products", and a page without a description of its own gets a factual one. The page of
+    a project of the Portfolio is titled by the name of the project.
     {%- endcomment -%}
     {%- liquid
       assign seo_title = page_title
@@ -31,6 +32,8 @@
         assign seo_title = 'general.corvo.all_rugs_title' | t
       elsif seo_key != blank and page_title == page.title
         assign seo_title = seo_key | append: '.title' | t
+      elsif request.page_type == 'metaobject' and metaobject.system.type == 'project'
+        assign seo_title = 'portfolio.seo_title' | t: title: metaobject.title.value
       endif
 
       if seo_title == blank
@@ -54,6 +57,14 @@
           assign seo_description = page.content | strip_html | strip_newlines | truncate: 160
         elsif request.page_type == 'list-collections'
           assign seo_description = 'general.corvo.collections_description' | t
+        elsif request.page_type == 'metaobject' and metaobject.system.type == 'project'
+          assign seo_description = metaobject.title.value
+
+          if metaobject.location.value != blank
+            assign seo_description = seo_description | append: ', ' | append: metaobject.location.value
+          endif
+
+          assign seo_description = 'portfolio.seo_description' | t | prepend: ': ' | prepend: seo_description
         endif
       endif
 
@@ -71,6 +82,11 @@
 
     {%- if seo_description != blank -%}
       <meta name="description" content="{{ seo_description | escape }}">
+    {%- endif -%}
+
+    {%- comment -%}Corvo addition: an example project (ticked "Preview only") is kept out of search engines{%- endcomment -%}
+    {%- if request.page_type == 'metaobject' and metaobject.example.value -%}
+      <meta name="robots" content="noindex">
     {%- endif -%}
 
     <link rel="canonical" href="{{ canonical_url }}">

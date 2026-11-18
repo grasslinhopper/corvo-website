@@ -50,6 +50,8 @@
 - [Colours]({{ shop.url }}/pages/colours): the Open Palette and the Infinite Colours matching service.
 - [Service]({{ shop.url }}/pages/bespoke-service): the five steps of a bespoke project and the rules of an order.
 - [Tailor your rug]({{ shop.url }}/pages/tailor-your-rug): a price guide for a design of your own, and the form to ask for a proposal.
+- [Design library]({{ shop.url }}/pages/gallery): {% render 'corvo-fill', text: '[design_count] designs by style, each made to measure in any colour.' %}
+- [Portfolio]({{ shop.url }}/pages/portfolio): projects with Corvo rugs, each with its place, its designer and its rugs.
 - [Samples]({{ shop.url }}/pages/samples): order a sample of any rug.
 - [Care and questions]({{ shop.url }}/pages/care-faq): care, delivery and the questions asked most often.
 - [Story]({{ shop.url }}/pages/about-us): where Corvo comes from.
@@ -86,6 +88,108 @@ What adds to the price per m²:
 {% for material in shop.metaobjects.rug_material.values -%}
 - {{ material.name.value }} (fibre: {{ material.fibre.value }}; price: {{ material.supplement.value | downcase }}){% if material.description.value != blank %}: {{ material.description.value }}{% endif %}
 {% endfor %}
+## Design library
+
+{% render 'corvo-fill', text: 'The design library holds [design_count] designs. Each is the starting point of a bespoke rug: Corvo draws it again in the size, the colours and the materials asked for, up to [max_size], and its price follows the price guide above.' %} The designs, by style:
+
+{% paginate shop.metaobjects.rug_design.values by 250 -%}
+{%- liquid
+  assign library_check = '|'
+
+  for design in shop.metaobjects.rug_design.values
+    assign library_style = design.style.value | default: 'Other'
+    assign library_needle = library_style | append: '|' | prepend: '|'
+
+    unless library_check contains library_needle
+      assign library_check = library_check | append: library_style | append: '|'
+    endunless
+  endfor
+
+  assign library_styles = library_check | split: '|'
+-%}
+{%- for library_style in library_styles -%}
+{%- liquid
+  if library_style == blank
+    continue
+  endif
+
+  assign library_names = ''
+
+  for design in shop.metaobjects.rug_design.values
+    assign design_style = design.style.value | default: 'Other'
+
+    if design_style == library_style
+      assign library_names = library_names | append: design.name.value | append: '|'
+    endif
+  endfor
+
+  assign library_names = library_names | split: '|' | join: ', '
+-%}
+- {{ library_style }}: {{ library_names }}.
+{% endfor -%}
+{%- endpaginate %}
+{% comment %}The projects of the Portfolio. An example project (ticked "Preview only") is never listed here.{% endcomment -%}
+{%- liquid
+  assign project_lines = ''
+  assign project_separator = '<!--project-->'
+  assign project_key_separator = '<!--key-->'
+
+  for project in shop.metaobjects.project.values
+    if project.example.value
+      continue
+    endif
+
+    assign project_facts = ''
+
+    if project.space.value != blank
+      assign project_facts = project_facts | append: project.space.value | downcase | append: '|'
+    endif
+
+    if project.location.value != blank
+      assign project_facts = project_facts | append: project.location.value | append: '|'
+    endif
+
+    if project.year.value != blank
+      assign project_facts = project_facts | append: project.year.value | append: '|'
+    endif
+
+    if project.designer.value != blank
+      assign project_facts = project_facts | append: 'design by ' | append: project.designer.value | append: '|'
+    endif
+
+    assign project_rugs = project.rugs.value | map: 'title' | join: ', '
+
+    if project_rugs != blank
+      assign project_facts = project_facts | append: 'rugs: ' | append: project_rugs | append: '|'
+    endif
+
+    assign project_facts = project_facts | split: '|' | join: '; '
+
+    capture project_key
+      render 'project-key', project: project
+    endcapture
+
+    assign project_key = project_key | strip
+    assign project_line = '- [' | append: project.title.value | append: '](' | append: shop.url | append: project.system.url | append: ')'
+
+    if project_facts != blank
+      assign project_line = project_line | append: ': ' | append: project_facts | append: '.'
+    endif
+
+    assign project_lines = project_lines | append: project_key | append: project_key_separator | append: project_line | append: project_separator
+  endfor
+
+  assign sorted_projects = project_lines | split: project_separator | sort
+-%}
+{%- if sorted_projects.size > 0 %}
+## Projects
+
+Projects with Corvo rugs, from the Portfolio:
+
+{% for project_line in sorted_projects -%}
+{{ project_line | split: project_key_separator | last }}
+{% endfor -%}
+{%- endif %}
 ## Rugs
 
 {% for rug in rugs -%}

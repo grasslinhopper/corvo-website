@@ -1,0 +1,557 @@
+{%- comment -%}
+  Project page (Corvo addition)
+
+  The page of one project of the Portfolio: its best photograph, its name, a summary and its facts (place, year, type
+  of space, designer or architect, photographer), then its story, its other photographs and the rugs made for it.
+
+  The project is a "Project" entry in Shopify (Content > Metaobjects). Every active entry has a page of its own at
+  /pages/projects/ followed by its handle, drawn by this section (templates/metaobject/project.json). Nothing is typed
+  here: change the entry and the page follows.
+
+  An entry ticked "Preview only" is shown in theme previews and never on the published theme: the example projects
+  are ticked, and say so at the top of their page.
+
+  A wide photograph opens the page across its full width. An upright one shares the opening with the text. The
+  opening reuses the styles of the "Page opening" section (sections/page-intro.liquid), and the list of rugs those of
+  the "Cards" section: Shopify serves the styles of every section on every page.
+{%- endcomment -%}
+
+{%- liquid
+  assign project = metaobject
+  assign is_available = true
+  assign portfolio_url = section.settings.portfolio_link | default: '/pages/portfolio'
+
+  if project == blank or project.system.type != 'project'
+    assign is_available = false
+  elsif project.example.value and theme.role == 'main'
+    assign is_available = false
+  endif
+-%}
+
+{%- if is_available -%}
+  {%- liquid
+    assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+    assign project_title = project.title.value
+    assign main_image = project.main_image.value
+    assign detail_image = project.detail_image.value
+    assign gallery_images = project.gallery.value
+    assign rugs = project.rugs.value
+    assign is_wide = false
+
+    if main_image != blank and main_image.aspect_ratio >= 1.2
+      assign is_wide = true
+    endif
+
+    assign main_alt_default = project_title
+
+    if project.location.value != blank
+      assign main_alt_default = project_title | append: ', ' | append: project.location.value
+    endif
+
+    assign main_alt = main_image.alt | default: main_alt_default
+    assign gallery_count = gallery_images.size | default: 0
+
+    if detail_image != blank
+      assign gallery_count = gallery_count | plus: 1
+    endif
+
+    assign rugs_count = 0
+
+    for rug in rugs
+      if rug.title != blank
+        assign rugs_count = rugs_count | plus: 1
+      endif
+    endfor
+  -%}
+
+  <article class="project">
+    {%- if project.example.value -%}
+      <p class="project__flag text-sm">{{ 'portfolio.example_note' | t }}</p>
+    {%- endif -%}
+
+    <div class="color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }}">
+      {%- if is_wide -%}
+        <div class="project__hero">
+          {{- main_image | image_url: width: main_image.width | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '100vw', widths: '600,800,1000,1200,1600,2000,2400,3000', alt: main_alt -}}
+        </div>
+      {%- endif -%}
+
+      <div class="page-intro project__opening {% if is_wide or main_image == blank %}page-intro--text-only{% endif %}">
+        <div class="page-intro__text">
+          <div class="page-intro__content prose">
+            {%- if section.settings.portfolio_label != blank -%}
+              <p class="h6 text-subdued"><a href="{{ portfolio_url }}" class="project__back">{{ section.settings.portfolio_label | escape }}</a></p>
+            {%- endif -%}
+
+            <h1 class="h1">{{ project_title | escape }}</h1>
+
+            {%- if project.summary.value != blank -%}
+              <div class="page-intro__lead">
+                <p>{{ project.summary.value | escape | newline_to_br }}</p>
+              </div>
+            {%- endif -%}
+          </div>
+
+          <dl class="page-intro__facts">
+            {%- if project.location.value != blank -%}
+              <div class="page-intro__fact">
+                <dt class="text-sm text-subdued">{{ 'portfolio.place' | t }}</dt>
+                <dd>{{ project.location.value | escape }}</dd>
+              </div>
+            {%- endif -%}
+
+            {%- if project.year.value != blank -%}
+              <div class="page-intro__fact">
+                <dt class="text-sm text-subdued">{{ 'portfolio.year' | t }}</dt>
+                <dd>{{ project.year.value }}</dd>
+              </div>
+            {%- endif -%}
+
+            {%- if project.space.value != blank -%}
+              <div class="page-intro__fact">
+                <dt class="text-sm text-subdued">{{ 'portfolio.space' | t }}</dt>
+                <dd>{{ project.space.value | escape }}</dd>
+              </div>
+            {%- endif -%}
+
+            {%- if project.designer.value != blank -%}
+              <div class="page-intro__fact">
+                <dt class="text-sm text-subdued">{{ 'portfolio.designer' | t }}</dt>
+                <dd>
+                  {%- if project.designer_link.value != blank -%}
+                    <a href="{{ project.designer_link.value }}" class="link" target="_blank" rel="noopener">{{ project.designer.value | escape }}</a>
+                  {%- else -%}
+                    {{- project.designer.value | escape -}}
+                  {%- endif -%}
+                </dd>
+              </div>
+            {%- endif -%}
+
+            {%- if project.photographer.value != blank -%}
+              <div class="page-intro__fact">
+                <dt class="text-sm text-subdued">{{ 'portfolio.photographs' | t }}</dt>
+                <dd>{{ project.photographer.value | escape }}</dd>
+              </div>
+            {%- endif -%}
+
+            {%- if rugs_count > 0 -%}
+              <div class="page-intro__fact">
+                <dt class="text-sm text-subdued">{{ 'portfolio.rugs' | t }}</dt>
+                <dd>
+                  {%- assign is_first_rug = true -%}
+
+                  {%- for rug in rugs -%}
+                    {%- if rug.title != blank -%}
+                      {%- unless is_first_rug -%}, {% endunless -%}
+                      <a href="{{ rug.url }}" class="link">{{ rug.title | escape }}</a>
+                      {%- assign is_first_rug = false -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                </dd>
+              </div>
+            {%- endif -%}
+          </dl>
+        </div>
+
+        {%- if main_image != blank and is_wide == false -%}
+          <div class="page-intro__media">
+            {{- main_image | image_url: width: main_image.width | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '(max-width: 999px) 100vw, 50vw', widths: '400,600,800,1000,1200,1400,1600,2000,2400', alt: main_alt -}}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- if project.story.value != blank or gallery_count > 0 or rugs_count > 0 -%}
+      <div class="project__body">
+        {%- if project.story.value != blank -%}
+          <div class="project__story prose">
+            {{- project.story | metafield_tag -}}
+          </div>
+        {%- endif -%}
+
+        {%- if gallery_count > 0 -%}
+          <div class="project__photographs">
+            <ul class="project-gallery {% if gallery_count == 1 %}project-gallery--single{% endif %} unstyled-list" role="list">
+              {%- assign photograph_number = 1 -%}
+
+              {%- if detail_image != blank -%}
+                {%- liquid
+                  assign photograph_number = photograph_number | plus: 1
+                  assign photograph_alt_default = 'portfolio.detail_suffix' | t | prepend: ': ' | prepend: project_title
+                  assign photograph_alt = detail_image.alt | default: photograph_alt_default
+                -%}
+
+                <li>
+                  {{- detail_image | image_url: width: 2400 | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 100vw, 50vw', widths: '400,600,800,1000,1200,1600,2000,2400', alt: photograph_alt -}}
+                </li>
+              {%- endif -%}
+
+              {%- for gallery_image in gallery_images -%}
+                {%- liquid
+                  assign photograph_number = photograph_number | plus: 1
+                  assign photograph_alt_default = 'portfolio.photograph' | t | prepend: ': ' | prepend: project_title | append: ' ' | append: photograph_number
+                  assign photograph_alt = gallery_image.alt | default: photograph_alt_default
+                -%}
+
+                <li>
+                  {{- gallery_image | image_url: width: 2400 | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 100vw, 50vw', widths: '400,600,800,1000,1200,1600,2000,2400', alt: photograph_alt -}}
+                </li>
+              {%- endfor -%}
+            </ul>
+
+            {%- if project.photographer.value != blank -%}
+              <p class="project-gallery__credit text-sm text-subdued">{{ 'portfolio.photographs' | t }} {{ project.photographer.value | escape }}</p>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if rugs_count > 0 -%}
+          <section class="project-rugs" aria-labelledby="project-rugs-title">
+            <h2 class="h3" id="project-rugs-title">{{ section.settings.rugs_title | escape }}</h2>
+
+            {%- if project.rug_details.value != blank -%}
+              <p class="project-rugs__details">{{ project.rug_details.value | escape | newline_to_br }}</p>
+            {%- endif -%}
+
+            <ul class="project-rugs__list unstyled-list" role="list">
+              {%- for rug in rugs -%}
+                {%- if rug.title != blank -%}
+                  {%- liquid
+                    assign rug_image = rug.featured_media
+                    assign rug_alt = rug_image.alt | default: rug.title
+                    assign rug_materials = rug.metafields.rug.materials.value | map: 'name' | map: 'value' | join: ', '
+                    assign rug_price = rug.price_min | money
+                  -%}
+
+                  <li class="project-rug">
+                    {%- if rug_image != blank -%}
+                      <div class="project-rug__media">
+                        {{- rug_image | image_url: width: 400 | image_tag: loading: 'lazy', sizes: '6rem', widths: '100,200,300,400', alt: rug_alt -}}
+                      </div>
+                    {%- endif -%}
+
+                    <div class="project-rug__text">
+                      <h3 class="h5"><a href="{{ rug.url }}" class="project-rug__link">{{ rug.title | escape }}</a></h3>
+
+                      {%- if rug_materials != blank -%}
+                        <p class="text-sm text-subdued">{{ rug_materials | escape }}</p>
+                      {%- endif -%}
+
+                      <p class="text-sm text-subdued">{{ 'portfolio.rug_from' | t: price: rug_price }}</p>
+                    </div>
+
+                    {%- if section.settings.rug_link_text != blank -%}
+                      <span class="project-rug__more link text-sm" aria-hidden="true">{{ section.settings.rug_link_text | escape }}</span>
+                    {%- endif -%}
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          </section>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </article>
+
+  {%- comment -%}
+  The project as structured data: what it is, where, when, by whom, and the rugs in it. An example project is left
+  out, so that nothing made up is ever handed to a search engine or an AI assistant.
+  {%- endcomment -%}
+  {%- unless project.example.value -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "@id": {{ shop.url | append: project.system.url | append: '#project' | json }},
+        "name": {{ project_title | json }},
+        "url": {{ shop.url | append: project.system.url | json }},
+        {%- if project.summary.value != blank -%}
+          "description": {{ project.summary.value | json }},
+        {%- endif -%}
+        {%- if main_image != blank -%}
+          "image": [
+            {{- main_image | image_url: width: 1600 | prepend: 'https:' | json -}}
+            {%- if detail_image != blank -%}
+              ,{{ detail_image | image_url: width: 1600 | prepend: 'https:' | json }}
+            {%- endif -%}
+            {%- for gallery_image in gallery_images -%}
+              ,{{ gallery_image | image_url: width: 1600 | prepend: 'https:' | json }}
+            {%- endfor -%}
+          ],
+        {%- endif -%}
+        {%- if project.space.value != blank -%}
+          "genre": {{ project.space.value | append: ' interior' | json }},
+        {%- endif -%}
+        {%- if project.year.value != blank -%}
+          "dateCreated": {{ project.year.value | append: '' | json }},
+        {%- endif -%}
+        {%- if project.location.value != blank -%}
+          "locationCreated": { "@type": "Place", "name": {{ project.location.value | json }} },
+        {%- endif -%}
+        {%- if project.designer.value != blank -%}
+          "contributor": {
+            "@type": "Organization",
+            "name": {{ project.designer.value | json }}
+            {%- if project.designer_link.value != blank -%}
+              ,"url": {{ project.designer_link.value | json }}
+            {%- endif -%}
+          },
+        {%- endif -%}
+        {%- if project.photographer.value != blank -%}
+          "creditText": {{ 'portfolio.photographs' | t | append: ' ' | append: project.photographer.value | json }},
+        {%- endif -%}
+        {%- if rugs_count > 0 -%}
+          "mentions": [
+            {%- assign is_first_rug = true -%}
+            {%- for rug in rugs -%}
+              {%- if rug.title != blank -%}
+                {%- unless is_first_rug -%},{%- endunless -%}
+                { "@type": "Product", "name": {{ rug.title | json }}, "url": {{ shop.url | append: rug.url | json }} }
+                {%- assign is_first_rug = false -%}
+              {%- endif -%}
+            {%- endfor -%}
+          ],
+        {%- endif -%}
+        "isPartOf": { "@type": "CollectionPage", "name": {{ section.settings.portfolio_label | default: 'Portfolio' | json }}, "url": {{ shop.url | append: portfolio_url | json }} },
+        "creator": { "@type": "Organization", "name": {{ shop.name | json }}, "url": {{ shop.url | json }} }
+      }
+    </script>
+  {%- endunless -%}
+{%- else -%}
+  <div class="section-spacing">
+    <div class="container">
+      <div class="prose text-center">
+        <h1 class="h2">{{ 'portfolio.unavailable' | t }}</h1>
+
+        {%- if section.settings.portfolio_label != blank -%}
+          <p><a href="{{ portfolio_url }}" class="link">{{ section.settings.portfolio_label | escape }}</a></p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  /* An example project says so at the top of its page */
+  .project__flag {
+    background: rgb(var(--text-color) / .06);
+    border-block-end: 1px solid rgb(var(--border-color));
+    text-align: center;
+    margin: 0;
+    padding: .625rem var(--container-gutter);
+  }
+
+  /* A wide photograph opens the page across its full width */
+  .project__hero {
+    background: rgb(var(--text-color) / .05);
+    aspect-ratio: 16 / 9;
+    max-height: min(52rem, calc(100vh - var(--sticky-area-height, 0px) - 6rem));
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .project__hero img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .project__back {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .project__back:hover {
+    text-decoration: underline;
+    text-underline-offset: .25em;
+  }
+
+  .project__opening .page-intro__facts {
+    width: 100%;
+  }
+
+  /* The story, the photographs and the rugs */
+  .project__body {
+    gap: clamp(3rem, 7vw, 6rem);
+    padding: clamp(3rem, 7vw, 6rem) var(--container-gutter);
+    display: grid;
+  }
+
+  .project__story {
+    width: 100%;
+    max-width: 44rem;
+    margin-inline: auto;
+  }
+
+  .project__story > :first-child {
+    font-size: var(--text-lg, 1.125rem);
+  }
+
+  .project__photographs {
+    gap: 1rem;
+    width: 100%;
+    max-width: 85rem;
+    margin-inline: auto;
+    display: grid;
+  }
+
+  /* The photographs keep their own proportions: none is cropped */
+  .project-gallery {
+    columns: 1;
+    column-gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .project-gallery li {
+    break-inside: avoid;
+    margin-block-end: 1.5rem;
+  }
+
+  .project-gallery img {
+    background: rgb(var(--text-color) / .05);
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .project-gallery__credit {
+    margin: 0;
+  }
+
+  @media screen and (min-width: 700px) {
+    .project-gallery {
+      columns: 2;
+    }
+
+    .project-gallery--single {
+      columns: 1;
+      max-width: 50rem;
+      margin-inline: auto;
+    }
+  }
+
+  /* The rugs made for the project */
+  .project-rugs {
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 44rem;
+    margin-inline: auto;
+    display: grid;
+  }
+
+  .project-rugs h2,
+  .project-rugs__details {
+    margin: 0;
+  }
+
+  .project-rugs__list {
+    border-block-start: 1px solid rgb(var(--border-color));
+    margin: 0;
+    padding: 0;
+  }
+
+  .project-rug {
+    border-block-end: 1px solid rgb(var(--border-color));
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1.25rem;
+    padding-block: 1rem;
+    display: grid;
+    position: relative;
+  }
+
+  .project-rug__media {
+    background: rgb(var(--text-color) / .05);
+    aspect-ratio: 4 / 5;
+    width: 5rem;
+    overflow: hidden;
+  }
+
+  .project-rug__media img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .project-rug__text {
+    gap: .25rem;
+    display: grid;
+  }
+
+  .project-rug__text h3,
+  .project-rug__text p {
+    margin: 0;
+  }
+
+  .project-rug__link {
+    text-decoration: none;
+  }
+
+  /* The link of a rug covers its whole row */
+  .project-rug__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  @media screen and (max-width: 699px) {
+    .project-rug {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .project-rug__more {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Project page",
+  "class": "shopify-section--main-project",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The page of a project. Everything on it comes from the \"Project\" entry in Shopify (Content > Metaobjects): its photographs, its facts, its story and its rugs."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "portfolio_label",
+      "label": "Line above the name of the project",
+      "info": "It links back to the list of projects.",
+      "default": "Portfolio"
+    },
+    {
+      "type": "url",
+      "id": "portfolio_link",
+      "label": "Page with the list of projects"
+    },
+    {
+      "type": "header",
+      "content": "Rugs"
+    },
+    {
+      "type": "text",
+      "id": "rugs_title",
+      "label": "Title above the rugs",
+      "default": "Rugs in this project"
+    },
+    {
+      "type": "text",
+      "id": "rug_link_text",
+      "label": "Link to a rug",
+      "default": "View the rug"
+    }
+  ]
+}
+{% endschema %}

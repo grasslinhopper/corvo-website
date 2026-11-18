@@ -234,6 +234,19 @@ breadcrumb.
             "name": {{ blog.title | json }},
             "item": "{{ shop.url }}{{ article.url }}"
           }
+      {%- elsif request.page_type == 'metaobject' and metaobject.system.type == 'project' -%}
+        {%- comment -%}Corvo addition: a project belongs to the Portfolio{%- endcomment -%}
+        ,{
+            "@type": "ListItem",
+            "position": 2,
+            "name": {{ pages['portfolio'].title | default: 'Portfolio' | json }},
+            "item": "{{ shop.url }}{{ pages['portfolio'].url | default: '/pages/portfolio' }}"
+          }, {
+            "@type": "ListItem",
+            "position": 3,
+            "name": {{ metaobject.title.value | json }},
+            "item": "{{ shop.url }}{{ metaobject.system.url }}"
+          }
       {%- elsif request.page_type == 'page' and crumb_parent != nil -%}
         ,{
             "@type": "ListItem",
