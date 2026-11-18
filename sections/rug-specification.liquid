@@ -232,7 +232,7 @@ A row without a value is left out.
               {%- if choice_count > 0 -%}
                 {%- for option in product.options_with_values -%}
                   {%- assign option_name = option.name | downcase | strip -%}
-                  {%- unless option_name == 'size' %} {{ 'rug_page.facts.choices' | t: name: option.name, count: option.values.size }}{% endunless -%}
+                  {%- unless option_name == 'size' or option.values.size < 2 %} {{ 'rug_page.facts.choices' | t: name: option.name, count: option.values.size }}{% endunless -%}
                 {%- endfor -%}
               {%- endif -%}
 
@@ -328,17 +328,24 @@ A row without a value is left out.
 
                 {%- unless option_name == 'size' -%}
                   <div class="rug-spec__row">
-                    <dt>{{ 'rug_page.spec.choices' | t: name: option.name }}</dt>
-                    <dd>
-                      <span>{{ 'rug_page.spec.choices_count' | t: count: option.values.size }}</span>
+                    {%- if option.values.size < 2 -%}
+                      {%- comment -%}One value only is a fact of the rug, not a choice{%- endcomment -%}
+                      {%- assign only_value = option.values | first -%}
+                      <dt>{{ option.name | escape }}</dt>
+                      <dd>{{ only_value.name | default: only_value | escape }}</dd>
+                    {%- else -%}
+                      <dt>{{ 'rug_page.spec.choices' | t: name: option.name }}</dt>
+                      <dd>
+                        <span>{{ 'rug_page.spec.choices_count' | t: count: option.values.size }}</span>
 
-                      <span class="text-sm text-subdued">
-                        {%- for option_value in option.values -%}
-                          {{- option_value.name | default: option_value | escape -}}
-                          {%- unless forloop.last -%}, {% endunless -%}
-                        {%- endfor -%}
-                      </span>
-                    </dd>
+                        <span class="text-sm text-subdued">
+                          {%- for option_value in option.values -%}
+                            {{- option_value.name | default: option_value | escape -}}
+                            {%- unless forloop.last -%}, {% endunless -%}
+                          {%- endfor -%}
+                        </span>
+                      </dd>
+                    {%- endif -%}
                   </div>
                 {%- endunless -%}
               {%- endfor -%}

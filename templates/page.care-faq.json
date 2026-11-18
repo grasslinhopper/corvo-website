@@ -216,7 +216,8 @@
         "image": "shopify://shop_images/CORVO_FINAL-62.jpg",
         "reveal_on_scroll": true,
         "image_position": "start",
-        "content_width": "sm"
+        "content_width": "sm",
+        "image_alt": "A person seen from behind in front of a rug with an abstract pattern in rust, blue and yellow, hung on a wall"
       }
     },
     "subnav-pager": {

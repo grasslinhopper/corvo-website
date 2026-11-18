@@ -66,11 +66,12 @@
   assign size_lines = size_lines | strip | split: '§'
 
   comment
-    The other choices of the rug (a colour, a frame): every choice that is not the size. A rug with such a choice
-    has one product code per size and per colour, so the table of sizes leaves the codes out.
+    The other choices of the rug (a colour, a frame): every choice that is not the size. A rug with a real choice
+    (two values or more) has one product code per size and per colour, so the table of sizes leaves the codes out.
   endcomment
 
   assign choice_count = 0
+  assign real_choice_count = 0
 
   if product.options.size > 1
     for option in product.options_with_values
@@ -78,6 +79,10 @@
 
       unless option_name == 'size'
         assign choice_count = choice_count | plus: 1
+
+        if option.values.size > 1
+          assign real_choice_count = real_choice_count | plus: 1
+        endif
       endunless
     endfor
   endif
@@ -119,8 +124,8 @@
       body {
         color: var(--ink);
         font-family: var(--text);
-        font-size: 10.5pt;
-        line-height: 1.5;
+        font-size: 10pt;
+        line-height: 1.45;
         margin: 0;
         padding: 1.5rem 1rem 4rem;
       }
@@ -130,7 +135,7 @@
         max-width: 210mm;
         min-height: 297mm;
         margin: 0 auto;
-        padding: 16mm 16mm 12mm;
+        padding: 13mm 16mm 10mm;
         box-shadow: 0 1px 12px rgb(0 0 0 / .08);
         display: flex;
         flex-direction: column;
@@ -141,7 +146,7 @@
         justify-content: space-between;
         align-items: flex-end;
         gap: 1rem;
-        padding-bottom: 5mm;
+        padding-bottom: 4mm;
         display: flex;
       }
 
@@ -167,7 +172,7 @@
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         align-items: end;
         gap: 8mm;
-        margin: 8mm 0 6mm;
+        margin: 6mm 0 5mm;
         display: grid;
       }
 
@@ -196,7 +201,7 @@
         flex: 1 1 0;
         width: 0;
         min-width: 0;
-        height: 62mm;
+        height: 52mm;
         display: block;
       }
 
@@ -209,7 +214,7 @@
         border-bottom: 1px solid var(--line);
         grid-template-columns: 38mm minmax(0, 1fr);
         gap: 4mm;
-        padding: 2.2mm 0;
+        padding: 1.6mm 0;
         display: grid;
         break-inside: avoid;
       }
@@ -232,9 +237,10 @@
         font-family: var(--heading);
         letter-spacing: .14em;
         text-transform: uppercase;
-        margin: 7mm 0 2.5mm;
-        font-size: 10pt;
+        margin: 5.5mm 0 2mm;
+        font-size: 9.5pt;
         font-weight: 400;
+        break-after: avoid;
       }
 
       table {
@@ -246,7 +252,11 @@
       td {
         border-bottom: 1px solid var(--line);
         text-align: left;
-        padding: 2mm 0;
+        padding: 1.5mm 0;
+      }
+
+      tr {
+        break-inside: avoid;
       }
 
       td {
@@ -259,7 +269,7 @@
 
       .sheet__note {
         color: var(--soft);
-        margin: 4mm 0 0;
+        margin: 3mm 0 0;
         font-size: 8.5pt;
       }
 
@@ -269,9 +279,10 @@
         justify-content: space-between;
         gap: 1rem;
         margin-top: auto;
-        padding-top: 4mm;
+        padding-top: 3.5mm;
         font-size: 8pt;
         display: flex;
+        break-inside: avoid;
       }
 
       .sheet__foot p {
@@ -279,7 +290,7 @@
       }
 
       .sheet__spacer {
-        min-height: 8mm;
+        min-height: 5mm;
       }
 
       .toolbar {
@@ -357,7 +368,7 @@
         .sheet {
           box-shadow: none;
           max-width: none;
-          min-height: 297mm;
+          min-height: 295mm;
         }
       }
     </style>
@@ -469,17 +480,24 @@
 
               {%- unless option_name == 'size' -%}
                 <div>
-                  <dt>{{ 'rug_page.spec.choices' | t: name: option.name }}</dt>
-                  <dd>
-                    {{ 'rug_page.spec.choices_count' | t: count: option.values.size }}
+                  {%- if option.values.size < 2 -%}
+                    {%- comment -%}One value only is a fact of the rug, not a choice{%- endcomment -%}
+                    {%- assign only_value = option.values | first -%}
+                    <dt>{{ option.name | escape }}</dt>
+                    <dd>{{ only_value.name | default: only_value | escape }}</dd>
+                  {%- else -%}
+                    <dt>{{ 'rug_page.spec.choices' | t: name: option.name }}</dt>
+                    <dd>
+                      {{ 'rug_page.spec.choices_count' | t: count: option.values.size }}
 
-                    <small>
-                      {%- for option_value in option.values -%}
-                        {{- option_value.name | default: option_value | escape -}}
-                        {%- unless forloop.last -%}, {% endunless -%}
-                      {%- endfor -%}
-                    </small>
-                  </dd>
+                      <small>
+                        {%- for option_value in option.values -%}
+                          {{- option_value.name | default: option_value | escape -}}
+                          {%- unless forloop.last -%}, {% endunless -%}
+                        {%- endfor -%}
+                      </small>
+                    </dd>
+                  {%- endif -%}
                 </div>
               {%- endunless -%}
             {%- endfor -%}
@@ -510,7 +528,7 @@
                 <th scope="col">{{ 'rug_page.size' | t }}</th>
                 <th scope="col">{{ 'spec_sheet.area' | t }}</th>
 
-                {%- if choice_count == 0 -%}
+                {%- if real_choice_count == 0 -%}
                   <th scope="col">{{ 'spec_sheet.code' | t }}</th>
                 {%- endif -%}
               </tr>
@@ -533,7 +551,7 @@
                   <td>{{ size_fields[6] | escape }}</td>
                   <td>{% if size_area != blank %}{{ 'rug_page.area' | t: area: size_area }}{% endif %}</td>
 
-                  {%- if choice_count == 0 -%}
+                  {%- if real_choice_count == 0 -%}
                     <td>{{ size_fields[4] | escape }}</td>
                   {%- endif -%}
                 </tr>

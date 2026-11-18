@@ -34,7 +34,9 @@
             >
           {%- endif -%}
 
-          {{- section.settings.image | image_url: width: section.settings.image.width | image_tag: sizes: sizes, widths: '200,300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200', reveal-on-scroll: section.settings.reveal_on_scroll -}}
+          {%- comment -%}Corvo addition: the section can describe its picture itself, when the file has no description{%- endcomment -%}
+          {%- assign image_alt = section.settings.image_alt | default: section.settings.image.alt -%}
+          {{- section.settings.image | image_url: width: section.settings.image.width | image_tag: alt: image_alt, sizes: sizes, widths: '200,300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200', reveal-on-scroll: section.settings.reveal_on_scroll -}}
         </picture>
       {%- else -%}
         {{- 'image' | placeholder_svg_tag: 'placeholder' -}}
@@ -115,6 +117,12 @@
       "id": "image",
       "label": "t:global.image.image",
       "info": "t:sections.image_with_text.image_size_recommendation"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Description of the picture",
+      "info": "For readers that cannot see it. Leave empty to use the description saved with the picture in Shopify."
     },
     {
       "type": "image_picker",
