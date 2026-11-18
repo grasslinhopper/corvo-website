@@ -58,7 +58,7 @@
             "row_count": 2,
             "title": "Collections",
             "heading_tag": "h2",
-            "content": "<p>Six collections, designed in our studio</p>",
+            "content": "<p>[Collection_count] collections, designed in our studio</p>",
             "link_text": "Explore the collections",
             "link_url": "shopify://collections",
             "link_style": "link",

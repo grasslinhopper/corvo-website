@@ -9,6 +9,10 @@
           "type": "text",
           "settings": {
             "title": "Corvo",
+            "logo": "shopify://shop_images/CorvoBranco.png",
+            "logo_width": 320,
+            "logo_mobile_width": 240,
+            "logo_shift": 2,
             "content": "<p>Meticulously crafted in Portugal, Corvo blends heritage techniques with modern innovation. We create sustainable, bespoke rugs designed to anchor your space in timeless luxury.</p><p>A Sorema Group company.</p>",
             "enable_follow_on_shop": false
           }

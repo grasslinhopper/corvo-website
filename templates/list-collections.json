@@ -122,6 +122,126 @@
         "link_text": "Discover the collection",
         "image_right": "shopify://shop_images/RAYURES-descarregar_5.png"
       }
+    },
+    "signature": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "signature-custom-edition",
+        "subheading": "A border in your colours. Eucalyptus.",
+        "title": "",
+        "image_left_position": 80,
+        "image_right_position": 80,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 2,
+        "products_limit": 2,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_left": "shopify://shop_images/graccioza-mood-p29.jpg",
+        "image_right": "shopify://shop_images/graccioza-mood-p33.jpg"
+      }
+    },
+    "frame-atelier": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "frame-atelier",
+        "subheading": "Nine frame designs. Wool.",
+        "title": "",
+        "image_left_position": 90,
+        "image_right_position": 90,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 5,
+        "products_limit": 10,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_left": "shopify://shop_images/graccioza-mood-p37.jpg",
+        "image_right": "shopify://shop_images/graccioza-mood-p45.jpg"
+      }
+    },
+    "tile": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "portuguese-tile-edition",
+        "subheading": "Tile motifs, reimagined. Eucalyptus.",
+        "title": "",
+        "image_left_position": 85,
+        "image_right_position": 80,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 4,
+        "products_limit": 4,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_left": "shopify://shop_images/graccioza-mood-p77.jpg",
+        "image_right": "shopify://shop_images/graccioza-mood-p82.jpg"
+      }
+    },
+    "cut-loop": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "cut-loop-edition",
+        "subheading": "Cut & loop pile. Eucalyptus.",
+        "title": "",
+        "image_left_position": 70,
+        "image_right_position": 80,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 2,
+        "products_limit": 2,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_left": "shopify://shop_images/graccioza-mood-p50.jpg",
+        "image_right": "shopify://shop_images/graccioza-mood-p53.jpg"
+      }
+    },
+    "three-d": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "3d-edition",
+        "subheading": "Sculpted pile heights. Eucalyptus & wool.",
+        "title": "",
+        "image_left_position": 85,
+        "image_right_position": 70,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 3,
+        "products_limit": 3,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_left": "shopify://shop_images/graccioza-mood-p60.jpg",
+        "image_right": "shopify://shop_images/graccioza-mood-p62.jpg"
+      }
+    },
+    "stone": {
+      "type": "collection-showcase",
+      "settings": {
+        "collection": "heritage-stone-edition",
+        "subheading": "Marble veining. Eucalyptus.",
+        "title": "",
+        "image_left_position": 85,
+        "image_right_position": 70,
+        "hero_height": "medium",
+        "overlay_opacity": 25,
+        "show_description": true,
+        "columns": 3,
+        "products_limit": 3,
+        "show_price": true,
+        "price_prefix": "From",
+        "link_text": "Discover the collection",
+        "image_left": "shopify://shop_images/graccioza-mood-p65.jpg",
+        "image_right": "shopify://shop_images/graccioza-mood-p68.jpg"
+      }
     }
   },
   "order": [
@@ -131,6 +251,12 @@
     "contour",
     "shading",
     "watered",
-    "textured"
+    "textured",
+    "signature",
+    "frame-atelier",
+    "tile",
+    "cut-loop",
+    "three-d",
+    "stone"
   ]
 }

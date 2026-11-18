@@ -31,6 +31,7 @@ and rules"), the craft levels, the materials and the sample product. Change the 
   [claim_days]          business days to report a defect
   [palette_count]       colours in the Open Palette
   [rug_count]           rug designs
+  [collection_count]    collections, in words up to twenty ("twelve"); [Collection_count] starts a sentence ("Twelve")
   [design_count]        designs in the design library
   [level_count]         craft levels
   [materials_count]     materials
@@ -155,6 +156,29 @@ Supported variables
           assign palette_count = palette_count | plus: 1
         endif
       endfor
+
+      comment
+        The collections are those of the "Collection" menu, the one that also feeds the filters of the rugs
+      endcomment
+
+      assign collection_count = 0
+
+      for collection_link in linklists['collection-links'].links
+        if collection_link.type == 'collection_link'
+          assign collection_count = collection_count | plus: 1
+        endif
+      endfor
+
+      assign collection_words = collection_count | append: ''
+
+      if collection_count > 0 and collection_count <= 20
+        assign number_words = 'one,two,three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,fifteen,sixteen,seventeen,eighteen,nineteen,twenty' | split: ','
+        assign number_index = collection_count | minus: 1
+        assign collection_words = number_words[number_index]
+      endif
+
+      assign collection_words_capital = collection_words | capitalize
+      assign filled = filled | replace: '[collection_count]', collection_words | replace: '[Collection_count]', collection_words_capital
 
       assign level_count = shop.metaobjects.craft_level.values | size
       assign materials_count = shop.metaobjects.rug_material.values | size

@@ -22,7 +22,9 @@ Supported variables
       <p class="h4">{{ link.title }}</p>
 
       {%- if block.settings.intro_text != blank -%}
-        <p class="text-subdued">{{ block.settings.intro_text | escape }}</p>
+        {%- comment -%}Markers such as [Collection_count] are filled in: see the "corvo-fill" snippet{%- endcomment -%}
+        {%- assign intro_text_escaped = block.settings.intro_text | escape -%}
+        <p class="text-subdued">{%- render 'corvo-fill', text: intro_text_escaped -%}</p>
       {%- endif -%}
 
       {%- if block.settings.intro_link_text != blank -%}

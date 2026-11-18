@@ -2,6 +2,26 @@
   #shopify-section-{{ section.id }} {
     --footer-content-justify-items: {% if section.settings.blocks.size <= 2 %}start{% else %}space-between{% endif %};
   }
+
+  /* Corvo addition: the logo of a text block. The shift lines its first letter up with the text under it. */
+  .footer__logo {
+    display: block;
+    inline-size: var(--footer-logo-mobile-width);
+    max-inline-size: 100%;
+    transform: translateX(calc(var(--footer-logo-shift, 0) * -1%));
+  }
+
+  .footer__logo-image {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  @media screen and (min-width: 700px) {
+    .footer__logo {
+      inline-size: var(--footer-logo-width);
+    }
+  }
 </style>
 
 {%- assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5 -%}
@@ -41,7 +61,18 @@
                 {%- when 'text' -%}
                   {%- if block.settings.title != blank or block.settings.content != blank or shop.features.follow_on_shop? and block.settings.enable_follow_on_shop -%}
                     <div class="v-stack gap-4 sm:gap-5">
-                      {%- if block.settings.title != blank -%}
+                      {%- comment -%}
+                        Corvo addition: a logo may stand in place of the heading. It is shown large, and it leads home.
+                      {%- endcomment -%}
+                      {%- if block.settings.logo != blank -%}
+                        {%- capture logo_sizes -%}(max-width: 699px) {{ block.settings.logo_mobile_width }}px, {{ block.settings.logo_width }}px{%- endcapture -%}
+                        {%- capture logo_widths -%}{{ block.settings.logo_mobile_width | at_most: block.settings.logo.width }}, {{ block.settings.logo_width | at_most: block.settings.logo.width }}, {{ block.settings.logo_width | times: 2 | at_most: block.settings.logo.width }}, {{ block.settings.logo_width | times: 3 | at_most: block.settings.logo.width }}{%- endcapture -%}
+                        {%- assign logo_alt = block.settings.logo.alt | default: shop.name -%}
+
+                        <a href="{{ routes.root_url }}" class="footer__logo" style="--footer-logo-width: {{ block.settings.logo_width }}px; --footer-logo-mobile-width: {{ block.settings.logo_mobile_width }}px; --footer-logo-shift: {{ block.settings.logo_shift }}">
+                          {{- block.settings.logo | image_url: width: block.settings.logo.width | image_tag: loading: 'lazy', sizes: logo_sizes, widths: logo_widths, alt: logo_alt, class: 'footer__logo-image' -}}
+                        </a>
+                      {%- elsif block.settings.title != blank -%}
                         <p class="h6">{{ block.settings.title }}</p>
                       {%- endif -%}
 
@@ -293,6 +324,43 @@
           "id": "title",
           "label": "t:global.text.heading",
           "default": "About our store"
+        },
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo",
+          "info": "Shown large, in place of the heading. On a dark footer, choose the light version of the logo."
+        },
+        {
+          "type": "range",
+          "id": "logo_width",
+          "min": 120,
+          "max": 480,
+          "step": 10,
+          "unit": "px",
+          "label": "Logo width",
+          "default": 320
+        },
+        {
+          "type": "range",
+          "id": "logo_mobile_width",
+          "min": 100,
+          "max": 360,
+          "step": 10,
+          "unit": "px",
+          "label": "Logo width on a phone",
+          "default": 240
+        },
+        {
+          "type": "range",
+          "id": "logo_shift",
+          "min": 0,
+          "max": 6,
+          "step": 0.5,
+          "unit": "%",
+          "label": "Shift the logo to the left",
+          "info": "For a logo file with empty space on its left: lines its first letter up with the text.",
+          "default": 0
         },
         {
           "type": "richtext",

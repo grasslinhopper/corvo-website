@@ -73,7 +73,8 @@
                   <div class="prose prose--tight {{ block.settings.text_position }}">
                     <p class="{{ block.settings.heading_tag }}">{{ block.settings.title }}</p>
 
-                    {{- block.settings.content -}}
+                    {%- comment -%}Corvo addition: markers such as [Collection_count] are filled in (see the "corvo-fill" snippet){%- endcomment -%}
+                    {%- render 'corvo-fill', text: block.settings.content -%}
 
                     {%- if block.settings.link_text != blank -%}
                       {%- render 'button', content: block.settings.link_text, style: block.settings.link_style -%}

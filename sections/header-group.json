@@ -71,7 +71,7 @@
           "settings": {
             "menu_item": "Collections",
             "images_position": "right",
-            "intro_text": "Six collections, each made in your size and colours.",
+            "intro_text": "[Collection_count] collections, each made in your size and colours.",
             "intro_link_text": "All collections",
             "image_1": "shopify://shop_images/RamiroRelvas_Pintura1.jpg",
             "image_1_heading": "From Ink to Thread",

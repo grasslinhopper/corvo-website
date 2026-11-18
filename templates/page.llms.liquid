@@ -25,8 +25,8 @@
 ## Key facts
 
 - Who: Corvo, a maker of bespoke and made-to-order rugs in {{ 'general.corvo.locality' | t }}, Portugal. Part of the {{ 'general.corvo.parent' | t }} Group.
-- What: {{ collections.all.products_count }} rug designs in six collections. Every rug is hand-tufted to order in Portugal.
-- Sizes: each design comes in five standard sizes, and is made to measure in any size up to {% render 'corvo-fill', text: '[max_size]' %}.
+- What: {% render 'corvo-fill', text: '[rug_count] rug designs in [collection_count] collections.' %} Every rug is hand-tufted to order in Portugal.
+- Sizes: each design comes in five standard rectangular sizes, some designs also in two round sizes, and every design is made to measure in any size up to {% render 'corvo-fill', text: '[max_size]' %}.
 - Materials: {% render 'corvo-fill', text: '[materials_count] materials. [materials_standard] are included in the price; [materials_plus] add a supplement; [materials_premium] are premium fibres.' %}
 - Colours: every colour of a design can be changed, {% render 'corvo-fill', text: 'to one of the [palette_count] colours of the Open Palette at no extra cost, or to any custom colour for [colour_price] per colour.' %}
 - Prices: shown on each rug page in the shop's currency, VAT of {{ vat_percent }}% included. A made-to-measure price is calculated on the rug page from the price per m² of the design. {% render 'corvo-fill', text: 'A design of your own starts at [from_price] per m².' %}

@@ -91,7 +91,7 @@
           "type": "question",
           "settings": {
             "question": "How is the price of a rug worked out?",
-            "answer": "<p>By area. Each design has a craft level, which sets its price per m², from [from_price] per m². Every rug page shows the price of its five standard sizes and works out the price of any other size, up to [max_size], as you type it. Prices include VAT.</p>"
+            "answer": "<p>By area. Each design has a craft level, which sets its price per m², from [from_price] per m². Every rug page shows the price of its standard sizes and works out the price of any other size, up to [max_size], as you type it. Prices include VAT.</p>"
           }
         },
         "q_samples": {
