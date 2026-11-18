@@ -210,7 +210,7 @@ Shapes sold online: rectangle{% if settings.rug_shape_round %}; round in any dia
 
 ## Rugs
 
-{%- assign llms_replaced = '|' -%}
+{% assign llms_replaced = '|' -%}
 {%- assign llms_ids = '|' -%}
 {%- paginate collections.all.products by 250 -%}
 {% for listed in collections.all.products -%}
