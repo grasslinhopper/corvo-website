@@ -48,6 +48,15 @@
   mix-blend-mode: multiply;
 }
 
+/* A rug that lies or a round one fills more of its frame than an upright one */
+.product-card__media--lying .product-card__image--alone {
+  padding: 7% 6%;
+}
+
+.product-card__media--square .product-card__image--alone {
+  padding: 8%;
+}
+
 /* On a dark ground a multiplied picture would turn black */
 .color-scheme--scheme-3 .product-card__media .product-card__image--alone {
   mix-blend-mode: normal;
@@ -96,12 +105,21 @@
   }
 
   .product-card__media .product-card__image--alone {
-    padding: 7% 9%;
+    padding: 6% 8%;
+  }
+
+  .product-card__media--lying .product-card__image--alone {
+    padding: 6% 3%;
   }
 
   .product-card .product-title {
     font-size: 0.6875rem;
     letter-spacing: 0.16em;
+  }
+
+  .rug-list .product-card__info,
+  .cshow__grid .product-card__info {
+    min-block-size: 5.75rem;
   }
 
   /* On a phone the card is narrow: the collection is left to the filters */
@@ -134,7 +152,8 @@
   display: grid;
   grid: none;
   grid-template-columns: repeat(var(--rug-columns), minmax(0, 1fr));
-  align-items: start;
+  /* The frames differ in height: the cards of a row stand on one line, where their names are */
+  align-items: end;
   column-gap: var(--rug-column-gap);
   row-gap: var(--rug-row-gap);
   margin-inline: 0;
@@ -162,6 +181,16 @@
     --rug-column-gap: 3.5rem;
     --rug-row-gap: 5.5rem;
   }
+}
+
+/*
+ * In a list the frames differ in height and the cards stand on one line. So that the names also sit on one line, the
+ * text of every card takes the same room, whether its last line is short, long or missing.
+ */
+.rug-list .product-card__info,
+.cshow__grid .product-card__info {
+  align-content: start;
+  min-block-size: 5.25rem;
 }
 
 /* Beside the filters there is less room: three across, and four on a wide screen */
