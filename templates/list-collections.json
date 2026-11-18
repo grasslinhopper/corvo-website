@@ -140,7 +140,8 @@
         "price_prefix": "From",
         "link_text": "Discover the collection",
         "image_left": "shopify://shop_images/graccioza-mood-p29.jpg",
-        "image_right": "shopify://shop_images/graccioza-mood-p33.jpg"
+        "image_right": "shopify://shop_images/graccioza-mood-p33.jpg",
+        "card_ratio": "2 / 3"
       }
     },
     "frame-atelier": {
@@ -160,7 +161,8 @@
         "price_prefix": "From",
         "link_text": "Discover the collection",
         "image_left": "shopify://shop_images/graccioza-mood-p37.jpg",
-        "image_right": "shopify://shop_images/graccioza-mood-p45.jpg"
+        "image_right": "shopify://shop_images/graccioza-mood-p45.jpg",
+        "card_ratio": "2 / 3"
       }
     },
     "tile": {
@@ -180,7 +182,8 @@
         "price_prefix": "From",
         "link_text": "Discover the collection",
         "image_left": "shopify://shop_images/graccioza-mood-p77.jpg",
-        "image_right": "shopify://shop_images/graccioza-mood-p82.jpg"
+        "image_right": "shopify://shop_images/graccioza-mood-p82.jpg",
+        "card_ratio": "2 / 3"
       }
     },
     "cut-loop": {
@@ -200,7 +203,8 @@
         "price_prefix": "From",
         "link_text": "Discover the collection",
         "image_left": "shopify://shop_images/graccioza-mood-p50.jpg",
-        "image_right": "shopify://shop_images/graccioza-mood-p53.jpg"
+        "image_right": "shopify://shop_images/graccioza-mood-p53.jpg",
+        "card_ratio": "2 / 3"
       }
     },
     "three-d": {
@@ -220,7 +224,8 @@
         "price_prefix": "From",
         "link_text": "Discover the collection",
         "image_left": "shopify://shop_images/graccioza-mood-p60.jpg",
-        "image_right": "shopify://shop_images/graccioza-mood-p62.jpg"
+        "image_right": "shopify://shop_images/graccioza-mood-p62.jpg",
+        "card_ratio": "2 / 3"
       }
     },
     "stone": {
@@ -240,7 +245,8 @@
         "price_prefix": "From",
         "link_text": "Discover the collection",
         "image_left": "shopify://shop_images/graccioza-mood-p65.jpg",
-        "image_right": "shopify://shop_images/graccioza-mood-p68.jpg"
+        "image_right": "shopify://shop_images/graccioza-mood-p68.jpg",
+        "card_ratio": "2 / 3"
       }
     }
   },
