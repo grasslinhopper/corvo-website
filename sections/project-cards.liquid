@@ -209,8 +209,8 @@
               assign list_class = 'project-tiles project-tiles--single'
             endif
           else
-            assign list_class = 'page-cards page-cards--landscape'
-            assign list_style = '--page-cards-columns: ' | append: columns | append: '; --page-cards-columns-tablet: ' | append: columns_tablet | append: '; --page-cards-columns-mobile: 1;'
+            assign list_class = 'project-cards'
+            assign list_style = '--project-columns: ' | append: columns | append: '; --project-columns-tablet: ' | append: columns_tablet | append: ';'
           endif
         -%}
 
@@ -321,9 +321,38 @@
     }
   }
 
-  /* Projects as cards: a picture with the name under it */
+  /*
+    Projects as cards: a picture with the name under it. A card never grows wider than a third of a full row, so one
+    project alone, or two, sit in the middle at the size they have in a row of three.
+  */
+  .project-cards {
+    grid-template-columns: minmax(0, 28rem);
+    justify-content: center;
+    gap: 2.5rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  @media screen and (min-width: 700px) {
+    .project-cards {
+      grid-template-columns: repeat(var(--project-columns-tablet, 2), minmax(0, 28rem));
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .project-cards {
+      grid-template-columns: repeat(var(--project-columns, 3), minmax(0, 28rem));
+      column-gap: 2rem;
+    }
+  }
+
   .project-card {
     position: relative;
+  }
+
+  .project-card .page-card__media {
+    aspect-ratio: 3 / 2;
   }
 
   .project-card__link {

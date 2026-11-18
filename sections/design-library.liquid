@@ -318,8 +318,9 @@
     }
   }
 
-  /* The library */
+  /* The library. Its one column never grows wider than the page, so a long row of filter links scrolls inside it. */
   .design-library {
+    grid-template-columns: minmax(0, 1fr);
     gap: clamp(2.5rem, 5vw, 4rem);
     display: grid;
   }
