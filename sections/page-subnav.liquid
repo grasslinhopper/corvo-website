@@ -134,26 +134,6 @@
       })();
     </script>
   {%- else -%}
-                <a href="{{ link.url }}" class="subnav__link" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a>
-              {%- endif -%}
-            </li>
-          {%- endfor -%}
-        </ul>
-      </div>
-    </nav>
-
-    {%- comment -%}Where the bar is wider than the screen it scrolls sideways: the tab of the current page is brought into view{%- endcomment -%}
-    <script>
-      (() => {
-        const list = document.currentScript.previousElementSibling.querySelector('.subnav__list'),
-          current = list ? list.querySelector('[aria-current="page"]') : null;
-
-        if (current && list.scrollWidth > list.clientWidth) {
-          list.scrollLeft += current.getBoundingClientRect().left - list.getBoundingClientRect().left - (list.clientWidth - current.offsetWidth) / 2;
-        }
-      })();
-    </script>
-  {%- else -%}
     {%- liquid
       assign previous_link = null
       assign next_link = null
