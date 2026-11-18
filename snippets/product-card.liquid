@@ -76,7 +76,24 @@ Supported variables
           endif
         -%}
 
-        {%- capture main_image_classes -%}product-card__image product-card__image--primary {% if settings.product_image_aspect_ratio contains 'crop' %}object-cover{% endif %} aspect-{{ settings.product_image_aspect_ratio | split: '_' | first }}{%- endcapture -%}
+        {%- comment -%}
+          Corvo addition: a rug photographed from above, edge to edge, is shown whole. Cut to the shape of the card it
+          would lose its border or its frame. Such a picture says "top view" in its description (its alt text).
+        {%- endcomment -%}
+        {%- liquid
+          assign main_image_fit = ''
+
+          if settings.product_image_aspect_ratio contains 'crop'
+            assign main_image_fit = 'object-cover'
+            assign main_image_alt = product.featured_media.alt | downcase
+
+            if main_image_alt contains 'top view'
+              assign main_image_fit = ''
+            endif
+          endif
+        -%}
+
+        {%- capture main_image_classes -%}product-card__image product-card__image--primary {{ main_image_fit }} aspect-{{ settings.product_image_aspect_ratio | split: '_' | first }}{%- endcapture -%}
         {{- product.featured_media | image_url: width: product.featured_media.width | image_tag: loading: main_media_loading_strategy, sizes: sizes, widths: '200,300,400,500,600,700,800,1000,1200,1400,1600,1800', draggable: 'false', class: main_image_classes -}}
 
         {%- liquid
