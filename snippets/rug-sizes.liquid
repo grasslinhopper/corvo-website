@@ -56,37 +56,21 @@ Supported variables
   {%- for size_value in product.options_with_values[size_index].values -%}
     {%- liquid
       assign size_name = size_value.name | default: size_value | append: ''
-      assign size_compact = size_name | downcase | remove: 'cm' | remove: ' '
-      assign size_shape = 'other'
-      assign size_width = 0
-      assign size_length = 0
+
+      capture size_read
+        render 'rug-size-read', size: size_name
+      endcapture
+
+      assign size_parts = size_read | strip | split: '|'
+      assign size_shape = size_parts[0]
+      assign size_width = size_parts[1] | plus: 0
+      assign size_length = size_parts[2] | plus: 0
       assign size_label = size_name
 
-      if size_compact contains 'ø' or size_compact contains 'Ø'
-        assign size_width = size_compact | remove: 'ø' | remove: 'Ø' | plus: 0
-        assign size_length = size_width
-
-        if size_width > 0
-          assign size_shape = 'round'
-          assign size_label = 'Ø ' | append: size_width | append: ' cm'
-        endif
-      else
-        assign size_parts = size_compact | split: 'x'
-
-        if size_parts.size == 2
-          assign size_width = size_parts[0] | plus: 0
-          assign size_length = size_parts[1] | plus: 0
-
-          if size_width > 0 and size_length > 0
-            assign size_shape = 'rect'
-            assign size_label = size_width | append: ' × ' | append: size_length | append: ' cm'
-          endif
-        endif
-      endif
-
-      if size_shape == 'other'
-        assign size_width = 0
-        assign size_length = 0
+      if size_shape == 'round'
+        assign size_label = 'Ø ' | append: size_width | append: ' cm'
+      elsif size_shape == 'rect'
+        assign size_label = size_width | append: ' × ' | append: size_length | append: ' cm'
       endif
 
       assign size_price = -1

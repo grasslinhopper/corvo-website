@@ -21,7 +21,12 @@ How that price reaches the checkout:
   nearest step and the matching variant is looked up through the Storefront API. Design, size, colours and shipping
   travel with the cart line as line item properties.
 
-When the rug has no craft level price, or its variants are not sizes, the theme's own variant picker is shown instead.
+A rug may have one other choice besides its size: a colourway or a frame. It is offered as a step of its own, and the
+rug's own variant is then the one of that size in that colourway. A round standard size ("Ø200 cm") is offered among
+the sizes; a rug made to measure is a rectangle.
+
+When the rug has no craft level price, when its variants are not sizes, or when it has more than one other choice, the
+theme's own variant picker is shown instead.
 
 ********************************************
 Supported variables
@@ -48,30 +53,207 @@ Supported variables
   if colour_refs.size > colour_count
     assign colour_count = colour_refs.size
   endif
+
+  comment
+    The choices of the rug: its sizes and, at most, one other choice (a colourway, a frame). The sizes are the values
+    of the choice named "Size", or of the only choice of the rug.
+  endcomment
+
+  assign size_position = 0
+  assign choice_option = nil
+  assign other_choices = 0
+
+  for option in product.options_with_values
+    assign option_name = option.name | downcase | strip
+
+    if option_name == 'size'
+      assign size_position = option.position
+    else
+      assign other_choices = other_choices | plus: 1
+      assign choice_option = option
+    endif
+  endfor
+
+  if size_position == 0 and product.options.size == 1
+    assign size_position = 1
+    assign other_choices = 0
+    assign choice_option = nil
+  endif
+
+  assign size_index = size_position | minus: 1
+  assign choice_index = -1
+  assign choice_is_colour = false
+  assign choice_count = 0
+
+  if choice_option
+    assign choice_index = choice_option.position | minus: 1
+    assign choice_name = choice_option.name | downcase | strip
+    assign choice_count = choice_option.values.size
+
+    if choice_name == 'colour' or choice_name == 'color'
+      assign choice_is_colour = true
+    endif
+  endif
+
+  comment
+    Each size is read once: its shape ("rect" or "round"), its width and its length in centimetres
+  endcomment
+
+  assign size_names = ''
+  assign size_shapes = ''
+  assign size_widths = ''
+  assign size_lengths = ''
+
+  if size_position > 0 and other_choices < 2
+    for size_value in product.options_with_values[size_index].values
+      assign size_name = size_value.name | default: size_value | append: ''
+
+      capture size_read
+        render 'rug-size-read', size: size_name
+      endcapture
+
+      assign size_parts = size_read | strip | split: '|'
+      assign size_names = size_names | append: size_name | append: '§'
+      assign size_shapes = size_shapes | append: size_parts[0] | append: '§'
+      assign size_widths = size_widths | append: size_parts[1] | append: '§'
+      assign size_lengths = size_lengths | append: size_parts[2] | append: '§'
+    endfor
+  endif
+
+  assign size_names = size_names | split: '§'
+  assign size_shapes = size_shapes | split: '§'
+  assign size_widths = size_widths | split: '§'
+  assign size_lengths = size_lengths | split: '§'
 -%}
 
-{%- comment -%}The standard sizes: every available variant whose name reads as "width x length"{%- endcomment -%}
+{%- comment -%}
+  The standard sizes: every variant that can be ordered and whose size reads as "width x length" or as "Ø diameter".
+  "c" is the place of its colourway or frame among the values of that choice (-1 when the rug has no such choice).
+{%- endcomment -%}
 {%- capture sizes_json -%}
-  {%- if product.options.size == 1 -%}
+  {%- if size_names.size > 0 -%}
     {%- for size_variant in product.variants -%}
       {%- liquid
-        assign dimensions = size_variant.title | downcase | remove: 'cm' | remove: ' ' | split: 'x'
-        assign size_width = dimensions[0] | plus: 0
-        assign size_length = dimensions[1] | plus: 0
+        unless size_variant.available
+          continue
+        endunless
+
+        assign variant_size = size_variant.options[size_index]
+        assign size_at = -1
+
+        for size_name in size_names
+          if size_name == variant_size
+            assign size_at = forloop.index0
+            break
+          endif
+        endfor
+
+        if size_at < 0
+          continue
+        endif
+
+        if size_shapes[size_at] == 'other'
+          continue
+        endif
+
+        assign choice_at = -1
+
+        if choice_option
+          assign variant_choice = size_variant.options[choice_index]
+
+          for choice_value in choice_option.values
+            assign choice_value_name = choice_value.name | default: choice_value | append: ''
+
+            if choice_value_name == variant_choice
+              assign choice_at = forloop.index0
+              break
+            endif
+          endfor
+        endif
       -%}
 
-      {%- if dimensions.size == 2 and size_width > 0 and size_length > 0 and size_variant.available -%}
-        {"id":{{ size_variant.id }},"w":{{ size_width }},"l":{{ size_length }},"price":{{ size_variant.price }}}|
-      {%- endif -%}
+      {"id":{{ size_variant.id }},"w":{{ size_widths[size_at] }},"l":{{ size_lengths[size_at] }},"round":{% if size_shapes[size_at] == 'round' %}true{% else %}false{% endif %},"c":{{ choice_at }},"price":{{ size_variant.price }}}|
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- comment -%}The values of the other choice, each with the picture of its first variant{%- endcomment -%}
+{%- capture choices_json -%}
+  {%- if choice_option -%}
+    {%- for choice_value in choice_option.values -%}
+      {%- liquid
+        assign choice_value_name = choice_value.name | default: choice_value | append: ''
+        assign choice_media = nil
+
+        for choice_variant in product.variants
+          if choice_variant.options[choice_index] == choice_value_name
+            assign choice_media = choice_variant.featured_media
+            break
+          endif
+        endfor
+      -%}
+
+      {"name":{{ choice_value_name | json }},"media":{{ choice_media.id | default: 'null' }},"position":{{ choice_media.position | default: 0 }}}|
     {%- endfor -%}
   {%- endif -%}
 {%- endcapture -%}
 
 {%- liquid
   assign sizes = sizes_json | strip | split: '|'
-  assign selected_dimensions = variant.title | downcase | remove: 'cm' | remove: ' ' | split: 'x'
-  assign selected_width = selected_dimensions[0] | plus: 0
-  assign selected_length = selected_dimensions[1] | plus: 0
+  assign selected_width = 0
+  assign selected_length = 0
+  assign selected_round = false
+  assign selected_size_name = variant.options[size_index]
+
+  for size_name in size_names
+    if size_name == selected_size_name
+      assign selected_width = size_widths[forloop.index0] | plus: 0
+      assign selected_length = size_lengths[forloop.index0] | plus: 0
+
+      if size_shapes[forloop.index0] == 'round'
+        assign selected_round = true
+      endif
+
+      break
+    endif
+  endfor
+
+  assign selected_choice = -1
+  assign selected_choice_name = ''
+
+  if choice_option
+    assign selected_choice_name = variant.options[choice_index]
+
+    for choice_value in choice_option.values
+      assign choice_value_name = choice_value.name | default: choice_value | append: ''
+
+      if choice_value_name == selected_choice_name
+        assign selected_choice = forloop.index0
+        break
+      endif
+    endfor
+  endif
+
+  comment
+    A choice with one value only (a rug in one colourway) is a fact of the rug: it is not offered as a step
+  endcomment
+
+  assign show_choice = false
+  assign show_colour_choice = false
+
+  if choice_count > 1
+    if choice_is_colour
+      assign show_colour_choice = true
+    else
+      assign show_choice = true
+    endif
+  endif
+
+  assign show_colour_changes = false
+
+  if block.settings.show_colour_step and colour_count > 0
+    assign show_colour_changes = true
+  endif
 -%}
 
 {%- if rate == 0 or sizes.size == 0 or selected_width == 0 or selected_length == 0 -%}
@@ -129,9 +311,17 @@ Supported variables
       assign is_base_currency = true
     endif
 
-    # The area in m², printed without needless zeros: "3", "8.75", "4.08"
+    # The area in m², printed without needless zeros: "3", "8.75", "4.08", and the size in words
+    assign selected_shape = 'rect'
+    assign selected_size_text = selected_width | append: ' × ' | append: selected_length | append: ' cm'
+
+    if selected_round
+      assign selected_shape = 'round'
+      assign selected_size_text = 'Ø ' | append: selected_width | append: ' cm'
+    endif
+
     capture area_text
-      render 'rug-area', width: selected_width, length: selected_length
+      render 'rug-area', width: selected_width, length: selected_length, shape: selected_shape
     endcapture
 
     assign total = variant.price
@@ -204,6 +394,7 @@ Supported variables
 
   {%- capture colours_json -%}
     {%- for i in (1..colour_count) -%}
+      {%- unless show_colour_changes -%}{%- break -%}{%- endunless -%}
       {%- assign colour_ref = colour_refs[forloop.index0] -%}
       {"ref":{{ colour_ref | default: '' | json }}}|
     {%- endfor -%}
@@ -221,6 +412,8 @@ Supported variables
         "large": { "long": {{ settings.rug_large_long | default: 900 }}, "short": {{ settings.rug_large_short | default: 400 }}, "percent": {{ settings.rug_large_percent | default: 0 }} },
         "limits": { "min": {{ min_side }}, "long": {{ max_long }}, "short": {{ max_short }}, "step": {{ size_step }} },
         "sizes": [{{ sizes | join: ',' }}],
+        "round": {{ selected_round }},
+        "choice": {% if choice_option %}{ "name": {{ choice_option.name | json }}, "colour": {{ choice_is_colour }}, "selected": {{ selected_choice }}, "values": [{{ choices_json | strip | split: '|' | join: ',' }}] }{% else %}null{% endif %},
         "colours": [{{ colours_json | strip | split: '|' | join: ',' }}],
         "palette": [{{ palette_json | strip | split: '|' | join: ',' }}],
         "customColour": {{ custom_colour_cents }},
@@ -238,6 +431,7 @@ Supported variables
         "strings": {
           "area": {{ 'rug_page.area' | t: area: '[area]' | json }},
           "about": {{ 'rug_page.about' | t: size: '[size]' | json }},
+          "round": {{ 'rug_page.round' | t: size: '[size]' | json }},
           "errorNumber": {{ 'rug_page.error_number' | t | json }},
           "errorMin": {{ 'rug_page.error_min' | t: min: min_side | json }},
           "errorLong": {{ 'rug_page.error_long' | t: max: max_long | json }},
@@ -293,15 +487,44 @@ Supported variables
       </legend>
 
       <div class="rug-sizes" role="group" aria-label="{{ 'rug_page.standard_sizes' | t | escape }}">
-        {%- for size_variant in product.variants -%}
+        {%- for size_name in size_names -%}
           {%- liquid
-            assign dimensions = size_variant.title | downcase | remove: 'cm' | remove: ' ' | split: 'x'
-            assign size_width = dimensions[0] | plus: 0
-            assign size_length = dimensions[1] | plus: 0
+            assign size_shape = size_shapes[forloop.index0]
+            assign size_width = size_widths[forloop.index0] | plus: 0
+            assign size_length = size_lengths[forloop.index0] | plus: 0
+            assign size_is_round = false
+
+            if size_shape == 'other'
+              continue
+            endif
+
+            if size_shape == 'round'
+              assign size_is_round = true
+            endif
+
+            comment
+              A size is offered when one of its variants can be ordered
+            endcomment
+
+            assign size_needle = '"w":' | append: size_width | append: ',"l":' | append: size_length | append: ',"round":' | append: size_is_round | append: ','
+
+            unless sizes_json contains size_needle
+              continue
+            endunless
+
+            assign size_pressed = false
+
+            if size_width == selected_width and size_length == selected_length and size_is_round == selected_round
+              assign size_pressed = true
+            endif
           -%}
 
-          {%- if dimensions.size == 2 and size_width > 0 and size_length > 0 and size_variant.available -%}
-            <button type="button" class="rug-size" data-rug-size data-width="{{ size_width }}" data-length="{{ size_length }}" aria-pressed="{% if size_variant.id == variant.id %}true{% else %}false{% endif %}">
+          {%- if size_is_round -%}
+            <button type="button" class="rug-size" data-rug-size data-round data-width="{{ size_width }}" data-length="{{ size_length }}" aria-label="{{ 'rug_page.round' | t: size: size_width | escape }}" aria-pressed="{{ size_pressed }}">
+              Ø&nbsp;{{ size_width -}}
+            </button>
+          {%- else -%}
+            <button type="button" class="rug-size" data-rug-size data-width="{{ size_width }}" data-length="{{ size_length }}" aria-pressed="{{ size_pressed }}">
               {{- size_width }}&nbsp;×&nbsp;{{ size_length -}}
             </button>
           {%- endif -%}
@@ -331,7 +554,7 @@ Supported variables
       </div>
 
       <p class="rug-step__error text-sm" id="rug-size-error-{{ uid }}" data-rug-size-error role="alert" hidden></p>
-      <p class="rug-step__more text-sm" data-rug-size-info>{{ 'rug_page.area' | t: area: area_text }}</p>
+      <p class="rug-step__more text-sm" data-rug-size-info>{% if selected_round %}{{ selected_size_text }} · {% endif %}{{ 'rug_page.area' | t: area: area_text }}</p>
       <p class="rug-step__note text-sm" data-rug-size-note hidden></p>
 
       {%- if block.settings.size_text != blank -%}
@@ -351,7 +574,51 @@ Supported variables
     ------------------------------------------------------------------------------------------------------------------
     {%- endcomment -%}
 
-    {%- if block.settings.show_colour_step and colour_count > 0 -%}
+    {%- comment -%}The values of the other choice, as buttons: a name and, under it, its colour references{%- endcomment -%}
+    {%- capture choice_buttons -%}
+      {%- if choice_count > 1 -%}
+        <div class="rug-options" role="group" aria-label="{{ choice_option.name | escape }}">
+          {%- for choice_value in choice_option.values -%}
+            {%- liquid
+              assign choice_value_name = choice_value.name | default: choice_value | append: ''
+              assign choice_parts = choice_value_name | split: ' ('
+              assign choice_label = choice_parts | first
+              assign choice_reference = ''
+
+              if choice_parts.size > 1
+                assign choice_reference = choice_parts | last | remove: ')' | replace: '/', ' · '
+              endif
+            -%}
+
+            <button type="button" class="rug-option" data-rug-choice="{{ forloop.index0 }}" aria-pressed="{% if forloop.index0 == selected_choice %}true{% else %}false{% endif %}">
+              <span class="rug-option__name">{{ choice_label | escape }}</span>
+
+              {%- if choice_reference != blank -%}
+                <span class="rug-option__reference text-subdued">{{ choice_reference | escape }}</span>
+              {%- endif -%}
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    {%- endcapture -%}
+
+    {%- if show_choice -%}
+      {%- liquid
+        assign step = step | plus: 1
+        assign choice_legend_id = 'rug-choice-' | append: uid
+      -%}
+
+      <div class="rug-step" role="group" aria-labelledby="{{ choice_legend_id }}">
+        <p class="rug-step__legend" id="{{ choice_legend_id }}">
+          <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+          <span class="rug-step__title h6">{{ choice_option.name | escape }}</span>
+        </p>
+
+        {{- choice_buttons -}}
+      </div>
+    {%- endif -%}
+
+    {%- if show_colour_choice or show_colour_changes -%}
       {%- liquid
         assign step = step | plus: 1
         assign colour_legend_id = 'rug-colours-' | append: uid
@@ -363,39 +630,45 @@ Supported variables
           <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
           <span class="rug-step__title h6">{{ 'rug_page.colours' | t }}</span>
 
-          {%- if family_note != blank -%}
+          {%- if family_note != blank and show_colour_choice == false -%}
             <span class="rug-step__aside text-sm text-subdued">{{ family_note | escape }}</span>
           {%- endif -%}
         </p>
 
-        <ul class="rug-colours unstyled-list" role="list">
-          {%- for i in (1..colour_count) -%}
-            {%- assign colour_ref = colour_refs[forloop.index0] -%}
+        {%- if show_colour_choice -%}
+          {{- choice_buttons -}}
+        {%- endif -%}
 
-            <li class="rug-colour" data-rug-colour="{{ forloop.index0 }}">
-              <div class="rug-colour__row">
-                <span class="rug-colour__swatch" data-rug-colour-swatch aria-hidden="true"></span>
+        {%- if show_colour_changes -%}
+          <ul class="rug-colours unstyled-list" role="list">
+            {%- for i in (1..colour_count) -%}
+              {%- assign colour_ref = colour_refs[forloop.index0] -%}
 
-                <span class="rug-colour__text">
-                  <span class="rug-colour__name">{{ 'rug_page.colour_number' | t: number: i }}</span>
+              <li class="rug-colour" data-rug-colour="{{ forloop.index0 }}">
+                <div class="rug-colour__row">
+                  <span class="rug-colour__swatch" data-rug-colour-swatch aria-hidden="true"></span>
 
-                  <span class="rug-colour__value text-sm text-subdued" data-rug-colour-value>
-                    {%- if colour_ref != blank -%}
-                      {{- colour_ref | escape }} · {{ 'rug_page.as_shown' | t | downcase -}}
-                    {%- else -%}
-                      {{- 'rug_page.as_shown' | t -}}
-                    {%- endif -%}
+                  <span class="rug-colour__text">
+                    <span class="rug-colour__name">{{ 'rug_page.colour_number' | t: number: i }}</span>
+
+                    <span class="rug-colour__value text-sm text-subdued" data-rug-colour-value>
+                      {%- if colour_ref != blank -%}
+                        {{- colour_ref | escape }} · {{ 'rug_page.as_shown' | t | downcase -}}
+                      {%- else -%}
+                        {{- 'rug_page.as_shown' | t -}}
+                      {%- endif -%}
+                    </span>
                   </span>
-                </span>
 
-                <button type="button" class="rug-colour__change link text-sm" data-rug-colour-change aria-expanded="false">{{ 'rug_page.change' | t }}</button>
-              </div>
-            </li>
-          {%- endfor -%}
-        </ul>
+                  <button type="button" class="rug-colour__change link text-sm" data-rug-colour-change aria-expanded="false">{{ 'rug_page.change' | t }}</button>
+                </div>
+              </li>
+            {%- endfor -%}
+          </ul>
 
-        {%- if block.settings.colour_text != blank -%}
-          <p class="rug-step__more text-sm text-subdued">{{ colour_text | strip }}</p>
+          {%- if block.settings.colour_text != blank -%}
+            <p class="rug-step__more text-sm text-subdued">{{ colour_text | strip }}</p>
+          {%- endif -%}
         {%- endif -%}
       </div>
     {%- endif -%}
@@ -471,7 +744,7 @@ Supported variables
 
         <div>
           <dt>{{ 'rug_page.size' | t }}</dt>
-          <dd data-rug-summary-size>{{ selected_width }} × {{ selected_length }} cm · {{ 'rug_page.area' | t: area: area_text }}</dd>
+          <dd data-rug-summary-size>{{ selected_size_text }} · {{ 'rug_page.area' | t: area: area_text }}</dd>
         </div>
 
         <div data-rug-summary-supplement-row hidden>
@@ -479,10 +752,17 @@ Supported variables
           <dd data-rug-summary-supplement></dd>
         </div>
 
-        {%- if block.settings.show_colour_step and colour_count > 0 -%}
+        {%- if choice_option and choice_is_colour == false -%}
+          <div>
+            <dt>{{ choice_option.name | escape }}</dt>
+            <dd data-rug-summary-choice>{{ selected_choice_name | escape }}</dd>
+          </div>
+        {%- endif -%}
+
+        {%- if show_colour_changes or choice_is_colour -%}
           <div>
             <dt>{{ 'rug_page.colours' | t }}</dt>
-            <dd data-rug-summary-colours>{{ 'rug_page.as_shown' | t }}</dd>
+            <dd data-rug-summary-colours>{% if choice_is_colour %}{{ selected_choice_name | escape }}{% else %}{{ 'rug_page.as_shown' | t }}{% endif %}</dd>
           </div>
         {%- endif -%}
 

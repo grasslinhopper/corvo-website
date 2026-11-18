@@ -729,7 +729,8 @@
       "made_in": "Made in",
       "choices": "{{ name }} choices",
       "choices_count": "{{ count }} to choose from"
-    }
+    },
+    "round": "Round, Ø {{ size }} cm"
   },
   "design_library": {
     "filter_label": "Filter the designs by style",

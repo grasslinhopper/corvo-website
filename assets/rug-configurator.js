@@ -7,6 +7,10 @@
  *  - a standard size with standard shipping and no priced extra is the rug's own variant;
  *  - anything else is a variant of the hidden price-step product, looked up through the Storefront API.
  *
+ * A rug may have one other choice besides its size, a colourway or a frame: the rug's own variant is then the one of
+ * the chosen size in the chosen colourway. A round standard size is one of the rug's own variants; its area is the
+ * area of the circle.
+ *
  * Nothing here reloads the page. The theme's <product-form> still adds to the cart: this element only decides what.
  */
 (() => {
@@ -114,6 +118,9 @@
       this.config = JSON.parse(source.textContent);
       this.controller = new AbortController();
       this.colours = this.config.colours.map((colour) => ({ original: colour.ref, choice: null }));
+      this.choice = this.config.choice ? Math.max(0, this.config.choice.selected) : null;
+      this.round = this.config.round === true;
+      this.applyChoice();
       this.version = 0;
       this.status = 'idle';
       this.openIndex = null;
@@ -177,6 +184,8 @@
           target.value = digits;
         }
 
+        // A size that is typed in is a rectangle
+        this.round = false;
         this.forceErrors = false;
         this.update();
       } else if (target.matches('[data-rug-colour-custom]') && this.openIndex !== null) {
@@ -203,9 +212,18 @@
       const size = event.target.closest('[data-rug-size]');
 
       if (size) {
+        this.round = 'round' in size.dataset;
         this.widthInput.value = size.dataset.width;
         this.lengthInput.value = size.dataset.length;
         this.update({ immediate: true });
+
+        return;
+      }
+
+      const option = event.target.closest('[data-rug-choice]');
+
+      if (option) {
+        this.setChoice(parseInt(option.dataset.rugChoice, 10));
 
         return;
       }
@@ -284,6 +302,72 @@
 
       if (this.status === 'failed') {
         this.update({ immediate: true });
+      }
+    }
+
+    /* ----------------------------------------------------------------------------------------------------------------
+     * THE OTHER CHOICE: A COLOURWAY OR A FRAME
+     * ------------------------------------------------------------------------------------------------------------- */
+
+    get choiceValue() {
+      return this.choice === null ? null : this.config.choice.values[this.choice] || null;
+    }
+
+    /**
+     * The colour references written at the end of a colourway, between brackets: "Sage (TL238/TL102)"
+     */
+    choiceReferences() {
+      const match = /\(([^()]+)\)\s*$/.exec(this.choiceValue?.name || '');
+
+      return match ? match[1].split('/').map((reference) => reference.trim()).filter(Boolean) : [];
+    }
+
+    /**
+     * A colourway sets the colours the rug is shown in: they become the colours that can be changed
+     */
+    applyChoice() {
+      if (!this.config.choice?.colour) {
+        return;
+      }
+
+      const references = this.choiceReferences();
+
+      this.colours.forEach((colour, index) => {
+        if (references[index]) {
+          colour.original = references[index];
+        }
+      });
+    }
+
+    setChoice(index) {
+      if (this.choice === null || index === this.choice || !this.config.choice.values[index]) {
+        return;
+      }
+
+      const previous = this.choiceValue;
+
+      this.choice = index;
+      this.applyChoice();
+      this.colours.forEach((colour, position) => this.renderColour(position));
+
+      this.querySelectorAll('[data-rug-choice]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(parseInt(button.dataset.rugChoice, 10) === index));
+      });
+
+      this.update({ immediate: true });
+
+      // The pictures follow the choice, the way they follow the theme's own variant picker
+      const media = this.choiceValue.media;
+
+      if (media && this.form) {
+        this.form.dispatchEvent(new CustomEvent('variant:change', {
+          bubbles: true,
+          detail: {
+            formId: this.form.id,
+            variant: { id: this.state?.variant || null, featured_media: { id: media, position: this.choiceValue.position } },
+            previousVariant: previous?.media ? { featured_media: { id: previous.media, position: previous.position } } : null
+          }
+        }));
       }
     }
 
@@ -497,9 +581,11 @@
      */
     amounts(width, length, express) {
       const { config } = this,
+        round = this.round && width === length,
         longSide = Math.max(width, length),
         shortSide = Math.min(width, length),
-        squareCentimetres = width * length;
+        // A round rug is priced on the area of its circle
+        squareCentimetres = round ? Math.round(Math.PI * width * width / 4) : width * length;
 
       let percent = config.supplement,
         reason = null;
@@ -518,7 +604,7 @@
         custom = this.colours.filter((colour) => colour.choice?.type === 'custom').length,
         list = euros * 100 + custom * config.customColour,
         total = express ? Math.round(list * (100 + config.expressPercent) / 100) : list,
-        standard = config.sizes.find((size) => (size.w === width && size.l === length) || (size.w === length && size.l === width)),
+        standard = config.sizes.find((size) => (this.choice === null || size.c === this.choice) && size.round === round && ((size.w === width && size.l === length) || (size.w === length && size.l === width))),
         result = { euros: euros, percent: percent, reason: reason, custom: custom };
 
       if (standard && !express && custom * config.customColour === 0) {
@@ -536,7 +622,7 @@
         width = wholeNumber(this.widthInput.value),
         length = wholeNumber(this.lengthInput.value),
         express = this.querySelector('[data-rug-shipping]:checked')?.value === 'express',
-        state = { width: width, length: length, express: express, errors: [], changed: this.colours.filter((colour) => colour.choice !== null).length };
+        state = { width: width, length: length, round: this.round && width === length, express: express, errors: [], changed: this.colours.filter((colour) => colour.choice !== null).length };
 
       if (!(width > 0) || !(length > 0)) {
         state.errors.push(strings.errorNumber);
@@ -557,7 +643,7 @@
           state.errors.push(strings.errorStep);
         }
 
-        state.area = Math.round(width * length / 100) / 100;
+        state.area = Math.round((state.round ? Math.PI * width * width / 4 : width * length) / 100) / 100;
       }
 
       if (state.errors.length > 0) {
@@ -602,11 +688,15 @@
       }
 
       properties[strings.propertyDesign] = config.title;
-      properties[strings.propertySize] = `${state.width} × ${state.length} cm (${state.area} m²)`;
+      properties[strings.propertySize] = `${state.round ? strings.round.replace('[size]', state.width) : `${state.width} × ${state.length} cm`} (${state.area} m²)`;
+
+      if (this.choiceValue) {
+        properties[config.choice.name] = this.choiceValue.name;
+      }
 
       if (changes.length > 0) {
         changes.forEach(([name, value]) => (properties[name] = value));
-      } else if (this.colours.length > 0) {
+      } else if (this.colours.length > 0 && !config.choice?.colour) {
         properties[strings.propertyColours] = strings.asShown;
       }
 
@@ -842,7 +932,7 @@
         const sizeWidth = parseInt(size.dataset.width, 10),
           sizeLength = parseInt(size.dataset.length, 10);
 
-        size.setAttribute('aria-pressed', String((sizeWidth === state.width && sizeLength === state.length) || (sizeWidth === state.length && sizeLength === state.width)));
+        size.setAttribute('aria-pressed', String(('round' in size.dataset) === (state.round === true) && ((sizeWidth === state.width && sizeLength === state.length) || (sizeWidth === state.length && sizeLength === state.width))));
       });
 
       error.textContent = showErrors ? state.errors.join(' ') : '';
@@ -859,17 +949,28 @@
       info.hidden = !valid;
 
       if (valid) {
-        info.textContent = `${strings.area.replace('[area]', state.area)} · ${strings.about.replace('[size]', `${feetAndInches(state.width)} × ${feetAndInches(state.length)}`)}`;
+        info.textContent = state.round
+          ? `Ø ${state.width} cm · ${strings.area.replace('[area]', state.area)} · ${strings.about.replace('[size]', `Ø ${feetAndInches(state.width)}`)}`
+          : `${strings.area.replace('[area]', state.area)} · ${strings.about.replace('[size]', `${feetAndInches(state.width)} × ${feetAndInches(state.length)}`)}`;
       }
 
       note.hidden = !valid || !state.reason;
       note.textContent = valid && state.reason ? strings[state.reason] : '';
 
       // Summary
-      print('[data-rug-summary-size]', valid ? `${state.width} × ${state.length} cm · ${strings.area.replace('[area]', state.area)}` : '—');
+      print('[data-rug-summary-size]', valid ? `${state.round ? `Ø ${state.width} cm` : `${state.width} × ${state.length} cm`} · ${strings.area.replace('[area]', state.area)}` : '—');
       print('[data-rug-summary-supplement]', valid && state.reason ? strings[state.reason] : '');
       this.querySelector('[data-rug-summary-supplement-row]').hidden = !valid || !state.reason;
-      print('[data-rug-summary-colours]', state.changed === 0 ? strings.asShown : (state.changed === 1 ? strings.changedOne : strings.changedOther.replace('[count]', state.changed)));
+      const changedText = state.changed === 0 ? '' : (state.changed === 1 ? strings.changedOne : strings.changedOther.replace('[count]', state.changed));
+
+      if (config.choice?.colour) {
+        // The colourway, then what was changed in it
+        print('[data-rug-summary-colours]', [this.choiceValue?.name, changedText].filter(Boolean).join(' · '));
+      } else {
+        print('[data-rug-summary-colours]', changedText || strings.asShown);
+        print('[data-rug-summary-choice]', this.choiceValue?.name || '');
+      }
+
       print('[data-rug-summary-shipping]', afterHeading(state.express ? strings.express : strings.standard, strings.propertyShipping));
       print('[data-rug-express-extra]', valid && state.expressExtra > 0 ? strings.surcharge.replace('[amount]', this.money(state.expressExtra)) : strings.percent);
 

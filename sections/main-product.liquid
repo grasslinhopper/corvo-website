@@ -288,6 +288,7 @@ quick buy information in a template, that will be extracted in JS, which ensures
   }
 
   .rug-size,
+  .rug-option,
   .rug-chip {
     color: rgb(var(--text-color) / .7);
     border: 1px solid rgb(var(--border-color));
@@ -301,11 +302,13 @@ quick buy information in a template, that will be extracted in JS, which ensures
   }
 
   .rug-size:hover,
+  .rug-option:hover,
   .rug-chip:hover {
     border-color: rgb(var(--text-color) / .45);
   }
 
   .rug-size[aria-pressed="true"],
+  .rug-option[aria-pressed="true"],
   .rug-chip[aria-pressed="true"] {
     color: rgb(var(--text-color));
     border-color: rgb(var(--text-color));
@@ -313,9 +316,37 @@ quick buy information in a template, that will be extracted in JS, which ensures
   }
 
   .rug-size:focus-visible,
+  .rug-option:focus-visible,
   .rug-chip:focus-visible {
     outline: 2px solid rgb(var(--text-color));
     outline-offset: 2px;
+  }
+
+  /* The other choice of a rug (a colourway, a frame): a name and, under it, its colour references */
+  .rug-options {
+    grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+    gap: .5rem;
+    display: grid;
+  }
+
+  .rug-options + .rug-colours {
+    margin-block-start: 1rem;
+  }
+
+  .rug-option {
+    white-space: normal;
+    align-content: center;
+    gap: .125rem;
+    min-height: 3.25rem;
+    padding: .5rem .375rem;
+    font-size: var(--text-sm);
+    line-height: 1.3;
+    display: grid;
+  }
+
+  .rug-option__reference {
+    font-size: var(--text-xs);
+    letter-spacing: .02em;
   }
 
   .rug-dimensions {

@@ -1,0 +1,57 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+RUG SIZE READ (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Reads the name of a standard size and prints its shape and its measures, separated by "|":
+
+  "150x200 cm"  >  rect|150|200
+  "Ø200 cm"     >  round|200|200      (a round rug: both measures are its diameter)
+  anything else >  other|0|0
+
+  capture size_read
+    render 'rug-size-read', size: '170x240 cm'
+  endcapture
+
+  assign size_parts = size_read | strip | split: '|'
+
+********************************************
+Supported variables
+********************************************
+
+* size: the name of the size, as written on the variant (required)
+{%- endcomment -%}
+
+{%- liquid
+  assign read_compact = size | append: '' | downcase | remove: 'cm' | remove: ' '
+  assign read_shape = 'other'
+  assign read_width = 0
+  assign read_length = 0
+
+  if read_compact contains 'ø' or read_compact contains 'Ø'
+    assign read_width = read_compact | remove: 'ø' | remove: 'Ø' | plus: 0
+    assign read_length = read_width
+
+    if read_width > 0
+      assign read_shape = 'round'
+    endif
+  else
+    assign read_parts = read_compact | split: 'x'
+
+    if read_parts.size == 2
+      assign read_width = read_parts[0] | plus: 0
+      assign read_length = read_parts[1] | plus: 0
+
+      if read_width > 0 and read_length > 0
+        assign read_shape = 'rect'
+      endif
+    endif
+  endif
+
+  if read_shape == 'other'
+    assign read_width = 0
+    assign read_length = 0
+  endif
+-%}
+
+{{- read_shape }}|{{ read_width }}|{{ read_length -}}
