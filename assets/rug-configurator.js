@@ -857,7 +857,9 @@
         // What each choice adds, in percent. A material the shop's list does not know has no percentage (null).
         parts = {
           rug: config.supplement,
-          material: material ? (material.percent || 0) : 0,
+          // The material adds its percentage only where it is a choice. A rug made in one material carries the
+          // supplement of that material in its own supplement, and counting it here as well would add it twice.
+          material: material && config.materials.step ? (material.percent || 0) : 0,
           pile: this.pile === null ? 0 : this.pilePercent(this.pile),
           corners: shape === 'corners' ? config.corners : 0
         },
