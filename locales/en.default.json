@@ -703,7 +703,9 @@
       "measure": "Made to measure: {{ limit }}. The price is {{ price }} per m², VAT included.",
       "limit": "Any size up to [max_size]",
       "lead_time": "Lead time: {{ text }}.",
-      "delivery": "Delivery: {{ text }}."
+      "delivery": "Delivery: {{ text }}.",
+      "choices": "{{ name }}: {{ count }} to choose from.",
+      "sizes_one": "1 standard size: {{ size }} at {{ price }}, VAT included."
     },
     "spec": {
       "per_m2": "{{ price }} per m², VAT included",
@@ -724,7 +726,9 @@
       "colours": "Colours",
       "sizes": "Standard sizes",
       "made_to_measure": "Made to measure",
-      "made_in": "Made in"
+      "made_in": "Made in",
+      "choices": "{{ name }} choices",
+      "choices_count": "{{ count }} to choose from"
     }
   },
   "design_library": {

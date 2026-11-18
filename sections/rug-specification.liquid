@@ -40,37 +40,50 @@ A row without a value is left out.
   endfor
 
   comment
-    The standard sizes: the values of the "Size" option (or of the first option), written as "150 × 200"
+    The standard sizes: one per size, whatever other choices the rug has (see the "rug-sizes" snippet), with the
+    cheapest and the dearest of them. A rug with five sizes and twenty colours has five standard sizes.
   endcomment
 
-  assign size_option = product.options_with_values | first
+  capture size_lines
+    render 'rug-sizes', product: product
+  endcapture
 
-  for option in product.options_with_values
-    assign option_name = option.name | downcase | strip
+  assign size_lines = size_lines | strip | split: '§'
+  assign low_cents = 0
+  assign high_cents = 0
+  assign low_label = ''
+  assign high_label = ''
 
-    if option_name == 'size'
-      assign size_option = option
-      break
+  for size_line in size_lines
+    assign size_fields = size_line | split: '|'
+    assign size_cents = size_fields[3] | plus: 0
+
+    if forloop.first or size_cents < low_cents
+      assign low_cents = size_cents
+      assign low_label = size_fields[6]
+    endif
+
+    if forloop.first or size_cents > high_cents
+      assign high_cents = size_cents
+      assign high_label = size_fields[6]
     endif
   endfor
 
-  assign sizes_text = ''
+  comment
+    The other choices of the rug (a colour, a frame): every choice that is not the size
+  endcomment
 
-  unless product.has_only_default_variant
-    for option_value in size_option.values
-      assign size_label = option_value.name | downcase | remove: 'cm' | strip | escape | replace: 'x', '&nbsp;×&nbsp;'
+  assign choice_count = 0
 
-      if forloop.first
-        assign sizes_text = size_label
-      else
-        assign sizes_text = sizes_text | append: ' · ' | append: size_label
-      endif
+  if product.options.size > 1
+    for option in product.options_with_values
+      assign option_name = option.name | downcase | strip
+
+      unless option_name == 'size'
+        assign choice_count = choice_count | plus: 1
+      endunless
     endfor
-
-    if sizes_text != blank
-      assign sizes_text = sizes_text | append: '&nbsp;cm'
-    endif
-  endunless
+  endif
 
   comment
     The pile, in words
@@ -193,17 +206,13 @@ A row without a value is left out.
           {%- if section.settings.show_summary -%}
             {%- liquid
               assign material_names = materials | map: 'name' | map: 'value' | join: ', '
-              assign first_variant = product.variants | first
-              assign last_variant = product.variants | last
-              assign first_size = first_variant.title | downcase | remove: 'cm' | strip | replace: 'x', ' × ' | append: ' cm'
-              assign last_size = last_variant.title | downcase | remove: 'cm' | strip | replace: 'x', ' × ' | append: ' cm'
 
               capture first_price
-                render 'rug-money', amount: first_variant.price
+                render 'rug-money', amount: low_cents
               endcapture
 
               capture last_price
-                render 'rug-money', amount: last_variant.price
+                render 'rug-money', amount: high_cents
               endcapture
 
               capture per_m2_price
@@ -220,7 +229,14 @@ A row without a value is left out.
 
               {%- if colour_count == 1 %} {{ 'rug_page.facts.colours_one' | t }}{% elsif colour_count != blank %} {{ 'rug_page.facts.colours_other' | t: count: colour_count }}{% endif -%}
 
-              {%- unless product.has_only_default_variant %} {{ 'rug_page.facts.sizes' | t: count: product.variants.size, smallest: first_size, low: first_price, largest: last_size, high: last_price }}{% endunless -%}
+              {%- if choice_count > 0 -%}
+                {%- for option in product.options_with_values -%}
+                  {%- assign option_name = option.name | downcase | strip -%}
+                  {%- unless option_name == 'size' %} {{ 'rug_page.facts.choices' | t: name: option.name, count: option.values.size }}{% endunless -%}
+                {%- endfor -%}
+              {%- endif -%}
+
+              {%- if size_lines.size == 1 %} {{ 'rug_page.facts.sizes_one' | t: size: low_label, price: first_price }}{% elsif size_lines.size > 1 %} {{ 'rug_page.facts.sizes' | t: count: size_lines.size, smallest: low_label, low: first_price, largest: high_label, high: last_price }}{% endif -%}
 
               {%- if per_m2 > 0 and made_to_measure_text != blank %} {{ 'rug_page.facts.measure' | t: limit: made_to_measure_sentence, price: per_m2_price }}{% endif -%}
               {%- if lead_time_text != blank %} {{ 'rug_page.facts.lead_time' | t: text: lead_time_sentence }}{% endif -%}
@@ -305,16 +321,41 @@ A row without a value is left out.
               </div>
             {%- endif -%}
 
-            {%- if sizes_text != blank -%}
+            {%- if choice_count > 0 -%}
+              {%- comment -%}The other choices of the rug, each with every one of its values, as text{%- endcomment -%}
+              {%- for option in product.options_with_values -%}
+                {%- assign option_name = option.name | downcase | strip -%}
+
+                {%- unless option_name == 'size' -%}
+                  <div class="rug-spec__row">
+                    <dt>{{ 'rug_page.spec.choices' | t: name: option.name }}</dt>
+                    <dd>
+                      <span>{{ 'rug_page.spec.choices_count' | t: count: option.values.size }}</span>
+
+                      <span class="text-sm text-subdued">
+                        {%- for option_value in option.values -%}
+                          {{- option_value.name | default: option_value | escape -}}
+                          {%- unless forloop.last -%}, {% endunless -%}
+                        {%- endfor -%}
+                      </span>
+                    </dd>
+                  </div>
+                {%- endunless -%}
+              {%- endfor -%}
+            {%- endif -%}
+
+            {%- if size_lines.size > 0 -%}
               <div class="rug-spec__row">
                 <dt>{{ 'rug_page.spec.sizes' | t }}</dt>
                 <dd>
                   {%- comment -%}Each standard size with its price, as text{%- endcomment -%}
                   <ul class="rug-spec__sizes unstyled-list" role="list">
-                    {%- for size_variant in product.variants -%}
+                    {%- for size_line in size_lines -%}
+                      {%- assign size_fields = size_line | split: '|' -%}
+
                       <li>
-                        <span>{{ size_variant.title | downcase | remove: 'cm' | strip | escape | replace: 'x', '&nbsp;×&nbsp;' }}&nbsp;cm</span>
-                        <span class="text-subdued">{%- render 'rug-money', amount: size_variant.price -%}</span>
+                        <span>{{ size_fields[6] | escape | replace: ' ', '&nbsp;' }}</span>
+                        <span class="text-subdued">{%- render 'rug-money', amount: size_fields[3] -%}</span>
                       </li>
                     {%- endfor -%}
                   </ul>

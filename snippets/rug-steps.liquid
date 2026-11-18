@@ -130,22 +130,9 @@ Supported variables
     endif
 
     # The area in m², printed without needless zeros: "3", "8.75", "4.08"
-    assign area_hundredths = selected_width | times: selected_length | divided_by: 100
-    assign area_rest = area_hundredths | modulo: 100
-    assign area_text = area_hundredths | divided_by: 100 | append: ''
-
-    if area_rest > 0
-      assign area_decimals = area_rest | append: ''
-      assign area_rest_tens = area_rest | modulo: 10
-
-      if area_rest_tens == 0
-        assign area_decimals = area_rest | divided_by: 10 | append: ''
-      elsif area_rest < 10
-        assign area_decimals = area_rest | prepend: '0'
-      endif
-
-      assign area_text = area_text | append: '.' | append: area_decimals
-    endif
+    capture area_text
+      render 'rug-area', width: selected_width, length: selected_length
+    endcapture
 
     assign total = variant.price
     assign pay_now = total | plus: 1 | divided_by: 2

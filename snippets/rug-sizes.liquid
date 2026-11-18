@@ -1,0 +1,114 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+RUG SIZES (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Prints the standard sizes of a rug: one entry per size, whatever other choices the rug has (a colour, a frame). A rug
+with five sizes and twenty colours has a hundred variants and still five standard sizes.
+
+The sizes are the values of the choice named "Size" (or of the only choice of the rug). A size reads as
+"150x200 cm" for a rectangle and as "Ø200 cm" for a round rug.
+
+What is printed is made to be cut up by the caller: entries are separated by "§" and, inside an entry, fields by "|":
+
+  shape | width | length | price | code | variant | label
+
+* shape: "rect", "round", or "other" when the name of the size is not a measure
+* width and length: in centimetres (for a round rug both are its diameter; 0 when the shape is "other")
+* price: the lowest price of that size, in cents
+* code: the product code (SKU) of the first variant of that size
+* variant: the ID of that variant
+* label: the size in words, "150 × 200 cm" or "Ø 200 cm"
+
+  capture size_lines
+    render 'rug-sizes', product: product
+  endcapture
+
+  assign size_lines = size_lines | strip | split: '§'
+
+********************************************
+Supported variables
+********************************************
+
+* product: the rug (required)
+{%- endcomment -%}
+
+{%- liquid
+  assign size_position = 0
+
+  for option in product.options_with_values
+    assign option_name = option.name | downcase | strip
+
+    if option_name == 'size'
+      assign size_position = option.position
+      break
+    endif
+  endfor
+
+  if size_position == 0 and product.options.size == 1
+    assign size_position = 1
+  endif
+
+  assign size_index = size_position | minus: 1
+-%}
+
+{%- unless product.has_only_default_variant or size_position == 0 -%}
+  {%- for size_value in product.options_with_values[size_index].values -%}
+    {%- liquid
+      assign size_name = size_value.name | default: size_value | append: ''
+      assign size_compact = size_name | downcase | remove: 'cm' | remove: ' '
+      assign size_shape = 'other'
+      assign size_width = 0
+      assign size_length = 0
+      assign size_label = size_name
+
+      if size_compact contains 'ø' or size_compact contains 'Ø'
+        assign size_width = size_compact | remove: 'ø' | remove: 'Ø' | plus: 0
+        assign size_length = size_width
+
+        if size_width > 0
+          assign size_shape = 'round'
+          assign size_label = 'Ø ' | append: size_width | append: ' cm'
+        endif
+      else
+        assign size_parts = size_compact | split: 'x'
+
+        if size_parts.size == 2
+          assign size_width = size_parts[0] | plus: 0
+          assign size_length = size_parts[1] | plus: 0
+
+          if size_width > 0 and size_length > 0
+            assign size_shape = 'rect'
+            assign size_label = size_width | append: ' × ' | append: size_length | append: ' cm'
+          endif
+        endif
+      endif
+
+      if size_shape == 'other'
+        assign size_width = 0
+        assign size_length = 0
+      endif
+
+      assign size_price = -1
+      assign size_code = ''
+      assign size_variant_id = ''
+
+      for size_variant in product.variants
+        if size_variant.options[size_index] == size_name
+          if size_price < 0
+            assign size_code = size_variant.sku
+            assign size_variant_id = size_variant.id
+          endif
+
+          if size_price < 0 or size_variant.price < size_price
+            assign size_price = size_variant.price
+          endif
+        endif
+      endfor
+    -%}
+
+    {%- if size_price >= 0 -%}
+      {{- size_shape }}|{{ size_width }}|{{ size_length }}|{{ size_price }}|{{ size_code | remove: '|' | remove: '§' }}|{{ size_variant_id }}|{{ size_label | remove: '|' | remove: '§' }}§
+    {%- endif -%}
+  {%- endfor -%}
+{%- endunless -%}

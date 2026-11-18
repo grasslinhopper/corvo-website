@@ -1,0 +1,52 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+RUG AREA (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Prints the area of a rug in square metres, without needless zeros: "3", "8.75", "4.08". Only the number is printed:
+the unit comes from the sentence around it ("rug_page.area" in the locale file).
+
+The area is rounded to two decimals, the same way the scripts of the rug page and of the price guide round it
+(assets/rug-configurator.js and assets/rug-price-guide.js), so the page says the same number before and after they run.
+
+********************************************
+Supported variables
+********************************************
+
+* width: the width of the rug, in centimetres (required)
+* length: the length of the rug, in centimetres (required)
+* shape: "round" for a round rug, whose width and length are both its diameter (optional)
+{%- endcomment -%}
+
+{%- liquid
+  assign area_width = width | plus: 0
+  assign area_length = length | plus: 0
+  assign area_cm2 = area_width | times: area_length
+
+  if shape == 'round'
+    comment
+      The area of a circle is its diameter squared × π / 4 (0.7854)
+    endcomment
+
+    assign area_cm2 = area_cm2 | times: 7854 | plus: 5000 | divided_by: 10000
+  endif
+
+  assign area_hundredths = area_cm2 | plus: 50 | divided_by: 100
+  assign area_rest = area_hundredths | modulo: 100
+  assign area_number = area_hundredths | divided_by: 100 | append: ''
+
+  if area_rest > 0
+    assign area_decimals = area_rest | append: ''
+    assign area_rest_tens = area_rest | modulo: 10
+
+    if area_rest_tens == 0
+      assign area_decimals = area_rest | divided_by: 10 | append: ''
+    elsif area_rest < 10
+      assign area_decimals = area_rest | prepend: '0'
+    endif
+
+    assign area_number = area_number | append: '.' | append: area_decimals
+  endif
+-%}
+
+{{- area_number -}}

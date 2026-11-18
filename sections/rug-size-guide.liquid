@@ -15,39 +15,46 @@
   assign room_blocks = section.blocks | where: 'type', 'room'
 
   comment
-    The standard sizes: those of the first rug that has rug facts and more than one size
+    The standard sizes: the rectangular sizes of the first rug that has rug facts and more than one size (see the
+    "rug-sizes" snippet, which counts a size once whatever colours the rug comes in). Round sizes are left out:
+    the drawing compares rectangles.
   endcomment
-
-  assign size_source = nil
-
-  for rug in collections.all.products
-    if rug.metafields.rug.craft_level.value != blank
-      unless rug.has_only_default_variant
-        assign size_source = rug
-        break
-      endunless
-    endif
-  endfor
 
   assign size_list = ''
   assign largest_width = 0
   assign largest_length = 0
 
-  for variant in size_source.variants
-    assign size_parts = variant.title | downcase | remove: 'cm' | remove: ' ' | split: 'x'
-    assign size_width = size_parts[0] | plus: 0
-    assign size_length = size_parts[1] | plus: 0
+  for rug in collections.all.products
+    if rug.metafields.rug.craft_level.value == blank or rug.has_only_default_variant
+      continue
+    endif
 
-    if size_width > 0 and size_length > 0
-      assign size_list = size_list | append: size_width | append: 'x' | append: size_length | append: '|'
+    capture rug_size_lines
+      render 'rug-sizes', product: rug
+    endcapture
 
-      if size_width > largest_width
-        assign largest_width = size_width
+    assign rug_size_lines = rug_size_lines | strip | split: '§'
+
+    for rug_size_line in rug_size_lines
+      assign size_fields = rug_size_line | split: '|'
+
+      if size_fields[0] == 'rect'
+        assign size_width = size_fields[1] | plus: 0
+        assign size_length = size_fields[2] | plus: 0
+        assign size_list = size_list | append: size_width | append: 'x' | append: size_length | append: '|'
+
+        if size_width > largest_width
+          assign largest_width = size_width
+        endif
+
+        if size_length > largest_length
+          assign largest_length = size_length
+        endif
       endif
+    endfor
 
-      if size_length > largest_length
-        assign largest_length = size_length
-      endif
+    if size_list != blank
+      break
     endif
   endfor
 
@@ -137,7 +144,10 @@
                   assign size_parts = size | split: 'x'
                   assign size_width = size_parts[0] | plus: 0
                   assign size_length = size_parts[1] | plus: 0
-                  assign size_area = size_width | times: size_length | divided_by: 10000.0 | round: 2
+
+                  capture size_area
+                    render 'rug-area', width: size_width, length: size_length
+                  endcapture
                 -%}
 
                 <li>

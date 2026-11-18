@@ -54,6 +54,33 @@
   assign colours_note = 'spec_sheet.colours_note' | t
   assign made_to_measure_note = 'spec_sheet.made_to_measure' | t
   assign page_address = shop.url | append: product.url | remove: 'https://' | remove: 'http://'
+
+  comment
+    The standard sizes: one per size, whatever other choices the rug has (see the "rug-sizes" snippet)
+  endcomment
+
+  capture size_lines
+    render 'rug-sizes', product: product
+  endcapture
+
+  assign size_lines = size_lines | strip | split: '§'
+
+  comment
+    The other choices of the rug (a colour, a frame): every choice that is not the size. A rug with such a choice
+    has one product code per size and per colour, so the table of sizes leaves the codes out.
+  endcomment
+
+  assign choice_count = 0
+
+  if product.options.size > 1
+    for option in product.options_with_values
+      assign option_name = option.name | downcase | strip
+
+      unless option_name == 'size'
+        assign choice_count = choice_count | plus: 1
+      endunless
+    endfor
+  endif
 -%}
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}">
@@ -167,13 +194,10 @@
         object-fit: cover;
         background: #f3f3f0;
         flex: 1 1 0;
-        width: 50%;
+        width: 0;
+        min-width: 0;
         height: 62mm;
         display: block;
-      }
-
-      .sheet__pictures img:only-child {
-        width: 100%;
       }
 
       dl {
@@ -439,6 +463,28 @@
             </div>
           {%- endif -%}
 
+          {%- if choice_count > 0 -%}
+            {%- for option in product.options_with_values -%}
+              {%- assign option_name = option.name | downcase | strip -%}
+
+              {%- unless option_name == 'size' -%}
+                <div>
+                  <dt>{{ 'rug_page.spec.choices' | t: name: option.name }}</dt>
+                  <dd>
+                    {{ 'rug_page.spec.choices_count' | t: count: option.values.size }}
+
+                    <small>
+                      {%- for option_value in option.values -%}
+                        {{- option_value.name | default: option_value | escape -}}
+                        {%- unless forloop.last -%}, {% endunless -%}
+                      {%- endfor -%}
+                    </small>
+                  </dd>
+                </div>
+              {%- endunless -%}
+            {%- endfor -%}
+          {%- endif -%}
+
           <div>
             <dt>{{ 'rug_page.spec.made_to_measure' | t }}</dt>
             <dd>{%- render 'corvo-fill', text: made_to_measure_note -%}</dd>
@@ -455,7 +501,7 @@
           </div>
         </dl>
 
-        {%- unless product.has_only_default_variant -%}
+        {%- if size_lines.size > 0 -%}
           <h2>{{ 'rug_page.spec.sizes' | t }}</h2>
 
           <table>
@@ -463,28 +509,38 @@
               <tr>
                 <th scope="col">{{ 'rug_page.size' | t }}</th>
                 <th scope="col">{{ 'spec_sheet.area' | t }}</th>
-                <th scope="col">{{ 'spec_sheet.code' | t }}</th>
+
+                {%- if choice_count == 0 -%}
+                  <th scope="col">{{ 'spec_sheet.code' | t }}</th>
+                {%- endif -%}
               </tr>
             </thead>
 
             <tbody>
-              {%- for variant in product.variants -%}
+              {%- for size_line in size_lines -%}
                 {%- liquid
-                  assign size_parts = variant.title | downcase | remove: 'cm' | remove: ' ' | split: 'x'
-                  assign size_width = size_parts[0] | plus: 0
-                  assign size_length = size_parts[1] | plus: 0
-                  assign size_area = size_width | times: size_length | divided_by: 10000.0 | round: 2
+                  assign size_fields = size_line | split: '|'
+                  assign size_area = ''
+
+                  unless size_fields[0] == 'other'
+                    capture size_area
+                      render 'rug-area', width: size_fields[1], length: size_fields[2], shape: size_fields[0]
+                    endcapture
+                  endunless
                 -%}
 
                 <tr>
-                  <td>{{ size_width }} × {{ size_length }} cm</td>
-                  <td>{% if size_area > 0 %}{{ 'rug_page.area' | t: area: size_area }}{% endif %}</td>
-                  <td>{{ variant.sku | escape }}</td>
+                  <td>{{ size_fields[6] | escape }}</td>
+                  <td>{% if size_area != blank %}{{ 'rug_page.area' | t: area: size_area }}{% endif %}</td>
+
+                  {%- if choice_count == 0 -%}
+                    <td>{{ size_fields[4] | escape }}</td>
+                  {%- endif -%}
                 </tr>
               {%- endfor -%}
             </tbody>
           </table>
-        {%- endunless -%}
+        {%- endif -%}
 
         <h2>{{ 'spec_sheet.care' | t }}</h2>
         <p class="sheet__text">{%- render 'corvo-fact', fact: 'care' -%}</p>
