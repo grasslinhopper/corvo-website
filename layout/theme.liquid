@@ -124,7 +124,7 @@
       {%- endunless -%}
     {%- endif -%}
 
-    {%- render 'social-meta-tags' -%}
+    {%- render 'social-meta-tags', seo_title: seo_title, seo_description: seo_description -%}
     {%- render 'microdata-schema' -%}
     {%- render 'css-variables' -%}
     {%- render 'adobe-fonts' -%}
