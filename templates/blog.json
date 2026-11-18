@@ -2,7 +2,13 @@
   "sections": {
     "main": {
       "type": "main-blog",
-      "settings": {}
+      "settings": {
+        "show_blog_title": true,
+        "title": "Journal",
+        "intro": "<p>Guides on choosing and caring for a rug, on materials and on craft, and stories from the atelier.</p>",
+        "show_tags": true,
+        "show_date": true
+      }
     },
     "subnav-tabs": {
       "type": "page-subnav",

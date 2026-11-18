@@ -1,43 +1,29 @@
 {
   "sections": {
-    "main": {
-      "type": "main-page",
-      "disabled": true,
+    "subnav-tabs": {
+      "type": "page-subnav",
       "settings": {
-        "color_scheme": "",
-        "show_title": true,
-        "page_width": "xs"
+        "menu": "site-menu",
+        "style": "tabs",
+        "current_as_title": false
       }
     },
-    "image_with_text_block_7b7AYc": {
-      "type": "image-with-text-block",
-      "blocks": {
-        "subheading_CqdxeD": {
-          "type": "subheading",
-          "settings": {
-            "text": "From portugal, with love"
-          }
-        },
-        "richtext_4tW9Ni": {
-          "type": "richtext",
-          "settings": {
-            "content": "<p>If you need assistance or have any questions, please feel free to reach out to us.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "subheading_CqdxeD",
-        "richtext_4tW9Ni"
-      ],
-      "disabled": true,
-      "name": "t:sections.image_with_text_block.presets.image_with_text_block.name",
+    "intro": {
+      "type": "page-intro",
       "settings": {
-        "color_scheme": "",
-        "image_size": "lg",
-        "image": "shopify://shop_images/CORVO_FINAL-62.jpg",
-        "content_width": "lg",
-        "enable_parallax": true,
-        "remove_vertical_spacing": true
+        "color_scheme": "scheme-1",
+        "eyebrow": "From Portugal, with care",
+        "title": "Contact",
+        "heading_tag": "h1",
+        "text": "<p>Questions, projects, visits: we answer personally.</p><p>Write to us, book a meeting, or come and see where the rugs are designed and made.</p>",
+        "image": "shopify://shop_images/image_7.png",
+        "image_alt": "The showroom: a long white room with rugs laid on the floor and hung on the walls",
+        "image_focus": "--focus: center",
+        "image_position": "end",
+        "button_1_text": "Write to us",
+        "button_1_link": "#contact_form",
+        "button_2_text": "Book a meeting",
+        "button_2_link": "https://cal.com/andre-sa-relvas-p9slq8/30min"
       }
     },
     "contact-form": {
@@ -56,148 +42,66 @@
         "text_UiDxFB"
       ],
       "settings": {
-        "color_scheme": "scheme-1",
-        "separate_section_with_border": true,
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
         "subheading": "",
-        "title": "Connect With Us",
-        "content": "<p>Have a question or require assistance? Please contact us — we would be delighted to assist you.</p>"
+        "title": "Write to us",
+        "content": "<p>Have a question or require assistance? Please contact us. We would be delighted to assist you.</p>"
       }
     },
-    "17678926235057d86d": {
-      "type": "_blocks",
+    "atelier": {
+      "type": "page-facts",
       "blocks": {
-        "ai_gen_block_b0ba658_T96FyL": {
-          "type": "ai_gen_block_b0ba658",
+        "address": {
+          "type": "fact",
           "settings": {
-            "map_image": "shopify://shop_images/high-resolution-grey-map-of-the-world-split-into-individual-countries-free-vector.jpg",
-            "spacing_below_image": 40,
-            "pin_size": 52,
-            "pin_color": "#1c1c1c",
-            "heading_font": "sans_serif_n4",
-            "location_name_size": 18,
-            "location_text_size": 14,
-            "text_color": "#1c1c1c",
-            "card_background": "#ffffff",
-            "active_card_border": "#1c1c1c",
-            "card_padding": 24,
-            "card_border_radius": 8,
-            "location_card_gap": 24,
-            "location_1_enabled": true,
-            "location_1_x": 45,
-            "location_1_y": 53,
-            "location_1_name": "Lisbon Showroom",
-            "location_1_address": "Rua Example 123\n1000-001 Lisboa, Portugal",
-            "location_1_phone": "",
-            "location_1_hours": "Mon-Fri: 10:00-18:00\nSat: 10:00-14:00",
-            "location_2_enabled": true,
-            "location_2_x": 20,
-            "location_2_y": 56,
-            "location_2_name": "Atlanta",
-            "location_2_address": "",
-            "location_2_phone": "",
-            "location_2_hours": "",
-            "location_3_enabled": true,
-            "location_3_x": 76,
-            "location_3_y": 57,
-            "location_3_name": "China",
-            "location_3_address": "",
-            "location_3_phone": "",
-            "location_3_hours": "",
-            "location_4_enabled": true,
-            "location_4_x": 47,
-            "location_4_y": 46,
-            "location_4_name": "London",
-            "location_4_address": "",
-            "location_4_phone": "",
-            "location_4_hours": "",
-            "location_5_enabled": false,
-            "location_5_x": 65,
-            "location_5_y": 40,
-            "location_5_name": "",
-            "location_5_address": "",
-            "location_5_phone": "",
-            "location_5_hours": ""
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_b0ba658_T96FyL"
-      ],
-      "disabled": true,
-      "settings": {
-        "color_scheme": "",
-        "separate_section_with_border": true,
-        "remove_vertical_spacing": false,
-        "remove_horizontal_spacing": false
-      }
-    },
-    "image_with_text_rpQXQt": {
-      "type": "image-with-text",
-      "blocks": {
-        "subheading_4X48iq": {
-          "type": "subheading",
-          "settings": {
-            "text": ""
+            "label": "Address",
+            "value": "<p>[address]</p>"
           }
         },
-        "heading_PtmYGk": {
-          "type": "heading",
+        "email": {
+          "type": "fact",
           "settings": {
-            "text": "our showroom",
-            "heading_tag": "h1"
+            "label": "E-mail",
+            "value": "<p>[email_link]</p>"
           }
         },
-        "richtext_y6teQM": {
-          "type": "richtext",
+        "meeting": {
+          "type": "fact",
           "settings": {
-            "content": "<p>Come and visit our production facilities in Portugal. Where we design and craft our products. </p><p></p><p>info@corvo-rugs.com<br/><br/><strong>Address</strong><br/>Rua dos Limites, 145, 4500-486<br/>Silvalde | Portugal</p>"
+            "label": "Meetings",
+            "value": "<p><a href=\"https://cal.com/andre-sa-relvas-p9slq8/30min\">Book a meeting of 30 minutes</a>, at a time that suits you.</p>"
           }
         },
-        "button_YByh3C": {
-          "type": "button",
+        "trade": {
+          "type": "fact",
           "settings": {
-            "style": "outline",
-            "text": "Book a meeting",
-            "url": "https://cal.com/andre-sa-relvas-p9slq8/30min",
-            "background": "",
-            "text_color": ""
+            "label": "Professionals",
+            "value": "<p>Architects, designers and retailers: see <a href=\"/pages/resources\">Resources</a> for specification sheets, samples and the catalogue.</p>"
           }
         }
       },
       "block_order": [
-        "subheading_4X48iq",
-        "heading_PtmYGk",
-        "richtext_y6teQM",
-        "button_YByh3C"
+        "address",
+        "email",
+        "meeting",
+        "trade"
       ],
-      "custom_css": [],
-      "name": "t:sections.image_with_text.presets.image_with_text.name",
       "settings": {
-        "color_scheme": "scheme-3",
-        "separate_section_with_border": true,
-        "image": "shopify://shop_images/image_7.png",
-        "reveal_on_scroll": true,
-        "image_position": "start",
-        "content_width": "sm",
-        "remove_vertical_spacing": true
-      }
-    },
-    "subnav-tabs": {
-      "type": "page-subnav",
-      "settings": {
-        "menu": "site-menu",
-        "style": "tabs",
-        "current_as_title": true
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "anchor": "atelier",
+        "subheading": "Showroom and atelier",
+        "title": "Our showroom",
+        "text": "<p>Come and visit our production facilities in Portugal, where we design and craft our rugs.</p>",
+        "note": ""
       }
     }
   },
   "order": [
     "subnav-tabs",
-    "main",
-    "image_with_text_block_7b7AYc",
+    "intro",
     "contact-form",
-    "17678926235057d86d",
-    "image_with_text_rpQXQt"
+    "atelier"
   ]
 }

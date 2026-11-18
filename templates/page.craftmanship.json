@@ -1,345 +1,196 @@
 {
   "sections": {
-    "main": {
-      "type": "main-page",
-      "disabled": true,
-      "custom_css": [],
-      "settings": {
-        "color_scheme": "",
-        "show_title": true,
-        "page_width": "sm"
-      }
-    },
-    "image_with_text_overlay_6G3neJ": {
-      "type": "image-with-text-overlay",
-      "blocks": {
-        "heading_itnAPn": {
-          "type": "heading",
-          "settings": {
-            "text": "Portuguese Craftmanship",
-            "heading_tag": "h1"
-          }
-        },
-        "richtext_GN6EJt": {
-          "type": "richtext",
-          "settings": {
-            "content": "<p>From the alchemy of the dye lab to the sculptor’s final cut.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "heading_itnAPn",
-        "richtext_GN6EJt"
-      ],
-      "name": "t:sections.image_with_text_overlay.presets.image_with_text_overlay.name",
-      "settings": {
-        "color_scheme": "",
-        "image_size": "lg",
-        "image": "shopify://shop_images/EARTHBOUND-25_187_1_TR-IMG_E8575.jpg",
-        "allow_transparent_header": false,
-        "reveal_on_scroll": true,
-        "remove_vertical_spacing": true,
-        "content_width": "md",
-        "mobile_text_position": "place-self-center text-center",
-        "desktop_text_position": "sm:place-self-center sm:text-center",
-        "overlay_color": "#000000",
-        "overlay_opacity": 30
-      }
-    },
-    "multiple_media_with_text_X68TpJ": {
-      "type": "multiple-media-with-text",
-      "blocks": {
-        "image_wakhiD": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/CORVO_FINAL-22.jpg",
-            "rotation": 0
-          }
-        },
-        "image_7cGAd3": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/CORVO_FINAL-7.jpg",
-            "rotation": 0
-          }
-        }
-      },
-      "block_order": [
-        "image_wakhiD",
-        "image_7cGAd3"
-      ],
-      "name": "t:sections.multiple_media_with_text.presets.multiple_media_with_text.name",
-      "settings": {
-        "color_scheme": "",
-        "reveal_on_scroll": true,
-        "separate_section_with_border": true,
-        "media_position_desktop": "before_text",
-        "media_position_mobile": "before_text",
-        "media_layout": "overlap",
-        "media_alignment": "center",
-        "media_alignment_offset": 0,
-        "media_mobile_alignment_offset": 0,
-        "text_alignment": "center",
-        "subheading": "",
-        "title": "Yarn",
-        "content": "<p>True luxury requires exactitude. In our dedicated color laboratory, we don't just select hues; we engineer them. Every batch of yarn undergoes rigorous in-house testing for colorfastness and consistency, ensuring that the vibrant tone you see today remains just as rich for generations to come.<br/></p>",
-        "button_1_text": "",
-        "button_1_link": "",
-        "button_1_style": "solid",
-        "button_2_text": "",
-        "button_2_link": "",
-        "button_2_style": "solid"
-      }
-    },
-    "multiple_media_with_text_fbYGjE": {
-      "type": "multiple-media-with-text",
-      "blocks": {
-        "image_iRLGXM": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/CORVO_FINAL-44.jpg",
-            "rotation": 0
-          }
-        },
-        "image_itTtrH": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/WhatsApp_Image_2025-11-20_at_14.42.32_2.jpg",
-            "rotation": 0
-          }
-        }
-      },
-      "block_order": [
-        "image_iRLGXM",
-        "image_itTtrH"
-      ],
-      "name": "t:sections.multiple_media_with_text.presets.multiple_media_with_text.name",
-      "settings": {
-        "color_scheme": "",
-        "reveal_on_scroll": true,
-        "separate_section_with_border": false,
-        "media_position_desktop": "after_text",
-        "media_position_mobile": "before_text",
-        "media_layout": "overlap",
-        "media_alignment": "center",
-        "media_alignment_offset": 0,
-        "media_mobile_alignment_offset": 0,
-        "text_alignment": "center",
-        "subheading": "",
-        "title": "Tufting",
-        "content": "<p><br/>Our tufting process represents the evolution of Portuguese heritage. We utilize a hybrid technique where mechanical precision meets human intuition. The tufting tool allows for deep, plush pile heights that anchor the rug, while our artisans manually refine the pattern row by row. It is deliberate, high-velocity craftsmanship that results in a rug of uncompromising durability and touch.<br/><br/></p>",
-        "button_1_text": "",
-        "button_1_link": "",
-        "button_1_style": "solid",
-        "button_2_text": "",
-        "button_2_link": "",
-        "button_2_style": "solid"
-      }
-    },
-    "image_with_text_7zFyVX": {
-      "type": "image-with-text",
-      "blocks": {
-        "heading_6eVnEb": {
-          "type": "heading",
-          "settings": {
-            "text": "Structure",
-            "heading_tag": "h1"
-          }
-        },
-        "richtext_tKqmGt": {
-          "type": "richtext",
-          "settings": {
-            "content": "<p>Beauty requires strength. Once tufted, the rug’s reverse is secured with a natural latex compound. This invisible step locks the fibers in place, ensuring the pile remains dense and upright for decades. It provides the necessary weight to anchor the rug to your floor, marrying flexibility with permanence.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "heading_6eVnEb",
-        "richtext_tKqmGt"
-      ],
-      "name": "t:sections.image_with_text.presets.image_with_text.name",
-      "settings": {
-        "color_scheme": "",
-        "separate_section_with_border": false,
-        "image": "shopify://shop_images/CORVO_FINAL-69.jpg",
-        "reveal_on_scroll": true,
-        "image_position": "start",
-        "content_width": "sm",
-        "remove_vertical_spacing": false
-      }
-    },
-    "image_with_text_pTDzdP": {
-      "type": "image-with-text",
-      "blocks": {
-        "heading_m9RzDw": {
-          "type": "heading",
-          "settings": {
-            "text": "The final touch",
-            "heading_tag": "h1"
-          }
-        },
-        "richtext_jMnUNt": {
-          "type": "richtext",
-          "settings": {
-            "content": "<p>True luxury creates no noise. In this final stage, we meticulously inspect every square inch of the pile. Artisans hand-trim any irregularities and define the pattern's edges with scissors. It is a slow, quiet process that guarantees the texture underfoot is perfectly smooth and the design lines are razor-sharp.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "heading_m9RzDw",
-        "richtext_jMnUNt"
-      ],
-      "name": "t:sections.image_with_text.presets.image_with_text.name",
-      "settings": {
-        "color_scheme": "",
-        "separate_section_with_border": false,
-        "image": "shopify://shop_images/WhatsApp_Image_2025-07-11_at_15.49.04_2.jpg",
-        "reveal_on_scroll": true,
-        "image_position": "end",
-        "content_width": "sm",
-        "remove_vertical_spacing": false
-      }
-    },
-    "images_with_text_scroll_AXWGDc": {
-      "type": "images-with-text-scroll",
-      "blocks": {
-        "image_with_text_PF9tym": {
-          "type": "image_with_text",
-          "settings": {
-            "image": "shopify://shop_images/CORVO_FINAL-77_af487f7e-2c52-4406-ab5d-ccba813b13ff.jpg",
-            "subheading": "",
-            "title": "Dyeing",
-            "content": "<p>Embrace vibrant hues crafted through precision dyeing techniques.</p>",
-            "link_text": "",
-            "link_url": "",
-            "link_style": "solid"
-          }
-        },
-        "image_with_text_7GD8Bw": {
-          "type": "image_with_text",
-          "settings": {
-            "image": "shopify://shop_images/CORVO_14.jpg",
-            "subheading": "",
-            "title": "Yarn",
-            "content": "<p>Experience unmatched quality and luxury in every stitch with our superior yarn selection.</p>",
-            "link_text": "",
-            "link_url": "",
-            "link_style": "solid"
-          }
-        },
-        "image_with_text_kFjEg6": {
-          "type": "image_with_text",
-          "settings": {
-            "image": "shopify://shop_images/CORVO_FINAL-44.jpg",
-            "subheading": "",
-            "title": "Tufting",
-            "content": "<p>Achieve uncompromised quality in every rug with our advanced tufting technology.</p>",
-            "link_text": "",
-            "link_url": "",
-            "link_style": "solid"
-          }
-        },
-        "image_with_text_n4ya7Q": {
-          "type": "image_with_text",
-          "settings": {
-            "image": "shopify://shop_images/CORVO_FINAL-69.jpg",
-            "subheading": "",
-            "title": "Adhesive Coating",
-            "content": "<p>bla bla bla</p>",
-            "link_text": "",
-            "link_url": "",
-            "link_style": "solid"
-          }
-        },
-        "image_with_text_pFMM7c": {
-          "type": "image_with_text",
-          "settings": {
-            "image": "shopify://shop_images/IMG_4631_copy_GS.jpg",
-            "subheading": "",
-            "title": "Finishing Touches",
-            "content": "<p>bla bla bla</p>",
-            "link_text": "",
-            "link_url": "",
-            "link_style": "solid"
-          }
-        }
-      },
-      "block_order": [
-        "image_with_text_PF9tym",
-        "image_with_text_7GD8Bw",
-        "image_with_text_kFjEg6",
-        "image_with_text_n4ya7Q",
-        "image_with_text_pFMM7c"
-      ],
-      "disabled": true,
-      "name": "t:sections.images_with_text_scroll.presets.images_with_text_scroll.name",
-      "settings": {
-        "color_scheme": "",
-        "image_position": "start",
-        "text_alignment": "center",
-        "heading_tag": "h3",
-        "overlay_color": "#000000",
-        "overlay_opacity": 0
-      }
-    },
-    "image_with_text_JAWKb8": {
-      "type": "image-with-text",
-      "blocks": {
-        "subheading_tyDwQR": {
-          "type": "subheading",
-          "settings": {
-            "text": "What it means to produce"
-          }
-        },
-        "heading_q96Ra8": {
-          "type": "heading",
-          "settings": {
-            "text": "Bespoke",
-            "heading_tag": "h1"
-          }
-        },
-        "richtext_KqUPki": {
-          "type": "richtext",
-          "settings": {
-            "content": "<p>Blah blah blah</p>"
-          }
-        }
-      },
-      "block_order": [
-        "subheading_tyDwQR",
-        "heading_q96Ra8",
-        "richtext_KqUPki"
-      ],
-      "disabled": true,
-      "name": "t:sections.image_with_text.presets.image_with_text.name",
-      "settings": {
-        "color_scheme": "",
-        "separate_section_with_border": true,
-        "reveal_on_scroll": true,
-        "image_position": "start",
-        "content_width": "sm",
-        "remove_vertical_spacing": true
-      }
-    },
-    "wf-film": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Film of the atelier",
-        "is_page_title": false,
-        "description": "A one-minute film following a rug from dye lab to final cut.",
-        "needs": "The film.",
-        "phase": "Phase 7",
-        "layout": "split",
-        "columns": 3,
-        "size": "medium"
-      }
-    },
     "subnav-tabs": {
       "type": "page-subnav",
       "settings": {
         "menu": "site-menu",
         "style": "tabs",
-        "current_as_title": true
+        "current_as_title": false
+      }
+    },
+    "intro": {
+      "type": "page-intro",
+      "blocks": {
+        "made": {
+          "type": "fact",
+          "settings": {
+            "label": "Made in",
+            "value": "Silvalde, Espinho, Portugal"
+          }
+        },
+        "order": {
+          "type": "fact",
+          "settings": {
+            "label": "Made",
+            "value": "To order, one rug at a time"
+          }
+        },
+        "how": {
+          "type": "fact",
+          "settings": {
+            "label": "Technique",
+            "value": "Hand tufting"
+          }
+        },
+        "time": {
+          "type": "fact",
+          "settings": {
+            "label": "Lead time",
+            "value": "[lead_weeks] weeks"
+          }
+        }
+      },
+      "block_order": [
+        "made",
+        "order",
+        "how",
+        "time"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Craftsmanship",
+        "title": "Portuguese craftsmanship",
+        "heading_tag": "h1",
+        "text": "<p>From the alchemy of the dye lab to the sculptor's final cut.</p><p>A Corvo rug is made in four stages: yarn, tufting, structure and the final touch.</p>",
+        "image": "shopify://shop_images/EARTHBOUND-25_187_1_TR-IMG_E8575.jpg",
+        "image_alt": "Close-up of the pile of a tufted rug in cream, sand, brown and black",
+        "image_focus": "--focus: center",
+        "image_position": "end"
+      }
+    },
+    "films": {
+      "type": "page-films",
+      "blocks": {
+        "dye": {
+          "type": "film",
+          "settings": {
+            "video": "shopify://files/videos/R10 V2.mov",
+            "stop_at": 8.3,
+            "alt": "Film: dye is poured and mixed in glass flasks in the colour laboratory",
+            "title": "The dye lab",
+            "text": "Where colour is engineered, not chosen."
+          }
+        },
+        "tuft": {
+          "type": "film",
+          "settings": {
+            "video": "shopify://files/videos/R9 V2.mov",
+            "stop_at": 20.6,
+            "alt": "Film: cones of red yarn, then a tufting head working across a stretched canvas",
+            "title": "Tufting",
+            "text": "Mechanical precision meets human intuition."
+          }
+        },
+        "hand": {
+          "type": "film",
+          "settings": {
+            "video": "shopify://files/videos/R13 V2.mov",
+            "stop_at": 8.9,
+            "alt": "Film: a hand passes over the pile of a rug in green, orange and yellow",
+            "title": "The final touch",
+            "text": "Every square inch of the pile is inspected."
+          }
+        },
+        "team": {
+          "type": "film",
+          "settings": {
+            "video": "shopify://files/videos/R7 V2.mov",
+            "stop_at": 6.1,
+            "alt": "Film: the team of the atelier standing together in the workshop",
+            "title": "The people",
+            "text": "The team of the atelier."
+          }
+        }
+      },
+      "block_order": [
+        "dye",
+        "tuft",
+        "hand",
+        "team"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "subheading": "In motion",
+        "title": "Inside the atelier",
+        "pause_label": "Pause the films",
+        "play_label": "Play the films"
+      }
+    },
+    "yarn": {
+      "type": "page-feature",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Stage 1 of 4",
+        "title": "Yarn",
+        "text": "<p>True luxury requires exactitude. In our dedicated colour laboratory, we don't just select hues; we engineer them. Every batch of yarn undergoes rigorous in-house testing for colour fastness and consistency, ensuring that the vibrant tone you see today remains just as rich for generations to come.</p>",
+        "image": "shopify://shop_images/CORVO_FINAL-22.jpg",
+        "image_alt": "A technician in a white coat and gloves draws red dye with a pipette in the colour laboratory",
+        "image_position": "start",
+        "image_shape": "portrait",
+        "image_2": "shopify://shop_images/CORVO_FINAL-7.jpg",
+        "image_2_alt": "Cones of yarn dyed deep blue, stacked on the spindles of a dyeing machine",
+        "link_1_text": "The colours",
+        "link_1_url": "shopify://pages/colours",
+        "link_2_text": "The materials",
+        "link_2_url": "shopify://pages/raw-materials"
+      }
+    },
+    "tufting": {
+      "type": "page-feature",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Stage 2 of 4",
+        "title": "Tufting",
+        "text": "<p>Our tufting process represents the evolution of Portuguese heritage. We utilize a hybrid technique where mechanical precision meets human intuition. The tufting tool allows for deep, plush pile heights that anchor the rug, while our artisans manually refine the pattern row by row. It is deliberate, high-velocity craftsmanship that results in a rug of uncompromising durability and touch.</p>",
+        "image": "shopify://shop_images/CORVO_FINAL-44.jpg",
+        "image_alt": "A tufting head works across a white canvas marked with the lines of a design",
+        "image_position": "end",
+        "image_shape": "portrait",
+        "image_2": "shopify://shop_images/WhatsApp_Image_2025-11-20_at_14.42.32_2.jpg",
+        "image_2_alt": "A hand-held tufting gun adds yarn to a rug in blue, yellow and white"
+      }
+    },
+    "structure": {
+      "type": "page-feature",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Stage 3 of 4",
+        "title": "Structure",
+        "text": "<p>Beauty requires strength. Once tufted, the rug's reverse is secured with a natural latex compound. This invisible step locks the fibres in place, ensuring the pile remains dense and upright for decades. It provides the necessary weight to anchor the rug to your floor, marrying flexibility with permanence.</p>",
+        "image": "shopify://shop_images/CORVO_FINAL-69.jpg",
+        "image_alt": "A craftsman in a mask spreads latex with a trowel over the back of a rug stretched on its frame",
+        "image_position": "start",
+        "image_shape": "portrait"
+      }
+    },
+    "final-touch": {
+      "type": "page-feature",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Stage 4 of 4",
+        "title": "The final touch",
+        "text": "<p>True luxury creates no noise. In this final stage, we meticulously inspect every square inch of the pile. Artisans hand-trim any irregularities and define the pattern's edges with scissors. It is a slow, quiet process that guarantees the texture underfoot is perfectly smooth and the design lines are razor-sharp.</p>",
+        "image": "shopify://shop_images/WhatsApp_Image_2025-07-11_at_15.49.04_2.jpg",
+        "image_alt": "A craftsman seen from behind trims by hand a rug with wavy brown and cream stripes, hung on the wall",
+        "image_position": "end",
+        "image_shape": "portrait"
+      }
+    },
+    "closing": {
+      "type": "page-intro",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "title": "From our hands to your floor",
+        "heading_tag": "h2",
+        "text": "<p>Begin a bespoke project: any design, in any colour, in any size up to [max_size].</p>",
+        "image": "shopify://shop_images/DSCF8626_copy.jpg",
+        "image_alt": "Black-and-white photograph of hanks of undyed yarn hanging from a rail, held by a worker",
+        "image_focus": "--focus: center",
+        "image_position": "start",
+        "button_1_text": "Tailor your rug",
+        "button_1_link": "shopify://pages/tailor-your-rug",
+        "button_2_text": "Bespoke at Corvo",
+        "button_2_link": "shopify://pages/bespoke"
       }
     },
     "subnav-pager": {
@@ -352,15 +203,13 @@
   },
   "order": [
     "subnav-tabs",
-    "main",
-    "image_with_text_overlay_6G3neJ",
-    "wf-film",
-    "multiple_media_with_text_X68TpJ",
-    "multiple_media_with_text_fbYGjE",
-    "image_with_text_7zFyVX",
-    "image_with_text_pTDzdP",
-    "images_with_text_scroll_AXWGDc",
-    "image_with_text_JAWKb8",
+    "intro",
+    "films",
+    "yarn",
+    "tufting",
+    "structure",
+    "final-touch",
+    "closing",
     "subnav-pager"
   ]
 }

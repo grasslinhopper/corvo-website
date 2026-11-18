@@ -4,72 +4,213 @@
       "type": "page-subnav",
       "settings": {
         "menu": "site-menu",
-        "style": "tabs"
+        "style": "tabs",
+        "current_as_title": false
       }
     },
-    "wf-1": {
-      "type": "wireframe",
+    "intro": {
+      "type": "page-intro",
+      "blocks": {
+        "founded": {
+          "type": "fact",
+          "settings": {
+            "label": "Founded",
+            "value": "1974"
+          }
+        },
+        "founders": {
+          "type": "fact",
+          "settings": {
+            "label": "Founders",
+            "value": "Ramiro Relvas, Duarte Relvas and Henrique Soares"
+          }
+        },
+        "makes": {
+          "type": "fact",
+          "settings": {
+            "label": "Makes",
+            "value": "Bath linens, accessories and tufted rugs"
+          }
+        },
+        "brands": {
+          "type": "fact",
+          "settings": {
+            "label": "Brands",
+            "value": "Sorema, Graccioza and Corvo"
+          }
+        }
+      },
+      "block_order": [
+        "founded",
+        "founders",
+        "makes",
+        "brands"
+      ],
       "settings": {
-        "label": "Sorema Group",
-        "is_page_title": true,
-        "description": "The family group behind Corvo, over an image of the mill.",
-        "needs": "",
-        "phase": "Phase 7",
-        "layout": "banner",
+        "color_scheme": "scheme-1",
+        "eyebrow": "The group",
+        "title": "Sorema Group",
+        "heading_tag": "h1",
+        "text": "<p>Sorema is the family group behind Corvo. It began in 1974 in the north of Portugal, and is now in its third generation.</p><p>Corvo is its atelier for bespoke rugs.</p>",
+        "image": "shopify://shop_images/Sorema5.jpg",
+        "image_alt": "A Sorema display of bath towels in many colours on curved white shelves, with a group of visitors",
+        "image_focus": "--focus: center",
+        "image_position": "end"
+      }
+    },
+    "beginning": {
+      "type": "page-feature",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "eyebrow": "Since 1974",
+        "title": "It began with an act of courage",
+        "text": "<p>Fifty years ago Ramiro Relvas, with his son Duarte and his friend Henrique Soares, began the project that would grow into the Sorema group. He wanted something of his own.</p><p>His first venture, car upholstery, had to be rethought after the Portuguese Revolution of 25 April 1974, when assembly lines left the country. He did not give up. Sorema went on to make bath linens and accessories, and never stopped making tufted rugs.</p>",
+        "link_1_text": "Read our story",
+        "link_1_url": "shopify://pages/about-us",
+        "image": "shopify://shop_images/HISTORIA_-_IMG_6672.jpg",
+        "image_alt": "Black-and-white archive photograph of a textile workshop, with women finishing tufted rugs at long tables",
+        "image_caption": "The workshop, in a photograph from the family archive.",
+        "image_position": "start",
+        "image_shape": "natural"
+      }
+    },
+    "figures": {
+      "type": "page-figures",
+      "blocks": {
+        "since": {
+          "type": "figure",
+          "settings": {
+            "value": "1974",
+            "label": "Founded"
+          }
+        },
+        "family": {
+          "type": "figure",
+          "settings": {
+            "value": "3rd",
+            "label": "Generation of the family"
+          }
+        },
+        "countries": {
+          "type": "figure",
+          "settings": {
+            "value": "50+",
+            "label": "Countries"
+          }
+        },
+        "people": {
+          "type": "figure",
+          "settings": {
+            "value": "190+",
+            "label": "People"
+          }
+        }
+      },
+      "block_order": [
+        "since",
+        "family",
+        "countries",
+        "people"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "subheading": "In figures",
+        "title": "The group today",
+        "note": "<p>Figures for the Sorema group as a whole.</p>"
+      }
+    },
+    "brands": {
+      "type": "page-cards",
+      "blocks": {
+        "sorema": {
+          "type": "card",
+          "settings": {
+            "label": "Since 1974",
+            "title": "Sorema",
+            "text": "<p>The company the group grew from. Bath linens and accessories, and tufted rugs.</p>"
+          }
+        },
+        "graccioza": {
+          "type": "card",
+          "settings": {
+            "label": "Bath and home",
+            "title": "Graccioza",
+            "text": "<p>The group's brand of luxury bath linens and rugs.</p>"
+          }
+        },
+        "corvo": {
+          "type": "card",
+          "settings": {
+            "label": "Since 2023",
+            "title": "Corvo",
+            "text": "<p>The group's atelier for luxury bespoke rugs, tufted by hand in Portugal.</p>",
+            "link_url": "shopify://pages/about-us",
+            "link_text": "Our story"
+          }
+        }
+      },
+      "block_order": [
+        "sorema",
+        "graccioza",
+        "corvo"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "subheading": "An archipelago of brands",
+        "title": "Three brands, one family",
+        "text": "<p>The Corvo brand was born within a family of brands inspired by the Azores, the family's favourite holiday destination.</p>",
+        "text_alignment": "center",
         "columns": 3,
-        "size": "large"
+        "columns_mobile": "1",
+        "image_ratio": "landscape",
+        "numbered": false
       }
     },
-    "wf-2": {
-      "type": "wireframe",
+    "atelier": {
+      "type": "page-feature",
       "settings": {
-        "label": "The group",
-        "is_page_title": false,
-        "description": "Who Sorema is, since 1974, and what it makes.",
-        "needs": "A short text and photos approved by the group.",
-        "phase": "Phase 7",
-        "layout": "split",
-        "columns": 3,
-        "size": "medium"
+        "color_scheme": "scheme-2",
+        "eyebrow": "Corvo in the group",
+        "title": "An atelier with a group behind it",
+        "text": "<p>Corvo was established in 2023 as a sister company of Sorema, with one purpose: luxury bespoke rugs, tufted by hand.</p><p>It works in Silvalde, Espinho, where its team has made rugs for more than fifty years. Yarn is dyed in-house, and every batch is tested in the colour laboratory for colour fastness and consistency.</p>",
+        "link_1_text": "How a rug is made",
+        "link_1_url": "shopify://pages/craftmanship",
+        "link_2_text": "Bespoke at Corvo",
+        "link_2_url": "shopify://pages/bespoke",
+        "image": "shopify://shop_images/CORVO_14.jpg",
+        "image_alt": "A trolley loaded with cones of yarn in many colours, in the yarn store",
+        "image_position": "end",
+        "image_shape": "portrait"
       }
     },
-    "wf-3": {
-      "type": "wireframe",
-      "settings": {
-        "label": "The brands",
-        "is_page_title": false,
-        "description": "Sorema, Graccioza and Corvo: the archipelago of brands.",
-        "needs": "",
-        "phase": "Phase 7",
-        "layout": "grid",
-        "columns": 3,
-        "size": "small"
-      }
-    },
-    "wf-4": {
-      "type": "wireframe",
-      "settings": {
-        "label": "Facts and figures",
-        "is_page_title": false,
-        "description": "Years, people, production and countries served, as four large numbers.",
-        "needs": "The figures.",
-        "phase": "Phase 7",
-        "layout": "grid",
-        "columns": 4,
-        "size": "small"
-      }
-    },
-    "wf-5": {
+    "wf-certificates": {
       "type": "wireframe",
       "settings": {
         "label": "Certifications and sustainability",
-        "is_page_title": false,
-        "description": "The certificates held and what the group does on materials, water and energy.",
-        "needs": "The list of certificates.",
+        "description": "The certificates held, and what the group does on materials, water and energy. Nothing is claimed here until it can be shown.",
+        "needs": "Which of GOTS, OEKO-TEX, TÜV and V-Label cover Corvo rugs, with the certificates (open point 24).",
         "phase": "Phase 7",
         "layout": "split",
         "columns": 3,
         "size": "small"
+      }
+    },
+    "closing": {
+      "type": "page-intro",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "title": "See what the atelier makes",
+        "heading_tag": "h2",
+        "text": "<p>[Collection_count] collections, and any rug of your own design, in any size up to [max_size].</p>",
+        "image": "shopify://shop_images/CORVO_FINAL-62.jpg",
+        "image_alt": "A woman seen from behind, looking at a rug with a painterly design in rust, blue and sand hung on a wall",
+        "image_focus": "--focus: center",
+        "image_position": "start",
+        "button_1_text": "Explore the collections",
+        "button_1_link": "shopify://collections",
+        "button_2_text": "Tailor your rug",
+        "button_2_link": "shopify://pages/tailor-your-rug"
       }
     },
     "subnav-pager": {
@@ -82,11 +223,13 @@
   },
   "order": [
     "subnav-tabs",
-    "wf-1",
-    "wf-2",
-    "wf-3",
-    "wf-4",
-    "wf-5",
+    "intro",
+    "beginning",
+    "figures",
+    "brands",
+    "atelier",
+    "wf-certificates",
+    "closing",
     "subnav-pager"
   ]
 }

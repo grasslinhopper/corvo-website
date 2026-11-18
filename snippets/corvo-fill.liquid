@@ -42,6 +42,9 @@ and rules"), the craft levels, the materials and the sample product. Change the 
   [sample_price]        the price of a sample
   [cut_pile_range]      the lowest and highest cut pile among the rugs, as "11 to 45 mm"
   [loop_pile_range]     the lowest and highest loop pile among the rugs, as "5 to 12 mm"
+  [address]             the address of the atelier, on one line
+  [email]               the e-mail address of the atelier
+  [email_link]          the same, as a link that opens a new message
 
 ********************************************
 Supported variables
@@ -139,6 +142,22 @@ Supported variables
       endcapture
 
       assign filled = filled | replace: '[sample_size]', sample_size | replace: '[sample_price]', sample_price
+    endif
+
+    comment
+      The address and the e-mail of the atelier: kept in the locale file, under "general.corvo", where the structured
+      data of the Contact page reads them too
+    endcomment
+
+    if filled contains '[address]' or filled contains '[email'
+      assign corvo_street = 'general.corvo.street' | t
+      assign corvo_postcode = 'general.corvo.postcode' | t
+      assign corvo_locality = 'general.corvo.locality' | t
+      assign corvo_country = 'general.corvo.country' | t
+      assign corvo_email = 'general.corvo.email' | t
+      assign corvo_address = corvo_street | append: ', ' | append: corvo_postcode | append: ' ' | append: corvo_locality | append: ', ' | append: corvo_country
+      assign corvo_email_link = corvo_email | prepend: '<a href="mailto:' | append: '">' | append: corvo_email | append: '</a>'
+      assign filled = filled | replace: '[address]', corvo_address | replace: '[email_link]', corvo_email_link | replace: '[email]', corvo_email
     endif
 
     comment

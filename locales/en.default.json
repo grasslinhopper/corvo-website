@@ -12,6 +12,8 @@
     "corvo": {
       "home_title": "Corvo: bespoke rugs, made to order by hand in Portugal",
       "all_rugs_title": "All rugs",
+      "journal_title": "Journal: rug guides, materials and craft",
+      "journal_description": "The Corvo journal: guides on choosing, sizing and caring for a rug, on wool, lyocell and other materials, and on how rugs are made by hand in Portugal.",
       "description": "Corvo makes bespoke and made-to-order hand-tufted rugs in Espinho, Portugal. Every design can be made in any size up to [max_size] and in custom colours, in [lead_weeks] weeks. Corvo is part of the Sorema Group.",
       "all_rugs_description": "All {{ count }} Corvo rugs in one place. Each is made to order by hand in Portugal, in standard sizes or made to measure up to [max_size], with prices shown per size.",
       "collections_description": "The [collection_count] Corvo rug collections. Every rug is made to order by hand in Portugal, in standard sizes or made to measure, and in custom colours.",
@@ -81,6 +83,7 @@
       "founded": "2023",
       "street": "Rua dos Limites, 145",
       "postcode": "4500-486",
+      "country": "Portugal",
       "email": "info@corvo-rugs.com",
       "care": "This product should be handled with care. Regular vacuuming without rotating brushes, prompt attention to spills, and periodic rotation will help preserve its appearance and structure. To maintain the quality of the fibres over time, we recommend protecting the rug from prolonged sunlight and relying on professional cleaning when needed.",
       "variation": "The colours shown are indicative. Natural materials and artisanal processes may give variations in colour and texture."

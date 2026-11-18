@@ -47,13 +47,16 @@
   {%- endif -%}
 
   {%- if section.settings.show_image and article.image -%}
+    {%- comment -%}Corvo addition: a picture without a description of its own is described by the title of the article{%- endcomment -%}
+    {%- assign article_image_alt = article.image.alt | default: article.title -%}
+
     <div class="article__image">
       {%- if section.settings.enable_parallax -%}
         <image-parallax class="contents">
-          {{- article.image | image_url: width: article.image.width | image_tag: widths: '200,300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200', class: 'w-full' -}}
+          {{- article.image | image_url: width: article.image.width | image_tag: widths: '200,300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200', class: 'w-full', alt: article_image_alt -}}
         </image-parallax>
       {%- else -%}
-        {{- article.image | image_url: width: article.image.width | image_tag: widths: '200,300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200', class: 'w-full' -}}
+        {{- article.image | image_url: width: article.image.width | image_tag: widths: '200,300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200', class: 'w-full', alt: article_image_alt -}}
       {%- endif -%}
     </div>
   {%- endif -%}

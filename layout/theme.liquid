@@ -30,6 +30,8 @@
         assign seo_title = 'general.corvo.home_title' | t
       elsif request.page_type == 'collection' and collection.handle == 'all'
         assign seo_title = 'general.corvo.all_rugs_title' | t
+      elsif request.page_type == 'blog' and blog.handle == 'news' and current_tags == blank and page_title == blog.title
+        assign seo_title = 'general.corvo.journal_title' | t
       elsif seo_key != blank and page_title == page.title
         assign seo_title = seo_key | append: '.title' | t
       elsif request.page_type == 'metaobject' and metaobject.system.type == 'project'
@@ -44,9 +46,17 @@
         assign seo_title = seo_title | append: ' | ' | append: shop.name
       endunless
 
+      # A page described in the theme keeps that description unless one was typed for it in Shopify. Otherwise Shopify
+      # would fill the description with the first lines of the page's own text.
+      if seo_key != blank and page.metafields.global.description_tag == blank
+        assign seo_description = blank
+      endif
+
       if seo_description == blank
         if request.page_type == 'index'
           assign seo_description = 'general.corvo.description' | t
+        elsif request.page_type == 'blog' and blog.handle == 'news' and current_tags == blank
+          assign seo_description = 'general.corvo.journal_description' | t
         elsif seo_key != blank
           assign seo_description = seo_key | append: '.description' | t
         elsif request.page_type == 'collection' and collection.handle == 'all'

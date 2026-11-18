@@ -5,7 +5,7 @@
     <div class="container container--xs">
       <div class="empty-state">
         <div class="prose">
-          <h1 class="h4">{{ blog.title }}</h1>
+          <h1 class="h4">{{ section.settings.title | default: blog.title | escape }}</h1>
           <p>{{ 'blog.general.empty_blog' | t }}</p>
 
           {%- assign button_content = 'blog.general.back_to_home' | t -%}
@@ -21,7 +21,8 @@
             {%- if section.settings.show_blog_title -%}
               <div class="section-header justify-self-center text-center">
                 <div class="h-stack justify-center gap-4">
-                  <h1 class="h2">{{ blog.title }}</h1>
+                  {%- comment -%}Corvo addition: the list can carry a title of its own ("Journal") and a line under it{%- endcomment -%}
+                  <h1 class="h2">{{ section.settings.title | default: blog.title | escape }}</h1>
 
                   {%- if section.settings.show_rss_feed -%}
                     <a href="{{ blog.url }}.atom" class="link-faded">
@@ -30,6 +31,10 @@
                     </a>
                   {%- endif -%}
                 </div>
+
+                {%- if section.settings.intro != blank and current_tags == blank -%}
+                  <div class="prose text-subdued">{{ section.settings.intro }}</div>
+                {%- endif -%}
               </div>
             {%- endif -%}
 
@@ -63,7 +68,8 @@
                       {%- capture featured_blog_post_sizes -%}(max-width: 1149px) 95vw, 1260px{%- endcapture -%}
 
                       {%- if article.image != blank -%}
-                        {{- article.image | image_url: width: article.image.width | image_tag: sizes: featured_blog_post_sizes, widths: '200,300,400,500,600,800,1000,1200,1400,1600,1800,2000,2200', class: 'zoom-image group-hover:zoom' -}}
+                        {%- assign featured_image_alt = article.image.alt | default: article.title -%}
+                        {{- article.image | image_url: width: article.image.width | image_tag: sizes: featured_blog_post_sizes, widths: '200,300,400,500,600,800,1000,1200,1400,1600,1800,2000,2200', class: 'zoom-image group-hover:zoom', alt: featured_image_alt -}}
                       {%- endif -%}
 
                       <div class="prose place-self-end-start">
@@ -82,7 +88,7 @@
                   </div>
                 {%- endif -%}
 
-                {%- render 'blog-post-card', article: article, blog: blog, show_category: section.settings.show_category, show_date: section.settings.show_date, show_excerpt: section.settings.show_excerpt, show_read_more: section.settings.show_read_more, sizes: sizes, position: forloop.index -%}
+                {%- render 'blog-post-card', article: article, blog: blog, show_category: section.settings.show_category, show_date: section.settings.show_date, show_excerpt: section.settings.show_excerpt, show_read_more: section.settings.show_read_more, sizes: sizes, position: forloop.index, heading_tag: 'h2' -%}
               {%- endfor -%}
             </blog-posts>
 
@@ -111,6 +117,17 @@
       "id": "show_blog_title",
       "label": "t:sections.main_blog.show_blog_title",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title of the list",
+      "info": "Corvo addition. Leave empty to use the name of the blog in Shopify."
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Line under the title"
     },
     {
       "type": "checkbox",

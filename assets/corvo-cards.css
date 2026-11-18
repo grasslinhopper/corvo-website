@@ -222,3 +222,26 @@
 .product-list--carousel .product-card__media .product-card__image--alone {
   padding: 8% 10%;
 }
+
+/* --------------------------------------------------------------------------------------------------------------------
+ * ARTICLES OF THE JOURNAL
+ * ----------------------------------------------------------------------------------------------------------------- */
+
+/* Every card has a picture of the same shape, whatever the shape of the photograph, so that rows stay level */
+.blog-post-card__media {
+  aspect-ratio: 3 / 2;
+  display: block;
+}
+
+.blog-post-card__media .blog-post-card__image {
+  object-fit: cover;
+  block-size: 100%;
+}
+
+/* The title of an article is a heading of the page; it keeps the look the theme gives it */
+.blog-post-card__heading {
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
