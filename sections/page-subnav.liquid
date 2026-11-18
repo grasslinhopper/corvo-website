@@ -55,13 +55,85 @@
       <div class="subnav__inner">
         <p class="subnav__title">{{ group_title | escape }}</p>
 
-        <ul class="subnav__list unstyled-list" role="list">
-          {%- for link in siblings -%}
-            <li>
-              {%- comment -%}On a page with no heading of its own, its name in the bar is the main heading{%- endcomment -%}
-              {%- if link.current and section.settings.current_as_title -%}
-                <h1 class="subnav__heading"><a href="{{ link.url }}" class="subnav__link" aria-current="page"><span class="sr-only">{{ group_title | escape }}: </span>{{ link.title | escape }}</a></h1>
-              {%- else -%}
+        {%- comment -%}
+          A bar with more tabs than fit scrolls sideways. On a computer two arrows move it; on a phone a finger does.
+          The script below shows the arrows only when there is more to see, and brings the current tab into view.
+        {%- endcomment -%}
+        <div class="subnav__scroller">
+          <button type="button" class="subnav__arrow" data-subnav-arrow="-1" aria-label="{{ 'general.accessibility.previous' | t | escape }}" hidden>
+            {%- render 'icon' with 'chevron-left' -%}
+          </button>
+
+          <ul class="subnav__list unstyled-list" role="list">
+            {%- for link in siblings -%}
+              <li>
+                {%- comment -%}On a page with no heading of its own, its name in the bar is the main heading{%- endcomment -%}
+                {%- if link.current and section.settings.current_as_title -%}
+                  <h1 class="subnav__heading"><a href="{{ link.url }}" class="subnav__link" aria-current="page"><span class="sr-only">{{ group_title | escape }}: </span>{{ link.title | escape }}</a></h1>
+                {%- else -%}
+                  <a href="{{ link.url }}" class="subnav__link" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+
+          <button type="button" class="subnav__arrow" data-subnav-arrow="1" aria-label="{{ 'general.accessibility.next' | t | escape }}" hidden>
+            {%- render 'icon' with 'chevron-right' -%}
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <script>
+      (() => {
+        const nav = document.currentScript.previousElementSibling,
+          list = nav.querySelector('.subnav__list');
+
+        if (!list) {
+          return;
+        }
+
+        const arrows = Array.from(nav.querySelectorAll('[data-subnav-arrow]')),
+          current = list.querySelector('[aria-current="page"]'),
+          direction = () => (getComputedStyle(list).direction === 'rtl' ? -1 : 1);
+
+        // What is hidden before and after: the bar fades out on that side, and the arrow of that side shows
+        const refresh = () => {
+          const hidden = list.scrollWidth - list.clientWidth,
+            passed = Math.abs(list.scrollLeft),
+            before = passed > 2,
+            after = hidden - passed > 2;
+
+          nav.classList.toggle('has-more-before', before);
+          nav.classList.toggle('has-more-after', after);
+
+          arrows.forEach((arrow) => {
+            arrow.hidden = !(arrow.dataset.subnavArrow === '-1' ? before : after);
+          });
+        };
+
+        const showCurrent = () => {
+          if (current && list.scrollWidth > list.clientWidth) {
+            list.scrollLeft += current.getBoundingClientRect().left - list.getBoundingClientRect().left - (list.clientWidth - current.offsetWidth) / 2;
+          }
+
+          refresh();
+        };
+
+        arrows.forEach((arrow) => {
+          arrow.addEventListener('click', () => {
+            list.scrollBy({ left: parseInt(arrow.dataset.subnavArrow, 10) * direction() * list.clientWidth * 0.7, behavior: 'smooth' });
+          });
+        });
+
+        list.addEventListener('scroll', refresh, { passive: true });
+        window.addEventListener('resize', refresh, { passive: true });
+        window.addEventListener('load', showCurrent, { once: true });
+
+        showCurrent();
+      })();
+    </script>
+  {%- else -%}
                 <a href="{{ link.url }}" class="subnav__link" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a>
               {%- endif -%}
             </li>
@@ -161,23 +233,68 @@
     text-transform: uppercase;
   }
 
-  /* On a phone or a tablet a long bar scrolls sideways: its end fades out, to show that there is more */
+  /* The tabs sit on one line. When they do not all fit the line scrolls sideways, and fades out where more is hidden. */
+  .subnav__scroller {
+    display: flex;
+    align-items: stretch;
+    min-inline-size: 0;
+    margin: 0 auto;
+  }
+
   .subnav__list {
     display: flex;
+    flex: 0 1 auto;
     gap: 1.75rem;
-    margin: 0 auto;
+    min-inline-size: 0;
+    margin: 0;
     padding: 0;
-    padding-inline-end: 1.5rem;
     overflow-x: auto;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
-    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 1.5rem), transparent);
-    mask-image: linear-gradient(to right, #000 calc(100% - 1.5rem), transparent);
   }
 
-  [dir="rtl"] .subnav__list {
-    -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 1.5rem), transparent);
-    mask-image: linear-gradient(to left, #000 calc(100% - 1.5rem), transparent);
+  .subnav--tabs.has-more-after .subnav__list {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+  }
+
+  .subnav--tabs.has-more-before .subnav__list {
+    -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 2.5rem), transparent);
+    mask-image: linear-gradient(to left, #000 calc(100% - 2.5rem), transparent);
+  }
+
+  .subnav--tabs.has-more-before.has-more-after .subnav__list {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent);
+  }
+
+  /* The arrows are for a mouse: a finger scrolls the bar itself */
+  .subnav__arrow {
+    display: none;
+    flex: none;
+    place-items: center;
+    padding: 0 0.75rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.2s ease;
+  }
+
+  .subnav__arrow svg {
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+  }
+
+  @media (hover: hover) {
+    .subnav__arrow:not([hidden]) {
+      display: grid;
+    }
+
+    .subnav__arrow:hover {
+      opacity: 1;
+    }
   }
 
   .subnav__list::-webkit-scrollbar {
@@ -298,15 +415,8 @@
       display: flex;
     }
 
-    /* On a computer nothing is hidden: a bar with many tabs takes a second line */
     .subnav__list {
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0 2.5rem;
-      padding-inline-end: 0;
-      overflow-x: visible;
-      -webkit-mask-image: none;
-      mask-image: none;
+      gap: 2.5rem;
     }
 
     .subnav__link,
@@ -319,6 +429,7 @@
   @media (prefers-reduced-motion: reduce) {
     .shopify-section--page-subnav:has(.subnav--tabs:not(.subnav--static)),
     .subnav__link,
+    .subnav__arrow,
     .subnav-pager__link {
       transition: none;
     }
