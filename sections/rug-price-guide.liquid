@@ -261,7 +261,7 @@
             the library.
             {%- endcomment -%}
             <div class="price-guide__design" data-guide-design hidden>
-              <img class="price-guide__design-image" data-guide-design-image alt="" width="120" height="168" hidden>
+              <div class="price-guide__design-media" data-guide-design-media hidden></div>
 
               <div class="price-guide__design-text">
                 <p class="text-sm text-subdued">{{ 'price_guide.design_starting' | t }}</p>
@@ -716,15 +716,16 @@
   }
 
   .price-guide__design[hidden],
-  .price-guide__design-image[hidden] {
+  .price-guide__design-media[hidden] {
     display: none;
   }
 
-  .price-guide__design-image {
+  .price-guide__design-media img {
     object-fit: contain;
     width: 4.5rem;
     height: auto;
     max-height: 7rem;
+    display: block;
   }
 
   .price-guide__design-text {

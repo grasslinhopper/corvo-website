@@ -128,7 +128,7 @@
 
       const { name, style, image } = this.design,
         level = this.config.levels.find((candidate) => String(candidate.number) === String(this.design.level)),
-        picture = this.designBox.querySelector('[data-guide-design-image]'),
+        media = this.designBox.querySelector('[data-guide-design-media]'),
         write = (selector, text) => {
           const element = this.designBox.querySelector(selector);
 
@@ -137,12 +137,19 @@
           }
         };
 
-      if (picture) {
-        picture.hidden = !image;
+      // The picture of the design is added here, so that the page as served holds no picture without a source
+      if (media) {
+        media.replaceChildren();
+        media.hidden = !image;
 
         if (image) {
+          const picture = document.createElement('img');
+
           picture.src = image;
           picture.alt = style ? strings.designAlt.replace('[name]', name).replace('[style]', style.toLowerCase()) : name;
+          picture.width = 120;
+          picture.height = 168;
+          media.append(picture);
         }
       }
 
