@@ -117,7 +117,7 @@
     letter-spacing: 0.16em;
   }
 
-  .rug-list .product-card__info,
+  .product-list .product-card__info,
   .cshow__grid .product-card__info {
     min-block-size: 5.75rem;
   }
@@ -135,7 +135,28 @@
 }
 
 /* --------------------------------------------------------------------------------------------------------------------
- * THE LIST OF RUGS (collection pages and All rugs)
+ * RUGS SIDE BY SIDE, IN ANY LIST
+ * ----------------------------------------------------------------------------------------------------------------- */
+
+/*
+ * The frames differ in height: a rug that lies has a lower frame than an upright one. Wherever rugs stand side by side
+ * (a list, a row that slides, the search panel) the cards of a row stand on one line, and the text of every card takes
+ * the same room, whether its last line is short, long or missing. So the names and the prices sit on one line too.
+ */
+.product-list,
+.predictive-search__products {
+  align-items: end;
+}
+
+.product-list .product-card__info,
+.predictive-search__products .product-card__info,
+.cshow__grid .product-card__info {
+  align-content: start;
+  min-block-size: 5.25rem;
+}
+
+/* --------------------------------------------------------------------------------------------------------------------
+ * THE LIST OF RUGS (collection pages, All rugs and the search results)
  * ----------------------------------------------------------------------------------------------------------------- */
 
 /* The list does not grow with the screen for ever: beyond this width the margins grow instead */
@@ -145,14 +166,14 @@
   margin-inline: auto;
 }
 
-.rug-list product-list.product-list {
+.rug-list product-list.product-list,
+.shopify-section--main-search product-list.product-list {
   --rug-columns: 2;
   --rug-column-gap: 1.25rem;
   --rug-row-gap: 2.75rem;
   display: grid;
   grid: none;
   grid-template-columns: repeat(var(--rug-columns), minmax(0, 1fr));
-  /* The frames differ in height: the cards of a row stand on one line, where their names are */
   align-items: end;
   column-gap: var(--rug-column-gap);
   row-gap: var(--rug-row-gap);
@@ -164,7 +185,8 @@
 }
 
 @media screen and (min-width: 700px) {
-  .rug-list product-list.product-list {
+  .rug-list product-list.product-list,
+  .shopify-section--main-search product-list.product-list {
     --rug-columns: 3;
     --rug-column-gap: 2.5rem;
     --rug-row-gap: 4.5rem;
@@ -176,26 +198,18 @@
 }
 
 @media screen and (min-width: 1150px) {
-  .rug-list product-list.product-list {
+  .rug-list product-list.product-list,
+  .shopify-section--main-search product-list.product-list {
     --rug-columns: 4;
     --rug-column-gap: 3.5rem;
     --rug-row-gap: 5.5rem;
   }
 }
 
-/*
- * In a list the frames differ in height and the cards stand on one line. So that the names also sit on one line, the
- * text of every card takes the same room, whether its last line is short, long or missing.
- */
-.rug-list .product-card__info,
-.cshow__grid .product-card__info {
-  align-content: start;
-  min-block-size: 5.25rem;
-}
-
 /* Beside the filters there is less room: three across, and four on a wide screen */
 @media screen and (min-width: 1000px) and (max-width: 1599px) {
-  .rug-list .collection:has(.facets-sidebar) product-list.product-list {
+  .rug-list .collection:has(.facets-sidebar) product-list.product-list,
+  .shopify-section--main-search .collection:has(.facets-sidebar) product-list.product-list {
     --rug-columns: 3;
     --rug-column-gap: 3rem;
   }
