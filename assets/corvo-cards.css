@@ -1,0 +1,181 @@
+/**
+ * Corvo: the rug card, and the lists it stands in.
+ *
+ * One card for every list of rugs: the collection pages, All rugs, the Collections page, search, related rugs.
+ * The principles: a small picture with room around it, four rugs across, wide gaps, and three quiet lines of text.
+ * The rug alone leads, laid on the plain colour of the page; the room shows when the pointer is on the card.
+ * Which picture leads is decided in snippets/product-card.liquid.
+ */
+
+/* --------------------------------------------------------------------------------------------------------------------
+ * THE CARD
+ * ----------------------------------------------------------------------------------------------------------------- */
+
+.product-card {
+  gap: 1.375rem;
+}
+
+/* Every picture stands in a frame of the same shape, so that names and prices line up across a row */
+.product-card__media {
+  position: relative;
+  display: block;
+  aspect-ratio: var(--rug-card-ratio, 4 / 5);
+  overflow: hidden;
+  background: rgb(var(--background));
+}
+
+.product-card__media .product-card__image {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: none;
+  margin: 0;
+  aspect-ratio: auto;
+  object-fit: cover;
+  mix-blend-mode: normal;
+  transition: opacity 0.45s ease;
+}
+
+/*
+ * The rug alone: shown whole, with room around it. Most of these pictures have a white ground: multiplied with the
+ * colour of the page the white disappears, and the rug lies on the page itself.
+ */
+.product-card__media .product-card__image--alone {
+  box-sizing: border-box;
+  padding: 9% 11%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+/* On a dark ground a multiplied picture would turn black */
+.color-scheme--scheme-3 .product-card__media .product-card__image--alone {
+  mix-blend-mode: normal;
+}
+
+/* The three lines under the picture */
+.product-card__info {
+  gap: 0.5rem;
+}
+
+.product-card__text {
+  gap: 0.4rem;
+}
+
+.product-card .product-title {
+  font-family: var(--heading-font-family);
+  font-weight: var(--heading-font-weight);
+  font-style: var(--heading-font-style);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.product-card .price-list {
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+}
+
+.product-card .price-list > * {
+  font-size: inherit;
+}
+
+.product-card__meta {
+  margin: 0;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  opacity: 0.7;
+  text-wrap: balance;
+}
+
+@media screen and (max-width: 699px) {
+  .product-card {
+    gap: 0.875rem;
+  }
+
+  .product-card__media .product-card__image--alone {
+    padding: 7% 9%;
+  }
+
+  .product-card .product-title {
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+  }
+
+  /* On a phone the card is narrow: the collection is left to the filters */
+  .product-card__meta-context {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-card__media .product-card__image {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------------------------------------------------
+ * THE LIST OF RUGS (collection pages and All rugs)
+ * ----------------------------------------------------------------------------------------------------------------- */
+
+/* The list does not grow with the screen for ever: beyond this width the margins grow instead */
+.rug-list .collection {
+  inline-size: 100%;
+  max-inline-size: 97.5rem;
+  margin-inline: auto;
+}
+
+.rug-list product-list.product-list {
+  --rug-columns: 2;
+  --rug-column-gap: 1.25rem;
+  --rug-row-gap: 2.75rem;
+  display: grid;
+  grid: none;
+  grid-template-columns: repeat(var(--rug-columns), minmax(0, 1fr));
+  align-items: start;
+  column-gap: var(--rug-column-gap);
+  row-gap: var(--rug-row-gap);
+  margin-inline: 0;
+}
+
+.rug-list .collection__main {
+  padding-block-start: 0.5rem;
+}
+
+@media screen and (min-width: 700px) {
+  .rug-list product-list.product-list {
+    --rug-columns: 3;
+    --rug-column-gap: 2.5rem;
+    --rug-row-gap: 4.5rem;
+  }
+
+  .rug-list .collection__main {
+    padding-block-start: 1.5rem;
+  }
+}
+
+@media screen and (min-width: 1150px) {
+  .rug-list product-list.product-list {
+    --rug-columns: 4;
+    --rug-column-gap: 3.5rem;
+    --rug-row-gap: 5.5rem;
+  }
+}
+
+/* Beside the filters there is less room: three across, and four on a wide screen */
+@media screen and (min-width: 1000px) and (max-width: 1599px) {
+  .rug-list .collection:has(.facets-sidebar) product-list.product-list {
+    --rug-columns: 3;
+    --rug-column-gap: 3rem;
+  }
+}
+
+/* --------------------------------------------------------------------------------------------------------------------
+ * RUGS IN A ROW THAT SLIDES (related rugs, recently viewed)
+ * ----------------------------------------------------------------------------------------------------------------- */
+
+.product-list--carousel .product-card__media .product-card__image--alone {
+  padding: 8% 10%;
+}

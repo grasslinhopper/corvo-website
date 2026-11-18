@@ -14,7 +14,6 @@
         "columns": 5,
         "products_limit": 5,
         "show_price": true,
-        "price_prefix": "From",
         "link_text": "Discover the collection",
         "image_left": "shopify://shop_images/RamiroRelvas_Pintura1.jpg",
         "image_right": "shopify://shop_images/IMG_E8470.jpg"
@@ -34,7 +33,6 @@
         "columns": 3,
         "products_limit": 6,
         "show_price": true,
-        "price_prefix": "From",
         "link_text": "Discover the collection",
         "image_right": "shopify://shop_images/AURA_100_VISCOSE_-AURA2.png"
       }
@@ -53,7 +51,6 @@
         "columns": 4,
         "products_limit": 8,
         "show_price": true,
-        "price_prefix": "From",
         "link_text": "Discover the collection",
         "image_right": "shopify://shop_images/RELIANCE-1_1.png"
       }
@@ -72,7 +69,6 @@
         "columns": 5,
         "products_limit": 5,
         "show_price": true,
-        "price_prefix": "From",
         "link_text": "Discover the collection",
         "image_right": "shopify://shop_images/GRADIENTTERRACOTA-descarregar_3.png"
       }
@@ -91,7 +87,6 @@
         "columns": 2,
         "products_limit": 2,
         "show_price": true,
-        "price_prefix": "From",
         "link_text": "Discover the collection",
         "image_right": "shopify://shop_images/DUNE-descarregar_1.png"
       }
@@ -110,7 +105,6 @@
         "columns": 4,
         "products_limit": 8,
         "show_price": true,
-        "price_prefix": "From",
         "link_text": "Discover the collection",
         "image_right": "shopify://shop_images/RAYURES-descarregar_5.png"
       }

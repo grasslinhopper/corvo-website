@@ -1041,6 +1041,32 @@
     ]
   },
   {
+    "name": "Corvo: rug cards",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "How a rug is shown in the lists: on collection pages, on All rugs, on the Collections page and in search."
+      },
+      {
+        "type": "select",
+        "id": "rug_card_picture",
+        "label": "Picture on a card",
+        "options": [
+          {
+            "value": "alone",
+            "label": "The rug alone"
+          },
+          {
+            "value": "first",
+            "label": "The first picture of the rug"
+          }
+        ],
+        "default": "alone",
+        "info": "\"The rug alone\" shows the second picture of a rug, which is the rug by itself, and the first picture, the room, when the pointer is on the card. A picture whose description says \"top view\" always leads."
+      }
+    ]
+  },
+  {
     "name": "t:theme_settings.favicon.name",
     "settings": [
       {

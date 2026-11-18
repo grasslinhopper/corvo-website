@@ -21,7 +21,8 @@ Supported variables
 * show_swatches: show or not the swatches. The swatch type is inferred from setting, and will default to true if nothing is set.
 * hide_product_information: if set to true, all content (vendor, badge, title...) are not rendered, to create image-based grid
 * quick_buy_context: a unique text to dissociate quick buy if the same product is embedded multiple times
-* meta: an optional short line shown under the title (Corvo addition: the rug list passes collection and materials)
+* meta: an optional word of context put before the facts of the rug, under its price (Corvo addition: on All rugs the
+  list passes the collection of the rug). The facts themselves, materials and number of colours, are read by the card.
 {%- endcomment -%}
 
 {%- liquid
@@ -59,61 +60,109 @@ Supported variables
         {%- render 'product-badges', product: product, vertical: true, context: 'card' -%}
       {%- endif -%}
 
-      <a href="{{ product.url }}" class="product-card__media" draggable="false" data-instant>
-        {%- capture sizes -%}
-          {%- if stacked -%}
-            (max-width: 699px) calc(100vw / {{ section.settings.products_per_row_mobile }}), (max-width: 999px) calc(100vw / {{ 3 | at_most: section.settings.products_per_row_desktop | default: 3 }} - 64px), calc((100vw - 96px) / {{ section.settings.products_per_row_desktop | default: 3 }} - (24px / {{ section.settings.products_per_row_desktop | default: 3 }} * {{ section.settings.products_per_row_desktop | default: 3 | minus: 1 }}))
-          {%- else -%}
-            (max-width: 699px) 74vw, (max-width: 999px) 38vw, calc((100vw - 96px) / {{ section.settings.products_per_row_desktop | default: 3 }} - (24px / {{ section.settings.products_per_row_desktop | default: 3 }} * {{ section.settings.products_per_row_desktop | default: 3 | minus: 1 }}))
-          {%- endif -%}
-        {%- endcapture -%}
+      {%- comment -%}
+        Corvo addition: which picture a card shows, and how.
+        The rug alone leads, laid on the plain colour of the page, and the room appears when the pointer is on the card.
+        1. The first picture whose description (its alt text) says "top view": a rug photographed from above.
+        2. Otherwise the second picture of the rug, which shows the rug alone (theme setting "Corvo: rug cards").
+        3. Otherwise the first picture.
+        A picture of the rug alone is shown whole, with room around it. A room fills the card.
+      {%- endcomment -%}
+      {%- liquid
+        assign card_media = product.featured_media
+        assign card_alone = false
 
-        {%- liquid
-          assign main_media_loading_strategy = nil
-          
-          if section.index > 3 or position > 3
-            assign main_media_loading_strategy = 'lazy'
-          endif
-        -%}
+        for media in product.media limit: 12
+          if media.media_type == 'image'
+            assign media_alt = media.alt | downcase
 
-        {%- comment -%}
-          Corvo addition: a rug photographed from above, edge to edge, is shown whole. Cut to the shape of the card it
-          would lose its border or its frame. Such a picture says "top view" in its description (its alt text).
-        {%- endcomment -%}
-        {%- liquid
-          assign main_image_fit = ''
-
-          if settings.product_image_aspect_ratio contains 'crop'
-            assign main_image_fit = 'object-cover'
-            assign main_image_alt = product.featured_media.alt | downcase
-
-            if main_image_alt contains 'top view'
-              assign main_image_fit = ''
+            if media_alt contains 'top view'
+              assign card_media = media
+              assign card_alone = true
+              break
             endif
           endif
-        -%}
+        endfor
 
-        {%- capture main_image_classes -%}product-card__image product-card__image--primary {{ main_image_fit }} aspect-{{ settings.product_image_aspect_ratio | split: '_' | first }}{%- endcapture -%}
-        {{- product.featured_media | image_url: width: product.featured_media.width | image_tag: loading: main_media_loading_strategy, sizes: sizes, widths: '200,300,400,500,600,700,800,1000,1200,1400,1600,1800', draggable: 'false', class: main_image_classes -}}
+        if card_alone == false and settings.rug_card_picture != 'first' and product.media.size > 1 and product.metafields.rug.craft_level != blank
+          assign second_media = product.media[1]
 
-        {%- liquid
-          if show_secondary_image and product.media.size > 1
-            assign next_media = product.media[product.featured_media.position] | default: product.media[1]
+          if second_media.media_type == 'image'
+            assign card_media = second_media
+            assign card_alone = true
+          endif
+        endif
 
-            if next_media != blank
-             assign secondary_image_classes = 'product-card__image product-card__image--secondary'
+        comment
+          On hover: the room. When the rug alone leads from another place than the first, the first picture is the room.
+          Otherwise it is the first picture that is neither another top view nor a detail.
+        endcomment
 
-              if settings.product_image_aspect_ratio contains 'crop'
-                assign secondary_image_classes = secondary_image_classes | append: ' object-cover'
+        assign hover_media = nil
+
+        if show_secondary_image and product.media.size > 1
+          if card_media.id != product.featured_media.id
+            assign hover_media = product.featured_media
+          else
+            for media in product.media limit: 12
+              if media.id == card_media.id or media.media_type != 'image'
+                continue
               endif
 
-              echo next_media | image_url: width: next_media.width | image_tag: class: secondary_image_classes, loading: 'lazy', fetchpriority: 'low', sizes: sizes, widths: '200,300,400,500,600,700,800,1000,1200,1400,1600,1800', draggable: 'false', aria-hidden: 'true'
+              assign media_alt = media.alt | downcase
+
+              if media_alt contains 'top view' or media_alt contains 'detail'
+                continue
+              endif
+
+              assign hover_media = media
+              break
+            endfor
+
+            if hover_media == nil
+              assign hover_media = product.media[1]
             endif
           endif
-        -%}
+        endif
+
+        assign card_ratio_name = settings.product_image_aspect_ratio | split: '_' | first
+
+        case card_ratio_name
+          when 'short'
+            assign card_ratio = '4 / 3'
+          when 'square'
+            assign card_ratio = '1'
+          when 'tall'
+            assign card_ratio = '2 / 3'
+          else
+            assign card_ratio = '4 / 5'
+        endcase
+
+        assign main_media_loading_strategy = nil
+
+        if section.index > 3 or position > 4
+          assign main_media_loading_strategy = 'lazy'
+        endif
+
+        assign main_image_classes = 'product-card__image product-card__image--primary'
+
+        if card_alone
+          assign main_image_classes = main_image_classes | append: ' product-card__image--alone'
+        endif
+      -%}
+
+      <a href="{{ product.url }}" class="product-card__media{% if card_alone %} product-card__media--alone{% endif %}" style="--rug-card-ratio: {{ card_ratio }}" draggable="false" data-instant>
+        {%- capture sizes -%}(max-width: 699px) 46vw, (max-width: 1149px) 30vw, 22vw{%- endcapture -%}
+
+        {{- card_media | image_url: width: card_media.width | image_tag: loading: main_media_loading_strategy, sizes: sizes, widths: '200,300,400,500,600,700,800,1000,1200', draggable: 'false', class: main_image_classes -}}
+
+        {%- if hover_media != blank -%}
+          {{- hover_media | image_url: width: hover_media.width | image_tag: class: 'product-card__image product-card__image--secondary', loading: 'lazy', fetchpriority: 'low', sizes: sizes, widths: '200,300,400,500,600,700,800,1000,1200', draggable: 'false', alt: '', aria-hidden: 'true' -}}
+        {%- endif -%}
       </a>
 
-      {%- if show_quick_buy and product.available -%}
+      {%- comment -%}Corvo addition: a rug is sized and coloured on its own page, so its card has no quick-add button{%- endcomment -%}
+      {%- if show_quick_buy and product.available and product.metafields.rug.craft_level == blank -%}
         {%- if product.variants.size == 1 and product.selling_plan_groups.size == 0 -%}
           <product-form>
             {%- form 'product', product -%}
@@ -162,26 +211,74 @@ Supported variables
         {%- endif -%}
 
         {%- if show_title or show_prices -%}
-          <div class="v-stack justify-items-center gap-1">
+          <div class="v-stack justify-items-center gap-1 product-card__text">
             {%- if show_title -%}
               <a href="{{ product.url }}" class="product-title {% if text_class != blank %}{{ text_class }}{% endif %} {% if settings.product_title_max_lines > 0 %}line-clamp{% endif %}" {% if settings.product_title_max_lines > 0 %}style="--line-clamp-count: {{ settings.product_title_max_lines }}"{% endif %} data-instant>
                 {{- product.title -}}
               </a>
             {%- endif -%}
 
-            {%- if show_title and meta != blank -%}
-              <p class="product-card__meta smallcaps text-subdued">{{ meta | escape }}</p>
+            {%- if show_prices -%}
+              {%- render 'price-list', product: product, context: 'card', compact: true -%}
             {%- endif -%}
 
-            {%- if show_prices -%}
-              {%- render 'price-list', product: product, context: 'card' -%}
+            {%- comment -%}
+              Corvo addition: one quiet line of facts under the price. The materials of the rug and, when it comes in
+              several, the number of its colours. "meta" is put first when a list passes it (All rugs: the collection).
+            {%- endcomment -%}
+            {%- if show_title -%}
+              {%- liquid
+                assign material_names = ''
+
+                for material in product.metafields.rug.materials.value
+                  if material_names != ''
+                    assign material_names = material_names | append: ', '
+                  endif
+
+                  assign material_names = material_names | append: material.name.value
+                endfor
+
+                assign colour_count = 0
+
+                for product_option in product.options_with_values
+                  assign option_name = product_option.name | downcase | strip
+
+                  if option_name == 'colour' or option_name == 'color'
+                    assign colour_count = product_option.values.size
+                  endif
+                endfor
+              -%}
+
+              {%- liquid
+                assign card_facts = material_names | escape
+
+                if colour_count > 1
+                  assign colours_text = 'rug_list.colours' | t: count: colour_count
+
+                  if card_facts != ''
+                    assign card_facts = card_facts | append: ' · '
+                  endif
+
+                  assign card_facts = card_facts | append: colours_text
+                endif
+              -%}
+
+              {%- if meta != blank or card_facts != '' -%}
+                <p class="product-card__meta">
+                  {%- if meta != blank -%}
+                    <span class="product-card__meta-context">{{ meta | escape }}{% if card_facts != '' %} · {% endif %}</span>
+                  {%- endif -%}
+
+                  {{- card_facts -}}
+                </p>
+              {%- endif -%}
             {%- endif -%}
           </div>
         {%- endif -%}
       </div>
     {%- endif -%}
 
-    {%- if show_swatches and settings.product_color_display != 'hide' -%}
+    {%- if show_swatches and settings.product_color_display != 'hide' and product.metafields.rug.craft_level == blank -%}
       {%- liquid
         assign matched_product_option = nil
         assign color_label_list = 'general.label.color' | t | replace: ', ', ',' | downcase | split: ','

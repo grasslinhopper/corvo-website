@@ -137,6 +137,9 @@
     {{ content_for_header }}
 
     {{- 'theme.css' | asset_url | stylesheet_tag: preload: true -}}
+
+    {%- comment -%}Corvo addition: the rug card and the lists of rugs. After the theme's own styles, which it refines.{%- endcomment -%}
+    {{- 'corvo-cards.css' | asset_url | stylesheet_tag -}}
   </head>
 
   {% liquid

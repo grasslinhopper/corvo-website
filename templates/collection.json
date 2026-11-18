@@ -6,7 +6,7 @@
         "color_scheme": "scheme-4",
         "image": "{{ collection.image }}",
         "mobile_image": "{{ collection.image }}",
-        "image_size": "lg",
+        "image_size": "sm",
         "allow_transparent_header": false,
         "show_image": true,
         "reveal": true,
@@ -79,7 +79,7 @@
       ],
       "settings": {
         "color_scheme": "scheme-1",
-        "products_per_row_mobile": "1",
+        "products_per_row_mobile": "2",
         "products_size_desktop": "large",
         "show_card_meta": true,
         "horizontal_spacing_factor": 0.2,

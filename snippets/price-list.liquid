@@ -14,6 +14,7 @@ Supported variables
 * line_item: if provided, then the price from this line item are rendered (used on cart or order)
 * hide_unit_price: if set to true unit prices are hidden (mostly useful for size constrained elements)
 * context: can be "product", "line_item" or "card". This controls how the prices are displayed (using the correct sizes)
+* compact: if set to true, a price of a product is written without its cents when they are zero (Corvo addition: cards)
 {%- endcomment -%}
 
 {%- liquid
@@ -109,6 +110,9 @@ Supported variables
       if settings.currency_code_enabled
         assign variant_price = variant.price | money_with_currency
         assign variant_compare_at_price = variant.compare_at_price | money_with_currency
+      elsif compact
+        assign variant_price = variant.price | money_without_trailing_zeros
+        assign variant_compare_at_price = variant.compare_at_price | money_without_trailing_zeros
       else
         assign variant_price = variant.price | money
         assign variant_compare_at_price = variant.compare_at_price | money

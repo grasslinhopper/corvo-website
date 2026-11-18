@@ -385,30 +385,13 @@
                     {%- liquid
                       assign meta = ''
 
-                      if section.settings.show_card_meta
-                        if collection.handle == 'all'
-                          for product_collection in product.collections
-                            unless product_collection.handle == 'all' or product_collection.handle == 'frontpage'
-                              assign meta = product_collection.title
-                              break
-                            endunless
-                          endfor
-                        endif
-
-                        assign material_names = ''
-                        for material in product.metafields.rug.materials.value
-                          if material_names != ''
-                            assign material_names = material_names | append: ', '
-                          endif
-                          assign material_names = material_names | append: material.name.value
+                      if section.settings.show_card_meta and collection.handle == 'all'
+                        for product_collection in product.collections
+                          unless product_collection.handle == 'all' or product_collection.handle == 'frontpage'
+                            assign meta = product_collection.title
+                            break
+                          endunless
                         endfor
-
-                        if material_names != ''
-                          if meta != ''
-                            assign meta = meta | append: ' · '
-                          endif
-                          assign meta = meta | append: material_names
-                        endif
                       endif
                     -%}
 
@@ -921,7 +904,7 @@
     {
       "type": "checkbox",
       "id": "show_card_meta",
-      "label": "Show collection and materials under each rug",
+      "label": "On All rugs, name the collection of each rug on its card",
       "default": true
     },
     {

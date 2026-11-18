@@ -594,6 +594,10 @@
       "material": "Material",
       "pile": "Pile",
       "colour": "Colour"
+    },
+    "colours": {
+      "one": "{{ count }} colour",
+      "other": "{{ count }} colours"
     }
   },
   "price_guide": {

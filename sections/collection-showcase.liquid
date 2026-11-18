@@ -24,7 +24,6 @@
   #shopify-section-{{ section.id }} {
     --cshow-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
     --cshow-cols: {{ section.settings.columns }};
-    --cshow-card-ratio: {{ section.settings.card_ratio }};
     --cshow-left-pos: 50% {{ section.settings.image_left_position }}%;
     --cshow-right-pos: 50% {{ section.settings.image_right_position }}%;
   }
@@ -67,33 +66,11 @@
         <p class="cshow__description">{{ collection.description | strip_html | strip }}</p>
       {%- endif -%}
 
-      <ul class="cshow__grid" role="list">
+      {%- comment -%}The rugs: the same card as in every list of rugs (see snippets/product-card.liquid){%- endcomment -%}
+      <ul class="cshow__grid{% unless section.settings.show_price %} cshow__grid--no-price{% endunless %}" role="list">
         {%- for product in collection.products limit: section.settings.products_limit -%}
           <li class="cshow__item">
-            <a href="{{ product.url | within: collection }}" class="cshow__card">
-              <div class="cshow__card-media">
-                {%- if product.featured_media != blank -%}
-                  {{- product.featured_media | image_url: width: 1200 | image_tag: sizes: '(max-width: 699px) 50vw, (max-width: 999px) 33vw, 25vw', widths: '300,400,500,600,800,1000,1200', alt: product.featured_media.alt, loading: 'lazy', class: 'cshow__card-image' -}}
-
-                  {%- if product.media.size > 1 -%}
-                    {%- assign secondary_media = product.media[1] -%}
-                    {{- secondary_media | image_url: width: 1200 | image_tag: sizes: '(max-width: 699px) 50vw, (max-width: 999px) 33vw, 25vw', widths: '300,400,500,600,800,1000,1200', alt: '', loading: 'lazy', class: 'cshow__card-image cshow__card-image--secondary' -}}
-                  {%- endif -%}
-                {%- endif -%}
-              </div>
-
-              <p class="cshow__card-title">{{ product.title | escape }}</p>
-
-              {%- if section.settings.show_price -%}
-                <p class="cshow__card-meta">
-                  {%- if product.price_varies -%}
-                    {{ section.settings.price_prefix | escape }} {{ product.price_min | money_without_trailing_zeros }}
-                  {%- else -%}
-                    {{ product.price | money_without_trailing_zeros }}
-                  {%- endif -%}
-                </p>
-              {%- endif -%}
-            </a>
+            {%- render 'product-card', product: product, position: forloop.index, show_badges: false -%}
           </li>
         {%- endfor -%}
       </ul>
@@ -225,14 +202,14 @@
   }
 
   .cshow__grid {
-    --cshow-gap-x: 1rem;
-    --cshow-gap-y: 2.5rem;
+    --cshow-gap-x: 1.25rem;
+    --cshow-gap-y: 2.75rem;
     --cshow-visible-cols: 2;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: var(--cshow-gap-y) var(--cshow-gap-x);
-    max-width: calc(var(--cshow-visible-cols) * 21rem);
+    max-width: calc(var(--cshow-visible-cols) * 19rem);
     margin: 0 auto;
     padding: 0;
     list-style: none;
@@ -243,47 +220,8 @@
     min-width: 0;
   }
 
-  .cshow__card {
-    display: block;
-    text-align: center;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .cshow__card-media {
-    position: relative;
-    aspect-ratio: var(--cshow-card-ratio, 3 / 4);
-    overflow: hidden;
-    background: rgb(0 0 0 / 0.04);
-  }
-
-  .cshow__card-image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: opacity 0.6s ease, transform 1.4s cubic-bezier(0.2, 0.6, 0.2, 1);
-  }
-
-  .cshow__card-image--secondary {
-    opacity: 0;
-  }
-
-  .cshow__card-title {
-    margin: 1.25rem 0 0;
-    font-family: var(--heading-font-family);
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    line-height: 1.5;
-  }
-
-  .cshow__card-meta {
-    margin: 0.35rem 0 0;
-    font-size: 0.75rem;
-    letter-spacing: 0.04em;
-    opacity: 0.6;
+  .cshow__grid--no-price .price-list {
+    display: none;
   }
 
   .cshow__footer {
@@ -308,14 +246,6 @@
       transform: scale(1.03);
     }
 
-    .cshow__card:hover .cshow__card-image {
-      transform: scale(1.03);
-    }
-
-    .cshow__card:hover .cshow__card-image--secondary {
-      opacity: 1;
-    }
-
     .cshow__link:hover {
       background-size: 40% 1px;
     }
@@ -329,8 +259,8 @@
 
   @media (min-width: 700px) {
     .cshow__grid {
-      --cshow-gap-x: 1.5rem;
-      --cshow-gap-y: 3.5rem;
+      --cshow-gap-x: 2.5rem;
+      --cshow-gap-y: 4rem;
       --cshow-visible-cols: min(var(--cshow-cols), 3);
     }
 
@@ -341,14 +271,14 @@
 
   @media (min-width: 1000px) {
     .cshow__grid {
-      --cshow-gap-x: 2rem;
+      --cshow-gap-x: 3.5rem;
+      --cshow-gap-y: 4.5rem;
       --cshow-visible-cols: var(--cshow-cols);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .cshow__hero-image img,
-    .cshow__card-image {
+    .cshow__hero-image img {
       transition: none;
     }
   }
@@ -360,7 +290,10 @@
   "class": "shopify-section--collection-showcase",
   "tag": "section",
   "disabled_on": {
-    "groups": ["header", "custom.overlay"]
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
   },
   "settings": [
     {
@@ -426,9 +359,18 @@
       "id": "hero_height",
       "label": "Banner height",
       "options": [
-        { "value": "compact", "label": "Compact" },
-        { "value": "medium", "label": "Medium" },
-        { "value": "large", "label": "Large" }
+        {
+          "value": "compact",
+          "label": "Compact"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
       ],
       "default": "medium"
     },
@@ -453,23 +395,6 @@
       "default": true
     },
     {
-      "type": "select",
-      "id": "card_ratio",
-      "label": "Shape of the rug pictures",
-      "info": "A picture is cut to this shape. Rugs photographed from above, edge to edge, keep their borders in the taller shape.",
-      "options": [
-        {
-          "value": "3 / 4",
-          "label": "3 : 4"
-        },
-        {
-          "value": "2 / 3",
-          "label": "2 : 3 (taller)"
-        }
-      ],
-      "default": "3 / 4"
-    },
-    {
       "type": "range",
       "id": "columns",
       "label": "Rugs per row (desktop)",
@@ -492,12 +417,6 @@
       "id": "show_price",
       "label": "Show starting price",
       "default": true
-    },
-    {
-      "type": "text",
-      "id": "price_prefix",
-      "label": "Price prefix",
-      "default": "From"
     },
     {
       "type": "text",
