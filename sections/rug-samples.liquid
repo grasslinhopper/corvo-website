@@ -78,7 +78,25 @@
 
         {%- paginate source.products by 250 -%}
           <ul class="rug-samples__grid unstyled-list" role="list">
+            {%- assign samples_replaced = '|' -%}
+
             {%- for product in source.products -%}
+              {%- comment -%}A rug that another rug replaces gives its place to that rug, shown once{%- endcomment -%}
+              {%- liquid
+                assign replacement = product.metafields.rug.replaced_by.value
+
+                if replacement
+                  assign replacement_key = '|' | append: replacement.handle | append: '|'
+
+                  if samples_replaced contains replacement_key
+                    continue
+                  endif
+
+                  assign samples_replaced = samples_replaced | append: replacement_key
+                  assign product = replacement
+                endif
+              -%}
+
               {%- if product.metafields.rug.craft_level.value == blank -%}
                 {%- continue -%}
               {%- endif -%}
@@ -95,6 +113,17 @@
                 endfor
 
                 assign form_id = 'rug-sample-' | append: section.id | append: '-' | append: product.id
+
+                # A rug made in a choice of materials: the sample is chosen on its page, where the material and the colour are
+                assign needs_choice = false
+
+                for product_option in product.options_with_values
+                  assign option_name = product_option.name | downcase | strip
+
+                  if option_name == 'material' and product_option.values.size > 1
+                    assign needs_choice = true
+                  endif
+                endfor
               -%}
 
               <li class="rug-samples__item" data-rug-samples-item data-collections="|{{ product_collection_handles | join: '|' }}|">
@@ -114,7 +143,9 @@
                   <span class="rug-samples__added text-sm" role="status" hidden>{{ section.settings.added_text | escape }}</span>
                 </div>
 
-                {%- if sample != nil -%}
+                {%- if needs_choice -%}
+                  {%- render 'button', content: section.settings.choose_text, href: product.url, style: 'outline', size: 'sm', stretch: true -%}
+                {%- elsif sample != nil -%}
                   {%- render 'rug-sample-form', product: product, sample: sample, form_id: form_id, label: section.settings.button_text, size: 'sm' -%}
                 {%- endif -%}
               </li>
@@ -382,6 +413,13 @@
       "id": "button_text",
       "label": "Button",
       "default": "Add sample"
+    },
+    {
+      "type": "text",
+      "id": "choose_text",
+      "label": "Button of a rug made in a choice of materials",
+      "info": "It leads to the page of the rug, where the material and the colour of the sample are chosen.",
+      "default": "Choose material"
     },
     {
       "type": "text",

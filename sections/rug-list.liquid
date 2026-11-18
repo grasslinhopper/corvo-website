@@ -111,11 +111,30 @@
             assign present_materials = '|'
             assign present_piles = '|'
             assign present_families = '|'
+
+            # A rug that another rug replaces (its "Replaced by" field) gives its place to that rug, which is shown once
+            assign data_replaced = '|'
+            assign cards_replaced = '|'
+            assign shown_count = 0
           -%}
 
           {%- capture rug_data -%}
             {%- for product in collection.products -%}
               {%- liquid
+                assign replacement = product.metafields.rug.replaced_by.value
+
+                if replacement
+                  assign replacement_key = '|' | append: replacement.handle | append: '|'
+
+                  if data_replaced contains replacement_key
+                    continue
+                  endif
+
+                  assign data_replaced = data_replaced | append: replacement_key
+                  assign product = replacement
+                endif
+
+                assign shown_count = shown_count | plus: 1
                 assign level_number = product.metafields.rug.craft_level.value.number.value | default: 0
                 assign materials = product.metafields.rug.materials.value
                 assign piles = product.metafields.rug.pile.value
@@ -158,8 +177,8 @@
                 endif
               -%}
 
+              {%- if shown_count > 1 -%},{%- endif -%}
               {{- product.handle | json }}:{"t":{{ product.title | json }},"p":{{ product.price_min | default: 0 }},"c":{{ product_collection_handle | json }},"l":{{ level_number }},"m":{{ material_handles | split: ',' | json }},"pi":{{ pile_handles | split: ',' | json }},"f":{{ family_handles | split: ',' | json }}}
-              {%- unless forloop.last -%},{%- endunless -%}
             {%- endfor -%}
           {%- endcapture -%}
 
@@ -281,10 +300,10 @@
             assign show_other = 'rug_list.show_other' | t: count: '%c'
             assign remove_label = 'collection.faceting.remove_filter' | t: name: '%n'
 
-            if collection.products_count == 1
-              assign initial_count = count_one | replace: '%c', collection.products_count
+            if shown_count == 1
+              assign initial_count = count_one | replace: '%c', shown_count
             else
-              assign initial_count = count_other | replace: '%c', collection.products_count
+              assign initial_count = count_other | replace: '%c', shown_count
             endif
           -%}
 
@@ -383,6 +402,19 @@
                 <product-list id="product-list-{{ section.id }}" class="product-list" collection-mobile-layout="{{ products_mobile_grid_mode }}" collection-desktop-layout="{{ products_desktop_grid_mode }}">
                   {%- for product in collection.products -%}
                     {%- liquid
+                      assign replacement = product.metafields.rug.replaced_by.value
+
+                      if replacement
+                        assign replacement_key = '|' | append: replacement.handle | append: '|'
+
+                        if cards_replaced contains replacement_key
+                          continue
+                        endif
+
+                        assign cards_replaced = cards_replaced | append: replacement_key
+                        assign product = replacement
+                      endif
+
                       assign meta = ''
 
                       if section.settings.show_card_meta and collection.handle == 'all'

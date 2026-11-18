@@ -291,7 +291,7 @@ Supported variables
                   </span>
                 {%- endcapture -%}
 
-                {%- render 'rug-sample-form', product: product, sample: rug_sample, form_id: rug_sample_form_id, label: rug_sample_label -%}
+                {%- render 'rug-sample-form', product: product, sample: rug_sample, form_id: rug_sample_form_id, label: rug_sample_label, live: true -%}
               {%- endif -%}
 
               {%- for i in (1..3) -%}

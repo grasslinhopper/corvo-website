@@ -591,6 +591,7 @@
     }
   },
   "rug_list": {
+    "materials": "In {{ count }} materials",
     "count_one": "{{ count }} rug",
     "count_other": "{{ count }} rugs",
     "count_filtered": "{{ count }} of {{ total }} rugs",
@@ -713,6 +714,7 @@
     "price_failed": "We could not confirm this price just now. Please try again.",
     "made_to_measure": "Made to measure",
     "and": "and",
+    "full_custom": "For another pile height, see",
     "material": "Material",
     "pile_height": "Pile height",
     "shape": "Shape",
@@ -747,6 +749,7 @@
       "intro": "{{ name }} is a hand-tufted rug by Corvo, made to order in Portugal.",
       "collection": "It belongs to the {{ collection }} collection.",
       "materials": "Materials: {{ materials }}.",
+      "materials_choice": "Made in a choice of materials: {{ materials }}.",
       "pile": "{{ pile }}, {{ height }}.",
       "colours_one": "1 colour.",
       "colours_other": "{{ count }} colours.",
@@ -769,6 +772,8 @@
       "collection": "Collection",
       "craft_level": "Craft level",
       "materials": "Materials",
+      "materials_choice": "Materials to choose from",
+      "customisation": "What you can choose",
       "pile": "Pile",
       "pile_cut": "Cut pile",
       "pile_loop": "Loop pile",

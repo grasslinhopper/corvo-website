@@ -60,6 +60,13 @@ this one adds what it is made of and how, under the same "@id", so that readers 
       {%- endif -%}
       "additionalProperty": [
         { "@type": "PropertyValue", "name": "Craft level", "value": {{ rug_craft.label.value | json }} }
+        {%- assign rug_custom = product.metafields.rug.customisation.value -%}
+        {%- if rug_custom -%}
+          ,{ "@type": "PropertyValue", "name": "Customisation", "value": {{ rug_custom.summary.value | default: rug_custom.name.value | strip_newlines | json }} }
+          {%- if rug_custom.change_material.value and product.metafields.rug.materials.value.size > 1 -%}
+            ,{ "@type": "PropertyValue", "name": "Materials to choose from", "value": {{ rug_materials | json }} }
+          {%- endif -%}
+        {%- endif -%}
         {%- if rug_pile != blank -%}
           ,{ "@type": "PropertyValue", "name": "Pile", "value": {{ rug_pile | json }} }
         {%- endif -%}

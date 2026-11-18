@@ -68,9 +68,39 @@
 
       {%- comment -%}The rugs: the same card as in every list of rugs (see snippets/product-card.liquid){%- endcomment -%}
       <ul class="cshow__grid{% unless section.settings.show_price %} cshow__grid--no-price{% endunless %}" role="list">
-        {%- for product in collection.products limit: section.settings.products_limit -%}
+        {%- comment -%}
+          A rug that another rug replaces (its "Replaced by" field) gives its place to that rug, which is shown once: the
+          card itself shows the replacement, and the list skips the ones that follow.
+        {%- endcomment -%}
+        {%- liquid
+          assign cshow_replaced = '|'
+          assign cshow_shown = 0
+        -%}
+
+        {%- for product in collection.products -%}
+          {%- liquid
+            if cshow_shown >= section.settings.products_limit
+              break
+            endif
+
+            assign replacement = product.metafields.rug.replaced_by.value
+
+            if replacement
+              assign replacement_key = '|' | append: replacement.handle | append: '|'
+
+              if cshow_replaced contains replacement_key
+                continue
+              endif
+
+              assign cshow_replaced = cshow_replaced | append: replacement_key
+              assign product = replacement
+            endif
+
+            assign cshow_shown = cshow_shown | plus: 1
+          -%}
+
           <li class="cshow__item">
-            {%- render 'product-card', product: product, position: forloop.index, show_badges: false -%}
+            {%- render 'product-card', product: product, position: cshow_shown, show_badges: false -%}
           </li>
         {%- endfor -%}
       </ul>

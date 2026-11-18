@@ -58,15 +58,26 @@
       "settings": {
         "color_scheme": "scheme-2",
         "separate_section_with_border": false,
-        "subheading": "Three ways in",
+        "subheading": "Four ways in",
         "title": "Choose a starting point",
         "text_alignment": "center",
-        "columns": 3,
+        "columns": 4,
         "columns_mobile": "1",
         "image_ratio": "portrait",
         "numbered": false
       },
       "blocks": {
+        "card_0": {
+          "type": "card",
+          "settings": {
+            "title": "A plain rug, fully yours",
+            "text": "<p>TAILOR-MADE is a plain rug in cut pile with every choice open: the material, the pile height, the colour, the shape and the size. See the price as you choose and order online.</p>",
+            "image": "shopify://shop_images/graccioza-mood-p20.jpg",
+            "image_alt": "Plain rug with rounded corners in a living room with a sofa and an ottoman",
+            "link_url": "shopify://products/tailor-made",
+            "link_text": "Configure TAILOR-MADE"
+          }
+        },
         "card_1": {
           "type": "card",
           "settings": {
@@ -102,6 +113,7 @@
         }
       },
       "block_order": [
+        "card_0",
         "card_1",
         "card_2",
         "card_3"

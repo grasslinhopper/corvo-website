@@ -436,10 +436,13 @@
       this.shape = shape;
 
       if (shape === 'round') {
-        // A round rug has one measure, its diameter: it starts from the shorter side
-        const diameter = Math.min(this.width > 0 ? this.width : Infinity, this.length > 0 ? this.length : Infinity);
+        // A round rug has one measure, its diameter: it starts from the shorter side or, when the rug lists round
+        // sizes, from the listed one nearest to it
+        const side = Math.min(this.width > 0 ? this.width : Infinity, this.length > 0 ? this.length : Infinity),
+          listed = this.config.sizes.filter((size) => size.round && (this.choice === null || size.c === this.choice)).map((size) => size.w),
+          nearest = listed.reduce((best, diameter) => (best === null || Math.abs(diameter - side) < Math.abs(best - side) ? diameter : best), null);
 
-        this.width = Number.isFinite(diameter) ? diameter : NaN;
+        this.width = nearest !== null ? nearest : (Number.isFinite(side) ? side : NaN);
         this.length = this.width;
       }
 
@@ -474,12 +477,13 @@
     }
 
     /**
-     * A material with a colour card of its own sets the colours a rug can be made in. A colour the rug has no
-     * reference for in that material (it has none at all, or the material is not the one it is shown in) starts on
-     * a colour of the card, and a colour picked on another card is replaced the same way. Custom colours stay.
+     * On a rug made in a choice of materials, the material sets the colours it can be made in: its own colour card
+     * or, when it has none, the Open Palette. A colour the rug has no reference for in that material (it has none at
+     * all, or the material is not the one it is shown in) starts on a colour of that list, and a colour picked on
+     * another list is replaced the same way. Custom colours stay.
      */
     applyCard() {
-      const card = this.hasCard ? this.palette : null,
+      const card = this.config.materials && this.palette.length > 0 ? this.palette : null,
         shownIn = this.material === null || this.material === 0;
 
       this.colours.forEach((colour, index) => {
@@ -496,6 +500,49 @@
         }
 
         colour.choice = colour.fromCard ? Object.assign({ type: 'palette' }, card[index % card.length]) : null;
+      });
+    }
+
+    /**
+     * The sample button of the page orders a sample of what is being chosen: the material, the pile height and the
+     * colours are written into its form, so they travel with the sample (see snippets/rug-sample-form.liquid)
+     */
+    syncSample() {
+      const scope = this.closest('.shopify-section') || document,
+        { strings, materials } = this.config,
+        entries = [];
+
+      if (materials?.step && this.materialValue) {
+        entries.push([strings.propertyMaterial, this.materialValue.name]);
+      }
+
+      if (this.pile !== null) {
+        entries.push([strings.propertyPile, strings.millimetres.replace('[height]', this.pileHeight)]);
+      }
+
+      if (this.colours.some((colour) => colour.choice !== null)) {
+        entries.push([strings.propertyColours, this.colours.map((colour) => this.describeColour(colour, false)).join(', ')]);
+      }
+
+      scope.querySelectorAll('form[data-rug-sample-live]').forEach((form) => {
+        const holder = form.querySelector('[data-rug-sample-choices]');
+
+        if (!holder) {
+          return;
+        }
+
+        // The colours the page wrote for the rug as shown give way to the colours chosen here
+        form.querySelectorAll('[data-rug-sample-colours]').forEach((input) => (input.disabled = entries.some(([name]) => name === strings.propertyColours)));
+
+        holder.replaceChildren(...entries.map(([name, value]) => {
+          const input = element('input');
+
+          input.type = 'hidden';
+          input.name = `properties[${name}]`;
+          input.value = value;
+
+          return input;
+        }));
       });
     }
 
@@ -1253,6 +1300,7 @@
       print('[data-rug-express-extra]', valid && state.expressExtra > 0 ? strings.surcharge.replace('[amount]', this.money(state.expressExtra)) : strings.percent);
 
       this.showMessage(state.status === 'quote' ? strings.onRequest : '');
+      this.syncSample();
 
       // Price: known at once in the shop's currency, and after the look-up in any other
       if (!valid || state.status === 'quote') {

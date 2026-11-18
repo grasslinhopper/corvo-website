@@ -19,6 +19,8 @@ Supported variables
 * label: the content of the button (required)
 * style: "outline" (default) or "solid"
 * size: "sm" for a smaller button
+* live: true on the page of the rug. The rug's steps then write what is being chosen (material, pile height, colours)
+  into the sample, so the sample is of that choice (see "syncSample" in assets/rug-configurator.js).
 {%- endcomment -%}
 
 {%- liquid
@@ -30,13 +32,17 @@ Supported variables
 -%}
 
 <product-form class="rug-sample">
-  <form method="post" action="{{ routes.cart_add_url }}" id="{{ form_id }}" accept-charset="UTF-8">
+  <form method="post" action="{{ routes.cart_add_url }}" id="{{ form_id }}" accept-charset="UTF-8"{% if live %} data-rug-sample-live{% endif %}>
     <input type="hidden" name="id" value="{{ sample_variant.id }}">
     <input type="hidden" name="quantity" value="1">
     <input type="hidden" name="properties[{{ design_label | escape }}]" value="{{ product.title | escape }}">
 
     {%- if sample_colours != blank -%}
-      <input type="hidden" name="properties[{{ colours_label | escape }}]" value="{{ sample_colours | escape }}">
+      <input type="hidden" name="properties[{{ colours_label | escape }}]" value="{{ sample_colours | escape }}" data-rug-sample-colours>
+    {%- endif -%}
+
+    {%- if live -%}
+      <div hidden data-rug-sample-choices></div>
     {%- endif -%}
 
     <input type="hidden" name="properties[_design]" value="{{ product.handle }}">

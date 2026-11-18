@@ -26,6 +26,13 @@ Supported variables
 {%- endcomment -%}
 
 {%- liquid
+  # Corvo addition: a rug that another rug replaces (its "Replaced by" field) shows as that rug, wherever its card is asked for
+  assign card_replacement = product.metafields.rug.replaced_by.value
+
+  if card_replacement
+    assign product = card_replacement
+  endif
+
   if hide_product_information
     assign show_badges = false
     assign show_rating = false
@@ -249,6 +256,8 @@ Supported variables
             {%- if show_title -%}
               {%- liquid
                 assign material_names = ''
+                assign material_total = 0
+                assign material_choice = false
 
                 for material in product.metafields.rug.materials.value
                   if material_names != ''
@@ -256,6 +265,7 @@ Supported variables
                   endif
 
                   assign material_names = material_names | append: material.name.value
+                  assign material_total = material_total | plus: 1
                 endfor
 
                 assign colour_count = 0
@@ -265,8 +275,20 @@ Supported variables
 
                   if option_name == 'colour' or option_name == 'color'
                     assign colour_count = product_option.values.size
+                  elsif option_name == 'material' and product_option.values.size > 1
+                    assign material_choice = true
+                    assign material_total = product_option.values.size
                   endif
                 endfor
+
+                # A rug made in a choice of materials counts them: the list would read as a blend
+                if product.metafields.rug.customisation.value.change_material.value and material_total > 1
+                  assign material_choice = true
+                endif
+
+                if material_choice
+                  assign material_names = 'rug_list.materials' | t: count: material_total
+                endif
               -%}
 
               {%- liquid

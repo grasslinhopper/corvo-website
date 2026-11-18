@@ -16,6 +16,12 @@
 {%- liquid
   assign craft = product.metafields.rug.craft_level.value
   assign materials = product.metafields.rug.materials.value
+  assign custom_level = product.metafields.rug.customisation.value
+  assign material_choice = false
+
+  if custom_level.change_material.value and materials.size > 1
+    assign material_choice = true
+  endif
   assign pile = product.metafields.rug.pile.value
   assign pile_height = product.metafields.rug.pile_height.value
   assign colour_count = product.metafields.rug.colours.value
@@ -432,9 +438,22 @@
             </dd>
           </div>
 
+          {%- if custom_level -%}
+            <div>
+              <dt>{{ 'rug_page.spec.customisation' | t }}</dt>
+              <dd>
+                {{ custom_level.name.value | escape }}
+
+                {%- if custom_level.summary.value != blank -%}
+                  <small>{{ custom_level.summary.value | escape }}</small>
+                {%- endif -%}
+              </dd>
+            </div>
+          {%- endif -%}
+
           {%- if materials != blank -%}
             <div>
-              <dt>{{ 'rug_page.spec.materials' | t }}</dt>
+              <dt>{% if material_choice %}{{ 'rug_page.spec.materials_choice' | t }}{% else %}{{ 'rug_page.spec.materials' | t }}{% endif %}</dt>
               <dd>
                 {%- for material in materials -%}
                   {{- material.name.value | escape -}}

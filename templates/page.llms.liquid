@@ -199,17 +199,50 @@ Projects with Corvo rugs, from the Portfolio:
 {% for article in blogs.news.articles limit: 30 -%}
 - [{{ article.title }}]({{ shop.url }}{{ article.url }}){% if article.excerpt != blank %}: {{ article.excerpt | strip_html | strip_newlines | strip | truncate: 220 }}{% endif %}
 {% endfor %}
+## What can be changed on a rug
+
+Every rug has a customisation level. It says what a client may choose on that rug; everything else stays as the rug is shown. Ready-made colour versions and listed round sizes of a rug can be chosen at every level.
+
+{% for custom_level in shop.metaobjects.customisation_level.values -%}
+- Level {{ custom_level.number.value }}, {{ custom_level.name.value }}: {{ custom_level.summary.value | strip_newlines }}
+{% endfor %}
+Shapes sold online: rectangle{% if settings.rug_shape_round %}; round in any diameter, priced on the area of the circle{% endif %}{% if settings.rug_shape_oval %}; oval, priced on the rectangle it fits in{% endif %}{% if settings.rug_shape_corners %}; rectangle with round corners{% if settings.rug_corners_percent > 0 %}, +{{ settings.rug_corners_percent }}%{% endif %}{% endif %}. Any other shape is made on request. A pile above {{ settings.rug_pile_limit | default: 18 }} mm adds {{ settings.rug_pile_percent | default: 0 }}%. A material sold online adds its own supplement; premium materials are made on request.
+
 ## Rugs
 
+{%- assign llms_replaced = '|' -%}
+{%- assign llms_ids = '|' -%}
 {% for rug in rugs -%}
 {%- liquid
-  assign craft = rug.metafields.rug.craft_level.value
-  if craft == blank
+  # A rug that another rug replaces (its "Replaced by" field) gives its place to that rug, listed once
+  assign replacement = rug.metafields.rug.replaced_by.value
+
+  if replacement
+    assign replacement_key = '|' | append: replacement.handle | append: '|'
+
+    if llms_replaced contains replacement_key
+      continue
+    endif
+
+    assign llms_replaced = llms_replaced | append: replacement_key
+    assign rug = replacement
+  endif
+
+  if rug.metafields.rug.craft_level.value == blank
     continue
   endif
-  assign materials = rug.metafields.rug.materials.value | map: 'name' | map: 'value' | join: ', '
-  assign own_factor = rug.metafields.rug.supplement.value | default: 0 | plus: 100 | divided_by: 100.0
-  assign per_m2 = craft.retail_per_m2.value | times: own_factor | times: vat_plus | round
+
+  assign llms_ids = llms_ids | append: rug.id | append: '|'
 -%}
-- [{{ rug.title }}]({{ shop.url }}{{ rug.url }}): craft level {{ craft.label.value }}{% if materials != blank %}; {{ materials }}{% endif %}{% if rug.metafields.rug.pile_height.value != blank %}; pile {{ rug.metafields.rug.pile_height.value | downcase }}{% endif %}; standard sizes from {{ rug.price_min | money }} to {{ rug.price_max | money }}; made to measure at {% render 'rug-money', amount: per_m2, fx: fx %} per m², VAT included.
+{% render 'llms-rug-line', rug: rug, vat_plus: vat_plus, fx: fx -%}
 {% endfor %}
+{%- comment -%}The fully custom rug is not in the lists until it is on sale: it is named here all the same{%- endcomment -%}
+{%- liquid
+  assign full_custom = all_products['tailor-made']
+  assign full_custom_key = '|' | append: full_custom.id | append: '|'
+-%}
+{%- if full_custom.id != blank and full_custom.metafields.rug.craft_level.value != blank -%}
+{%- unless llms_ids contains full_custom_key %}
+{% render 'llms-rug-line', rug: full_custom, vat_plus: vat_plus, fx: fx -%}
+{%- endunless -%}
+{%- endif %}

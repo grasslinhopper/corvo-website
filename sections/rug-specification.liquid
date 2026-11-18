@@ -19,6 +19,13 @@ A row without a value is left out.
 {%- liquid
   assign craft = product.metafields.rug.craft_level.value
   assign materials = product.metafields.rug.materials.value
+  assign custom_level = product.metafields.rug.customisation.value
+  assign material_choice = false
+
+  # At a level that lets the client choose the material, the materials listed are a choice and not a blend
+  if custom_level.change_material.value and materials.size > 1
+    assign material_choice = true
+  endif
   assign pile = product.metafields.rug.pile.value
   assign pile_height = product.metafields.rug.pile_height.value
   assign colour_count = product.metafields.rug.colours.value
@@ -224,7 +231,7 @@ A row without a value is left out.
               {{ 'rug_page.facts.intro' | t: name: product.title }}
 
               {%- if rug_collection != blank %} {{ 'rug_page.facts.collection' | t: collection: rug_collection.title }}{% endif -%}
-              {%- if material_names != blank %} {{ 'rug_page.facts.materials' | t: materials: material_names }}{% endif -%}
+              {%- if material_names != blank %} {% if material_choice %}{{ 'rug_page.facts.materials_choice' | t: materials: material_names }}{% else %}{{ 'rug_page.facts.materials' | t: materials: material_names }}{% endif %}{% endif -%}
               {%- if pile_label != blank %} {{ 'rug_page.facts.pile' | t: pile: pile_label, height: pile_height }}{% endif -%}
 
               {%- if colour_count == 1 %} {{ 'rug_page.facts.colours_one' | t }}{% elsif colour_count != blank %} {{ 'rug_page.facts.colours_other' | t: count: colour_count }}{% endif -%}
@@ -269,9 +276,22 @@ A row without a value is left out.
               </div>
             {%- endif -%}
 
+            {%- if custom_level -%}
+              <div class="rug-spec__row">
+                <dt>{{ 'rug_page.spec.customisation' | t }}</dt>
+                <dd>
+                  <span>{{ custom_level.name.value | escape }}</span>
+
+                  {%- if custom_level.summary.value != blank -%}
+                    <span class="text-sm text-subdued">{{ custom_level.summary.value | escape }}</span>
+                  {%- endif -%}
+                </dd>
+              </div>
+            {%- endif -%}
+
             {%- if materials != blank -%}
               <div class="rug-spec__row">
-                <dt>{{ 'rug_page.spec.materials' | t }}</dt>
+                <dt>{% if material_choice %}{{ 'rug_page.spec.materials_choice' | t }}{% else %}{{ 'rug_page.spec.materials' | t }}{% endif %}</dt>
                 <dd>
                   {%- capture material_names -%}
                     {%- for material in materials -%}

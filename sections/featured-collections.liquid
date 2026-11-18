@@ -48,8 +48,35 @@
                   {%- assign should_reveal = true -%}
                 {%- endif -%}
 
-                {%- for product in block.settings.collection.products limit: block.settings.products_count -%}
-                  {%- render 'product-card', product: product, reveal: should_reveal, position: forloop.index, hide_product_information: section.settings.hide_product_information, block: block -%}
+                {%- comment -%}Corvo addition: a rug that another rug replaces gives its place to that rug, shown once{%- endcomment -%}
+                {%- liquid
+                  assign featured_replaced = '|'
+                  assign featured_shown = 0
+                -%}
+
+                {%- for product in block.settings.collection.products -%}
+                  {%- liquid
+                    if featured_shown >= block.settings.products_count
+                      break
+                    endif
+
+                    assign replacement = product.metafields.rug.replaced_by.value
+
+                    if replacement
+                      assign replacement_key = '|' | append: replacement.handle | append: '|'
+
+                      if featured_replaced contains replacement_key
+                        continue
+                      endif
+
+                      assign featured_replaced = featured_replaced | append: replacement_key
+                      assign product = replacement
+                    endif
+
+                    assign featured_shown = featured_shown | plus: 1
+                  -%}
+
+                  {%- render 'product-card', product: product, reveal: should_reveal, position: featured_shown, hide_product_information: section.settings.hide_product_information, block: block -%}
                 {%- else -%}
                   {%- for i in (1..block.settings.products_count) -%}
                     {%- render 'product-card-placeholder', reveal: should_reveal, loop_index: forloop.index0, hide_product_information: section.settings.hide_product_information -%}

@@ -1,0 +1,44 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+A RUG AS A LINE OF THE GUIDE FOR AI ASSISTANTS (Corvo addition; see templates/page.llms.liquid)
+----------------------------------------------------------------------------------------------------------------------
+
+The facts of one rug in one line of plain text: its craft level, what it is made of (or the materials it can be made
+in, when its customisation level lets the client choose), its pile, what a client may change on it, and its prices.
+
+********************************************
+Supported variables
+********************************************
+
+* rug: the rug (required)
+* vat_plus: 100 plus the VAT rate (required)
+* fx: the currency factor of the "rug-fx" snippet (required)
+{%- endcomment -%}
+{%- liquid
+  assign craft = rug.metafields.rug.craft_level.value
+  assign custom = rug.metafields.rug.customisation.value
+  assign material_list = rug.metafields.rug.materials.value
+  assign material_choice = false
+
+  if custom.change_material.value and material_list.size > 1
+    assign material_choice = true
+  endif
+
+  assign materials = ''
+
+  for material in material_list
+    if materials != ''
+      assign materials = materials | append: ', '
+    endif
+
+    assign materials = materials | append: material.name.value
+
+    if material_choice and material.group.value != 'Standard' and material.supplement.value != blank
+      assign materials = materials | append: ' (' | append: material.supplement.value | append: ')'
+    endif
+  endfor
+
+  assign own_factor = rug.metafields.rug.supplement.value | default: 0 | plus: 100 | divided_by: 100.0
+  assign per_m2 = craft.retail_per_m2.value | times: own_factor | times: vat_plus | round
+-%}
+- [{{ rug.title }}]({{ shop.url }}{{ rug.url }}): craft level {{ craft.label.value }}{% if materials != blank %}; {% if material_choice %}made in a choice of {{ materials }}{% else %}{{ materials }}{% endif %}{% endif %}{% if rug.metafields.rug.pile_height.value != blank %}; pile {{ rug.metafields.rug.pile_height.value | downcase }}{% endif %}{% if custom %}; customisation level {{ custom.number.value }} ({{ custom.name.value | downcase }}){% endif %}; standard sizes from {{ rug.price_min | money }} to {{ rug.price_max | money }}; made to measure at {% render 'rug-money', amount: per_m2, fx: fx %} per m², VAT included.

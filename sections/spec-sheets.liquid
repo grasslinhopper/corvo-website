@@ -54,8 +54,24 @@
           <p class="sr-only" role="status" data-spec-status></p>
 
           <ul class="spec-sheets__list unstyled-list" role="list">
+            {%- assign sheets_replaced = '|' -%}
+
             {%- for rug in rugs -%}
               {%- liquid
+                # A rug that another rug replaces (its "Replaced by" field) gives its place to that rug, shown once
+                assign replacement = rug.metafields.rug.replaced_by.value
+
+                if replacement
+                  assign replacement_key = '|' | append: replacement.handle | append: '|'
+
+                  if sheets_replaced contains replacement_key
+                    continue
+                  endif
+
+                  assign sheets_replaced = sheets_replaced | append: replacement_key
+                  assign rug = replacement
+                endif
+
                 assign craft = rug.metafields.rug.craft_level.value
 
                 if craft == blank
@@ -63,6 +79,11 @@
                 endif
 
                 assign material_names = rug.metafields.rug.materials.value | map: 'name' | map: 'value' | join: ', '
+
+                # A rug made in a choice of materials counts them: the list would read as a blend
+                if rug.metafields.rug.customisation.value.change_material.value and rug.metafields.rug.materials.value.size > 1
+                  assign material_names = 'rug_list.materials' | t: count: rug.metafields.rug.materials.value.size
+                endif
               -%}
 
               <li class="spec-sheet" data-spec-item data-name="{{ rug.title | downcase | escape }}">

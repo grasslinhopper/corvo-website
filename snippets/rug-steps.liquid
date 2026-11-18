@@ -735,7 +735,29 @@ Supported variables
     </script>
 
     {%- comment -%}What can be chosen on this rug, in one plain sentence{%- endcomment -%}
-    <p class="rug-steps__scope text-sm text-subdued" data-rug-scope>{{ scope_text | strip }}</p>
+    {%- comment -%}
+      A rug made in a choice of materials but at one pile height points to the fully custom rug, where the pile
+      height is a choice too (the block names it by its handle)
+    {%- endcomment -%}
+    {%- liquid
+      assign full_custom = nil
+
+      if can_material and show_pile == false and block.settings.full_custom_handle != blank
+        assign full_custom = all_products[block.settings.full_custom_handle]
+
+        if full_custom.id == blank or full_custom.id == product.id
+          assign full_custom = nil
+        endif
+      endif
+    -%}
+
+    <p class="rug-steps__scope text-sm text-subdued" data-rug-scope>
+      {{- scope_text | strip -}}
+
+      {%- if full_custom %}
+        {{ 'rug_page.full_custom' | t }} <a href="{{ full_custom.url }}" class="link">{{ full_custom.title | escape }}</a>.
+      {%- endif -%}
+    </p>
 
     {%- comment -%}
     ------------------------------------------------------------------------------------------------------------------
