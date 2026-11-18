@@ -51,7 +51,7 @@
         "eyebrow": "Our story",
         "title": "A family legacy, woven anew",
         "heading_tag": "h1",
-        "text": "<p>Corvo is a rug atelier in the north of Portugal. It was founded in 2023 within the Sorema group, the family business that Ramiro Relvas began in 1974.</p><p>Two families of textile makers meet in it, Ferreira de Sá and Relvas. Corvo is the work of their third generation.</p>",
+        "text": "<p>Corvo is a rug atelier in the north of Portugal. It was founded in 2023 within the Sorema group, the family business that Ramiro Relvas began in 1974.</p><p>Two families of textile makers meet in it, Ferreira de Sá and Relvas. Rugs have been in the family since 1947, and Sorema is now in its fourth generation.</p>",
         "image": "shopify://shop_images/HISTORIA_-_IMG_6599.jpg",
         "image_alt": "Black-and-white archive photograph of a man in a suit and glasses writing at his desk, in front of a bookcase",
         "image_focus": "--focus: center",
@@ -76,7 +76,6 @@
     },
     "quote": {
       "type": "page-quote",
-      "disabled": true,
       "settings": {
         "color_scheme": "scheme-3",
         "quote": "True luxury creates no noise.",

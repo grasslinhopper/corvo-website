@@ -51,7 +51,7 @@
         "eyebrow": "The group",
         "title": "Sorema Group",
         "heading_tag": "h1",
-        "text": "<p>Sorema is the family group behind Corvo. It began in 1974 in the north of Portugal, and is now in its third generation.</p><p>Corvo is its atelier for bespoke rugs.</p>",
+        "text": "<p>Sorema is the family group behind Corvo. It began in 1974 in the north of Portugal, and is now in its fourth generation.</p><p>Corvo is its atelier for bespoke rugs.</p>",
         "image": "shopify://shop_images/Sorema5.jpg",
         "image_alt": "A Sorema display of bath towels in many colours on curved white shelves, with a group of visitors",
         "image_focus": "--focus: center",
@@ -87,8 +87,8 @@
         "family": {
           "type": "figure",
           "settings": {
-            "value": "3rd",
-            "label": "Generation of the family"
+            "value": "4th",
+            "label": "Generation of the family business"
           }
         },
         "countries": {
@@ -133,9 +133,9 @@
         "graccioza": {
           "type": "card",
           "settings": {
-            "label": "Bath and home",
+            "label": "Bath linens",
             "title": "Graccioza",
-            "text": "<p>The group's brand of luxury bath linens and rugs.</p>"
+            "text": "<p>The group's brand of luxury bath linens.</p>"
           }
         },
         "corvo": {
