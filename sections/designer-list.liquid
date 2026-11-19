@@ -1,0 +1,372 @@
+{%- comment -%}
+  Designers (Corvo addition)
+
+  The designers Corvo has made rugs with: a card for each (snippets/designer-card.liquid), and a box that finds a
+  designer by name, studio, place or rug as one types.
+
+  The designers are the "Designer" entries in Shopify (Content > Metaobjects), in the order of "Order in the lists"
+  (see snippets/designer-handles.liquid). Each active entry has its own page (templates/metaobject/designer.json) and
+  appears here, in the header panel of Designers and in the site search, with nothing else to set. An entry ticked
+  "Preview only" is shown in theme previews and never on the published theme: the example designers are ticked.
+
+  The whole list is plain HTML. The search box only hides the cards that do not match, for readers that run scripts
+  (assets/designer-list.js). On the page of a designer, the section can leave that designer out: "More designers".
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign exclude = ''
+
+  if section.settings.exclude_current and request.page_type == 'metaobject' and metaobject.system.type == 'designer'
+    assign exclude = metaobject.system.handle
+  endif
+
+  capture designer_list
+    render 'designer-handles', exclude: exclude
+  endcapture
+
+  assign designer_handles = designer_list | strip | split: ','
+  assign designer_limit = section.settings.limit | default: 0
+
+  if designer_limit == 0
+    assign designer_limit = designer_handles.size
+  endif
+
+  assign shown_total = designer_handles.size | at_most: designer_limit
+  assign has_header = false
+
+  if section.settings.subheading != blank or section.settings.title != blank or section.settings.text != blank
+    assign has_header = true
+  endif
+
+  assign card_heading = 'h2'
+
+  if section.settings.title != blank
+    assign card_heading = 'h3'
+  endif
+
+  assign count_one = 'designers.count_one' | t: count: '%c'
+  assign count_other = 'designers.count_other' | t: count: '%c'
+  assign count_filtered = 'designers.count_filtered' | t: count: '%c', total: '%t'
+
+  if shown_total == 1
+    assign initial_count = count_one | replace: '%c', shown_total
+  else
+    assign initial_count = count_other | replace: '%c', shown_total
+  endif
+-%}
+
+{%- if shown_total > 0 or section.settings.empty_text != blank -%}
+  <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+    <div class="container">
+      <div class="section-stack">
+        {%- if has_header -%}
+          <div class="section-header justify-self-center text-center">
+            <div class="prose">
+              {%- if section.settings.subheading != blank -%}
+                <p class="h6 text-subdued">{{ section.settings.subheading | escape }}</p>
+              {%- endif -%}
+
+              {%- if section.settings.title != blank -%}
+                <h2 class="h2">{{ section.settings.title | escape }}</h2>
+              {%- endif -%}
+
+              {%- if section.settings.text != blank -%}
+                {%- render 'corvo-fill', text: section.settings.text -%}
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if shown_total == 0 -%}
+          <p class="designers__empty text-subdued">{{ section.settings.empty_text | escape }}</p>
+        {%- else -%}
+          <designer-list class="designers" data-text-count-one="{{ count_one | escape }}" data-text-count-other="{{ count_other | escape }}" data-text-count-filtered="{{ count_filtered | escape }}">
+            {%- if section.settings.show_search -%}
+              <div class="designers__search" role="search">
+                <label class="designers__label h6" for="designer-search-{{ section.id }}">{{ section.settings.search_label | escape }}</label>
+
+                <input class="designers__input" type="search" id="designer-search-{{ section.id }}" placeholder="{{ section.settings.search_placeholder | escape }}" autocomplete="off" spellcheck="false" data-designer-search>
+
+                <p class="designers__status text-sm text-subdued" role="status" data-designer-status>{{ initial_count }}</p>
+              </div>
+            {%- endif -%}
+
+            <ul class="designers__grid" role="list">
+              {%- for designer_handle in designer_handles limit: designer_limit -%}
+                {%- liquid
+                  assign designer = shop.metaobjects.designer[designer_handle]
+
+                  if designer == blank
+                    continue
+                  endif
+
+                  assign search_text = designer.name.value | append: ' ' | append: designer.studio.value | append: ' ' | append: designer.location.value
+
+                  for rug in designer.rugs.value
+                    assign search_text = search_text | append: ' ' | append: rug.title
+                  endfor
+                -%}
+
+                <li class="designers__item" data-designer-item data-search="{{ search_text | downcase | escape }}">
+                  {%- render 'designer-card', designer: designer, heading_tag: card_heading -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+
+            {%- if section.settings.show_search -%}
+              <p class="designers__none text-subdued" data-designer-none hidden>{{ section.settings.no_match_text | escape }}</p>
+            {%- endif -%}
+          </designer-list>
+        {%- endif -%}
+
+        {%- if section.settings.button_text != blank and section.settings.button_link != blank -%}
+          <p class="designers__footer">
+            <a href="{{ section.settings.button_link }}" class="cshow__link">{{ section.settings.button_text | escape }}</a>
+          </p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  {%- if section.settings.show_search and shown_total > 0 -%}
+    <script src="{{ 'designer-list.js' | asset_url }}" defer></script>
+  {%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+  .designers {
+    gap: 2.5rem;
+    display: grid;
+  }
+
+  /* The search box: one quiet line, centred over the list */
+  .designers__search {
+    justify-items: center;
+    gap: .75rem;
+    width: 100%;
+    max-width: 30rem;
+    margin-inline: auto;
+    display: grid;
+  }
+
+  .designers__input {
+    -webkit-appearance: none;
+    appearance: none;
+    color: rgb(var(--text-color));
+    font: inherit;
+    text-align: center;
+    background: transparent;
+    border: 0;
+    border-block-end: 1px solid rgb(var(--text-color) / .35);
+    border-radius: 0;
+    width: 100%;
+    padding: .625rem .25rem;
+  }
+
+  .designers__input:focus {
+    border-block-end-color: rgb(var(--text-color));
+    outline: none;
+  }
+
+  .designers__input:focus-visible {
+    outline: 2px solid rgb(var(--text-color));
+    outline-offset: 4px;
+  }
+
+  .designers__status,
+  .designers__none,
+  .designers__empty {
+    text-align: center;
+    margin: 0;
+  }
+
+  /* The cards: two across on a phone, three on a tablet, four on a computer, with wide gaps */
+  .designers__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+  }
+
+  .designers__footer {
+    text-align: center;
+    margin: 0;
+  }
+
+  .designer-card {
+    color: inherit;
+    text-align: center;
+    gap: 1rem;
+    text-decoration: none;
+    display: grid;
+  }
+
+  .designer-card__media {
+    aspect-ratio: 4 / 5;
+    background: rgb(var(--text-color) / .05);
+    overflow: hidden;
+    display: block;
+  }
+
+  .designer-card__media img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .designer-card__text {
+    justify-items: center;
+    gap: .375rem;
+    display: grid;
+  }
+
+  .designer-card__name {
+    margin: 0;
+  }
+
+  .designer-card__meta,
+  .designer-card__count {
+    color: rgb(var(--text-color) / .65);
+    font-size: var(--text-sm);
+  }
+
+  .designer-card__flag {
+    color: rgb(var(--text-color) / .65);
+    font-size: var(--text-xs);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    border: 1px solid rgb(var(--text-color) / .25);
+    padding: .125rem .5rem;
+  }
+
+  @media screen and (min-width: 700px) {
+    .designers__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 3.5rem 2.5rem;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .designers__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 4rem 3rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Designers",
+  "class": "shopify-section--designer-list",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The designers are the \"Designer\" entries in Shopify (Content > Metaobjects). Add a designer there and it appears here, in the header and in the search."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "Designers shown",
+      "info": "0 shows them all.",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "exclude_current",
+      "label": "On a designer's page, leave that designer out",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Search"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show a box to find a designer",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_label",
+      "label": "Box, label",
+      "default": "Find a designer"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Box, example text",
+      "default": "Name, studio, place or rug"
+    },
+    {
+      "type": "text",
+      "id": "no_match_text",
+      "label": "Text when nothing is found",
+      "default": "No designer matches this search."
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "Text when there is no designer yet",
+      "default": "The first designers will be here soon."
+    },
+    {
+      "type": "header",
+      "content": "Link"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Link text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Designers"
+    }
+  ]
+}
+{% endschema %}

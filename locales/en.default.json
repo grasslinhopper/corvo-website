@@ -73,7 +73,11 @@
           "title": "Our story: a family of Portuguese textile makers",
           "description": "Corvo is a rug atelier founded in 2023 within the Sorema group, the family business Ramiro Relvas began in 1974. Its story, its dates and its name."
         },
-        "sorema_group": {
+        "designers": {
+        "title": "Designers",
+        "description": "The designers Corvo makes rugs with: a page for each, with the story of the collaboration and the rugs made together, hand-tufted to order in Portugal."
+      },
+      "sorema_group": {
           "title": "Sorema Group: the family group behind Corvo",
           "description": "Sorema is the Portuguese family group behind Corvo: founded in 1974, in its fourth generation, with the brands Sorema, Graccioza and Corvo."
         }
@@ -589,6 +593,26 @@
       },
       "product_subtotal": "Product subtotal"
     }
+  },
+  "designers": {
+    "example": "Example",
+    "example_page": "Example designer: shown in the preview only",
+    "rugs_one": "1 rug",
+    "rugs_other": "{{ count }} rugs",
+    "rug_by": "{{ rug }}, a rug made with {{ name }}",
+    "count_one": "{{ count }} designer",
+    "count_other": "{{ count }} designers",
+    "count_filtered": "{{ count }} of {{ total }} designers",
+    "since": "Working with Corvo since",
+    "rugs": "Rugs",
+    "website": "Website",
+    "no_rugs_preview": "Preview note: no rug is linked to this designer yet. Add them in Shopify, under Content, Metaobjects, Designer, in the field \"Rugs\".",
+    "unavailable": "This designer's page is not available.",
+    "search_tab": "Designers",
+    "search_title": "Designers",
+    "search_only": "No rug, page or article matches “{{ terms }}”, but these designers do.",
+    "seo_title": "{{ name }}, designer",
+    "seo_description": "Rugs made with {{ name }} for Corvo, hand-tufted to order in Portugal."
   },
   "rug_list": {
     "materials": "In {{ count }} materials",

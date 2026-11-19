@@ -1,0 +1,81 @@
+{
+  "sections": {
+    "intro": {
+      "type": "page-intro",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Collaborations",
+        "title": "Designers",
+        "heading_tag": "h1",
+        "text": "<p>The designers we make rugs with. Each has a page with the story of the collaboration and the rugs made together.</p>",
+        "image_focus": "--focus: center",
+        "image_position": "end"
+      }
+    },
+    "list": {
+      "type": "designer-list",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "subheading": "",
+        "title": "",
+        "text": "",
+        "limit": 0,
+        "exclude_current": false,
+        "show_search": true,
+        "search_label": "Find a designer",
+        "search_placeholder": "Name, studio, place or rug",
+        "no_match_text": "No designer matches this search.",
+        "empty_text": "The first designers will be here soon.",
+        "button_text": "",
+        "button_link": ""
+      }
+    },
+    "wf-how": {
+      "type": "wireframe",
+      "settings": {
+        "label": "How a collaboration works",
+        "is_page_title": false,
+        "description": "A short text on how Corvo works with a designer: the brief, the drawings, the samples, the making in Silvalde, and how the rugs are then sold.",
+        "needs": "Your text, or the points to write it from.",
+        "phase": "Designers",
+        "layout": "split",
+        "columns": 3,
+        "size": "small"
+      }
+    },
+    "wf-featured": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Latest collaboration",
+        "is_page_title": false,
+        "description": "One designer shown large, with a picture of the rugs in a room and a link to their page.",
+        "needs": "Whether to feature one designer here, and which.",
+        "phase": "Designers",
+        "layout": "banner",
+        "columns": 3,
+        "size": "medium"
+      }
+    },
+    "wf-cta": {
+      "type": "wireframe",
+      "settings": {
+        "label": "For designers",
+        "is_page_title": false,
+        "description": "An invitation to designers who would like to make rugs with Corvo, with a link to the contact form.",
+        "needs": "Whether Corvo invites proposals from designers, and how.",
+        "phase": "Designers",
+        "layout": "text",
+        "columns": 3,
+        "size": "small"
+      }
+    }
+  },
+  "order": [
+    "intro",
+    "list",
+    "wf-how",
+    "wf-featured",
+    "wf-cta"
+  ]
+}

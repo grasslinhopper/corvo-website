@@ -230,6 +230,19 @@
         "image_left": "shopify://shop_images/graccioza-mood-p65.jpg",
         "image_right": "shopify://shop_images/graccioza-mood-p68.jpg"
       }
+    },
+    "wf-brands": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Partnerships with brands",
+        "is_page_title": false,
+        "description": "Collections made with other known brands, shown after Corvo's own collections, each with the brand's name and a link to its collection.",
+        "needs": "Which brands, and whether their collections are shown apart from Corvo's own or among them.",
+        "phase": "Collections",
+        "layout": "grid",
+        "columns": 3,
+        "size": "small"
+      }
     }
   },
   "order": [
@@ -245,6 +258,7 @@
     "tile",
     "cut-loop",
     "three-d",
-    "stone"
+    "stone",
+    "wf-brands"
   ]
 }

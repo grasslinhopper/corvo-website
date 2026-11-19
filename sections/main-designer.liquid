@@ -1,0 +1,415 @@
+{%- comment -%}
+  Designer page (Corvo addition)
+
+  The page of one designer Corvo has made rugs with: the name, the studio and the place, a short introduction and the
+  main picture, then the designer's story, the story of the collaboration, the rugs made together and more pictures.
+
+  The designer is a "Designer" entry in Shopify (Content > Metaobjects). Every active entry has a page of its own at
+  /pages/designers/ followed by its handle, drawn by this section (templates/metaobject/designer.json). Nothing is
+  typed here: change the entry and the page follows. The rugs are the products chosen in the entry's "Rugs" field,
+  in that order: that is where a rug is added to a designer.
+
+  An entry ticked "Preview only" is shown in theme previews and never on the published theme: the example designers
+  are ticked, and say so at the top of their page. Their page is also kept out of search engines (layout/theme.liquid).
+
+  The rugs are shown with the same card as every list of rugs (snippets/product-card.liquid), in the grid of the
+  collection showcase (sections/collection-showcase.liquid): Shopify serves the styles of every section on every page.
+{%- endcomment -%}
+
+{%- liquid
+  assign designer = metaobject
+  assign is_available = true
+  assign designers_url = section.settings.designers_link | default: '/pages/designers'
+
+  if designer == blank or designer.system.type != 'designer'
+    assign is_available = false
+  elsif designer.example.value and theme.role == 'main'
+    assign is_available = false
+  endif
+-%}
+
+{%- if is_available -%}
+  {%- liquid
+    assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+    assign designer_name = designer.name.value
+    assign portrait = designer.portrait.value
+    assign portrait_alt = portrait.alt | default: designer_name
+    assign gallery_images = designer.gallery.value
+    assign rugs = designer.rugs.value
+    assign rugs_count = 0
+
+    for rug in rugs
+      if rug.id != blank
+        assign rugs_count = rugs_count | plus: 1
+      endif
+    endfor
+
+    assign meta_parts = ''
+
+    if designer.studio.value != blank and designer.studio.value != designer_name
+      assign meta_parts = meta_parts | append: designer.studio.value | append: '|'
+    endif
+
+    if designer.location.value != blank
+      assign meta_parts = meta_parts | append: designer.location.value | append: '|'
+    endif
+
+    assign designer_meta = meta_parts | split: '|' | join: ' · '
+    assign rugs_title = section.settings.rugs_title | replace: '[name]', designer_name
+    assign about_title = section.settings.about_title | replace: '[name]', designer_name
+  -%}
+
+  <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }}">
+    <div class="container">
+      <article class="designer">
+        <div class="designer__opening">
+          <div class="designer__text">
+            {%- if section.settings.designers_label != blank -%}
+              <p class="h6 text-subdued"><a href="{{ designers_url }}" class="designer__back">{{ section.settings.designers_label | escape }}</a></p>
+            {%- endif -%}
+
+            {%- if designer.example.value -%}
+              <p class="designer__flag">{{ 'designers.example_page' | t }}</p>
+            {%- endif -%}
+
+            <h1 class="h1">{{ designer_name | escape }}</h1>
+
+            {%- if designer_meta != blank -%}
+              <p class="designer__meta">{{ designer_meta | escape }}</p>
+            {%- endif -%}
+
+            {%- if designer.summary.value != blank -%}
+              <p class="designer__summary">{{ designer.summary.value | escape | newline_to_br }}</p>
+            {%- endif -%}
+
+            {%- if designer.since.value != blank or rugs_count > 0 or designer.website.value != blank -%}
+              <dl class="designer__facts">
+                {%- if designer.since.value != blank -%}
+                  <div>
+                    <dt class="text-sm text-subdued">{{ 'designers.since' | t }}</dt>
+                    <dd>{{ designer.since.value }}</dd>
+                  </div>
+                {%- endif -%}
+
+                {%- if rugs_count > 0 -%}
+                  <div>
+                    <dt class="text-sm text-subdued">{{ 'designers.rugs' | t }}</dt>
+                    <dd>
+                      {%- for rug in rugs -%}
+                        {%- if rug.id != blank -%}
+                          <a href="{{ rug.url }}" class="link">{{ rug.title | escape }}</a>
+                          {%- unless forloop.last -%}, {% endunless -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </dd>
+                  </div>
+                {%- endif -%}
+
+                {%- if designer.website.value != blank -%}
+                  <div>
+                    <dt class="text-sm text-subdued">{{ 'designers.website' | t }}</dt>
+                    <dd><a href="{{ designer.website.value }}" class="link" target="_blank" rel="noopener">{{ designer.website.value | remove: 'https://' | remove: 'http://' | remove: 'www.' | split: '/' | first }}</a></dd>
+                  </div>
+                {%- endif -%}
+              </dl>
+            {%- endif -%}
+          </div>
+
+          <div class="designer__media">
+            {%- if portrait != blank -%}
+              {{- portrait | image_url: width: 1400 | image_tag: sizes: '(max-width: 999px) 100vw, 40vw', widths: '400,600,800,1000,1200,1400', alt: portrait_alt, fetchpriority: 'high' -}}
+            {%- endif -%}
+          </div>
+        </div>
+
+        {%- if designer.biography.value != blank or designer.collaboration.value != blank -%}
+          <div class="designer__story">
+            {%- if designer.biography.value != blank -%}
+              <section class="prose">
+                <h2 class="h3">{{ about_title | escape }}</h2>
+                {{- designer.biography | metafield_tag -}}
+              </section>
+            {%- endif -%}
+
+            {%- if designer.collaboration.value != blank -%}
+              <section class="prose">
+                <h2 class="h3">{{ section.settings.collaboration_title | escape }}</h2>
+                {{- designer.collaboration | metafield_tag -}}
+              </section>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if rugs_count > 0 -%}
+          <section class="designer__rugs" aria-labelledby="designer-rugs-{{ section.id }}">
+            <h2 class="h3" id="designer-rugs-{{ section.id }}">{{ rugs_title | escape }}</h2>
+
+            <ul class="cshow__grid" role="list" style="--cshow-cols: {{ rugs_count | at_most: 4 }};">
+              {%- for rug in rugs -%}
+                {%- if rug.id != blank -%}
+                  <li class="cshow__item">
+                    {%- render 'product-card', product: rug, position: forloop.index, show_badges: false -%}
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          </section>
+        {%- elsif theme.role != 'main' -%}
+          <p class="designer__note">{{ 'designers.no_rugs_preview' | t }}</p>
+        {%- endif -%}
+
+        {%- if gallery_images.size > 0 -%}
+          <ul class="designer__gallery unstyled-list" role="list">
+            {%- for gallery_image in gallery_images -%}
+              <li>
+                {%- assign gallery_alt = gallery_image.alt | default: designer_name -%}
+                {{- gallery_image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 100vw, 50vw', widths: '400,600,800,1000,1400', alt: gallery_alt -}}
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </article>
+    </div>
+  </div>
+
+  {%- comment -%}
+  The designer as structured data: who they are, where their own site is, and the rugs made with them. An example
+  designer is left out.
+  {%- endcomment -%}
+  {%- unless designer.example.value -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfilePage",
+        "url": {{ shop.url | append: designer.system.url | json }},
+        "name": {{ designer_name | json }},
+        "isPartOf": { "@type": "CollectionPage", "name": {{ section.settings.designers_label | default: 'Designers' | json }}, "url": {{ shop.url | append: designers_url | json }} },
+        "mainEntity": {
+          "@type": "Person",
+          "name": {{ designer_name | json }}
+          {%- if designer.summary.value != blank -%},"description": {{ designer.summary.value | strip_newlines | json }}{%- endif -%}
+          {%- if portrait != blank -%},"image": {{ portrait | image_url: width: 1200 | prepend: 'https:' | json }}{%- endif -%}
+          {%- if designer.studio.value != blank and designer.studio.value != designer_name -%},"worksFor": { "@type": "Organization", "name": {{ designer.studio.value | json }} }{%- endif -%}
+          {%- if designer.location.value != blank -%},"homeLocation": { "@type": "Place", "name": {{ designer.location.value | json }} }{%- endif -%}
+          {%- if designer.website.value != blank -%},"sameAs": [{{ designer.website.value | json }}]{%- endif -%}
+        }
+        {%- if rugs_count > 0 -%}
+          ,"hasPart": {
+            "@type": "ItemList",
+            "name": {{ rugs_title | json }},
+            "itemListElement": [
+              {%- assign rug_position = 0 -%}
+              {%- for rug in rugs -%}
+                {%- if rug.id != blank -%}
+                  {%- assign rug_position = rug_position | plus: 1 -%}
+                  {%- if rug_position > 1 -%},{%- endif -%}
+                  { "@type": "ListItem", "position": {{ rug_position }}, "name": {{ rug.title | json }}, "url": {{ shop.url | append: rug.url | json }} }
+                {%- endif -%}
+              {%- endfor -%}
+            ]
+          }
+        {%- endif -%}
+      }
+    </script>
+  {%- endunless -%}
+{%- else -%}
+  <div class="section-spacing">
+    <div class="container container--xs">
+      <div class="empty-state">
+        <div class="prose">
+          <h1 class="h2">{{ 'designers.unavailable' | t }}</h1>
+
+          {%- if section.settings.designers_label != blank -%}
+            <p><a href="{{ designers_url }}" class="link">{{ section.settings.designers_label | escape }}</a></p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .designer {
+    gap: clamp(3.5rem, 7vw, 6.5rem);
+    display: grid;
+  }
+
+  /* The opening: the name and the facts beside the main picture */
+  .designer__opening {
+    gap: 2.5rem;
+    display: grid;
+  }
+
+  .designer__text {
+    align-content: center;
+    justify-items: start;
+    gap: 1.25rem;
+    display: grid;
+  }
+
+  .designer__text > * {
+    margin: 0;
+  }
+
+  .designer__back {
+    text-decoration: none;
+  }
+
+  .designer__meta {
+    color: rgb(var(--text-color) / .65);
+    letter-spacing: .04em;
+  }
+
+  .designer__summary {
+    font-size: clamp(1rem, 1.2vw, 1.125rem);
+    line-height: 1.75;
+    max-width: 34rem;
+  }
+
+  .designer__flag {
+    color: rgb(var(--text-color) / .65);
+    font-size: var(--text-xs);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    border: 1px solid rgb(var(--text-color) / .25);
+    padding: .25rem .625rem;
+  }
+
+  .designer__facts {
+    border-block-start: 1px solid rgb(var(--text-color) / .15);
+    gap: .875rem;
+    width: 100%;
+    max-width: 34rem;
+    margin: .5rem 0 0;
+    padding-block-start: 1.25rem;
+    display: grid;
+  }
+
+  .designer__facts > div {
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: 1rem;
+    display: grid;
+  }
+
+  .designer__facts dd {
+    margin: 0;
+  }
+
+  .designer__media {
+    aspect-ratio: 4 / 5;
+    background: rgb(var(--text-color) / .05);
+    overflow: hidden;
+  }
+
+  .designer__media img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* The stories: one column of comfortable width */
+  .designer__story {
+    gap: 3rem;
+    width: 100%;
+    max-width: 44rem;
+    margin-inline: auto;
+    display: grid;
+  }
+
+  /* The rugs */
+  .designer__rugs {
+    gap: clamp(2rem, 4vw, 3.5rem);
+    display: grid;
+  }
+
+  .designer__rugs > h2 {
+    text-align: center;
+    margin: 0;
+  }
+
+  .designer__note {
+    color: rgb(var(--text-color) / .65);
+    text-align: center;
+    border: 1px dashed rgb(var(--text-color) / .3);
+    margin: 0;
+    padding: 1.5rem;
+  }
+
+  .designer__gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    display: grid;
+  }
+
+  .designer__gallery img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  @media screen and (min-width: 1000px) {
+    .designer__opening {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      gap: clamp(3rem, 6vw, 7rem);
+    }
+
+    .designer__gallery {
+      gap: 2rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Designer page",
+  "class": "shopify-section--main-designer",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The page of a designer. Everything on it comes from the \"Designer\" entry in Shopify (Content > Metaobjects): the name, the pictures, the stories and the rugs."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "designers_label",
+      "label": "Link back to all designers",
+      "default": "Designers"
+    },
+    {
+      "type": "url",
+      "id": "designers_link",
+      "label": "Page of all designers"
+    },
+    {
+      "type": "text",
+      "id": "about_title",
+      "label": "Title above the designer's story",
+      "info": "[name] is the name of the designer.",
+      "default": "About [name]"
+    },
+    {
+      "type": "text",
+      "id": "collaboration_title",
+      "label": "Title above the story of the collaboration",
+      "default": "The collaboration"
+    },
+    {
+      "type": "text",
+      "id": "rugs_title",
+      "label": "Title above the rugs",
+      "info": "[name] is the name of the designer.",
+      "default": "Rugs with [name]"
+    }
+  ]
+}
+{% endschema %}

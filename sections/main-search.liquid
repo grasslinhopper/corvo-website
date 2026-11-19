@@ -1,4 +1,9 @@
 {%- if search.performed -%}
+  {%- comment -%}Corvo addition: the designers whose name, studio, place or rugs hold the words searched (snippets/designer-search.liquid){%- endcomment -%}
+  {%- capture designer_results -%}
+    {%- render 'designer-search', terms: search.terms, style: 'page', limit: 8 -%}
+  {%- endcapture -%}
+
   {%- liquid
     assign active_values_count = 0
 
@@ -58,6 +63,13 @@
                 <p>{{ 'search.results_count_for_terms' | t: count: search.results_count, terms: search.terms }}</p>
               </div>
             </div>
+
+            {%- if designer_results != blank -%}
+              <div class="search-designers">
+                <h2 class="h5">{{ 'designers.search_title' | t }}</h2>
+                <ul class="designers__grid" role="list">{{ designer_results }}</ul>
+              </div>
+            {%- endif -%}
 
             <div class="main-search">
               <x-tabs class="main-search__tabs content-tabs content-tabs--center">
@@ -214,6 +226,25 @@
         </div>
       </div>
     {%- endpaginate -%}
+  {%- elsif designer_results != blank -%}
+    {%- comment -%}Corvo addition: no rug, page or article matches, but designers do{%- endcomment -%}
+    <div class="section-spacing section-spacing--tight color-scheme color-scheme--{{ section.settings.color_scheme.id }}">
+      <div class="container">
+        <div class="section-stack">
+          <div class="section-header justify-self-center text-center">
+            <div class="v-stack gap-4">
+              <h1 class="h2">{{ 'search.general.title' | t }}</h1>
+              <p>{{ 'designers.search_only' | t: terms: search.terms }}</p>
+            </div>
+          </div>
+
+          <div class="search-designers">
+            <h2 class="h5">{{ 'designers.search_title' | t }}</h2>
+            <ul class="designers__grid" role="list">{{ designer_results }}</ul>
+          </div>
+        </div>
+      </div>
+    </div>
   {%- else -%}
     <div class="color-scheme color-scheme--{{ section.settings.color_scheme.id }}">
       <div class="container container--xs">
@@ -259,6 +290,24 @@
     </div>
   </div>
 {%- endif -%}
+
+{% stylesheet %}
+  /* Corvo addition: the designers found by a search, above the rugs, pages and articles */
+  .search-designers {
+    gap: 1.75rem;
+    display: grid;
+  }
+
+  .search-designers > h2 {
+    text-align: center;
+    margin: 0;
+  }
+
+  .predictive-search__collections .designer-search__image {
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {

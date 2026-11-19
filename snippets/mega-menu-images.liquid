@@ -81,6 +81,45 @@ ticked "Preview only" is never shown on the published theme.
   {%- for project_item in sorted_projects limit: 4 -%}
     {{- project_item | split: project_key_separator | last -}}
   {%- endfor -%}
+{%- elsif block.settings.images_source == 'designers' -%}
+  {%- comment -%}
+  Corvo addition: the panel of Designers shows the first four designers, read from the "Designer" entries in Shopify
+  (Content > Metaobjects), in the order of the Designers page (snippets/designer-handles.liquid). Each picture leads to
+  the page of its designer. A designer without a picture of their own is shown by the picture of their first rug.
+  {%- endcomment -%}
+  {%- capture panel_designer_list -%}{%- render 'designer-handles' -%}{%- endcapture -%}
+  {%- assign panel_designer_handles = panel_designer_list | strip | split: ',' -%}
+
+  {%- for panel_designer_handle in panel_designer_handles limit: 4 -%}
+    {%- liquid
+      assign panel_designer = shop.metaobjects.designer[panel_designer_handle]
+      assign panel_image = panel_designer.portrait.value
+      assign panel_alt = panel_image.alt | default: panel_designer.name.value
+
+      if panel_image == blank
+        assign panel_first_rug = panel_designer.rugs.value | first
+        assign panel_image = panel_first_rug.featured_media.preview_image
+      endif
+
+      assign panel_meta = panel_designer.studio.value | default: panel_designer.location.value
+    -%}
+
+    <a href="{{ panel_designer.system.url }}" class="v-stack justify-items-center gap-4 sm:gap-5 group">
+      {%- if panel_image != blank -%}
+        <div class="overflow-hidden">
+          {{- panel_image | image_url: width: 945 | image_tag: loading: 'lazy', sizes: '(min-width: 1000px) 21rem, 315px', widths: '315,480,630,800,945', class: 'zoom-image group-hover:zoom', alt: panel_alt -}}
+        </div>
+      {%- endif -%}
+
+      <div class="v-stack text-center {% if context == 'menu' %}gap-2.5{% else %}gap-0.5{% endif %}">
+        <p class="h6">{{ panel_designer.name.value | escape }}</p>
+
+        {%- if panel_meta != blank -%}
+          <p class="smallcaps text-xs text-subdued">{{ panel_meta | escape }}</p>
+        {%- endif -%}
+      </div>
+    </a>
+  {%- endfor -%}
 {%- else -%}
   {%- comment -%}Corvo addition: up to four pictures, where the theme has two{%- endcomment -%}
   {%- for i in (1..4) -%}

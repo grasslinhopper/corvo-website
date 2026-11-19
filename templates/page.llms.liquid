@@ -53,6 +53,7 @@
 - [Tailor your rug]({{ shop.url }}/pages/tailor-your-rug): a price guide for a design of your own, and the form to ask for a proposal.
 - [Design library]({{ shop.url }}/pages/gallery): {% render 'corvo-fill', text: '[design_count] designs by style, each made to measure in any colour.' %}
 - [Portfolio]({{ shop.url }}/pages/portfolio): projects with Corvo rugs, each with its place, its designer and its rugs.
+- [Designers]({{ shop.url }}/pages/designers): the designers Corvo makes rugs with, each with a page and the rugs made together.
 - [Samples]({{ shop.url }}/pages/samples): order a sample of any rug.
 - [Care and questions]({{ shop.url }}/pages/care-faq): care, delivery and the questions asked most often.
 - [Story]({{ shop.url }}/pages/about-us): where Corvo comes from: its founder, the two families behind it and its dates.
@@ -192,6 +193,62 @@ Projects with Corvo rugs, from the Portfolio:
 
 {% for project_line in sorted_projects -%}
 {{ project_line | split: project_key_separator | last }}
+{% endfor -%}
+{%- endif %}
+{%- comment -%}The designers, in the order of the Designers page. An example designer ("Preview only") is never listed here.{%- endcomment -%}
+{%- capture llms_designer_list -%}{%- render 'designer-handles' -%}{%- endcapture -%}
+{%- assign llms_designer_handles = llms_designer_list | strip | split: ',' -%}
+{%- assign llms_designer_lines = '' -%}
+{%- for llms_designer_handle in llms_designer_handles -%}
+{%- liquid
+  assign llms_designer = shop.metaobjects.designer[llms_designer_handle]
+
+  if llms_designer == blank or llms_designer.example.value
+    continue
+  endif
+
+  assign llms_facts = ''
+
+  if llms_designer.studio.value != blank and llms_designer.studio.value != llms_designer.name.value
+    assign llms_facts = llms_facts | append: llms_designer.studio.value | append: '|'
+  endif
+
+  if llms_designer.location.value != blank
+    assign llms_facts = llms_facts | append: llms_designer.location.value | append: '|'
+  endif
+
+  if llms_designer.since.value != blank
+    assign llms_facts = llms_facts | append: 'working with Corvo since ' | append: llms_designer.since.value | append: '|'
+  endif
+
+  assign llms_rugs = llms_designer.rugs.value | map: 'title' | join: ', '
+
+  if llms_rugs != blank
+    assign llms_facts = llms_facts | append: 'rugs: ' | append: llms_rugs | append: '|'
+  endif
+
+  assign llms_facts = llms_facts | split: '|' | join: '; '
+  assign llms_line = '- [' | append: llms_designer.name.value | append: '](' | append: shop.url | append: llms_designer.system.url | append: ')'
+
+  if llms_facts != blank
+    assign llms_line = llms_line | append: ': ' | append: llms_facts | append: '.'
+  endif
+
+  if llms_designer.summary.value != blank
+    assign llms_line = llms_line | append: ' ' | append: llms_designer.summary.value | strip_newlines
+  endif
+
+  assign llms_designer_lines = llms_designer_lines | append: llms_line | append: '¦'
+-%}
+{%- endfor -%}
+{%- assign llms_designer_lines = llms_designer_lines | split: '¦' -%}
+{%- if llms_designer_lines.size > 0 %}
+## Designers
+
+Designers Corvo makes rugs with, each with a page of their own:
+
+{% for llms_designer_line in llms_designer_lines -%}
+{{ llms_designer_line }}
 {% endfor -%}
 {%- endif %}
 ## Journal

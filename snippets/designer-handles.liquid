@@ -1,0 +1,61 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+THE DESIGNERS, IN ORDER (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Prints the handles of the "Designer" entries in Shopify (Content > Metaobjects), separated by commas, in the order of
+the lists: first the designers with a number in "Order in the lists", lowest first, then the others in alphabetical
+order. A designer ticked "Preview only" is left out on the published theme.
+
+Every list of designers reads its order here: the Designers page, the header panel, the site search and the guide
+for AI assistants. Liquid cannot sort entries by one of their fields, so each entry gets a key that sorts as text.
+A caller reads an entry back with shop.metaobjects.designer[handle].
+
+The list holds up to fifty designers: an entry list read without pagination stops there, and this snippet is used
+inside paginated pages, where a second pagination is not allowed.
+
+********************************************
+Supported variables
+********************************************
+
+* exclude: the handle of a designer to leave out (optional), such as the designer whose page is open
+{%- endcomment -%}
+
+{%- liquid
+  assign designer_items = ''
+
+  for designer in shop.metaobjects.designer.values
+    if designer.example.value and theme.role == 'main'
+      continue
+    endif
+
+    if exclude != blank and designer.system.handle == exclude
+      continue
+    endif
+
+    assign designer_number = 99999
+
+    if designer.position.value != blank
+      assign designer_number = designer.position.value | plus: 0 | at_least: 0 | at_most: 49999
+    endif
+
+    assign designer_order = designer_number | prepend: '00000' | slice: -5, 5
+    assign designer_name_key = designer.name.value | default: designer.system.handle | downcase
+    assign designer_items = designer_items | append: designer_order | append: ':' | append: designer_name_key | append: '§' | append: designer.system.handle | append: '¦'
+  endfor
+
+  assign designer_sorted = designer_items | split: '¦' | sort
+  assign designer_handles = ''
+
+  for designer_item in designer_sorted
+    assign designer_handle = designer_item | split: '§' | last
+
+    if designer_handles != ''
+      assign designer_handles = designer_handles | append: ','
+    endif
+
+    assign designer_handles = designer_handles | append: designer_handle
+  endfor
+
+  echo designer_handles
+-%}

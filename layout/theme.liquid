@@ -19,7 +19,7 @@
 
       if request.page_type == 'page'
         assign seo_handle = page.handle | replace: '-', '_'
-        assign seo_handles = 'raw_materials|colours|bespoke_service|tailor_your_rug|care_faq|craftmanship|gallery|portfolio|resources|sales_tools|catalogue|about_us|sorema_group' | split: '|'
+        assign seo_handles = 'raw_materials|colours|bespoke_service|tailor_your_rug|care_faq|craftmanship|gallery|portfolio|resources|sales_tools|catalogue|about_us|sorema_group|designers' | split: '|'
 
         if seo_handles contains seo_handle
           assign seo_key = 'general.corvo.seo.' | append: seo_handle
@@ -36,6 +36,8 @@
         assign seo_title = seo_key | append: '.title' | t
       elsif request.page_type == 'metaobject' and metaobject.system.type == 'project'
         assign seo_title = 'portfolio.seo_title' | t: title: metaobject.title.value
+      elsif request.page_type == 'metaobject' and metaobject.system.type == 'designer'
+        assign seo_title = 'designers.seo_title' | t: name: metaobject.name.value
       endif
 
       if seo_title == blank
@@ -79,6 +81,8 @@
           endif
 
           assign seo_description = 'portfolio.seo_description' | t | prepend: ': ' | prepend: seo_description
+        elsif request.page_type == 'metaobject' and metaobject.system.type == 'designer'
+          assign seo_description = 'designers.seo_description' | t: name: metaobject.name.value
         endif
       endif
 

@@ -33,7 +33,26 @@ Supported variables
     </div>
   {%- endif -%}
 
-  {%- if link.levels > 0 -%}
+  {%- if link.levels == 0 and block.settings.images_source == 'designers' -%}
+    {%- comment -%}
+    Corvo addition: the column of Designers lists the designers themselves, read from the "Designer" entries in
+    Shopify, so a designer added there appears here without touching the menu
+    {%- endcomment -%}
+    {%- capture panel_list -%}{%- render 'designer-handles' -%}{%- endcapture -%}
+    {%- assign panel_handles = panel_list | strip | split: ',' -%}
+
+    {%- if panel_handles.size > 0 -%}
+      <ul class="mega-menu__linklist unstyled-list">
+        {%- for panel_handle in panel_handles limit: 10 -%}
+          {%- assign panel_entry = shop.metaobjects.designer[panel_handle] -%}
+
+          <li class="v-stack justify-items-start gap-5">
+            <a href="{{ panel_entry.system.url }}" class="h6">{{ panel_entry.name.value | escape }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  {%- elsif link.levels > 0 -%}
     <ul class="mega-menu__linklist unstyled-list">
       {%- for sub_link in link.links -%}
         <li class="v-stack justify-items-start gap-5">

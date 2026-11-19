@@ -1,0 +1,79 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+DESIGNER CARD (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+A designer as a card in a list: the main picture, the name, the studio and the place, and the number of rugs made
+together. A designer without a picture of their own is shown by the picture of their first rug. The whole card leads
+to the designer's page. An example designer ("Preview only") says so.
+
+********************************************
+Supported variables
+********************************************
+
+* designer: the "Designer" entry (required)
+* heading_tag: the tag of the name, "h2" by default; "p" where the name is not a heading (the search)
+* sizes: the "sizes" of the picture (optional)
+{%- endcomment -%}
+
+{%- liquid
+  assign card_tag = heading_tag | default: 'h2'
+  assign card_sizes = sizes | default: '(max-width: 699px) 50vw, (max-width: 999px) 33vw, 25vw'
+  assign card_name = designer.name.value
+  assign card_image = designer.portrait.value
+  assign card_alt = card_image.alt | default: card_name
+  assign card_rugs = 0
+
+  for card_rug in designer.rugs.value
+    if card_rug.id != blank
+      assign card_rugs = card_rugs | plus: 1
+
+      if card_image == blank and card_rug.featured_media != blank
+        assign card_image = card_rug.featured_media.preview_image
+        assign card_alt = 'designers.rug_by' | t: rug: card_rug.title, name: card_name
+      endif
+    endif
+  endfor
+
+  assign card_meta = ''
+
+  if designer.studio.value != blank and designer.studio.value != card_name
+    assign card_meta = card_meta | append: designer.studio.value | append: '|'
+  endif
+
+  if designer.location.value != blank
+    assign card_meta = card_meta | append: designer.location.value | append: '|'
+  endif
+
+  assign card_meta = card_meta | split: '|' | join: ' · '
+-%}
+
+<a href="{{ designer.system.url }}" class="designer-card group">
+  <span class="designer-card__media">
+    {%- if card_image != blank -%}
+      {{- card_image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: card_sizes, widths: '300,450,600,750,900', alt: card_alt, class: 'zoom-image group-hover:zoom' -}}
+    {%- endif -%}
+  </span>
+
+  <span class="designer-card__text">
+    {%- if designer.example.value -%}
+      <span class="designer-card__flag">{{ 'designers.example' | t }}</span>
+    {%- endif -%}
+
+    <{{ card_tag }} class="designer-card__name h6">{{ card_name | escape }}</{{ card_tag }}>
+
+    {%- if card_meta != blank -%}
+      <span class="designer-card__meta">{{ card_meta | escape }}</span>
+    {%- endif -%}
+
+    {%- if card_rugs > 0 -%}
+      <span class="designer-card__count">
+        {%- if card_rugs == 1 -%}
+          {{- 'designers.rugs_one' | t -}}
+        {%- else -%}
+          {{- 'designers.rugs_other' | t: count: card_rugs -}}
+        {%- endif -%}
+      </span>
+    {%- endif -%}
+  </span>
+</a>

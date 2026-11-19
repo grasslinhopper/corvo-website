@@ -1,0 +1,66 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-designer",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "designers_label": "Designers",
+        "designers_link": "shopify://pages/designers",
+        "about_title": "About [name]",
+        "collaboration_title": "The collaboration",
+        "rugs_title": "Rugs with [name]"
+      }
+    },
+    "wf-making": {
+      "type": "wireframe",
+      "settings": {
+        "label": "The making of the rugs",
+        "is_page_title": false,
+        "description": "The drawings, the colour choices and the samples of the collaboration, in pictures, with a sentence from the designer.",
+        "needs": "Pictures and a quotation from each designer.",
+        "phase": "Designers",
+        "layout": "split",
+        "columns": 3,
+        "size": "medium"
+      }
+    },
+    "more": {
+      "type": "designer-list",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "subheading": "Collaborations",
+        "title": "More designers",
+        "text": "",
+        "limit": 4,
+        "exclude_current": true,
+        "show_search": false,
+        "search_label": "Find a designer",
+        "search_placeholder": "Name, studio, place or rug",
+        "no_match_text": "No designer matches this search.",
+        "empty_text": "",
+        "button_text": "All designers",
+        "button_link": "shopify://pages/designers"
+      }
+    },
+    "wf-cta": {
+      "type": "wireframe",
+      "settings": {
+        "label": "Order a rug of this collaboration",
+        "is_page_title": false,
+        "description": "How a client orders one of these rugs, or asks for one in another size or colour, with links to the rugs and to Tailor your rug.",
+        "needs": "Whether the designers' rugs can be changed like the others, or only within limits the designer sets.",
+        "phase": "Designers",
+        "layout": "text",
+        "columns": 3,
+        "size": "small"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "wf-making",
+    "more",
+    "wf-cta"
+  ]
+}

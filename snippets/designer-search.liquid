@@ -1,0 +1,87 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+DESIGNERS IN THE SEARCH (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Shopify's own search finds rugs, pages and articles, not designers. This snippet finds them: a designer is shown when
+every word searched appears in their name, their studio, their place or the name of one of their rugs. So a search
+for a designer, or for one of their rugs, leads to the designer's page as well.
+
+Prints the designers found, in the order of the lists (see snippets/designer-handles.liquid), and nothing when none
+is found: a caller captures the output and tests it for blank.
+
+********************************************
+Supported variables
+********************************************
+
+* terms: the words searched (required)
+* style: "predictive" (the search panel in the header, the style of its collections) or "page" (the search page,
+  as cards in a list)
+* limit: the most designers shown (4 by default)
+{%- endcomment -%}
+
+{%- liquid
+  assign search_words = terms | downcase | strip | split: ' '
+  assign search_limit = limit | default: 4
+  assign search_shown = 0
+
+  capture search_list
+    render 'designer-handles'
+  endcapture
+
+  assign search_handles = search_list | strip | split: ','
+-%}
+
+{%- if search_words.size > 0 -%}
+  {%- for search_handle in search_handles -%}
+    {%- liquid
+      if search_shown >= search_limit
+        break
+      endif
+
+      assign search_designer = shop.metaobjects.designer[search_handle]
+
+      if search_designer == blank
+        continue
+      endif
+
+      assign search_text = search_designer.name.value | append: ' ' | append: search_designer.studio.value | append: ' ' | append: search_designer.location.value
+
+      for search_rug in search_designer.rugs.value
+        assign search_text = search_text | append: ' ' | append: search_rug.title
+      endfor
+
+      assign search_text = search_text | downcase
+      assign search_match = true
+
+      for search_word in search_words
+        unless search_text contains search_word
+          assign search_match = false
+          break
+        endunless
+      endfor
+
+      unless search_match
+        continue
+      endunless
+
+      assign search_shown = search_shown | plus: 1
+    -%}
+
+    {%- if style == 'page' -%}
+      <li class="designers__item">
+        {%- render 'designer-card', designer: search_designer, heading_tag: 'h3' -%}
+      </li>
+    {%- else -%}
+      {%- assign search_image = search_designer.portrait.value -%}
+
+      <a href="{{ search_designer.system.url }}" class="v-stack gap-3 sm:gap-5">
+        {%- if search_image != blank -%}
+          {{- search_image | image_url: width: 500 | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 160px, 500px', widths: '200,300,400,500', alt: search_designer.name.value, class: 'designer-search__image' -}}
+        {%- endif -%}
+
+        <span class="h6 sm:h5">{{ search_designer.name.value | escape }}</span>
+      </a>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}

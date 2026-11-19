@@ -22,6 +22,15 @@ Nothing
     {%- assign results_count = results_count | plus: resource.last.size -%}
   {%- endfor -%}
 
+  {%- comment -%}Corvo addition: the designers whose name, studio, place or rugs hold the words searched (snippets/designer-search.liquid){%- endcomment -%}
+  {%- capture designer_results -%}
+    {%- render 'designer-search', terms: predictive_search.terms, style: 'predictive', limit: 4 -%}
+  {%- endcapture -%}
+
+  {%- if designer_results != blank -%}
+    {%- assign results_count = results_count | plus: 1 -%}
+  {%- endif -%}
+
   {%- if results_count > 0 -%}
     <div class="predictive-search__results {% if predictive_search.resources.queries.size > 0 %}predictive-search__results--with-suggestions{% endif %}">
       {%- if predictive_search.resources.queries.size > 0 -%}
@@ -54,7 +63,7 @@ Nothing
         {%- if predictive_search.resources.products.size > 0 -%}
           <button type="button" class="h6" role="tab" slot="title">{{ 'search.general.products' | t }}</button>
 
-          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden' %}>
+          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden', 'hidden' %}>
             {%- if predictive_search.resources.queries.size > 0 -%}
               {%- assign products_count = 4 -%}
             {%- else -%}
@@ -76,10 +85,20 @@ Nothing
           </div>
         {%- endif -%}
 
+        {%- if designer_results != blank -%}
+          <button type="button" class="h6" role="tab" slot="title">{{ 'designers.search_tab' | t }}</button>
+
+          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden', 'hidden' %}>
+            <div class="predictive-search__collections" style="--collection-list-items-per-row: 4">
+              {{- designer_results -}}
+            </div>
+          </div>
+        {%- endif -%}
+
         {%- if predictive_search.resources.collections.size > 0 -%}
           <button type="button" class="h6" role="tab" slot="title">{{ 'search.general.collections' | t }}</button>
 
-          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden' %}>
+          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden', 'hidden' %}>
             {%- if predictive_search.resources.queries.size > 0 -%}
               {%- assign collections_count = 4 -%}
             {%- else -%}
@@ -97,7 +116,7 @@ Nothing
         {%- if predictive_search.resources.articles.size > 0 -%}
           <button type="button" class="h6" role="tab" slot="title">{{ 'search.general.posts' | t }}</button>
 
-          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden' %}>
+          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden', 'hidden' %}>
             {%- if predictive_search.resources.queries.size > 0 -%}
               {%- assign articles_count = 3 -%}
             {%- else -%}
@@ -115,7 +134,7 @@ Nothing
         {%- if predictive_search.resources.pages.size > 0 -%}
           <button type="button" class="h6" role="tab" slot="title">{{ 'search.general.pages' | t }}</button>
 
-          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden' %}>
+          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden', 'hidden' %}>
             <div class="predictive-search__pages v-stack justify-items-start gap-3">
               {%- render 'predictive-search-result-item' for predictive_search.resources.pages as page, type: 'page' -%}
             </div>
@@ -151,7 +170,7 @@ Nothing
         {%- if product_results.size > 0 -%}
           <button type="button" class="h6" role="tab" slot="title">{{ 'search.general.products' | t }}</button>
 
-          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden' %}>
+          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden', 'hidden' %}>
             {%- assign products_count = 5 -%}
             {%- assign product_results = product_results | slice: 0, products_count -%}
 
@@ -171,7 +190,7 @@ Nothing
         {%- if article_results.size > 0 -%}
           <button type="button" class="h6" role="tab" slot="title">{{ 'search.general.posts' | t }}</button>
 
-          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden' %}>
+          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden', 'hidden' %}>
             {%- assign articles_count = 4 -%}
             {%- assign article_results = article_results | slice: 0, articles_count -%}
 
@@ -184,7 +203,7 @@ Nothing
         {%- if page_results.size > 0 -%}
           <button type="button" class="h6" role="tab" slot="title">{{ 'search.general.pages' | t }}</button>
 
-          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden' %}>
+          <div class="predictive-search__resource-item" role="tabpanel" slot="content" {% cycle 'result_tab': '', 'hidden', 'hidden', 'hidden', 'hidden' %}>
             <div class="predictive-search__pages v-stack justify-items-start gap-3">
               {%- render 'predictive-search-result-item' for predictive_search.resources.pages as page, type: 'page' -%}
             </div>

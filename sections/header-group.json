@@ -128,12 +128,23 @@
             "image_3_text": "The family behind Corvo",
             "image_3_link": "shopify://pages/sorema-group"
           }
+        },
+        "mega-designers": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_item": "Designers",
+            "images_position": "right",
+            "intro_text": "Rugs made with designers.",
+            "intro_link_text": "All designers",
+            "images_source": "designers"
+          }
         }
       },
       "block_order": [
         "mega-bespoke",
         "mega-portfolio",
         "mega-collections",
+        "mega-designers",
         "mega-resources",
         "mega-about"
       ]
