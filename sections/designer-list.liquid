@@ -131,6 +131,38 @@
 
   {%- if section.settings.show_search and shown_total > 0 -%}
     <script src="{{ 'designer-list.js' | asset_url }}" defer></script>
+
+    {%- comment -%}
+    The designers as structured data, on the page that lists them all: a list of their pages, in the order shown. An
+    example designer ("Preview only") is left out.
+    {%- endcomment -%}
+    {%- capture designer_items_json -%}
+      {%- assign item_position = 0 -%}
+
+      {%- for designer_handle in designer_handles limit: designer_limit -%}
+        {%- assign designer = shop.metaobjects.designer[designer_handle] -%}
+
+        {%- if designer == blank or designer.example.value -%}
+          {%- continue -%}
+        {%- endif -%}
+
+        {%- assign item_position = item_position | plus: 1 -%}
+        {%- if item_position > 1 -%},{%- endif -%}
+        { "@type": "ListItem", "position": {{ item_position }}, "name": {{ designer.name.value | json }}, "url": {{ shop.url | append: designer.system.url | json }} }
+      {%- endfor -%}
+    {%- endcapture -%}
+
+    {%- if designer_items_json != blank -%}
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": {{ page.title | default: section.settings.title | default: 'Designers' | json }},
+          "url": {{ shop.url | append: request.path | json }},
+          "mainEntity": { "@type": "ItemList", "itemListElement": [{{ designer_items_json }}] }
+        }
+      </script>
+    {%- endif -%}
   {%- endif -%}
 {%- endif -%}
 
@@ -181,14 +213,23 @@
     margin: 0;
   }
 
-  /* The cards: two across on a phone, three on a tablet, four on a computer, with wide gaps */
+  /* The cards: two across on a phone, three on a tablet, four on a computer, with wide gaps. A short row is centred. */
   .designers__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 2.5rem 1.25rem;
+    --designers-cols: 2;
+    --designers-gap-x: 1.25rem;
+    --designers-gap-y: 2.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--designers-gap-y) var(--designers-gap-x);
     margin: 0;
     padding: 0;
     list-style: none;
-    display: grid;
+    display: flex;
+  }
+
+  .designers__grid > li {
+    flex: 0 0 calc((100% - (var(--designers-cols) - 1) * var(--designers-gap-x)) / var(--designers-cols));
+    min-width: 0;
   }
 
   .designers__footer {
@@ -245,15 +286,17 @@
 
   @media screen and (min-width: 700px) {
     .designers__grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 3.5rem 2.5rem;
+      --designers-cols: 3;
+      --designers-gap-x: 2.5rem;
+      --designers-gap-y: 3.5rem;
     }
   }
 
   @media screen and (min-width: 1000px) {
     .designers__grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 4rem 3rem;
+      --designers-cols: 4;
+      --designers-gap-x: 3rem;
+      --designers-gap-y: 4rem;
     }
   }
 {% endstylesheet %}
