@@ -261,6 +261,13 @@ Parameters:
         text-transform: none;
       }
 
+      /* The menu from 1150 to 1279 px: closer tabs, so that the six hold on one line beside the button */
+      @media screen and (min-width: 1150px) and (max-width: 1279px) {
+        html .header__primary-nav {
+          column-gap: 1.75rem;
+        }
+      }
+
       /* The filters of the rug lists: a size down, so that the longer names hold on one line */
       html .rug-filters {
         font-size: var(--text-sm);
