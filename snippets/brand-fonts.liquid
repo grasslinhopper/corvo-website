@@ -173,6 +173,11 @@ Parameters:
         font-size: clamp(2.5rem, 2.043rem + 1.951vw, 4rem);
       }
 
+      /* The home's opening line, larger on a phone, where it now takes two lines */
+      html .hero-films__heading {
+        font-size: clamp(2.25rem, 1.75rem + 2.6vw, 4.5rem);
+      }
+
       /* Lead paragraphs: Canela Text */
       html :is(.page-intro__lead, .hero-films__text, .cshow__description, .pfolio__lede, .designer__summary, .collection-banner .collection-description),
       html .section-header .prose > p:not([class]) {
@@ -213,9 +218,21 @@ Parameters:
       }
 
       html .product-card .product-title {
+        font-weight: 400;
         font-size: 1.125rem;
         line-height: 1.3;
         letter-spacing: 0;
+        text-transform: none;
+      }
+
+      /* Designer names: Canela Deck, like rug names */
+      html .designer-card__name {
+        font-family: var(--heading-font-family);
+        font-weight: 400;
+        font-size: 1.25rem;
+        line-height: 1.25;
+        letter-spacing: 0;
+        text-transform: none;
       }
 
       @media screen and (max-width: 699px) {
@@ -242,6 +259,11 @@ Parameters:
         font-size: inherit;
         letter-spacing: var(--text-letter-spacing);
         text-transform: none;
+      }
+
+      /* The filters of the rug lists: a size down, so that the longer names hold on one line */
+      html .rug-filters {
+        font-size: var(--text-sm);
       }
 
       /* Fields keep the text font */
