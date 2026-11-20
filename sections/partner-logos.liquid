@@ -99,9 +99,9 @@ an AI assistant) reads them as stores that sell Corvo.
     height: auto;
   }
 
+  /* Grey, and a little darker, so that logos in light gold or grey stay as legible as the black ones */
   .plogos--one-colour .plogos__logo {
-    filter: grayscale(1);
-    opacity: .82;
+    filter: grayscale(1) brightness(.72) contrast(1.25);
   }
 
   .plogos__name {
@@ -141,12 +141,12 @@ an AI assistant) reads them as stores that sell Corvo.
   @media screen and (min-width: 1000px) {
     .plogos__list {
       --plogos-scale: .64;
-      row-gap: 2.25rem;
+      row-gap: 2rem;
     }
 
     .plogos__item {
       flex-basis: calc(100% / 6);
-      min-height: 5rem;
+      min-height: 4.5rem;
     }
   }
 </style>
@@ -168,8 +168,9 @@ an AI assistant) reads them as stores that sell Corvo.
           this.button.setAttribute('aria-expanded', String(open));
           this.button.textContent = open ? this.button.dataset.less : this.button.dataset.more;
 
+          // The list closes above the button: bring the button back to the middle of the screen
           if (!open) {
-            this.button.scrollIntoView({ block: 'nearest' });
+            this.button.scrollIntoView({ block: 'center' });
           }
         };
 
