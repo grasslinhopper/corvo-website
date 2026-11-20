@@ -115,8 +115,15 @@
     {%- endif -%}
 
     {%- comment -%}Few prefetch to increase performance on commonly used third-parties{%- endcomment -%}
-    {%- comment -%}The fonts of the font pickers are preloaded only while the brand fonts (Adobe Fonts) are off{%- endcomment -%}
-    {%- if settings.adobe_fonts_id == blank -%}
+    {%- comment -%}
+    Corvo addition: the brand fonts, Canela and Graphik (snippets/brand-fonts.liquid), preload their two most used files.
+    The fonts of the font pickers are preloaded only while no brand fonts are in use (neither these nor Adobe Fonts).
+    {%- endcomment -%}
+    {%- capture brand_fonts_state -%}{%- render 'brand-fonts', part: 'state' -%}{%- endcapture -%}
+
+    {%- if brand_fonts_state == 'on' -%}
+      {%- render 'brand-fonts', part: 'preload' -%}
+    {%- elsif settings.adobe_fonts_id == blank -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
 
       {%- unless settings.heading_font.system? -%}
@@ -158,6 +165,11 @@
 
     {%- comment -%}Corvo addition: the rug card and the lists of rugs. After the theme's own styles, which it refines.{%- endcomment -%}
     {{- 'corvo-cards.css' | asset_url | stylesheet_tag -}}
+
+    {%- comment -%}Corvo addition: the brand fonts and their styles, after every other style, which they refine{%- endcomment -%}
+    {%- if brand_fonts_state == 'on' -%}
+      {%- render 'brand-fonts' -%}
+    {%- endif -%}
   </head>
 
   {% liquid

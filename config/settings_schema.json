@@ -374,11 +374,25 @@
       },
       {
         "type": "header",
-        "content": "Brand fonts (Adobe Fonts)"
+        "content": "Brand fonts (Canela and Graphik)"
       },
       {
         "type": "paragraph",
-        "content": "Corvo's brand fonts, IvyMode and IvyEpic, are served by Adobe Fonts. Enter the ID of the Adobe Fonts web project to switch every page to them. Leave it empty to keep the fonts chosen above."
+        "content": "Canela for titles and lead paragraphs, Graphik for text, labels and buttons, as set on 20 November. The font files are read from Content > Files. The files there now are the foundry's trial versions, so the fonts show in theme previews only: the published site keeps the fonts chosen above until the licensed files are in place."
+      },
+      {
+        "type": "checkbox",
+        "id": "brand_fonts",
+        "label": "Use the brand fonts",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Fonts from Adobe Fonts (not in use)"
+      },
+      {
+        "type": "paragraph",
+        "content": "An earlier choice, IvyMode and IvyEpic, served by Adobe Fonts. Enter the ID of an Adobe Fonts web project to switch every page to its fonts. Leave it empty to keep the fonts above."
       },
       {
         "type": "text",
