@@ -68,7 +68,19 @@
   @media screen and (min-width: 1150px) {
     .header__cta-item {
       display: block;
+      transition: opacity .3s ease, visibility .3s ease;
     }
+  }
+
+  {%- comment -%}
+  Corvo addition: on a page that opens with the hero films and their own buttons (the home), the header button waits
+  until the films have been scrolled past, so that "Tailor your rug" is never shown twice at once. The films set
+  "is-past-hero" (sections/hero-films.liquid). Without scripts the button stays in place.
+  {%- endcomment -%}
+  html.corvo-js:has(hero-films[data-hide-header-button]):not(.is-past-hero) .header__cta-item {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   {%- comment -%}

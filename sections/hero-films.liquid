@@ -19,7 +19,7 @@
   }
 </style>
 
-<hero-films class="hero-films" {% if section.settings.allow_transparent_header %}allow-transparent-header{% endif %}>
+<hero-films class="hero-films" {% if section.settings.allow_transparent_header %}allow-transparent-header{% endif %} {% if section.settings.hide_header_button %}data-hide-header-button{% endif %}>
   <div class="hero-films__panels">
     {%- for block in section.blocks -%}
       {%- liquid
@@ -350,12 +350,36 @@
           this.onBreakpointChange = () => this.sync();
           this.breakpoint.addEventListener('change', this.onBreakpointChange);
 
+          // Corvo addition: the header button waits until the films have been scrolled past (see sections/header.liquid)
+          if (this.hasAttribute('data-hide-header-button')) {
+            this.onHeaderScroll = () => {
+              if (this.headerTicking) return;
+              this.headerTicking = true;
+
+              window.requestAnimationFrame(() => {
+                this.headerTicking = false;
+                const header = document.querySelector('.header');
+                const headerBottom = header ? Math.max(0, header.getBoundingClientRect().bottom) : 0;
+                document.documentElement.classList.toggle('is-past-hero', this.getBoundingClientRect().bottom <= headerBottom + 1);
+              });
+            };
+
+            window.addEventListener('scroll', this.onHeaderScroll, { passive: true });
+            window.addEventListener('resize', this.onHeaderScroll, { passive: true });
+            this.onHeaderScroll();
+          }
+
           this.sync();
         }
 
         disconnectedCallback() {
           if (this.observer) this.observer.disconnect();
           if (this.breakpoint) this.breakpoint.removeEventListener('change', this.onBreakpointChange);
+
+          if (this.onHeaderScroll) {
+            window.removeEventListener('scroll', this.onHeaderScroll);
+            window.removeEventListener('resize', this.onHeaderScroll);
+          }
         }
 
         // Sets the film's address the first time it is needed: the lighter 720p file, or the listed file if that fails
@@ -499,6 +523,13 @@
       "id": "allow_transparent_header",
       "label": "Show the header transparently over the hero",
       "info": "Only applies when this is the first section of the page.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_header_button",
+      "label": "Hide the header button until the films are scrolled past",
+      "info": "So that \"Tailor your rug\" does not show twice while the films and their own buttons are on screen.",
       "default": true
     },
     {

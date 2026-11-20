@@ -5,6 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=5.0">
 
+    {%- comment -%}Corvo addition: a mark that scripts run, set before anything is drawn, for styles that depend on them{%- endcomment -%}
+    <script>document.documentElement.classList.add('corvo-js');</script>
+
     {%- comment -%}
     Corvo addition: every page tells search engines and AI assistants what it is. A title always names Corvo, the list
     of all rugs is not called "Products", and a page without a description of its own gets a factual one. The page of
