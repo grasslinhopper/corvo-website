@@ -37,8 +37,8 @@
         "hide_for_account_holders": true,
         "show_only_once": true,
         "show_newsletter_form": true,
-        "title": "COrvo newsletter",
-        "content": "Subscrive to our newsletter to get product and new collecition releases",
+        "title": "Corvo newsletter",
+        "content": "Subscribe to our newsletter to get product and new collection releases",
         "button_text": "Subscribe"
       }
     },
