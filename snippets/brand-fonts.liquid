@@ -247,6 +247,20 @@ Parameters:
         font-variant-numeric: tabular-nums;
       }
 
+      /* Prices: Graphik, also where the theme gives a price the size of a title */
+      html :is(sale-price, compare-at-price, .price-list) {
+        font-family: var(--text-font-family);
+        font-weight: 400;
+        font-style: normal;
+        letter-spacing: 0;
+        text-transform: none;
+      }
+
+      /* The choices of the rug page keep the size they had, 14 px, so that "300 × 400" fits its button */
+      html :is(.rug-size, .rug-option, .rug-chip) {
+        font-size: var(--text-sm);
+      }
+
       /* Totals: Graphik Medium */
       html .rug-summary__total {
         font-weight: 500;
