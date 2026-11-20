@@ -1,0 +1,304 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+Corvo addition: PARTNER LOGOS
+----------------------------------------------------------------------------------------------------------------------
+
+Logos of partner stores under a short text. Made for the home page's "Proof": stores that sell Graccioza, the Sorema
+group's brand of luxury bath linens. The text says whose stores they are, so that nobody (a visitor, a search engine or
+an AI assistant) reads them as stores that sell Corvo.
+
+* Each logo carries the store's name as its text, so the names are read without the pictures.
+* Logos keep their own proportions and the sizes they were given: a logo of 200 pixels is shown larger than one of
+  100. Its "Size" setting makes one logo a little larger or smaller, to balance it with the others.
+* On a phone, the first rows are shown with a button for the rest. Without scripts, every logo is shown.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign phone_limit = section.settings.phone_rows | times: 3
+  assign logo_count = section.blocks.size
+  assign has_more = false
+
+  if section.settings.phone_rows > 0 and logo_count > phone_limit
+    assign has_more = true
+  endif
+
+  assign more_label = section.settings.more_label | default: 'See all the stores'
+  assign less_label = section.settings.less_label | default: 'Show fewer'
+  assign list_label = section.settings.list_label | strip_html | escape
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --plogos-size: {{ section.settings.logo_scale | divided_by: 100.0 }};
+  }
+</style>
+
+<div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+  <div class="container">
+    <partner-logos class="plogos section-stack{% if section.settings.one_colour %} plogos--one-colour{% endif %}"{% if has_more %} data-limited{% endif %}>
+      {%- render 'section-header', subheading: section.settings.eyebrow, heading: section.settings.title, content: section.settings.text -%}
+
+      {%- if logo_count > 0 -%}
+        <ul class="plogos__list unstyled-list" role="list" id="plogos-{{ section.id }}"{% if list_label != blank %} aria-label="{{ list_label }}"{% endif %}>
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign logo = block.settings.image
+              assign name = block.settings.name | strip
+              assign size = block.settings.size | divided_by: 100.0
+
+              if name == blank and logo != blank
+                assign name = logo.alt | remove: ' logo'
+              endif
+            -%}
+
+            <li class="plogos__item{% if has_more and forloop.index > phone_limit %} plogos__item--more{% endif %}" {{ block.shopify_attributes }}>
+              {%- if logo != blank -%}
+                <img class="plogos__logo" src="{{ logo | image_url: width: logo.width }}" width="{{ logo.width }}" height="{{ logo.height }}" alt="{{ name | escape }}" loading="lazy" decoding="async" style="--logo-width: {{ logo.width }}; --logo-size: {{ size }};">
+              {%- else -%}
+                <span class="plogos__name">{{ name | escape }}</span>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        {%- if has_more -%}
+          <div class="plogos__more">
+            <button type="button" class="link" aria-controls="plogos-{{ section.id }}" aria-expanded="false" data-more="{{ more_label | escape }}" data-less="{{ less_label | escape }}">{{ more_label | escape }}</button>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    </partner-logos>
+  </div>
+</div>
+
+<style>
+  .plogos__list {
+    --plogos-scale: .5;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 1.5rem;
+    width: 100%;
+    max-width: 68rem;
+    margin-inline: auto;
+  }
+
+  .plogos__item {
+    display: flex;
+    flex: 0 0 calc(100% / 3);
+    align-items: center;
+    justify-content: center;
+    min-height: 3.75rem;
+    padding-inline: .5rem;
+  }
+
+  .plogos__logo {
+    width: calc(var(--logo-width) * 1px * var(--plogos-scale) * var(--plogos-size, 1) * var(--logo-size, 1));
+    max-width: 100%;
+    height: auto;
+  }
+
+  .plogos--one-colour .plogos__logo {
+    filter: grayscale(1);
+    opacity: .82;
+  }
+
+  .plogos__name {
+    font-size: var(--text-sm);
+    letter-spacing: .08em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .plogos__more {
+    display: none;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 699px) {
+    html.corvo-js .plogos[data-limited]:not(.is-open) .plogos__item--more {
+      display: none;
+    }
+
+    html.corvo-js .plogos[data-limited] .plogos__more {
+      display: block;
+    }
+  }
+
+  @media screen and (min-width: 700px) {
+    .plogos__list {
+      --plogos-scale: .56;
+      row-gap: 2rem;
+    }
+
+    .plogos__item {
+      flex-basis: 20%;
+      min-height: 4.5rem;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .plogos__list {
+      --plogos-scale: .64;
+      row-gap: 2.25rem;
+    }
+
+    .plogos__item {
+      flex-basis: calc(100% / 6);
+      min-height: 5rem;
+    }
+  }
+</style>
+
+<script>
+  if (!customElements.get('partner-logos')) {
+    customElements.define('partner-logos', class extends HTMLElement {
+      connectedCallback() {
+        this.button = this.querySelector('.plogos__more button');
+
+        if (!this.button) {
+          return;
+        }
+
+        this.onToggle = () => {
+          const open = !this.classList.contains('is-open');
+
+          this.classList.toggle('is-open', open);
+          this.button.setAttribute('aria-expanded', String(open));
+          this.button.textContent = open ? this.button.dataset.less : this.button.dataset.more;
+
+          if (!open) {
+            this.button.scrollIntoView({ block: 'nearest' });
+          }
+        };
+
+        this.button.addEventListener('click', this.onToggle);
+      }
+
+      disconnectedCallback() {
+        this.button?.removeEventListener('click', this.onToggle);
+      }
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Partner logos",
+  "class": "shopify-section--partner-logos",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small title above"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "info": "Say whose stores these are: a store that sells Graccioza does not sell Corvo."
+    },
+    {
+      "type": "text",
+      "id": "list_label",
+      "label": "Name of the list",
+      "info": "Not shown. Read aloud by screen readers before the names of the stores.",
+      "default": "Stores that sell Graccioza"
+    },
+    {
+      "type": "checkbox",
+      "id": "one_colour",
+      "label": "Show the logos in grey",
+      "info": "Off: each logo in its own colours.",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "logo_scale",
+      "label": "Size of all logos",
+      "min": 70,
+      "max": 130,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "phone_rows",
+      "label": "Rows shown on a phone before \"See all\"",
+      "info": "Three logos per row. 0 shows every logo.",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "more_label",
+      "label": "Button to show all",
+      "default": "See all the stores"
+    },
+    {
+      "type": "text",
+      "id": "less_label",
+      "label": "Button to show fewer",
+      "default": "Show fewer"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Logo",
+          "info": "A file with a transparent background, about 200 pixels wide or more."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name of the store",
+          "info": "Read by search engines, AI assistants and screen readers."
+        },
+        {
+          "type": "range",
+          "id": "size",
+          "label": "Size",
+          "info": "To balance this logo with the others.",
+          "min": 50,
+          "max": 150,
+          "step": 5,
+          "unit": "%",
+          "default": 100
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Partner logos"
+    }
+  ]
+}
+{% endschema %}

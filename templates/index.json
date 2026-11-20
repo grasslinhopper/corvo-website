@@ -427,17 +427,321 @@
       },
       "disabled": true
     },
-    "wf-proof": {
-      "type": "wireframe",
+    "proof": {
+      "type": "partner-logos",
+      "blocks": {
+        "logo-neiman-marcus": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-neiman-marcus.png",
+            "name": "Neiman Marcus",
+            "size": 100
+          }
+        },
+        "logo-glancy-fawcett": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-glancy-fawcett.png",
+            "name": "Glancy Fawcett",
+            "size": 100
+          }
+        },
+        "logo-harrods": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-harrods.png",
+            "name": "Harrods",
+            "size": 100
+          }
+        },
+        "logo-fine-linens-manhattan": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-fine-linens-manhattan.png",
+            "name": "Fine Linens Manhattan",
+            "size": 100
+          }
+        },
+        "logo-el-palacio-de-hierro": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-el-palacio-de-hierro.png",
+            "name": "El Palacio de Hierro",
+            "size": 100
+          }
+        },
+        "logo-maison-de-sandra": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-maison-de-sandra.png",
+            "name": "Maison de Sandra",
+            "size": 100
+          }
+        },
+        "logo-au-lit-fine-linens": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-au-lit-fine-linens.png",
+            "name": "Au Lit Fine Linens",
+            "size": 100
+          }
+        },
+        "logo-el-corte-ingles": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-el-corte-ingles.png",
+            "name": "El Corte Inglés",
+            "size": 100
+          }
+        },
+        "logo-luxemporium": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-luxemporium.png",
+            "name": "Luxemporium",
+            "size": 100
+          }
+        },
+        "logo-paris-em-lisboa": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-paris-em-lisboa.png",
+            "name": "Paris em Lisboa",
+            "size": 100
+          }
+        },
+        "logo-etra-home": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-etra-home.png",
+            "name": "Etra Home",
+            "size": 100
+          }
+        },
+        "logo-los-encajeros": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-los-encajeros.png",
+            "name": "Los Encajeros",
+            "size": 100
+          }
+        },
+        "logo-lavie": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-lavie.png",
+            "name": "Lavie",
+            "size": 100
+          }
+        },
+        "logo-rialto-living": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-rialto-living.png",
+            "name": "Rialto Living",
+            "size": 100
+          }
+        },
+        "logo-the-master-bedroom": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-the-master-bedroom.png",
+            "name": "The Master Bedroom",
+            "size": 100
+          }
+        },
+        "logo-matarranz": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-matarranz.png",
+            "name": "Matarranz",
+            "size": 100
+          }
+        },
+        "logo-bed-bath": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-bed-bath.png",
+            "name": "Bed & Bath",
+            "size": 100
+          }
+        },
+        "logo-betten-struve": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-betten-struve.png",
+            "name": "Betten Struve",
+            "size": 100
+          }
+        },
+        "logo-davids-fine-linens": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-davids-fine-linens.png",
+            "name": "David's Fine Linens",
+            "size": 100
+          }
+        },
+        "logo-between-the-sheets": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-between-the-sheets.png",
+            "name": "Between the Sheets",
+            "size": 100
+          }
+        },
+        "logo-spinocchia-freund": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-spinocchia-freund.png",
+            "name": "Spinocchia Freund",
+            "size": 100
+          }
+        },
+        "logo-kuhl-linscomb": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-kuhl-linscomb.png",
+            "name": "Kuhl-Linscomb",
+            "size": 100
+          }
+        },
+        "logo-perigold": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-perigold.png",
+            "name": "Perigold",
+            "size": 100
+          }
+        },
+        "logo-pisolino": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-pisolino.png",
+            "name": "Pisolino",
+            "size": 100
+          }
+        },
+        "logo-breuninger": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-breuninger.png",
+            "name": "Breuninger",
+            "size": 100
+          }
+        },
+        "logo-linen-obsession": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-linen-obsession.png",
+            "name": "Linen Obsession",
+            "size": 100
+          }
+        },
+        "logo-fine-linen-and-bath": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-fine-linen-and-bath.png",
+            "name": "Fine Linen and Bath",
+            "size": 100
+          }
+        },
+        "logo-blue-salon": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-blue-salon.png",
+            "name": "Blue Salon",
+            "size": 100
+          }
+        },
+        "logo-heirlooms-england": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-heirlooms-england.png",
+            "name": "Heirlooms England",
+            "size": 100
+          }
+        },
+        "logo-charlottes-grace": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-charlottes-grace.png",
+            "name": "Charlotte's Grace",
+            "size": 100
+          }
+        },
+        "logo-samuel-scheuer": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-samuel-scheuer.png",
+            "name": "Samuel Scheuer",
+            "size": 100
+          }
+        },
+        "logo-gingers": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-gingers.png",
+            "name": "Ginger's",
+            "size": 100
+          }
+        },
+        "logo-french-quarter": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/partner-french-quarter.png",
+            "name": "French Quarter",
+            "size": 100
+          }
+        }
+      },
+      "block_order": [
+        "logo-neiman-marcus",
+        "logo-glancy-fawcett",
+        "logo-harrods",
+        "logo-fine-linens-manhattan",
+        "logo-el-palacio-de-hierro",
+        "logo-maison-de-sandra",
+        "logo-au-lit-fine-linens",
+        "logo-el-corte-ingles",
+        "logo-luxemporium",
+        "logo-paris-em-lisboa",
+        "logo-etra-home",
+        "logo-los-encajeros",
+        "logo-lavie",
+        "logo-rialto-living",
+        "logo-the-master-bedroom",
+        "logo-matarranz",
+        "logo-bed-bath",
+        "logo-betten-struve",
+        "logo-davids-fine-linens",
+        "logo-between-the-sheets",
+        "logo-spinocchia-freund",
+        "logo-kuhl-linscomb",
+        "logo-perigold",
+        "logo-pisolino",
+        "logo-breuninger",
+        "logo-linen-obsession",
+        "logo-fine-linen-and-bath",
+        "logo-blue-salon",
+        "logo-heirlooms-england",
+        "logo-charlottes-grace",
+        "logo-samuel-scheuer",
+        "logo-gingers",
+        "logo-french-quarter"
+      ],
       "settings": {
-        "label": "Proof",
-        "is_page_title": false,
-        "description": "Press logos, client names and three or four numbers.",
-        "needs": "Logos, quotes and figures.",
-        "phase": "Phase 1",
-        "layout": "grid",
-        "columns": 5,
-        "size": "small"
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "eyebrow": "The Sorema group",
+        "title": "A world of exceptional partners",
+        "text": "<p>Corvo belongs to the Sorema group, which also makes Graccioza, its brand of luxury bath linens. Graccioza is sold in more than 70 countries, from London to Dubai and from New York to Zurich, by some of the most prestigious luxury stores in the world. Here are some of them.</p>",
+        "list_label": "Stores that sell Graccioza",
+        "one_colour": true,
+        "logo_scale": 100,
+        "phone_rows": 4,
+        "more_label": "See all the stores",
+        "less_label": "Show fewer"
       }
     },
     "blog-posts": {
@@ -674,7 +978,7 @@
     "professionals",
     "heritage",
     "atelier",
-    "wf-proof",
+    "proof",
     "blog-posts",
     "meeting"
   ]
