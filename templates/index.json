@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -53,7 +62,7 @@
           "type": "image",
           "settings": {
             "color_scheme": "scheme-4",
-            "image": "shopify://shop_images/CORVO_FINAL-43-19mb.jpg",
+            "image": "shopify://shop_images/EARTHBOUND-25_187_1_TR-rug2-1.jpg",
             "column_count": "4",
             "row_count": 2,
             "title": "Collections",
@@ -71,7 +80,7 @@
           "type": "image",
           "settings": {
             "color_scheme": "scheme-4",
-            "image": "shopify://shop_images/CORVO_11.jpg",
+            "image": "shopify://shop_images/CORVO_FINAL-71_742c0d97-042d-4efa-849a-45845d38c986.jpg",
             "column_count": "4",
             "row_count": 2,
             "title": "Bespoke",
@@ -89,7 +98,7 @@
           "type": "image",
           "settings": {
             "color_scheme": "scheme-4",
-            "image": "shopify://shop_images/VERTIS-4.png",
+            "image": "shopify://shop_images/u5599495731_a_contemporary_living_area_is_designed_with_a_neu_903f937f-5810-444f-af22-c2d829e5548f_1.png",
             "column_count": "4",
             "row_count": 2,
             "title": "Portfolio",
@@ -112,10 +121,10 @@
       "settings": {
         "color_scheme": "scheme-1",
         "separate_section_with_border": false,
-        "desktop_row_height": 330,
+        "desktop_row_height": 310,
         "mobile_row_height": 200,
         "section_width": "lg",
-        "spacing": "xs",
+        "spacing": "sm",
         "subheading": "",
         "title": "",
         "content": ""
@@ -124,54 +133,84 @@
     "collections": {
       "type": "collection-list",
       "blocks": {
-        "collection-1": {
+        "collection-3": {
           "type": "collection",
           "settings": {
             "color_scheme": "scheme-1",
-            "collection": "from-ink-to-thread",
-            "title": "From Ink To Thread",
+            "collection": "frame-atelier",
+            "expand_collection": false,
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "title": "{{ block.settings.collection.title }}",
             "button_text": "Discover",
-            "button_style": "link"
+            "button_link": "",
+            "button_style": "link",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
           }
         },
         "collection-2": {
           "type": "collection",
           "settings": {
             "color_scheme": "scheme-1",
-            "collection": "colecao-ultra-fixe",
-            "title": "Priming",
+            "collection": "3d-edition",
+            "expand_collection": false,
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "title": "{{ block.settings.collection.title }}",
             "button_text": "Discover",
-            "button_style": "link"
-          }
-        },
-        "collection-3": {
-          "type": "collection",
-          "settings": {
-            "color_scheme": "scheme-1",
-            "collection": "contour",
-            "title": "Contour",
-            "button_text": "Discover",
-            "button_style": "link"
+            "button_link": "",
+            "button_style": "link",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
           }
         },
         "collection-4": {
           "type": "collection",
           "settings": {
             "color_scheme": "scheme-1",
-            "collection": "shading",
+            "collection": "portuguese-tile-edition",
+            "expand_collection": false,
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
             "title": "Shading",
             "button_text": "Discover",
-            "button_style": "link"
+            "button_link": "",
+            "button_style": "link",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
+          }
+        },
+        "collection-1": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "from-ink-to-thread",
+            "expand_collection": false,
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "title": "{{ block.settings.collection.title }}",
+            "button_text": "Discover",
+            "button_link": "",
+            "button_style": "link",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
           }
         },
         "collection-5": {
           "type": "collection",
           "settings": {
             "color_scheme": "scheme-1",
-            "collection": "watered-layer",
-            "title": "Watered Layer",
+            "collection": "cut-loop-edition",
+            "expand_collection": false,
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "title": "{{ block.settings.collection.title }}",
             "button_text": "Discover",
-            "button_style": "link"
+            "button_link": "",
+            "button_style": "link",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
           }
         },
         "collection-6": {
@@ -179,17 +218,23 @@
           "settings": {
             "color_scheme": "scheme-1",
             "collection": "textured-touch",
+            "expand_collection": false,
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
             "title": "Textured Touch",
             "button_text": "Discover",
-            "button_style": "link"
+            "button_link": "",
+            "button_style": "link",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
           }
         }
       },
       "block_order": [
-        "collection-1",
-        "collection-2",
         "collection-3",
+        "collection-2",
         "collection-4",
+        "collection-1",
         "collection-5",
         "collection-6"
       ],
@@ -329,6 +374,7 @@
         "color_scheme": "scheme-2",
         "separate_section_with_border": true,
         "image": "shopify://shop_images/CORVO_FINAL-28.jpg",
+        "image_alt": "",
         "reveal_on_scroll": true,
         "image_position": "start",
         "content_width": "sm",
