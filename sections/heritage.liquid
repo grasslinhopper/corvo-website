@@ -1,0 +1,342 @@
+{%- comment -%}
+  Heritage (Corvo addition)
+
+  The family's story and craft in one block: an archive photograph with a second, smaller picture over its corner, a
+  title, a few lines, three or four figures (a number over a label) and links. Everything is plain HTML; the figures
+  are a description list, read as "label: number".
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign figure_blocks = section.blocks | where: 'type', 'figure'
+  assign has_links = false
+
+  if section.settings.link_1_text != blank and section.settings.link_1_url != blank
+    assign has_links = true
+  endif
+
+  if section.settings.link_2_text != blank and section.settings.link_2_url != blank
+    assign has_links = true
+  endif
+-%}
+
+<div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+  <div class="container">
+    <div class="heritage {% if section.settings.image_position == 'end' %}heritage--media-end{% endif %}">
+      {%- if section.settings.image != blank -%}
+        <div class="heritage__media {% if section.settings.image_2 != blank %}heritage__media--pair{% endif %}">
+          {%- assign image_alt = section.settings.image_alt | default: section.settings.image.alt | escape -%}
+          <figure class="heritage__image">
+            {{- section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '(max-width: 999px) 100vw, 46vw', widths: '400,600,800,1000,1200,1400', alt: image_alt -}}
+          </figure>
+
+          {%- if section.settings.image_2 != blank -%}
+            {%- assign image_2_alt = section.settings.image_2_alt | default: section.settings.image_2.alt | escape -%}
+            <figure class="heritage__image heritage__image--small">
+              {{- section.settings.image_2 | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(max-width: 999px) 45vw, 20vw', widths: '300,450,600,800', alt: image_2_alt -}}
+            </figure>
+          {%- endif -%}
+
+          {%- if section.settings.caption != blank -%}
+            <p class="heritage__caption text-xs text-subdued">{{ section.settings.caption | escape }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div class="heritage__text">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="h6">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.title != blank -%}
+          <h2 class="heritage__title">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <div class="heritage__lead prose">
+            {%- render 'corvo-fill', text: section.settings.text -%}
+          </div>
+        {%- endif -%}
+
+        {%- if figure_blocks.size > 0 -%}
+          <dl class="heritage__figures">
+            {%- for block in figure_blocks -%}
+              <div class="heritage__figure" {{ block.shopify_attributes }}>
+                <dt class="heritage__label">{{ block.settings.label | escape }}</dt>
+                <dd class="heritage__value">{{ block.settings.value | escape }}</dd>
+              </div>
+            {%- endfor -%}
+          </dl>
+        {%- endif -%}
+
+        {%- if has_links -%}
+          <p class="heritage__links">
+            {%- if section.settings.link_1_text != blank and section.settings.link_1_url != blank -%}
+              <a href="{{ section.settings.link_1_url }}" class="link">{{ section.settings.link_1_text | escape }}</a>
+            {%- endif -%}
+
+            {%- if section.settings.link_2_text != blank and section.settings.link_2_url != blank -%}
+              <a href="{{ section.settings.link_2_url }}" class="link">{{ section.settings.link_2_text | escape }}</a>
+            {%- endif -%}
+          </p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .heritage {
+    gap: clamp(3rem, 6vw, 6rem);
+    display: grid;
+  }
+
+  .heritage__media {
+    position: relative;
+  }
+
+  .heritage__media--pair {
+    padding-block-end: 12%;
+  }
+
+  .heritage__image {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    margin: 0;
+    background: rgb(var(--text-color) / .06);
+  }
+
+  .heritage__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .heritage__image--small {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-end: -4%;
+    width: 46%;
+    aspect-ratio: 1;
+    outline: .5rem solid rgb(var(--background));
+  }
+
+  .heritage__caption {
+    margin: .75rem 0 0;
+    max-width: 54%;
+  }
+
+  .heritage__text {
+    align-content: center;
+    gap: 1.25rem;
+    max-width: 36rem;
+    display: grid;
+  }
+
+  .heritage__text > * {
+    margin: 0;
+  }
+
+  .heritage__title {
+    font-family: var(--display-font-family, var(--heading-font-family));
+    font-weight: var(--display-font-weight, var(--heading-font-weight));
+    font-style: var(--heading-font-style);
+    letter-spacing: var(--heading-letter-spacing);
+    text-transform: var(--heading-text-transform);
+    font-size: clamp(2.125rem, 1.6rem + 2.2vw, 3.5rem);
+    line-height: 1.1;
+  }
+
+  .heritage__lead {
+    font-family: var(--lead-font-family, var(--text-font-family));
+    font-size: clamp(1.0625rem, 1rem + .3vw, 1.25rem);
+    line-height: 1.5;
+  }
+
+  .heritage__lead > * {
+    margin-block: 0;
+  }
+
+  .heritage__lead > * + * {
+    margin-block-start: 1em;
+  }
+
+  .heritage__figures {
+    grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+    gap: 1.5rem 2rem;
+    margin: .75rem 0 0;
+    padding-block-start: 1.75rem;
+    border-block-start: 1px solid rgb(var(--text-color) / .15);
+    display: grid;
+  }
+
+  .heritage__figure {
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: .375rem;
+    display: flex;
+  }
+
+  .heritage__value {
+    font-family: var(--display-font-family, var(--heading-font-family));
+    font-weight: var(--display-font-weight, var(--heading-font-weight));
+    font-size: clamp(2rem, 1.6rem + 1.6vw, 3rem);
+    line-height: 1;
+    margin: 0;
+  }
+
+  .heritage__label {
+    color: rgb(var(--text-color) / .7);
+    font-size: var(--text-sm);
+    line-height: 1.4;
+  }
+
+  .heritage__links {
+    flex-wrap: wrap;
+    gap: .75rem 2rem;
+    margin-block-start: .5rem !important;
+    display: flex;
+  }
+
+  @media screen and (min-width: 1000px) {
+    .heritage {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: center;
+    }
+
+    .heritage--media-end .heritage__media {
+      order: 2;
+    }
+
+    .heritage__text {
+      justify-self: center;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Heritage",
+  "class": "shopify-section--heritage",
+  "tag": "section",
+  "max_blocks": 4,
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Pictures on a computer",
+      "options": [
+        {
+          "value": "start",
+          "label": "On the left"
+        },
+        {
+          "value": "end",
+          "label": "On the right"
+        }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Photograph"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "What the photograph shows"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Second picture, smaller"
+    },
+    {
+      "type": "text",
+      "id": "image_2_alt",
+      "label": "What the second picture shows"
+    },
+    {
+      "type": "text",
+      "id": "caption",
+      "label": "Caption"
+    },
+    {
+      "type": "text",
+      "id": "link_1_text",
+      "label": "First link, text"
+    },
+    {
+      "type": "url",
+      "id": "link_1_url",
+      "label": "First link"
+    },
+    {
+      "type": "text",
+      "id": "link_2_text",
+      "label": "Second link, text"
+    },
+    {
+      "type": "url",
+      "id": "link_2_url",
+      "label": "Second link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "figure",
+      "name": "Figure",
+      "settings": [
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Number or word",
+          "info": "For example: 1947"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "What it means"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Heritage"
+    }
+  ]
+}
+{% endschema %}

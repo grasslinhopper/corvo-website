@@ -305,7 +305,8 @@
         "heading_tag": "h3",
         "overlay_color": "#1c1c1c",
         "overlay_opacity": 20
-      }
+      },
+      "disabled": true
     },
     "projects": {
       "type": "project-cards",
@@ -423,7 +424,8 @@
         "button_2_text": "The Sorema Group",
         "button_2_link": "shopify://pages/sorema-group",
         "button_2_style": "link"
-      }
+      },
+      "disabled": true
     },
     "wf-proof": {
       "type": "wireframe",
@@ -510,15 +512,167 @@
         "overlay_color": "#000000",
         "overlay_opacity": 45
       }
+    },
+    "process-film": {
+      "type": "media-story",
+      "settings": {
+        "layout": "film",
+        "media_position": "start",
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "eyebrow": "The making",
+        "title": "From the yarn to the finished rug",
+        "text": "<p>Every Corvo rug is made in our atelier in Silvalde, in the north of Portugal. The yarn is chosen and dyed, the design is tufted by hand, and the pile is cut and finished by the people who make it.</p>",
+        "button_1_text": "Craftsmanship",
+        "button_1_link": "shopify://pages/craftmanship",
+        "button_1_outline": true,
+        "button_2_text": "",
+        "button_2_link": "",
+        "video": "shopify://files/videos/R9 V2.mov",
+        "video_description": "A film from the atelier: yarn on its cones, the tufting frame with its canvas, and the pile of a rug taking shape.",
+        "trim_end": 2.8,
+        "pause_label": "Pause the film",
+        "play_label": "Play the film",
+        "image_alt": ""
+      }
+    },
+    "process-flow": {
+      "type": "process-flow",
+      "blocks": {
+        "step-materials": {
+          "type": "step",
+          "settings": {
+            "title": "Raw materials",
+            "text": "<p>Every fibre is selected for how it feels, how it wears over time and how it lives in a space, not just how it looks. We work with refined plant-based yarns, fine cottons and natural wools chosen for their strength and comfort.</p>",
+            "image": "shopify://shop_images/CORVO_FINAL-19.jpg",
+            "image_alt": "Hanks of undyed yarn, the raw material of a Corvo rug",
+            "link_text": "Discover the raw materials",
+            "link_url": "shopify://pages/raw-materials"
+          }
+        },
+        "step-colours": {
+          "type": "step",
+          "settings": {
+            "title": "Colours",
+            "text": "<p>Choose from our Open Palette or develop a tone of your own through Infinite Colours. In our colour laboratory every hue is engineered, and every batch of yarn is tested in-house for colourfastness and consistency.</p>",
+            "image": "shopify://shop_images/CORVO_FINAL-22.jpg",
+            "image_alt": "A technician measuring red dye in the colour laboratory",
+            "link_text": "Discover the colours",
+            "link_url": "shopify://pages/colours"
+          }
+        },
+        "step-service": {
+          "type": "step",
+          "settings": {
+            "title": "Service",
+            "text": "<p>It starts with a personal consultation, where our team works with you on fibres, structure, pile height, colours and shape. Then come the artwork for your approval, a sample, production and delivery.</p>",
+            "image": "shopify://shop_images/WhatsApp_Image_2026-01-05_at_20.18.57_4.jpg",
+            "image_alt": "A designer drawing the artwork of a rug on a tablet, beside small yarn samples in blues and greens",
+            "link_text": "Discover the service",
+            "link_url": "shopify://pages/bespoke-service"
+          }
+        }
+      },
+      "block_order": [
+        "step-materials",
+        "step-colours",
+        "step-service"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "eyebrow": "How a Corvo rug is made",
+        "title": "From fibre to finished rug",
+        "text": "<p>Three steps, each with a page of its own: the material, its colours, and the service that brings the rug to you.</p>",
+        "button_text": "",
+        "button_link": "",
+        "button_outline": true
+      }
+    },
+    "bespoke": {
+      "type": "media-story",
+      "settings": {
+        "layout": "image_film",
+        "media_position": "end",
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "eyebrow": "Bespoke",
+        "title": "Your design, your size, your colours",
+        "text": "<p>Choose a design from our collections or the design library, or bring one of your own. Our team takes it from the first consultation to the artwork, the sample and the finished rug, made by hand in Portugal in any size up to [max_size].</p>",
+        "button_1_text": "How bespoke works",
+        "button_1_link": "shopify://pages/bespoke",
+        "button_1_outline": false,
+        "button_2_text": "Tailor your rug",
+        "button_2_link": "shopify://pages/tailor-your-rug",
+        "video": "shopify://files/videos/R12 V2.mov",
+        "video_description": "A film of a Corvo rug in orange, yellow and deep green, seen up close.",
+        "trim_end": 2.8,
+        "pause_label": "Pause the film",
+        "play_label": "Play the film",
+        "image": "shopify://shop_images/CORVO_FINAL-57.jpg",
+        "image_alt": "A cream Corvo rug in a room, with a terracotta jug of dried flowers, a plant and a Corvo box"
+      }
+    },
+    "heritage": {
+      "type": "heritage",
+      "blocks": {
+        "figure-century": {
+          "type": "figure",
+          "settings": {
+            "value": "100+",
+            "label": "Years of textiles in the family"
+          }
+        },
+        "figure-1947": {
+          "type": "figure",
+          "settings": {
+            "value": "1947",
+            "label": "Rugs enter the family"
+          }
+        },
+        "figure-generation": {
+          "type": "figure",
+          "settings": {
+            "value": "4th",
+            "label": "Generation of the family business"
+          }
+        }
+      },
+      "block_order": [
+        "figure-century",
+        "figure-1947",
+        "figure-generation"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "image_position": "start",
+        "eyebrow": "Our story",
+        "title": "More than a century of textiles in the family",
+        "text": "<p>Two families of textile makers meet in Corvo, Ferreira de Sá and Relvas. Joaquim Ferreira de Sá founded his rug manufacture in 1947, and Ramiro Relvas began the Sorema group in 1974.</p><p>That knowledge now goes into one thing only: rugs tufted by hand in Silvalde, in the north of Portugal, where every piece passes through the hands of the people who make it.</p>",
+        "image": "shopify://shop_images/HISTORIA_-_IMG_6672.jpg",
+        "image_alt": "Black-and-white archive photograph of a textile workshop, with women finishing tufted rugs at long tables",
+        "image_2": "shopify://shop_images/IMG_4631_copy_GS.jpg",
+        "image_2_alt": "Hands trimming with scissors a tufted rug that reads Est. 1974 and Made in Portugal",
+        "caption": "The workshop, in a photograph from the family archive.",
+        "link_1_text": "Our story",
+        "link_1_url": "shopify://pages/about-us",
+        "link_2_text": "Craftsmanship",
+        "link_2_url": "shopify://pages/craftmanship"
+      }
     }
   },
   "order": [
     "hero",
     "doors",
     "collections",
+    "process-film",
+    "process-flow",
     "images-with-text-scroll",
+    "bespoke",
     "projects",
     "professionals",
+    "heritage",
     "atelier",
     "wf-proof",
     "blog-posts",

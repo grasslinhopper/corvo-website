@@ -1,0 +1,491 @@
+{%- comment -%}
+  The process in steps (Corvo addition)
+
+  Numbered steps along a line that draws itself as the visitor scrolls: each dot fills when the line reaches it, and
+  empties again on the way back up. On a computer the steps alternate sides of the line, picture and text; on a tablet
+  and a phone the line runs down the left edge.
+
+  The steps are a plain ordered list, readable without scripts. Without scripts, and for visitors who reduce motion,
+  the line is drawn whole and every dot is filled.
+{%- endcomment -%}
+
+{%- assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5 -%}
+
+<div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+  <process-flow class="pflow container">
+    {%- if section.settings.eyebrow != blank or section.settings.title != blank or section.settings.text != blank -%}
+      <div class="pflow__header">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="h6">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.title != blank -%}
+          <h2 class="h2">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <div class="pflow__intro prose">
+            {%- render 'corvo-fill', text: section.settings.text -%}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="pflow__body">
+      <span class="pflow__track" aria-hidden="true"><span class="pflow__fill"></span></span>
+
+      <ol class="pflow__steps unstyled-list" role="list">
+        {%- for block in section.blocks -%}
+          {%- assign step_number = forloop.index | prepend: '0' | slice: -2, 2 -%}
+          {%- assign image_alt = block.settings.image_alt | default: block.settings.image.alt | default: block.settings.title | escape -%}
+
+          <li class="pflow__step {% cycle 'pflow__step--odd', 'pflow__step--even' %} {% if block.settings.image == blank %}pflow__step--no-media{% endif %}" {{ block.shopify_attributes }}>
+            <div class="pflow__marker" aria-hidden="true">
+              <span class="pflow__dot">{{ step_number }}</span>
+            </div>
+
+            {%- if block.settings.image != blank -%}
+              <figure class="pflow__media">
+                {{- block.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(max-width: 999px) calc(100vw - 6rem), 40vw', widths: '400,600,800,1000,1200', alt: image_alt -}}
+              </figure>
+            {%- endif -%}
+
+            <div class="pflow__text">
+              {%- if block.settings.title != blank -%}
+                <h3 class="h3 pflow__title">{{ block.settings.title | escape }}</h3>
+              {%- endif -%}
+
+              {%- if block.settings.text != blank -%}
+                <div class="pflow__desc prose">
+                  {%- render 'corvo-fill', text: block.settings.text -%}
+                </div>
+              {%- endif -%}
+
+              {%- if block.settings.link_text != blank and block.settings.link_url != blank -%}
+                <a href="{{ block.settings.link_url }}" class="link pflow__link">{{ block.settings.link_text | escape }}</a>
+              {%- endif -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ol>
+    </div>
+
+    {%- if section.settings.button_text != blank and section.settings.button_link != blank -%}
+      <p class="pflow__footer">
+        <a href="{{ section.settings.button_link }}" class="button {% if section.settings.button_outline %}button--outline{% endif %}">{{ section.settings.button_text | escape }}</a>
+      </p>
+    {%- endif -%}
+  </process-flow>
+</div>
+
+{% stylesheet %}
+  .pflow {
+    --pflow-marker: 3rem;
+    --pflow-line: rgb(var(--text-color) / .18);
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+    display: grid;
+  }
+
+  .pflow__header {
+    justify-items: center;
+    text-align: center;
+    gap: 1rem;
+    max-width: 40rem;
+    margin-inline: auto;
+    display: grid;
+  }
+
+  .pflow__header > * {
+    margin: 0;
+  }
+
+  .pflow__intro {
+    font-family: var(--lead-font-family, var(--text-font-family));
+    font-size: clamp(1.0625rem, 1rem + .3vw, 1.25rem);
+    line-height: 1.5;
+  }
+
+  .pflow__body {
+    position: relative;
+  }
+
+  /* The line, from the first dot to the last; the script measures it and draws it with the scroll */
+  .pflow__track {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--pflow-marker) / 2);
+    width: 1px;
+    background: var(--pflow-line);
+    transform: translateX(-50%);
+    display: none;
+  }
+
+  .pflow.is-live .pflow__track {
+    display: block;
+  }
+
+  .pflow__fill {
+    position: absolute;
+    inset: 0;
+    background: rgb(var(--text-color));
+    transform-origin: top;
+    transform: scaleY(var(--pflow-progress, 1));
+  }
+
+  .pflow__steps {
+    gap: 3.5rem;
+    display: grid;
+  }
+
+  .pflow__step {
+    position: relative;
+    grid-template-columns: var(--pflow-marker) minmax(0, 1fr);
+    column-gap: 1.25rem;
+    row-gap: 1.25rem;
+    display: grid;
+  }
+
+  .pflow__marker {
+    grid-row: 1 / span 2;
+    grid-column: 1;
+    justify-self: center;
+  }
+
+  .pflow__media,
+  .pflow__text {
+    grid-column: 2;
+  }
+
+  .pflow__dot {
+    position: relative;
+    z-index: 1;
+    width: var(--pflow-marker);
+    height: var(--pflow-marker);
+    border-radius: 50%;
+    border: 1px solid rgb(var(--text-color));
+    color: rgb(var(--background));
+    background: rgb(var(--text-color));
+    font-family: var(--text-font-family);
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    font-variant-numeric: tabular-nums;
+    place-items: center;
+    display: grid;
+    transition: background-color .45s ease, color .45s ease, border-color .45s ease, transform .45s ease;
+  }
+
+  /* While the line has not reached a step, its dot stays open */
+  .pflow.is-live .pflow__step:not(.is-reached) .pflow__dot {
+    border-color: rgb(var(--text-color) / .35);
+    color: rgb(var(--text-color) / .7);
+    background: rgb(var(--background));
+    transform: scale(.88);
+  }
+
+  .pflow__media {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    margin: 0;
+    background: rgb(var(--text-color) / .06);
+  }
+
+  .pflow__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .pflow__text {
+    align-content: start;
+    gap: .875rem;
+    max-width: 34rem;
+    display: grid;
+  }
+
+  .pflow__text > * {
+    margin: 0;
+  }
+
+  .pflow__desc > * {
+    margin-block: 0;
+  }
+
+  .pflow__desc > * + * {
+    margin-block-start: 1em;
+  }
+
+  .pflow__link {
+    justify-self: start;
+  }
+
+  .pflow__footer {
+    text-align: center;
+    margin: 0;
+  }
+
+  @media screen and (min-width: 700px) {
+    .pflow__media {
+      max-width: 34rem;
+    }
+  }
+
+  /* On a computer: the line in the middle, picture and text on either side, alternating */
+  @media screen and (min-width: 1000px) {
+    .pflow {
+      --pflow-marker: 3.5rem;
+    }
+
+    .pflow__track {
+      inset-inline-start: 50%;
+    }
+
+    .pflow__steps {
+      gap: clamp(4rem, 7vw, 6.5rem);
+    }
+
+    .pflow__step {
+      grid-template-columns: minmax(0, 1fr) calc(var(--pflow-marker) + 3rem) minmax(0, 1fr);
+      align-items: center;
+      column-gap: clamp(1.5rem, 3vw, 3rem);
+      row-gap: 0;
+    }
+
+    .pflow__marker {
+      grid-row: 1;
+      grid-column: 2;
+    }
+
+    .pflow__media {
+      grid-row: 1;
+      grid-column: 1;
+      justify-self: end;
+      width: 100%;
+      max-width: 36rem;
+      aspect-ratio: 4 / 5;
+    }
+
+    .pflow__text {
+      grid-row: 1;
+      grid-column: 3;
+      justify-self: start;
+      max-width: 30rem;
+    }
+
+    .pflow__step--even .pflow__media {
+      grid-column: 3;
+      justify-self: start;
+    }
+
+    .pflow__step--even .pflow__text {
+      grid-column: 1;
+      justify-self: end;
+      text-align: end;
+    }
+
+    .pflow__step--even .pflow__link {
+      justify-self: end;
+    }
+
+    .pflow__step--no-media .pflow__text {
+      grid-column: 3;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pflow__dot {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('process-flow')) {
+    customElements.define(
+      'process-flow',
+      class ProcessFlow extends HTMLElement {
+        connectedCallback() {
+          this.body = this.querySelector('.pflow__body');
+          this.track = this.querySelector('.pflow__track');
+          this.steps = Array.from(this.querySelectorAll('.pflow__step'));
+          this.dots = this.steps.map((step) => step.querySelector('.pflow__dot'));
+
+          if (!this.body || !this.track || this.dots.length < 2) return;
+
+          // Visitors who reduce motion see the line drawn whole, every dot filled
+          this.still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          this.classList.add('is-live');
+
+          this.onScroll = () => {
+            if (this.ticking) return;
+            this.ticking = true;
+            window.requestAnimationFrame(() => {
+              this.ticking = false;
+              this.update();
+            });
+          };
+
+          this.onResize = () => {
+            this.measure();
+            this.update();
+          };
+
+          window.addEventListener('scroll', this.onScroll, { passive: true });
+          window.addEventListener('resize', this.onResize, { passive: true });
+
+          // Pictures that load late change the height of the steps: the line follows
+          this.resizeObserver = new ResizeObserver(this.onResize);
+          this.resizeObserver.observe(this.body);
+
+          this.measure();
+          this.update();
+        }
+
+        disconnectedCallback() {
+          window.removeEventListener('scroll', this.onScroll);
+          window.removeEventListener('resize', this.onResize);
+          if (this.resizeObserver) this.resizeObserver.disconnect();
+        }
+
+        // The line runs from the middle of the first dot to the middle of the last
+        measure() {
+          const body = this.body.getBoundingClientRect();
+          const first = this.dots[0].getBoundingClientRect();
+          const last = this.dots[this.dots.length - 1].getBoundingClientRect();
+          const start = first.top + first.height / 2 - body.top;
+          const end = last.top + last.height / 2 - body.top;
+
+          this.track.style.insetBlockStart = `${start}px`;
+          this.track.style.insetBlockEnd = 'auto';
+          this.track.style.height = `${Math.max(0, end - start)}px`;
+        }
+
+        // The line is drawn down to a point a little below the middle of the screen
+        update() {
+          const track = this.track.getBoundingClientRect();
+          const reach = this.still ? Infinity : window.innerHeight * 0.6;
+          const progress = this.still || track.height === 0 ? 1 : Math.min(1, Math.max(0, (reach - track.top) / track.height));
+
+          this.style.setProperty('--pflow-progress', progress.toFixed(4));
+
+          this.steps.forEach((step, index) => {
+            const dot = this.dots[index].getBoundingClientRect();
+            step.classList.toggle('is-reached', dot.top + dot.height / 2 <= reach);
+          });
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Process in steps",
+  "class": "shopify-section--process-flow",
+  "tag": "section",
+  "max_blocks": 6,
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button under the steps, text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button under the steps, link"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_outline",
+      "label": "Button with an outline only",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Picture"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "What the picture shows"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link, text"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Process in steps",
+      "blocks": [
+        {
+          "type": "step"
+        },
+        {
+          "type": "step"
+        },
+        {
+          "type": "step"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

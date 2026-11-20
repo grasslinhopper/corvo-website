@@ -1,0 +1,581 @@
+{%- comment -%}
+  Film and text (Corvo addition)
+
+  A film of the atelier beside a title and a few lines, in one of two layouts:
+  - "film": the film fills one half of a band, the text the other half (on the home: the film of the making)
+  - "image_film": the text beside a photograph and a film (on the home: Bespoke)
+
+  The films are Shopify-hosted videos: the vertical films of the atelier (9:16) suit both layouts, cropped at most a
+  little. A film plays without sound while it is on screen, loops before its closing card ("Stop before the end"), and
+  never starts by itself for visitors who reduce motion or save data. A button pauses and restarts it. The text is
+  plain HTML; the film carries a short description for those who cannot see it.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign layout = section.settings.layout
+  assign video = section.settings.video
+  assign poster = section.settings.poster | default: video.preview_image
+  assign source_url = ''
+
+  for source in video.sources
+    if source.format == 'mp4' and source.url contains 'HD-1080p'
+      assign source_url = source.url
+      break
+    endif
+  endfor
+
+  if source_url == ''
+    for source in video.sources
+      if source.format == 'mp4'
+        assign source_url = source.url
+        break
+      endif
+    endfor
+  endif
+
+  comment
+    On a phone the lighter 720p file, which Shopify keeps at the same address under another name, is enough. If it is
+    ever missing, the script falls back to the listed file.
+  endcomment
+  assign light_url = source_url | replace: 'HD-1080p-7.2Mbps', 'HD-720p-4.5Mbps'
+
+  if light_url == source_url
+    assign light_url = ''
+  endif
+
+  assign title_class = 'mstory__title'
+
+  if layout == 'image_film'
+    assign title_class = 'mstory__title h2'
+  endif
+
+  assign has_actions = false
+
+  if section.settings.button_1_text != blank and section.settings.button_1_link != blank
+    assign has_actions = true
+  endif
+
+  if section.settings.button_2_text != blank and section.settings.button_2_link != blank
+    assign has_actions = true
+  endif
+-%}
+
+<div class="color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+  <media-story class="mstory mstory--{{ layout }} {% if section.settings.media_position == 'start' %}mstory--media-start{% endif %}">
+    <div class="mstory__inner">
+      <div class="mstory__text">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="h6 mstory__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.title != blank -%}
+          <h2 class="{{ title_class }}">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <div class="mstory__lead prose">
+            {%- render 'corvo-fill', text: section.settings.text -%}
+          </div>
+        {%- endif -%}
+
+        {%- if has_actions -%}
+          <div class="mstory__actions">
+            {%- if section.settings.button_1_text != blank and section.settings.button_1_link != blank -%}
+              <a href="{{ section.settings.button_1_link }}" class="button {% if section.settings.button_1_outline %}button--outline{% endif %}">{{ section.settings.button_1_text | escape }}</a>
+            {%- endif -%}
+
+            {%- if section.settings.button_2_text != blank and section.settings.button_2_link != blank -%}
+              <a href="{{ section.settings.button_2_link }}" class="link">{{ section.settings.button_2_text | escape }}</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="mstory__media">
+        {%- if layout == 'image_film' and section.settings.image != blank -%}
+          {%- assign image_alt = section.settings.image_alt | default: section.settings.image.alt | escape -%}
+          <figure class="mstory__image">
+            {{- section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 50vw, 32vw', widths: '400,600,800,1000,1200,1400', alt: image_alt -}}
+          </figure>
+        {%- endif -%}
+
+        {%- if video != blank or poster != blank -%}
+          <figure class="mstory__film">
+            {%- if poster != blank -%}
+              {%- if layout == 'film' -%}
+                {{- poster | image_url: width: 1080 | image_tag: class: 'mstory__poster', loading: 'lazy', sizes: '(max-width: 699px) 100vw, 50vw', widths: '400,600,800,1080', alt: '' -}}
+              {%- else -%}
+                {{- poster | image_url: width: 1080 | image_tag: class: 'mstory__poster', loading: 'lazy', sizes: '(max-width: 699px) 50vw, 24vw', widths: '300,450,600,800,1080', alt: '' -}}
+              {%- endif -%}
+            {%- endif -%}
+
+            {%- if source_url != '' -%}
+              <video class="mstory__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="{{ source_url }}" {% if light_url != '' %}data-src-light="{{ light_url }}"{% endif %} data-trim-end="{{ section.settings.trim_end }}"></video>
+
+              <button type="button" class="mstory__toggle" hidden data-pause-label="{{ section.settings.pause_label | escape }}" data-play-label="{{ section.settings.play_label | escape }}" aria-label="{{ section.settings.pause_label | escape }}">
+                <svg class="mstory__icon mstory__icon--pause" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false"><path d="M2.5 1.5v9M9.5 1.5v9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+                <svg class="mstory__icon mstory__icon--play" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false"><path d="M3 1.5v9l7-4.5z" fill="currentColor"/></svg>
+              </button>
+            {%- endif -%}
+
+            {%- if section.settings.video_description != blank -%}
+              <figcaption class="sr-only">{{ section.settings.video_description | escape }}</figcaption>
+            {%- endif -%}
+          </figure>
+        {%- endif -%}
+      </div>
+    </div>
+  </media-story>
+</div>
+
+{% stylesheet %}
+  .mstory__eyebrow {
+    margin: 0;
+  }
+
+  .mstory__title {
+    font-family: var(--display-font-family, var(--heading-font-family));
+    font-weight: var(--display-font-weight, var(--heading-font-weight));
+    font-style: var(--heading-font-style);
+    letter-spacing: var(--heading-letter-spacing);
+    text-transform: var(--heading-text-transform);
+    font-size: clamp(2.125rem, 1.6rem + 2.2vw, 3.5rem);
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .mstory__title.h2 {
+    font-family: var(--heading-font-family);
+    font-weight: var(--heading-font-weight);
+    font-size: var(--text-h2);
+    line-height: 1.15;
+  }
+
+  .mstory__lead {
+    font-family: var(--lead-font-family, var(--text-font-family));
+    font-size: clamp(1.0625rem, 1rem + .3vw, 1.25rem);
+    line-height: 1.5;
+  }
+
+  .mstory__lead > * {
+    margin-block: 0;
+  }
+
+  .mstory__lead > * + * {
+    margin-block-start: 1em;
+  }
+
+  .mstory__text {
+    gap: 1.25rem;
+    display: grid;
+  }
+
+  .mstory__actions {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+    margin-block-start: .75rem;
+    display: flex;
+  }
+
+  .mstory__media {
+    position: relative;
+  }
+
+  .mstory__image,
+  .mstory__film {
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    background: rgb(var(--text-color) / .06);
+  }
+
+  .mstory__image img,
+  .mstory__poster,
+  .mstory__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .mstory__video {
+    opacity: 0;
+    transition: opacity .6s ease;
+  }
+
+  .mstory__video.is-playing {
+    opacity: 1;
+  }
+
+  .mstory__toggle {
+    position: absolute;
+    inset-block-end: 1rem;
+    inset-inline-end: 1rem;
+    z-index: 1;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid rgb(255 255 255 / .7);
+    color: #fff;
+    background: rgb(0 0 0 / .25);
+    place-items: center;
+    cursor: pointer;
+    display: grid;
+  }
+
+  .mstory__toggle[hidden] {
+    display: none;
+  }
+
+  .mstory__toggle:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+
+  .mstory__icon--play,
+  .mstory__toggle.is-paused .mstory__icon--pause {
+    display: none;
+  }
+
+  .mstory__toggle.is-paused .mstory__icon--play {
+    display: block;
+  }
+
+  /* The film of the making: one band, the film on one half, the text on the other */
+  .mstory--film .mstory__film {
+    aspect-ratio: 4 / 5;
+  }
+
+  .mstory--film .mstory__text {
+    padding: 3rem var(--container-gutter) 3.5rem;
+    max-width: 38rem;
+  }
+
+  @media screen and (min-width: 1000px) {
+    .mstory--film .mstory__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      min-height: min(88vh, 56rem);
+      display: grid;
+    }
+
+    .mstory--film.mstory--media-start .mstory__media {
+      order: -1;
+    }
+
+    .mstory--film .mstory__film {
+      position: absolute;
+      inset: 0;
+      aspect-ratio: auto;
+    }
+
+    .mstory--film .mstory__text {
+      align-self: center;
+      justify-self: center;
+      padding: 5rem clamp(2.5rem, 6vw, 6.5rem);
+      max-width: 42rem;
+    }
+  }
+
+  /* Bespoke: the text beside a photograph and a film */
+  .mstory--image_film .mstory__inner {
+    padding-block: var(--section-vertical-spacing);
+    margin-inline: max(var(--container-gutter), 50% - var(--container-lg-max-width) / 2);
+    gap: 2.5rem;
+    display: grid;
+  }
+
+  .mstory--image_film .mstory__media {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 3fr);
+    align-items: start;
+    gap: .875rem;
+    display: grid;
+  }
+
+  .mstory--image_film .mstory__image {
+    aspect-ratio: 4 / 5;
+  }
+
+  .mstory--image_film .mstory__film {
+    aspect-ratio: 9 / 16;
+    margin-block-start: 2.5rem;
+  }
+
+  @media screen and (min-width: 1000px) {
+    .mstory--image_film .mstory__inner {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      align-items: center;
+      gap: clamp(3rem, 6vw, 6rem);
+    }
+
+    .mstory--image_film.mstory--media-start .mstory__media {
+      order: -1;
+    }
+
+    .mstory--image_film .mstory__media {
+      gap: 1.5rem;
+    }
+
+    .mstory--image_film .mstory__film {
+      margin-block-start: 5rem;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('media-story')) {
+    customElements.define(
+      'media-story',
+      class MediaStory extends HTMLElement {
+        connectedCallback() {
+          this.video = this.querySelector('video[data-src]');
+          this.toggle = this.querySelector('.mstory__toggle');
+
+          if (!this.video) return;
+
+          // Respect the visitor's device settings: no film starts by itself with reduced motion or data saver
+          const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const saveData = navigator.connection && navigator.connection.saveData;
+          this.paused = Boolean(reducedMotion || saveData);
+          this.inView = false;
+
+          const trimEnd = parseFloat(this.video.dataset.trimEnd) || 0;
+
+          this.video.addEventListener('timeupdate', () => {
+            if (trimEnd > 0 && this.video.duration && this.video.currentTime >= this.video.duration - trimEnd) {
+              this.video.currentTime = 0;
+            }
+          });
+
+          this.video.addEventListener('playing', () => this.video.classList.add('is-playing'), { once: true });
+
+          if (this.toggle) {
+            this.toggle.hidden = false;
+            this.toggle.addEventListener('click', () => {
+              this.paused = !this.paused;
+              this.sync();
+            });
+          }
+
+          this.observer = new IntersectionObserver(
+            (entries) => {
+              this.inView = entries[0].isIntersecting;
+              this.sync();
+            },
+            { threshold: 0.15 }
+          );
+          this.observer.observe(this.video.closest('figure') || this);
+
+          this.sync();
+        }
+
+        disconnectedCallback() {
+          if (this.observer) this.observer.disconnect();
+        }
+
+        // Sets the film's address the first time it is needed: the lighter file on a phone, the listed file elsewhere
+        load() {
+          if (this.video.getAttribute('src')) return;
+
+          const light = window.matchMedia('(max-width: 699px)').matches ? this.video.dataset.srcLight : '';
+
+          if (light) {
+            this.video.addEventListener(
+              'error',
+              () => {
+                if (this.video.getAttribute('src') !== light) return;
+                this.video.setAttribute('src', this.video.dataset.src);
+                this.sync();
+              },
+              { once: true }
+            );
+            this.video.setAttribute('src', light);
+          } else {
+            this.video.setAttribute('src', this.video.dataset.src);
+          }
+        }
+
+        sync() {
+          if (this.inView && !this.paused) {
+            this.load();
+            const attempt = this.video.play();
+            if (attempt) attempt.catch(() => {});
+          } else {
+            this.video.pause();
+          }
+
+          if (this.toggle) {
+            this.toggle.classList.toggle('is-paused', this.paused);
+            this.toggle.setAttribute('aria-label', this.paused ? this.toggle.dataset.playLabel : this.toggle.dataset.pauseLabel);
+          }
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Film and text",
+  "class": "shopify-section--media-story",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        {
+          "value": "film",
+          "label": "A film on half of a band"
+        },
+        {
+          "value": "image_film",
+          "label": "A photograph and a film beside the text"
+        }
+      ],
+      "default": "film"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Pictures on a computer",
+      "options": [
+        {
+          "value": "start",
+          "label": "On the left"
+        },
+        {
+          "value": "end",
+          "label": "On the right"
+        }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Line above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "button_1_text",
+      "label": "Button, text"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Button, link"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_1_outline",
+      "label": "Button with an outline only",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "button_2_text",
+      "label": "Second link, text"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Second link"
+    },
+    {
+      "type": "header",
+      "content": "Film"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Film",
+      "info": "A vertical film (9:16) works best. It plays without sound."
+    },
+    {
+      "type": "image_picker",
+      "id": "poster",
+      "label": "Still shown before the film plays",
+      "info": "Optional. Without one, the first frame of the film is shown."
+    },
+    {
+      "type": "text",
+      "id": "video_description",
+      "label": "What the film shows",
+      "info": "One sentence, read to visitors who cannot see the film and to search engines."
+    },
+    {
+      "type": "range",
+      "id": "trim_end",
+      "label": "Stop before the end",
+      "info": "Seconds cut from the end of the loop, to leave out a closing card.",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "unit": "s",
+      "default": 2.8
+    },
+    {
+      "type": "text",
+      "id": "pause_label",
+      "label": "Pause button, label",
+      "default": "Pause the film"
+    },
+    {
+      "type": "text",
+      "id": "play_label",
+      "label": "Play button, label",
+      "default": "Play the film"
+    },
+    {
+      "type": "header",
+      "content": "Photograph"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Photograph",
+      "info": "Shown with the second layout only."
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "What the photograph shows"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Film and text"
+    }
+  ]
+}
+{% endschema %}
