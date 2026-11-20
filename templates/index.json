@@ -49,7 +49,7 @@
         "button_2_link": "shopify://pages/tailor-your-rug",
         "text_color": "#ffffff",
         "overlay_opacity": 45,
-        "mobile_film": "1",
+        "mobile_film": "3",
         "allow_transparent_header": true,
         "pause_label": "Pause the films",
         "play_label": "Play the films"
