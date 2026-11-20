@@ -94,7 +94,7 @@
         "countries": {
           "type": "figure",
           "settings": {
-            "value": "50+",
+            "value": "70+",
             "label": "Countries"
           }
         },
