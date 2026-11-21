@@ -1076,7 +1076,7 @@
         "id": "rug_palette",
         "label": "Open Palette colours",
         "info": "One colour per line: the code, then optionally a name and a colour value, separated by |. Example: 284 | Sand | #d9c8a9",
-        "default": "284\n283\n314\n287\n346\n316\n208\n351\n212\n237\n348\n344\n290\n343\n342\n137\n182\n155\n345\n350\n132\n179\n184\n193\n289\n349\n347\n213\n174\n175"
+        "default": "284 | Greige | #BFB5AC\n283 | Feather | #E8E5D5\n314 | Oat | #F2ECDC\n287 | Espresso | #300400\n346 | Cognac | #693804\n316 | Sunlit Stone | #9A8A62\n208 | Iron | #63717A\n351 | Silver Shadow | #63717A\n212 | Serene Sky | #EAF0F6\n237 | Desert Mist | #E7CFB7\n348 | Golden Field | #DED8AA\n344 | Soft Ivory | #EDE4C1\n290 | Deep Ocean | #00003C\n343 | Vintage Blue | #6B95C7\n342 | Dusty Blue | #A7A7C5\n137 | Tile | #AF4A20\n182 | Rio Red | #820020\n155 | Deep Claret | #6C040B\n345 | Dusky Petal | #C28B7C\n350 | Graphite Berry | #500050\n132 | Marsala | #B579A0\n179 | Peach Whip | #E8D4E5\n184 | Inca Gold | #A25C23\n193 | Pot Pourri | #C89689\n289 | Teal Green | #005259\n349 | Concrete Sage | #7B9E6A\n347 | Soft Olive | #D6D39D\n213 | Dusk Grey | #929A2F\n174 | Avocado | #524824\n175 | Woodbine | #4C4D13"
       }
     ]
   },
