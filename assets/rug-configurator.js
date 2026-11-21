@@ -620,7 +620,9 @@
     // The pictures of a colour version, with those that show no particular version: the sets are printed by
     // snippets/product-gallery.liquid ("data-colour-sets"). Returns the gallery when its pictures were changed.
     showChoicePictures(index) {
-      const gallery = this.form ? document.querySelector(`product-gallery[form="${this.form.id}"]`) : null;
+      // The form's "id" property is its variant input, so the gallery is found by the form attribute
+      const formId = this.getAttribute('form'),
+        gallery = formId ? document.querySelector(`product-gallery[form="${CSS.escape(formId)}"]`) : null;
 
       if (!gallery || !gallery.dataset.colourSets || !gallery.carousel || !this.config.choice) {
         return null;
