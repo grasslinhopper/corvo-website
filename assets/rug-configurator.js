@@ -622,6 +622,19 @@
       return this.palette.find((entry) => entry.code === reference || (number !== '' && entry.code === number));
     }
 
+    // The colour value of a colour of the design as shown: its own code in the palette offered, then in any colour
+    // card of the shop (a card's value is measured on its material), then its number in the palette offered
+    swatchFor(reference) {
+      if (!reference) {
+        return '';
+      }
+
+      const exact = (list) => (list || []).find((entry) => entry.code === reference && entry.hex),
+        entry = exact(this.palette) || exact(this.config.colourIndex) || this.paletteEntry(reference);
+
+      return entry?.hex || '';
+    }
+
     describeColour(colour, withOriginal = true) {
       const { strings } = this.config,
         choice = colour.choice;
@@ -649,7 +662,7 @@
       }
 
       const swatch = row.querySelector('[data-rug-colour-swatch]'),
-        hex = colour.choice ? (colour.choice.type === 'palette' ? colour.choice.hex : '') : (this.paletteEntry(colour.original)?.hex || '');
+        hex = colour.choice ? (colour.choice.type === 'palette' ? colour.choice.hex : '') : this.swatchFor(colour.original);
 
       row.querySelector('[data-rug-colour-value]').textContent = this.describeColour(colour);
       row.classList.toggle('is-changed', colour.choice !== null);

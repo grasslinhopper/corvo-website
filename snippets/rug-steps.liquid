@@ -614,6 +614,18 @@ Supported variables
     {%- render 'rug-palette', lines: settings.rug_palette -%}
   {%- endcapture -%}
 
+  {%- comment -%}
+    Every colour card of the shop's materials, for the swatch of a colour of the design as shown: a reference such as
+    "FW224" takes the value of the card that lists it, even on a rug that offers another palette.
+  {%- endcomment -%}
+  {%- capture colour_index_json -%}
+    {%- for card_material in shop_materials -%}
+      {%- if card_material.colours.value != blank -%}
+        {%- render 'rug-palette', lines: card_material.colours.value -%}¦
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
   {%- comment -%}The sentence that says what can be chosen on this rug and what stays as shown{%- endcomment -%}
   {%- capture scope_text -%}
     {%- if can_words == blank -%}
@@ -666,6 +678,7 @@ Supported variables
         "choice": {% if choice_option %}{ "name": {{ choice_option.name | json }}, "colour": {{ choice_is_colour }}, "selected": {{ selected_choice }}, "values": [{{ choices_json | strip | split: '|' | join: ',' }}] }{% else %}null{% endif %},
         "colours": [{{ colours_json | strip | split: '|' | join: ',' }}],
         "palette": [{{ palette_json | strip }}],
+        "colourIndex": [{{ colour_index_json | strip | split: '¦' | join: ',' }}],
         "customColour": {{ custom_colour_cents }},
         "expressPercent": {{ express_percent }},
         "steps": {
