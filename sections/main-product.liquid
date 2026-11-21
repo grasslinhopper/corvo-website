@@ -255,7 +255,15 @@ quick buy information in a template, that will be extracted in JS, which ensures
     display: flex;
   }
 
+  /* The step's number and title stay on one line; a long note beside them (the colour families) wraps instead */
+  .rug-step__number,
+  .rug-step__title {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
   .rug-step__aside {
+    min-width: 0;
     text-align: end;
     margin-inline-start: auto;
   }
