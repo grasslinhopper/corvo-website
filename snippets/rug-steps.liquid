@@ -3,7 +3,7 @@
 RUG STEPS (Corvo addition)
 ----------------------------------------------------------------------------------------------------------------------
 
-The buying steps of a rug page: material, pile height, shape, size, colours and shipping, then a summary that keeps the
+The buying steps of a rug page: pile height, material, colours, shape, size and shipping, then a summary that keeps the
 price in view. A rug shows only the steps its customisation level allows.
 
 THE CUSTOMISATION LEVEL of a rug (rug.customisation) is an entry of the shop's list "Customisation level". It says
@@ -455,16 +455,25 @@ Supported variables
     assign fixed_words = 'rug_page.words.design' | t | append: '§'
   endif
 
+  # In the order of the steps: pile height, material, colours, shape, size
+  if show_pile
+    assign can_words = 'rug_page.words.pile' | t | append: '§' | prepend: can_words
+  else
+    assign fixed_words = 'rug_page.words.pile' | t | append: '§' | prepend: fixed_words
+  endif
+
   if show_material
     assign can_words = 'rug_page.words.material' | t | append: '§' | prepend: can_words
   else
     assign fixed_words = 'rug_page.words.material' | t | append: '§' | prepend: fixed_words
   endif
 
-  if show_pile
-    assign can_words = 'rug_page.words.pile' | t | append: '§' | prepend: can_words
+  if show_colour_changes
+    assign can_words = 'rug_page.words.colours' | t | append: '§' | prepend: can_words
+  elsif show_colour_choice
+    assign can_words = 'rug_page.words.colourway' | t | append: '§' | prepend: can_words
   else
-    assign fixed_words = 'rug_page.words.pile' | t | append: '§' | prepend: fixed_words
+    assign fixed_words = 'rug_page.words.colours' | t | append: '§' | prepend: fixed_words
   endif
 
   if show_shape
@@ -475,14 +484,6 @@ Supported variables
 
   if can_size
     assign can_words = 'rug_page.words.size' | t | append: '§' | prepend: can_words
-  endif
-
-  if show_colour_changes
-    assign can_words = 'rug_page.words.colours' | t | append: '§' | prepend: can_words
-  elsif show_colour_choice
-    assign can_words = 'rug_page.words.colourway' | t | append: '§' | prepend: can_words
-  else
-    assign fixed_words = 'rug_page.words.colours' | t | append: '§' | prepend: fixed_words
   endif
 
   assign fixed_count = fixed_words | split: '§' | size
@@ -774,6 +775,42 @@ Supported variables
 
     {%- comment -%}
     ------------------------------------------------------------------------------------------------------------------
+    PILE HEIGHT
+    ------------------------------------------------------------------------------------------------------------------
+    {%- endcomment -%}
+
+    {%- if show_pile -%}
+      {%- liquid
+        assign step = step | plus: 1
+        assign pile_legend_id = 'rug-pile-' | append: uid
+      -%}
+
+      <div class="rug-step" role="group" aria-labelledby="{{ pile_legend_id }}">
+        <p class="rug-step__legend" id="{{ pile_legend_id }}">
+          <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+          <span class="rug-step__title h6">{{ 'rug_page.pile_height' | t }}</span>
+        </p>
+
+        <div class="rug-options" role="group" aria-label="{{ 'rug_page.pile_height' | t | escape }}">
+          {%- for pile_option in pile_options -%}
+            <button type="button" class="rug-option" data-rug-pile="{{ forloop.index0 }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
+              <span class="rug-option__name">{{ 'rug_page.millimetres' | t: height: pile_option }}</span>
+
+              <span class="rug-option__reference text-subdued">
+                {%- if pile_option > pile_limit and pile_percent > 0 -%}
+                  {{- 'rug_page.percent_more' | t: percent: pile_percent -}}
+                {%- else -%}
+                  {{- 'rug_page.included' | t -}}
+                {%- endif -%}
+              </span>
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%}
+    ------------------------------------------------------------------------------------------------------------------
     MATERIAL
     ------------------------------------------------------------------------------------------------------------------
     {%- endcomment -%}
@@ -826,37 +863,106 @@ Supported variables
 
     {%- comment -%}
     ------------------------------------------------------------------------------------------------------------------
-    PILE HEIGHT
+    COLOURS
     ------------------------------------------------------------------------------------------------------------------
     {%- endcomment -%}
 
-    {%- if show_pile -%}
-      {%- liquid
-        assign step = step | plus: 1
-        assign pile_legend_id = 'rug-pile-' | append: uid
-      -%}
+    {%- comment -%}The values of the other choice, as buttons: a name and, under it, its colour references{%- endcomment -%}
+    {%- capture choice_buttons -%}
+      {%- if choice_count > 1 -%}
+        <div class="rug-options" role="group" aria-label="{{ choice_option.name | escape }}">
+          {%- for choice_value in choice_option.values -%}
+            {%- liquid
+              assign choice_value_name = choice_value.name | default: choice_value | append: ''
+              assign choice_parts = choice_value_name | split: ' ('
+              assign choice_label = choice_parts | first
+              assign choice_reference = ''
 
-      <div class="rug-step" role="group" aria-labelledby="{{ pile_legend_id }}">
-        <p class="rug-step__legend" id="{{ pile_legend_id }}">
-          <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
-          <span class="rug-step__title h6">{{ 'rug_page.pile_height' | t }}</span>
-        </p>
+              if choice_parts.size > 1
+                assign choice_reference = choice_parts | last | remove: ')' | replace: '/', ' · '
+              endif
+            -%}
 
-        <div class="rug-options" role="group" aria-label="{{ 'rug_page.pile_height' | t | escape }}">
-          {%- for pile_option in pile_options -%}
-            <button type="button" class="rug-option" data-rug-pile="{{ forloop.index0 }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
-              <span class="rug-option__name">{{ 'rug_page.millimetres' | t: height: pile_option }}</span>
+            <button type="button" class="rug-option" data-rug-choice="{{ forloop.index0 }}" aria-pressed="{% if forloop.index0 == selected_choice %}true{% else %}false{% endif %}">
+              <span class="rug-option__name">{{ choice_label | escape }}</span>
 
-              <span class="rug-option__reference text-subdued">
-                {%- if pile_option > pile_limit and pile_percent > 0 -%}
-                  {{- 'rug_page.percent_more' | t: percent: pile_percent -}}
-                {%- else -%}
-                  {{- 'rug_page.included' | t -}}
-                {%- endif -%}
-              </span>
+              {%- if choice_reference != blank -%}
+                <span class="rug-option__reference text-subdued">{{ choice_reference | escape }}</span>
+              {%- endif -%}
             </button>
           {%- endfor -%}
         </div>
+      {%- endif -%}
+    {%- endcapture -%}
+
+    {%- if show_choice -%}
+      {%- liquid
+        assign step = step | plus: 1
+        assign choice_legend_id = 'rug-choice-' | append: uid
+      -%}
+
+      <div class="rug-step" role="group" aria-labelledby="{{ choice_legend_id }}">
+        <p class="rug-step__legend" id="{{ choice_legend_id }}">
+          <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+          <span class="rug-step__title h6">{{ choice_option.name | escape }}</span>
+        </p>
+
+        {{- choice_buttons -}}
+      </div>
+    {%- endif -%}
+
+    {%- if show_colour_choice or show_colour_changes -%}
+      {%- liquid
+        assign step = step | plus: 1
+        assign colour_legend_id = 'rug-colours-' | append: uid
+        assign family_note = families | join: ', '
+      -%}
+
+      <div class="rug-step" role="group" aria-labelledby="{{ colour_legend_id }}">
+        <p class="rug-step__legend" id="{{ colour_legend_id }}">
+          <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
+          <span class="rug-step__title h6">{{ 'rug_page.colours' | t }}</span>
+
+          {%- if family_note != blank and show_colour_choice == false -%}
+            <span class="rug-step__aside text-sm text-subdued">{{ family_note | escape }}</span>
+          {%- endif -%}
+        </p>
+
+        {%- if show_colour_choice -%}
+          {{- choice_buttons -}}
+        {%- endif -%}
+
+        {%- if show_colour_changes -%}
+          <ul class="rug-colours unstyled-list" role="list">
+            {%- for i in (1..colour_count) -%}
+              {%- assign colour_ref = colour_refs[forloop.index0] -%}
+
+              <li class="rug-colour" data-rug-colour="{{ forloop.index0 }}">
+                <div class="rug-colour__row">
+                  <span class="rug-colour__swatch" data-rug-colour-swatch aria-hidden="true"></span>
+
+                  <span class="rug-colour__text">
+                    <span class="rug-colour__name">{{ 'rug_page.colour_number' | t: number: i }}</span>
+
+                    <span class="rug-colour__value text-sm text-subdued" data-rug-colour-value>
+                      {%- if colour_ref != blank -%}
+                        {{- colour_ref | escape }} · {{ 'rug_page.as_shown' | t | downcase -}}
+                      {%- else -%}
+                        {{- 'rug_page.as_shown' | t -}}
+                      {%- endif -%}
+                    </span>
+                  </span>
+
+                  <button type="button" class="rug-colour__change link text-sm" data-rug-colour-change aria-expanded="false">{{ 'rug_page.change' | t }}</button>
+                </div>
+              </li>
+            {%- endfor -%}
+          </ul>
+
+          {%- if block.settings.colour_text != blank -%}
+            <p class="rug-step__more text-sm text-subdued">{{ colour_text | strip }}</p>
+          {%- endif -%}
+        {%- endif -%}
       </div>
     {%- endif -%}
 
@@ -1008,111 +1114,6 @@ Supported variables
         </p>
       {%- endif -%}
     </fieldset>
-
-    {%- comment -%}
-    ------------------------------------------------------------------------------------------------------------------
-    COLOURS
-    ------------------------------------------------------------------------------------------------------------------
-    {%- endcomment -%}
-
-    {%- comment -%}The values of the other choice, as buttons: a name and, under it, its colour references{%- endcomment -%}
-    {%- capture choice_buttons -%}
-      {%- if choice_count > 1 -%}
-        <div class="rug-options" role="group" aria-label="{{ choice_option.name | escape }}">
-          {%- for choice_value in choice_option.values -%}
-            {%- liquid
-              assign choice_value_name = choice_value.name | default: choice_value | append: ''
-              assign choice_parts = choice_value_name | split: ' ('
-              assign choice_label = choice_parts | first
-              assign choice_reference = ''
-
-              if choice_parts.size > 1
-                assign choice_reference = choice_parts | last | remove: ')' | replace: '/', ' · '
-              endif
-            -%}
-
-            <button type="button" class="rug-option" data-rug-choice="{{ forloop.index0 }}" aria-pressed="{% if forloop.index0 == selected_choice %}true{% else %}false{% endif %}">
-              <span class="rug-option__name">{{ choice_label | escape }}</span>
-
-              {%- if choice_reference != blank -%}
-                <span class="rug-option__reference text-subdued">{{ choice_reference | escape }}</span>
-              {%- endif -%}
-            </button>
-          {%- endfor -%}
-        </div>
-      {%- endif -%}
-    {%- endcapture -%}
-
-    {%- if show_choice -%}
-      {%- liquid
-        assign step = step | plus: 1
-        assign choice_legend_id = 'rug-choice-' | append: uid
-      -%}
-
-      <div class="rug-step" role="group" aria-labelledby="{{ choice_legend_id }}">
-        <p class="rug-step__legend" id="{{ choice_legend_id }}">
-          <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
-          <span class="rug-step__title h6">{{ choice_option.name | escape }}</span>
-        </p>
-
-        {{- choice_buttons -}}
-      </div>
-    {%- endif -%}
-
-    {%- if show_colour_choice or show_colour_changes -%}
-      {%- liquid
-        assign step = step | plus: 1
-        assign colour_legend_id = 'rug-colours-' | append: uid
-        assign family_note = families | join: ', '
-      -%}
-
-      <div class="rug-step" role="group" aria-labelledby="{{ colour_legend_id }}">
-        <p class="rug-step__legend" id="{{ colour_legend_id }}">
-          <span class="rug-step__number smallcaps text-subdued">{{ 'rug_page.step' | t: number: step }}</span>
-          <span class="rug-step__title h6">{{ 'rug_page.colours' | t }}</span>
-
-          {%- if family_note != blank and show_colour_choice == false -%}
-            <span class="rug-step__aside text-sm text-subdued">{{ family_note | escape }}</span>
-          {%- endif -%}
-        </p>
-
-        {%- if show_colour_choice -%}
-          {{- choice_buttons -}}
-        {%- endif -%}
-
-        {%- if show_colour_changes -%}
-          <ul class="rug-colours unstyled-list" role="list">
-            {%- for i in (1..colour_count) -%}
-              {%- assign colour_ref = colour_refs[forloop.index0] -%}
-
-              <li class="rug-colour" data-rug-colour="{{ forloop.index0 }}">
-                <div class="rug-colour__row">
-                  <span class="rug-colour__swatch" data-rug-colour-swatch aria-hidden="true"></span>
-
-                  <span class="rug-colour__text">
-                    <span class="rug-colour__name">{{ 'rug_page.colour_number' | t: number: i }}</span>
-
-                    <span class="rug-colour__value text-sm text-subdued" data-rug-colour-value>
-                      {%- if colour_ref != blank -%}
-                        {{- colour_ref | escape }} · {{ 'rug_page.as_shown' | t | downcase -}}
-                      {%- else -%}
-                        {{- 'rug_page.as_shown' | t -}}
-                      {%- endif -%}
-                    </span>
-                  </span>
-
-                  <button type="button" class="rug-colour__change link text-sm" data-rug-colour-change aria-expanded="false">{{ 'rug_page.change' | t }}</button>
-                </div>
-              </li>
-            {%- endfor -%}
-          </ul>
-
-          {%- if block.settings.colour_text != blank -%}
-            <p class="rug-step__more text-sm text-subdued">{{ colour_text | strip }}</p>
-          {%- endif -%}
-        {%- endif -%}
-      </div>
-    {%- endif -%}
 
     {%- comment -%}
     ------------------------------------------------------------------------------------------------------------------
