@@ -597,6 +597,9 @@
 
       this.update({ immediate: true });
 
+      // Only the pictures of the chosen colour version are shown, before the gallery moves to its picture
+      const gallery = this.showChoicePictures(index);
+
       // The pictures follow the choice, the way they follow the theme's own variant picker
       const media = this.choiceValue.media;
 
@@ -609,7 +612,38 @@
             previousVariant: previous?.media ? { featured_media: { id: previous.media, position: previous.position } } : null
           }
         }));
+      } else if (gallery) {
+        gallery.carousel.select(0, { instant: true });
       }
+    }
+
+    // The pictures of a colour version, with those that show no particular version: the sets are printed by
+    // snippets/product-gallery.liquid ("data-colour-sets"). Returns the gallery when its pictures were changed.
+    showChoicePictures(index) {
+      const gallery = this.form ? document.querySelector(`product-gallery[form="${this.form.id}"]`) : null;
+
+      if (!gallery || !gallery.dataset.colourSets || !gallery.carousel || !this.config.choice) {
+        return null;
+      }
+
+      let sets = null;
+
+      try {
+        sets = JSON.parse(gallery.dataset.colourSets);
+      } catch (error) {
+        return null;
+      }
+
+      const hidden = sets && sets.option === this.config.choice.name && Array.isArray(sets.hidden) ? sets.hidden[index] : null;
+
+      if (!Array.isArray(hidden)) {
+        return null;
+      }
+
+      gallery.setAttribute('filtered-indexes', JSON.stringify(hidden));
+      gallery.carousel.filter(hidden.map((position) => position - 1));
+
+      return gallery;
     }
 
     /* ----------------------------------------------------------------------------------------------------------------

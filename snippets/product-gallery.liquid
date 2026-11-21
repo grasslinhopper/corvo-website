@@ -92,7 +92,182 @@ only way to do it on Shopify right now.
   endif
 %}
 
-<product-gallery class="product-gallery" form="{{ product_form_id }}" filtered-indexes="{{ filtered_indexes | json }}" {% if enable_media_autoplay %}autoplay-media{% endif %} {% if enable_image_zoom %}allow-zoom="{{ max_image_zoom_level }}"{% endif %}>
+{%- comment -%}
+Corvo addition: the pictures of a colour version. On a rug sold in colour versions that have pictures of their own
+(Alfama in Sage, Fog and Anthracite), the gallery shows the pictures of the chosen version with the pictures that show
+no particular version, and hides those of the other versions.
+
+A picture belongs to a version when it is the version's own picture in Shopify, or when its description (alt text) names
+the version by a word that no other version uses ("Green" for "Green/Snow"). A picture that names no version, or more
+than one, is shown with every version. The rug page switches the pictures when another version is chosen
+(assets/rug-configurator.js), from "data-colour-sets": for each version, in the order of the option, the positions of
+the pictures to hide.
+{%- endcomment -%}
+{%- liquid
+  assign colour_sets_json = ''
+  assign colour_option = nil
+
+  for option in product.options_with_values
+    assign option_key = option.name | downcase
+
+    if option_key == 'colour' or option_key == 'color'
+      assign colour_option = option
+    endif
+  endfor
+
+  if colour_option and colour_option.values.size > 1
+    assign colour_at = colour_option.position | minus: 1
+    assign version_names = ''
+    assign version_media = ''
+    assign version_selected = 0
+    assign own_pictures = 0
+
+    for colour_value in colour_option.values
+      assign colour_value_name = colour_value.name | default: colour_value | append: ''
+      assign colour_name = colour_value_name | split: ' (' | first | downcase | replace: '/', ' ' | replace: '-', ' ' | strip
+      assign colour_media_id = 'none'
+
+      if colour_value.selected
+        assign version_selected = forloop.index0
+      endif
+
+      for colour_variant in product.variants
+        if colour_variant.options[colour_at] == colour_value_name
+          if colour_variant.featured_media
+            assign colour_media_id = colour_variant.featured_media.id | append: ''
+            assign own_pictures = own_pictures | plus: 1
+          endif
+
+          break
+        endif
+      endfor
+
+      assign version_names = version_names | append: colour_name | append: '|'
+      assign version_media = version_media | append: colour_media_id | append: '|'
+    endfor
+
+    if own_pictures > 1
+      assign names = version_names | split: '|'
+      assign version_pictures = version_media | split: '|'
+
+      # The words of each version's name that no other version uses
+      assign version_words = ''
+
+      for name in names
+        assign own_index = forloop.index0
+        assign name_words = name | split: ' '
+        assign kept_words = ''
+
+        for name_word in name_words
+          assign word_padded = ' ' | append: name_word | append: ' '
+          assign word_shared = false
+
+          for other_name in names
+            if forloop.index0 != own_index
+              assign other_padded = ' ' | append: other_name | append: ' '
+
+              if other_padded contains word_padded
+                assign word_shared = true
+                break
+              endif
+            endif
+          endfor
+
+          unless word_shared
+            assign kept_words = kept_words | append: name_word | append: ' '
+          endunless
+        endfor
+
+        assign kept_words = kept_words | strip | default: 'none'
+        assign version_words = version_words | append: kept_words | append: '|'
+      endfor
+
+      assign version_word_lists = version_words | split: '|'
+
+      # The version each picture belongs to, or -1 when it belongs to none or to several
+      assign picture_versions = ''
+
+      for media in product.media
+        assign alt_words = media.alt | default: '' | downcase | replace: ',', ' ' | replace: '.', ' ' | replace: '–', ' ' | replace: '—', ' ' | replace: '-', ' ' | replace: '/', ' ' | replace: '(', ' ' | replace: ')', ' ' | replace: ':', ' ' | replace: ';', ' '
+        assign alt_padded = ' ' | append: alt_words | append: ' '
+        assign media_key = media.id | append: ''
+        assign picture_owner = -1
+        assign picture_owners = 0
+
+        for word_list in version_word_lists
+          assign version_index = forloop.index0
+          assign version_match = false
+
+          if version_pictures[version_index] == media_key
+            assign version_match = true
+          elsif word_list != 'none'
+            assign list_words = word_list | split: ' '
+
+            for list_word in list_words
+              assign list_padded = ' ' | append: list_word | append: ' '
+
+              if alt_padded contains list_padded
+                assign version_match = true
+                break
+              endif
+            endfor
+          endif
+
+          if version_match
+            assign picture_owner = version_index
+            assign picture_owners = picture_owners | plus: 1
+          endif
+        endfor
+
+        if picture_owners != 1
+          assign picture_owner = -1
+        endif
+
+        assign picture_versions = picture_versions | append: picture_owner | append: ','
+      endfor
+
+      assign picture_owner_list = picture_versions | split: ','
+      assign colour_hidden_lists = ''
+
+      for name in names
+        assign version_index = forloop.index0
+        assign hidden_positions = ''
+
+        for owner_value in picture_owner_list
+          assign owner_number = owner_value | plus: 0
+
+          if owner_number >= 0 and owner_number != version_index
+            assign hidden_positions = hidden_positions | append: forloop.index | append: ','
+
+            if version_index == version_selected
+              assign media_position = forloop.index | sort
+              assign filtered_indexes = filtered_indexes | concat: media_position
+            endif
+          endif
+        endfor
+
+        assign hidden_positions = hidden_positions | split: ',' | join: ','
+        assign colour_hidden_lists = colour_hidden_lists | append: '[' | append: hidden_positions | append: ']'
+
+        unless forloop.last
+          assign colour_hidden_lists = colour_hidden_lists | append: ','
+        endunless
+      endfor
+
+      assign filtered_indexes = filtered_indexes | uniq
+
+      capture colour_sets_json
+        echo '{"option":'
+        echo colour_option.name | json
+        echo ',"hidden":['
+        echo colour_hidden_lists
+        echo ']}'
+      endcapture
+    endif
+  endif
+-%}
+
+<product-gallery class="product-gallery" form="{{ product_form_id }}" filtered-indexes="{{ filtered_indexes | json }}"{% if colour_sets_json != '' %} data-colour-sets="{{ colour_sets_json | escape }}"{% endif %} {% if enable_media_autoplay %}autoplay-media{% endif %} {% if enable_image_zoom %}allow-zoom="{{ max_image_zoom_level }}"{% endif %}>
   {%- if enable_image_zoom -%}
     <open-lightbox-button class="contents">
       <button class="product-gallery__zoom-button circle-button circle-button--sm md:hidden">
