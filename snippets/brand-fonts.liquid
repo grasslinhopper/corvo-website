@@ -110,7 +110,7 @@ Parameters:
         --lead-font-family: "Canela Text", Georgia, "Times New Roman", serif;
         --lead-font-size: clamp(1.0625rem, 1.017rem + .195vw, 1.1875rem);
         --small-title-font-family: "Canela Text", Georgia, "Times New Roman", serif;
-        --opener-font-size: clamp(2.5rem, 2.043rem + 1.951vw, 4rem);
+        --opener-font-size: clamp(2.25rem, 1.714rem + 2.286vw, 4rem);
         --text-font-family: "Graphik", "Helvetica Neue", Helvetica, Arial, sans-serif;
         --text-font-weight: 400;
         --text-font-style: normal;
@@ -193,6 +193,11 @@ Parameters:
         font-size: var(--opener-font-size);
       }
 
+      /* The Journal's title stood against the line under it */
+      html .shopify-section--main-blog .section-header > * + * {
+        margin-block-start: 1rem;
+      }
+
       /* The names of the collections on their tiles, and the figures of the story: 48 px and more beside Canela Light */
       html .cshow__title {
         font-size: clamp(1.75rem, 4vw, 3.5rem);
@@ -226,6 +231,19 @@ Parameters:
       /* The leads of the home's sections: the same size as every other lead */
       html :is(.mstory__lead, .pflow__intro, .heritage__lead) {
         font-size: var(--lead-font-size);
+      }
+
+      /* Inside an article, a policy or a plain page, titles step down from the title of the page (48 px): 28 and 22 px */
+      html :is(.article, .shopify-policy__body, .shopify-section--main-page) .prose h2,
+      html .shopify-policy__body h2 {
+        font-size: var(--text-h3);
+        line-height: 1.25;
+      }
+
+      html :is(.article, .shopify-policy__body, .shopify-section--main-page) .prose h3,
+      html .shopify-policy__body h3 {
+        font-size: var(--text-h4);
+        line-height: 1.25;
       }
 
       /* Quotes: Canela Deck, without added spacing */
@@ -263,7 +281,8 @@ Parameters:
       }
 
       /* Tabs, filters and links written in capitals are pressed like buttons: Graphik Medium, as buttons are */
-      html :is(.subnav__link, .cshow__link, .pfolio__link, .corvo-chip, .rug-samples__filter) {
+      html :is(.subnav__link, .cshow__link, .pfolio__link, .corvo-chip, .rug-samples__filter),
+      html .blog-tags a {
         font-family: var(--text-font-family);
         font-weight: 500;
         font-size: var(--text-h6);
@@ -290,10 +309,13 @@ Parameters:
         font-family: var(--small-title-font-family);
       }
 
-      /* Rug names in the lists: on the cards, and in the lists of samples, of specification sheets and of designs */
+      /* Names in the lists: rugs on their cards and in the lists of samples, specification sheets and designs, the rug in
+         the bar that follows its page, and the names under the pictures of the menu (a label stays under each) */
       html .product-card .product-title,
       html :is(.rug-samples__name, .spec-sheet__name),
-      html .design-card__text h3 {
+      html .design-card__text h3,
+      html .product-sticky-bar__info .h6,
+      html .menu-card__name {
         font-family: var(--small-title-font-family);
         font-weight: 400;
         font-size: 1.125rem;

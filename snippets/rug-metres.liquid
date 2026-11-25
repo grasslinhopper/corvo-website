@@ -29,5 +29,6 @@ Supported variables
     assign short_text = short_cm | divided_by: 100.0
   endif
 
-  echo long_text | append: ' × ' | append: short_text | append: ' m'
+  # No-break spaces: the size is never cut between two lines
+  echo long_text | append: ' × ' | append: short_text | append: ' m'
 -%}

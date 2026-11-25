@@ -64,7 +64,7 @@ ticked "Preview only" is never shown on the published theme.
         </div>
 
         <div class="v-stack text-center {% if context == 'menu' %}gap-2.5{% else %}gap-0.5{% endif %}">
-          <p class="h6">{{ project.title.value | escape }}</p>
+          <p class="h6 menu-card__name">{{ project.title.value | escape }}</p>
 
           {%- if project_meta != blank -%}
             <p class="smallcaps text-xs text-subdued">{{ project_meta | escape }}</p>
@@ -112,7 +112,7 @@ ticked "Preview only" is never shown on the published theme.
       {%- endif -%}
 
       <div class="v-stack text-center {% if context == 'menu' %}gap-2.5{% else %}gap-0.5{% endif %}">
-        <p class="h6">{{ panel_designer.name.value | escape }}</p>
+        <p class="h6 menu-card__name">{{ panel_designer.name.value | escape }}</p>
 
         {%- if panel_meta != blank -%}
           <p class="smallcaps text-xs text-subdued">{{ panel_meta | escape }}</p>
@@ -141,7 +141,7 @@ ticked "Preview only" is never shown on the published theme.
       {%- if block.settings[heading_setting] != blank or block.settings[text_setting] != blank -%}
         <div class="v-stack text-center {% if context == 'menu' %}gap-2.5{% else %}gap-0.5{% endif %}">
           {%- if block.settings[heading_setting] != blank -%}
-            <p class="h6">{{ block.settings[heading_setting] }}</p>
+            <p class="h6 menu-card__name">{{ block.settings[heading_setting] }}</p>
           {%- endif -%}
 
           {%- if block.settings[text_setting] != blank -%}
