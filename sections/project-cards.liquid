@@ -26,7 +26,7 @@
   assign item_separator = '<!--project-->'
   assign key_separator = '<!--key-->'
 
-  if theme.role == 'main'
+  if theme.role == 'main' or settings.preview_as_live
     assign is_published_theme = true
   endif
 
@@ -47,6 +47,11 @@
 
 {%- for project in shop.metaobjects.project.values -%}
   {%- liquid
+    # With the Portfolio area switched off (theme settings, "Corvo: areas of the site"), the section shows no project and is not drawn
+    if settings.area_projects == false
+      break
+    endif
+
     if project.example.value and is_published_theme
       continue
     endif

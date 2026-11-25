@@ -50,10 +50,13 @@
 - [Raw materials]({{ shop.url }}/pages/raw-materials): each material, its fibre, what it adds to the price and the rugs made with it.
 - [Colours]({{ shop.url }}/pages/colours): the Open Palette and the Infinite Colours matching service.
 - [Service]({{ shop.url }}/pages/bespoke-service): the five steps of a bespoke project and the rules of an order.
-- [Tailor your rug]({{ shop.url }}/pages/tailor-your-rug): a price guide for a design of your own, and the form to ask for a proposal.
+{% if settings.area_tailor %}- [Tailor your rug]({{ shop.url }}/pages/tailor-your-rug): a price guide for a design of your own, and the form to ask for a proposal.
+{% endif -%}
 - [Design library]({{ shop.url }}/pages/gallery): {% render 'corvo-fill', text: '[design_count] designs by style, each made to measure in any colour.' %}
-- [Portfolio]({{ shop.url }}/pages/portfolio): projects with Corvo rugs, each with its place, its designer and its rugs.
-- [Designers]({{ shop.url }}/pages/designers): the designers Corvo makes rugs with, each with a page and the rugs made together.
+{% if settings.area_projects %}- [Portfolio]({{ shop.url }}/pages/portfolio): projects with Corvo rugs, each with its place, its designer and its rugs.
+{% endif -%}
+{%- if settings.area_designers %}- [Designers]({{ shop.url }}/pages/designers): the designers Corvo makes rugs with, each with a page and the rugs made together.
+{% endif -%}
 - [Samples]({{ shop.url }}/pages/samples): order a sample of any rug.
 - [Care and questions]({{ shop.url }}/pages/care-faq): care, delivery and the questions asked most often.
 - [Story]({{ shop.url }}/pages/about-us): where Corvo comes from: its founder, the two families behind it and its dates.
@@ -140,6 +143,11 @@ What adds to the price per m²:
   assign project_key_separator = '<!--key-->'
 
   for project in shop.metaobjects.project.values
+    # With the Portfolio switched off in the theme settings ("Corvo: areas of the site"), no project is listed
+    if settings.area_projects == false
+      break
+    endif
+
     if project.example.value
       continue
     endif
@@ -297,9 +305,17 @@ Shapes sold online: rectangle{% if settings.rug_shape_round %}; round in any dia
 {% render 'llms-rug-line', rug: rug, vat_plus: vat_plus, fx: fx -%}
 {% endfor %}
 {%- endpaginate -%}
-{%- comment -%}The fully custom rug is not in the lists until it is on sale: it is named here all the same{%- endcomment -%}
+{%- comment -%}
+The fully custom rug is not in the lists until it is on sale: it is named here all the same, unless "Tailor your rug",
+the area it belongs to, is switched off in the theme settings ("Corvo: areas of the site")
+{%- endcomment -%}
 {%- liquid
   assign full_custom = all_products['tailor-made']
+
+  if settings.area_tailor == false
+    assign full_custom = nil
+  endif
+
   assign full_custom_key = '|' | append: full_custom.id | append: '|'
 -%}
 {%- if full_custom.id != blank and full_custom.metafields.rug.craft_level.value != blank -%}

@@ -46,6 +46,12 @@ and rules"), the craft levels, the materials and the sample product. Change the 
   [email]               the e-mail address of the atelier
   [email_link]          the same, as a link that opens a new message
 
+A text can also hold parts that depend on an area of the site that can be switched off in the theme settings ("Corvo:
+areas of the site"). A part between [tailor] and [/tailor] is printed only while "Tailor your rug" is on, and a part
+between [no_tailor] and [/no_tailor] only while it is off. The same works with "designers" and "projects":
+
+  [tailor]The price guide works it out for your idea.[/tailor][no_tailor]Write to us for a price.[/no_tailor]
+
 ********************************************
 Supported variables
 ********************************************
@@ -55,6 +61,48 @@ Supported variables
 
 {%- liquid
   assign filled = text
+
+  # The parts that depend on an area of the site: the part of the other state is taken out, then the markers
+  if filled contains '[/'
+    assign area_names = 'tailor|designers|projects' | split: '|'
+
+    for area_name in area_names
+      assign area_setting = area_name | prepend: 'area_'
+      assign on_open = area_name | prepend: '[' | append: ']'
+      assign on_close = area_name | prepend: '[/' | append: ']'
+      assign off_open = area_name | prepend: '[no_' | append: ']'
+      assign off_close = area_name | prepend: '[/no_' | append: ']'
+
+      if settings[area_setting] == false
+        assign drop_open = on_open
+        assign drop_close = on_close
+      else
+        assign drop_open = off_open
+        assign drop_close = off_close
+      endif
+
+      if filled contains drop_open
+        assign area_pieces = filled | split: drop_open
+        assign filled = ''
+
+        for area_piece in area_pieces
+          if forloop.first
+            assign filled = area_piece
+            continue
+          endif
+
+          assign area_rest = area_piece | append: '§§' | split: drop_close
+
+          if area_rest.size > 1
+            assign area_kept = area_rest[1] | remove_last: '§§'
+            assign filled = filled | append: area_kept
+          endif
+        endfor
+      endif
+
+      assign filled = filled | remove: on_open | remove: on_close | remove: off_open | remove: off_close
+    endfor
+  endif
 
   if filled contains '['
     assign vat_plus = settings.rug_vat_percent | plus: 100

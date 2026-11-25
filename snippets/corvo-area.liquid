@@ -1,0 +1,48 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+CORVO AREA (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Says whether an address belongs to an area of the site that is switched off.
+
+Three areas can be switched off in the theme settings ("Corvo: areas of the site"): Designers, Portfolio (with the
+page of each project) and Tailor your rug (with the TAILOR-MADE rug). While an area is off, nothing on the site leads
+to it: its links leave the menus, its buttons give way to the contact button of the settings, its sections are not
+drawn, and its own pages say that they are not available (layout/theme.liquid).
+
+Prints the name of the area ("designers", "projects" or "tailor") when the address belongs to an area that is off,
+and nothing otherwise.
+
+********************************************
+Supported variables
+********************************************
+
+* url: the address to check, such as the link of a menu or of a button
+{%- endcomment -%}
+
+{%- liquid
+  assign area_url = url | default: '' | downcase
+  assign area_off = ''
+
+  if area_url != ''
+    if settings.area_tailor == false
+      if area_url contains '/pages/tailor-your-rug' or area_url contains '/products/tailor-made'
+        assign area_off = 'tailor'
+      endif
+    endif
+
+    if settings.area_designers == false
+      if area_url contains '/pages/designers'
+        assign area_off = 'designers'
+      endif
+    endif
+
+    if settings.area_projects == false
+      if area_url contains '/pages/portfolio' or area_url contains '/pages/projects'
+        assign area_off = 'projects'
+      endif
+    endif
+  endif
+
+  echo area_off
+-%}

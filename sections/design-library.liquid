@@ -16,6 +16,15 @@
   assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
   assign anchor = section.settings.anchor | default: 'designs' | handleize
   assign tailor_link = section.settings.tailor_link
+
+  # While "Tailor your rug" is switched off in the theme settings, a design has no link to its price guide
+  capture tailor_area_off
+    render 'corvo-area', url: tailor_link
+  endcapture
+
+  if tailor_area_off != blank
+    assign tailor_link = ''
+  endif
   assign other_style = 'design_library.other' | t
   assign vat_plus = settings.rug_vat_percent | default: 23 | plus: 100
   assign style_blocks = section.blocks | where: 'type', 'style'

@@ -250,6 +250,10 @@
         {%- if menu.links.size > 0 and section.settings.layout != 'drawer' -%}
           <ul class="contents unstyled-list md-max:hidden">
             {%- for link in menu.links -%}
+              {%- comment -%}Corvo addition: a link to an area of the site that is switched off is left out (snippets/corvo-area.liquid){%- endcomment -%}
+              {%- capture link_area_off -%}{%- render 'corvo-area', url: link.url -%}{%- endcapture -%}
+              {%- if link_area_off != blank -%}{%- continue -%}{%- endif -%}
+
               {% liquid
                 assign link_title_downcase = link.title | strip | downcase
                 assign mega_menu_block = ''
@@ -280,6 +284,9 @@
                       {%- else -%}
                         <ul class="header__dropdown-menu {% if link.levels <= 1 %}header__dropdown-menu--restrictable{% endif %} unstyled-list" role="list">
                           {%- for sub_link in link.links -%}
+                            {%- capture sub_link_area_off -%}{%- render 'corvo-area', url: sub_link.url -%}{%- endcapture -%}
+                            {%- if sub_link_area_off != blank -%}{%- continue -%}{%- endif -%}
+
                             <li>
                               {%- if sub_link.levels == 0 -%}
                                 <a href="{{ sub_link.url }}" class="link-faded-reverse" {% if sub_link.current %}aria-current="page"{% endif %}>{{ sub_link.title }}</a>
@@ -295,6 +302,9 @@
 
                                     <ul class="header__dropdown-menu unstyled-list" role="list">
                                       {%- for sub_sub_link in sub_link.links -%}
+                                        {%- capture sub_sub_link_area_off -%}{%- render 'corvo-area', url: sub_sub_link.url -%}{%- endcapture -%}
+                                        {%- if sub_sub_link_area_off != blank -%}{%- continue -%}{%- endif -%}
+
                                         <li>
                                           <a href="{{ sub_sub_link.url }}" class="link-faded-reverse" {% if sub_sub_link.current %}aria-current="page"{% endif %}>{{ sub_sub_link.title }}</a>
                                         </li>
@@ -366,9 +376,13 @@
           {%- endif -%}
         {%- endfor -%}
 
-        {%- if section.settings.cta_text != blank and section.settings.cta_link != blank -%}
+        {%- comment -%}Corvo addition: while "Tailor your rug" is switched off, the button is the contact button of the theme settings (snippets/corvo-buttons.liquid){%- endcomment -%}
+        {%- capture header_cta -%}{%- render 'corvo-buttons', text_1: section.settings.cta_text, link_1: section.settings.cta_link -%}{%- endcapture -%}
+        {%- assign header_cta_parts = header_cta | split: '¦' -%}
+
+        {%- if header_cta_parts[0] != blank and header_cta_parts[1] != blank -%}
           <li class="header__cta-item">
-            {%- render 'header-cta', text: section.settings.cta_text, link: section.settings.cta_link, context: 'header' -%}
+            {%- render 'header-cta', text: header_cta_parts[0], link: header_cta_parts[1], context: 'header' -%}
           </li>
         {%- endif -%}
 

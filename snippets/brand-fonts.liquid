@@ -46,8 +46,11 @@ Parameters:
     assign brand_fonts_on = true
   endif
 
-  if file_text contains '-Trial' and theme.role == 'main'
-    assign brand_fonts_on = false
+  # Trial files never show on the published theme, nor on a theme set to preview as it will be once published
+  if file_text contains '-Trial'
+    if theme.role == 'main' or settings.preview_as_live
+      assign brand_fonts_on = false
+    endif
   endif
 -%}
 

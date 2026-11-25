@@ -43,6 +43,21 @@
       {%- if section.blocks.size > 0 -%}
         <div class="content {{ section.settings.mobile_text_position }} {{ section.settings.desktop_text_position }}">
           <div class="prose">
+            {%- comment -%}
+            Corvo addition: a button or a link that leads to an area of the site that is switched off gives way to the
+            contact button of the theme settings, or is left out when another button here already leads there
+            (snippets/corvo-buttons.liquid)
+            {%- endcomment -%}
+            {%- liquid
+              assign overlay_links = ''
+
+              for block in section.blocks
+                if block.type == 'button' or block.type == 'link'
+                  assign overlay_links = overlay_links | append: block.settings.url | append: '|'
+                endif
+              endfor
+            -%}
+
             {%- for block in section.blocks -%}
               {%- case block.type -%}
                 {%- when 'subheading' -%}
@@ -70,14 +85,20 @@
                   {%- endif -%}
 
                 {%- when 'button' -%}
-                  {%- if block.settings.text != blank -%}
-                    {%- render 'button', content: block.settings.text, href: block.settings.url, style: block.settings.style, background: block.settings.background, text_color: block.settings.text_color, block: block -%}
+                  {%- capture overlay_button -%}{%- render 'corvo-buttons', text_1: block.settings.text, link_1: block.settings.url, beside: overlay_links -%}{%- endcapture -%}
+                  {%- assign overlay_button = overlay_button | strip | split: '¦' -%}
+
+                  {%- if overlay_button[0] != blank -%}
+                    {%- render 'button', content: overlay_button[0], href: overlay_button[1], style: block.settings.style, background: block.settings.background, text_color: block.settings.text_color, block: block -%}
                   {%- endif -%}
 
                 {%- when 'link' -%}
-                  {%- if block.settings.text != blank -%}
+                  {%- capture overlay_button -%}{%- render 'corvo-buttons', text_1: block.settings.text, link_1: block.settings.url, beside: overlay_links -%}{%- endcapture -%}
+                  {%- assign overlay_button = overlay_button | strip | split: '¦' -%}
+
+                  {%- if overlay_button[0] != blank -%}
                     <div {{ block.shopify_attributes }}>
-                      <a href="{{ block.settings.url }}">{{ block.settings.text }}</a>
+                      <a href="{{ overlay_button[1] }}">{{ overlay_button[0] }}</a>
                     </div>
                   {%- endif -%}
               {%- endcase -%}

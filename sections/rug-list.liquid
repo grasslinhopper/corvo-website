@@ -441,8 +441,12 @@
                     <div class="h-stack wrap justify-center gap-4">
                       <button type="button" class="button" data-rug-clear="{{ section.id }}">{{ 'collection.faceting.clear_filters' | t }}</button>
 
-                      {%- if section.settings.empty_link != blank and section.settings.empty_link_text != blank -%}
-                        <a href="{{ section.settings.empty_link }}" class="button button--outline">{{ section.settings.empty_link_text | escape }}</a>
+                      {%- comment -%}Corvo addition: while "Tailor your rug" is switched off, the button is the contact button of the theme settings (snippets/corvo-buttons.liquid){%- endcomment -%}
+                      {%- capture empty_button -%}{%- render 'corvo-buttons', text_1: section.settings.empty_link_text, link_1: section.settings.empty_link -%}{%- endcapture -%}
+                      {%- assign empty_button = empty_button | strip | split: '¦' -%}
+
+                      {%- if empty_button[0] != blank and empty_button[1] != blank -%}
+                        <a href="{{ empty_button[1] }}" class="button button--outline">{{ empty_button[0] | escape }}</a>
                       {%- endif -%}
                     </div>
                   </div>

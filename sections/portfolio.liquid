@@ -15,7 +15,7 @@
 {%- liquid
   assign is_published_theme = false
 
-  if theme.role == 'main'
+  if theme.role == 'main' or settings.preview_as_live
     assign is_published_theme = true
   endif
 
@@ -30,6 +30,10 @@
 {%- paginate shop.metaobjects.project.values by 250 -%}
   {%- for project in shop.metaobjects.project.values -%}
     {%- liquid
+      if settings.area_projects == false
+        break
+      endif
+
       if project.example.value and is_published_theme
         continue
       endif

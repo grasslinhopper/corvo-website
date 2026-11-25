@@ -9,6 +9,15 @@
     <script>document.documentElement.classList.add('corvo-js');</script>
 
     {%- comment -%}
+    Corvo addition: three areas of the site can be switched off in the theme settings ("Corvo: areas of the site"):
+    Designers, the Portfolio and Tailor your rug. A page of an area that is off is answered like a page that does not
+    exist: it shows the "page not found" message instead of its content, and asks search engines not to list it. The
+    address is checked by snippets/corvo-area.liquid, which the menus and the buttons use too.
+    {%- endcomment -%}
+    {%- capture area_closed -%}{%- render 'corvo-area', url: request.path -%}{%- endcapture -%}
+    {%- assign area_closed = area_closed | strip -%}
+
+    {%- comment -%}
     Corvo addition: every page tells search engines and AI assistants what it is. A title always names Corvo, the list
     of all rugs is not called "Products", and a page without a description of its own gets a factual one. The page of
     a project of the Portfolio is titled by the name of the project.
@@ -43,6 +52,12 @@
         assign seo_title = 'designers.seo_title' | t: name: metaobject.name.value
       endif
 
+      if area_closed != blank
+        assign seo_title = '404.general.title' | t
+        assign seo_description = blank
+        assign seo_key = blank
+      endif
+
       if seo_title == blank
         assign seo_title = shop.name
       endif
@@ -61,7 +76,9 @@
         assign seo_description = blank
       endif
 
-      if seo_description == blank
+      if area_closed != blank
+        assign seo_description = blank
+      elsif seo_description == blank
         if request.page_type == 'index'
           assign seo_description = 'general.corvo.description' | t
         elsif request.page_type == 'blog' and blog.handle == 'news' and current_tags == blank
@@ -106,7 +123,9 @@
     {%- endif -%}
 
     {%- comment -%}Corvo addition: an example project (ticked "Preview only") is kept out of search engines{%- endcomment -%}
-    {%- if request.page_type == 'metaobject' and metaobject.example.value -%}
+    {%- if area_closed != blank -%}
+      <meta name="robots" content="noindex, nofollow">
+    {%- elsif request.page_type == 'metaobject' and metaobject.example.value -%}
       <meta name="robots" content="noindex">
     {%- endif -%}
 
@@ -138,8 +157,11 @@
       {%- endunless -%}
     {%- endif -%}
 
-    {%- render 'social-meta-tags', seo_title: seo_title, seo_description: seo_description -%}
-    {%- render 'microdata-schema' -%}
+    {%- comment -%}Corvo addition: a page of an area that is switched off describes nothing to search engines and social networks{%- endcomment -%}
+    {%- if area_closed == blank -%}
+      {%- render 'social-meta-tags', seo_title: seo_title, seo_description: seo_description -%}
+      {%- render 'microdata-schema' -%}
+    {%- endif -%}
     {%- render 'css-variables' -%}
     {%- render 'adobe-fonts' -%}
     {%- render 'js-variables' -%}
@@ -217,7 +239,26 @@
     {%- endif -%}
 
     <main id="main" class="anchor">
-      {{ content_for_layout }}
+      {%- if area_closed != blank -%}
+        {%- comment -%}Corvo addition: the "page not found" message, in place of a page of an area that is switched off{%- endcomment -%}
+        <section class="shopify-section shopify-section--404">
+          <div class="section-spacing color-scheme color-scheme--{{ settings.default_color_scheme.id }}">
+            <div class="container container--xs">
+              <div class="empty-state">
+                <div class="prose">
+                  <h1 class="h4">{{ '404.general.title' | t }}</h1>
+                  <p>{{ '404.general.not_found_info' | t }}</p>
+
+                  {%- assign closed_button = '404.general.continue_shopping' | t -%}
+                  {%- render 'button', content: closed_button, href: routes.all_products_collection_url -%}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      {%- else -%}
+        {{ content_for_layout }}
+      {%- endif -%}
 
       {%- comment -%}
       IMPLEMENTATION NOTE: For best semantics, having the footer group outside the main would be slightly better, but

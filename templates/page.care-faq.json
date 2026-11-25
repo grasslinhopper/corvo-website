@@ -35,7 +35,7 @@
           "type": "question",
           "settings": {
             "question": "How do I start a bespoke project?",
-            "answer": "<p>On the <a href=\"/pages/tailor-your-rug\">Tailor your rug page</a>: see a price guide for your idea and ask for a proposal. You can also write to us through the <a href=\"/pages/contact\">contact page</a>. From there, the path is simple: consultation, design, sampling, production.</p>"
+            "answer": "<p>[tailor]On the <a href=\"/pages/tailor-your-rug\">Tailor your rug page</a>: see a price guide for your idea and ask for a proposal. You can also write to us through the <a href=\"/pages/contact\">contact page</a>.[/tailor][no_tailor]Write to us or book a meeting through the <a href=\"/pages/contact\">contact page</a>.[/no_tailor] From there, the path is simple: consultation, design, sampling, production.</p>"
           }
         },
         "cat_materials": {
@@ -147,7 +147,7 @@
           "type": "question",
           "settings": {
             "question": "How much does a bespoke rug cost?",
-            "answer": "<p>From [from_price] per m², VAT included. The price per m² follows the craft level of the design, on a scale of 1 to [level_count]. The material, the pile, the size and custom colours can add to it. The <a href=\"/pages/tailor-your-rug\">Tailor your rug page</a> works out a price guide for your idea.</p>"
+            "answer": "<p>From [from_price] per m², VAT included. The price per m² follows the craft level of the design, on a scale of 1 to [level_count]. The material, the pile, the size and custom colours can add to it.[tailor] The <a href=\"/pages/tailor-your-rug\">Tailor your rug page</a> works out a price guide for your idea.[/tailor][no_tailor] For the price of your idea, write to us through the <a href=\"/pages/contact\">contact page</a>.[/no_tailor]</p>"
           }
         }
       },

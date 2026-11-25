@@ -21,9 +21,17 @@
   assign is_available = true
   assign designers_url = section.settings.designers_link | default: '/pages/designers'
 
+  assign is_published_theme = false
+
+  if theme.role == 'main' or settings.preview_as_live
+    assign is_published_theme = true
+  endif
+
   if designer == blank or designer.system.type != 'designer'
     assign is_available = false
-  elsif designer.example.value and theme.role == 'main'
+  elsif designer.example.value and is_published_theme
+    assign is_available = false
+  elsif settings.area_designers == false
     assign is_available = false
   endif
 -%}
@@ -154,7 +162,7 @@
               {%- endfor -%}
             </ul>
           </section>
-        {%- elsif theme.role != 'main' -%}
+        {%- elsif is_published_theme == false -%}
           <p class="designer__note">{{ 'designers.no_rugs_preview' | t }}</p>
         {%- endif -%}
 

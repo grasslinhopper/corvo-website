@@ -47,9 +47,25 @@
       break
     endif
   endfor
+
+  # A page of an area of the site that is switched off (snippets/corvo-area.liquid) is not a tab, nor a previous or a
+  # next page
+  assign siblings_shown = 0
+
+  if siblings != null
+    for link in siblings
+      capture link_area_off
+        render 'corvo-area', url: link.url
+      endcapture
+
+      if link_area_off == blank
+        assign siblings_shown = siblings_shown | plus: 1
+      endif
+    endfor
+  endif
 -%}
 
-{%- if siblings != null and siblings.size > 1 -%}
+{%- if siblings != null and siblings_shown > 1 -%}
   {%- if section.settings.style == 'tabs' -%}
     <nav class="subnav subnav--tabs{% unless section.settings.sticky %} subnav--static{% endunless %}" aria-label="{{ group_title | escape }}">
       <div class="subnav__inner">
@@ -66,6 +82,9 @@
 
           <ul class="subnav__list unstyled-list" role="list">
             {%- for link in siblings -%}
+              {%- capture link_area_off -%}{%- render 'corvo-area', url: link.url -%}{%- endcapture -%}
+              {%- if link_area_off != blank -%}{%- continue -%}{%- endif -%}
+
               <li>
                 {%- comment -%}On a page with no heading of its own, its name in the bar is the main heading{%- endcomment -%}
                 {%- if link.current and section.settings.current_as_title -%}
@@ -140,6 +159,14 @@
       assign take_next = false
 
       for link in siblings
+        capture link_area_off
+          render 'corvo-area', url: link.url
+        endcapture
+
+        if link_area_off != blank
+          continue
+        endif
+
         if take_next
           assign next_link = link
           break

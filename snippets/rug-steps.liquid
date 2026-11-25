@@ -55,6 +55,19 @@ Supported variables
 {%- endcomment -%}
 
 {%- liquid
+  # The page that takes requests for what the rug page does not offer ("Another shape?", "Talk to us"). While
+  # "Tailor your rug" is switched off in the theme settings ("Corvo: areas of the site"), those links lead to the page of
+  # the contact button instead (snippets/corvo-area.liquid).
+  assign custom_link = block.settings.custom_link
+
+  capture custom_area_off
+    render 'corvo-area', url: custom_link
+  endcapture
+
+  if custom_area_off != blank
+    assign custom_link = settings.area_tailor_link | default: '/pages/contact'
+  endif
+
   assign variant = product.selected_or_first_available_variant
   assign craft = product.metafields.rug.craft_level.value
   assign rate = craft.retail_per_m2.value | default: 0 | times: 100 | round
@@ -585,7 +598,7 @@ Supported variables
 
     assign preview = false
 
-    unless theme.role == 'main'
+    unless theme.role == 'main' or settings.preview_as_live
       assign preview = true
     endunless
   -%}
@@ -762,6 +775,15 @@ Supported variables
         if full_custom.id == blank or full_custom.id == product.id
           assign full_custom = nil
         endif
+
+        # The fully custom rug belongs to "Tailor your rug": no link to it while that area is switched off
+        capture full_custom_off
+          render 'corvo-area', url: full_custom.url
+        endcapture
+
+        if full_custom_off != blank
+          assign full_custom = nil
+        endif
       endif
     -%}
 
@@ -853,8 +875,8 @@ Supported variables
             {%- capture premium_list -%}{%- render 'corvo-and', items: premium_names -%}{%- endcapture -%}
             {{- 'rug_page.premium_note' | t: materials: premium_list -}}
 
-            {%- if block.settings.custom_link != blank and block.settings.contact_link_text != blank %}
-              <a href="{{ block.settings.custom_link }}" class="link">{{ block.settings.contact_link_text | escape }}</a>
+            {%- if custom_link != blank and block.settings.contact_link_text != blank %}
+              <a href="{{ custom_link }}" class="link">{{ block.settings.contact_link_text | escape }}</a>
             {%- endif -%}
           </p>
         {%- endif -%}
@@ -1005,9 +1027,9 @@ Supported variables
           {%- endfor -%}
         </div>
 
-        {%- if block.settings.custom_link != blank and block.settings.size_link_text != blank -%}
+        {%- if custom_link != blank and block.settings.size_link_text != blank -%}
           <p class="rug-step__more text-sm text-subdued">
-            <a href="{{ block.settings.custom_link }}" class="link">{{ block.settings.size_link_text | escape }}</a>
+            <a href="{{ custom_link }}" class="link">{{ block.settings.size_link_text | escape }}</a>
           </p>
         {%- endif -%}
       </div>
@@ -1108,8 +1130,8 @@ Supported variables
         <p class="rug-step__more text-sm text-subdued">
           {{- size_text | strip -}}
 
-          {%- if show_shape == false and block.settings.custom_link != blank and block.settings.size_link_text != blank %}
-            <a href="{{ block.settings.custom_link }}" class="link">{{ block.settings.size_link_text | escape }}</a>
+          {%- if show_shape == false and custom_link != blank and block.settings.size_link_text != blank %}
+            <a href="{{ custom_link }}" class="link">{{ block.settings.size_link_text | escape }}</a>
           {%- endif -%}
         </p>
       {%- endif -%}
@@ -1267,8 +1289,8 @@ Supported variables
       <p class="rug-summary__message text-sm" data-rug-message role="status" hidden>
         <span data-rug-message-text></span>
 
-        {%- if block.settings.custom_link != blank and block.settings.contact_link_text != blank %}
-          <a href="{{ block.settings.custom_link }}" class="link">{{ block.settings.contact_link_text | escape }}</a>
+        {%- if custom_link != blank and block.settings.contact_link_text != blank %}
+          <a href="{{ custom_link }}" class="link">{{ block.settings.contact_link_text | escape }}</a>
         {%- endif -%}
       </p>
 

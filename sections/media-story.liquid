@@ -50,13 +50,20 @@
     assign title_class = 'mstory__title h2'
   endif
 
+  # A button that leads to an area of the site that is switched off gives way to the contact button of the theme
+  # settings, or is left out (snippets/corvo-buttons.liquid)
+  capture story_buttons
+    render 'corvo-buttons', text_1: section.settings.button_1_text, link_1: section.settings.button_1_link, text_2: section.settings.button_2_text, link_2: section.settings.button_2_link
+  endcapture
+
+  assign story_buttons = story_buttons | strip | split: '¦'
   assign has_actions = false
 
-  if section.settings.button_1_text != blank and section.settings.button_1_link != blank
+  if story_buttons[0] != blank and story_buttons[1] != blank
     assign has_actions = true
   endif
 
-  if section.settings.button_2_text != blank and section.settings.button_2_link != blank
+  if story_buttons[2] != blank and story_buttons[3] != blank
     assign has_actions = true
   endif
 -%}
@@ -81,12 +88,12 @@
 
         {%- if has_actions -%}
           <div class="mstory__actions">
-            {%- if section.settings.button_1_text != blank and section.settings.button_1_link != blank -%}
-              <a href="{{ section.settings.button_1_link }}" class="button {% if section.settings.button_1_outline %}button--outline{% endif %}">{{ section.settings.button_1_text | escape }}</a>
+            {%- if story_buttons[0] != blank and story_buttons[1] != blank -%}
+              <a href="{{ story_buttons[1] }}" class="button {% if section.settings.button_1_outline %}button--outline{% endif %}">{{ story_buttons[0] | escape }}</a>
             {%- endif -%}
 
-            {%- if section.settings.button_2_text != blank and section.settings.button_2_link != blank -%}
-              <a href="{{ section.settings.button_2_link }}" class="link">{{ section.settings.button_2_text | escape }}</a>
+            {%- if story_buttons[2] != blank and story_buttons[3] != blank -%}
+              <a href="{{ story_buttons[3] }}" class="link">{{ story_buttons[2] | escape }}</a>
             {%- endif -%}
           </div>
         {%- endif -%}

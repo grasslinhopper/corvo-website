@@ -55,12 +55,19 @@ Supported variables
   {%- elsif link.levels > 0 -%}
     <ul class="mega-menu__linklist unstyled-list">
       {%- for sub_link in link.links -%}
+        {%- comment -%}Corvo addition: a link to an area of the site that is switched off is left out (snippets/corvo-area.liquid){%- endcomment -%}
+        {%- capture sub_link_area_off -%}{%- render 'corvo-area', url: sub_link.url -%}{%- endcapture -%}
+        {%- if sub_link_area_off != blank -%}{%- continue -%}{%- endif -%}
+
         <li class="v-stack justify-items-start gap-5">
           <a href="{{ sub_link.url }}" class="h6">{{ sub_link.title }}</a>
 
           {%- if sub_link.links.size > 0 -%}
             <ul class="v-stack gap-2.5 unstyled-list">
               {%- for sub_sub_link in sub_link.links -%}
+                {%- capture sub_sub_link_area_off -%}{%- render 'corvo-area', url: sub_sub_link.url -%}{%- endcapture -%}
+                {%- if sub_sub_link_area_off != blank -%}{%- continue -%}{%- endif -%}
+
                 <li>
                   <a href="{{ sub_sub_link.url }}" class="link-faded">{{ sub_sub_link.title }}</a>
                 </li>

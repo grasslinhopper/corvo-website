@@ -21,9 +21,17 @@
   assign is_available = true
   assign portfolio_url = section.settings.portfolio_link | default: '/pages/portfolio'
 
+  assign is_published_theme = false
+
+  if theme.role == 'main' or settings.preview_as_live
+    assign is_published_theme = true
+  endif
+
   if project == blank or project.system.type != 'project'
     assign is_available = false
-  elsif project.example.value and theme.role == 'main'
+  elsif project.example.value and is_published_theme
+    assign is_available = false
+  elsif settings.area_projects == false
     assign is_available = false
   endif
 -%}

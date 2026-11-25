@@ -397,8 +397,12 @@ A row without a value is left out.
                   <span>
                     {{- made_to_measure_text -}}
 
-                    {%- if section.settings.custom_link != blank and section.settings.custom_link_text != blank %}
-                      <a href="{{ section.settings.custom_link }}" class="link">{{ section.settings.custom_link_text | escape }}</a>
+                    {%- comment -%}Corvo addition: while "Tailor your rug" is switched off, the link is the contact button of the theme settings (snippets/corvo-buttons.liquid){%- endcomment -%}
+                    {%- capture spec_custom -%}{%- render 'corvo-buttons', text_1: section.settings.custom_link_text, link_1: section.settings.custom_link -%}{%- endcapture -%}
+                    {%- assign spec_custom = spec_custom | strip | split: '¦' -%}
+
+                    {%- if spec_custom[0] != blank and spec_custom[1] != blank %}
+                      <a href="{{ spec_custom[1] }}" class="link">{{ spec_custom[0] | escape }}</a>
                     {%- endif -%}
                   </span>
 

@@ -2,10 +2,11 @@
   Wireframe placeholder (Corvo addition, TEMPORARY)
 
   Marks where a planned block will go: its name, what it will show and what is still needed. Each one is replaced by
-  the real section when its page is built. As a safety net it renders nothing on the published theme.
+  the real section when its page is built. As a safety net it renders nothing on the published theme, nor on a theme set
+  to preview as it will be once published (theme settings, "Corvo: areas of the site").
 {%- endcomment -%}
 
-{%- unless theme.role == 'main' -%}
+{%- unless theme.role == 'main' or settings.preview_as_live -%}
   {%- assign layout = section.settings.layout -%}
 
   <div class="wf wf--{{ layout }} wf--{{ section.settings.size }}">

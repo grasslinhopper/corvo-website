@@ -55,14 +55,24 @@
         </dl>
       {%- endif -%}
 
-      {%- if section.settings.button_1_text != blank or section.settings.button_2_text != blank -%}
+      {%- comment -%}
+      Corvo addition: a button that leads to an area of the site that is switched off gives way to the contact button
+      of the theme settings, or is left out (snippets/corvo-buttons.liquid)
+      {%- endcomment -%}
+      {%- capture intro_buttons -%}
+        {%- render 'corvo-buttons', text_1: section.settings.button_1_text, link_1: section.settings.button_1_link, text_2: section.settings.button_2_text, link_2: section.settings.button_2_link -%}
+      {%- endcapture -%}
+
+      {%- assign intro_buttons = intro_buttons | strip | split: '¦' -%}
+
+      {%- if intro_buttons[0] != blank or intro_buttons[2] != blank -%}
         <div class="page-intro__buttons">
-          {%- if section.settings.button_1_text != blank -%}
-            {%- render 'button', content: section.settings.button_1_text, href: section.settings.button_1_link, style: 'solid' -%}
+          {%- if intro_buttons[0] != blank -%}
+            {%- render 'button', content: intro_buttons[0], href: intro_buttons[1], style: 'solid' -%}
           {%- endif -%}
 
-          {%- if section.settings.button_2_text != blank -%}
-            {%- render 'button', content: section.settings.button_2_text, href: section.settings.button_2_link, style: 'outline' -%}
+          {%- if intro_buttons[2] != blank -%}
+            {%- render 'button', content: intro_buttons[2], href: intro_buttons[3], style: 'outline' -%}
           {%- endif -%}
         </div>
       {%- endif -%}

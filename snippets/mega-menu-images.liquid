@@ -27,8 +27,14 @@ ticked "Preview only" is never shown on the published theme.
 
   {%- for project in shop.metaobjects.project.values -%}
     {%- liquid
-      if project.example.value and theme.role == 'main'
-        continue
+      if settings.area_projects == false
+        break
+      endif
+
+      if project.example.value
+        if theme.role == 'main' or settings.preview_as_live
+          continue
+        endif
       endif
 
       assign project_image = project.main_image.value
@@ -150,6 +156,13 @@ ticked "Preview only" is never shown on the published theme.
         </div>
       {%- endif -%}
     {%- endcapture -%}
+
+    {%- comment -%}Corvo addition: a picture that leads to an area of the site that is switched off is left out{%- endcomment -%}
+    {%- capture image_area_off -%}{%- render 'corvo-area', url: block.settings[link_setting] -%}{%- endcapture -%}
+
+    {%- if image_area_off != blank -%}
+      {%- continue -%}
+    {%- endif -%}
 
     {%- if image_content != blank -%}
       {%- if block.settings[link_setting] != blank -%}

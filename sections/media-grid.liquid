@@ -33,16 +33,51 @@
       <div class="section-stack">
         {%- render 'section-header', subheading: section.settings.subheading, heading: section.settings.title, content: section.settings.content -%}
 
+        {%- comment -%}
+        Corvo addition: a block that leads to an area of the site that is switched off (snippets/corvo-area.liquid) is
+        left out, and the blocks that stay share its width
+        {%- endcomment -%}
+        {%- liquid
+          assign grid_hidden_columns = 0
+          assign grid_shown = 0
+
+          for block in section.blocks
+            capture grid_area_off
+              render 'corvo-area', url: block.settings.link_url
+            endcapture
+
+            if grid_area_off != blank
+              assign grid_hidden_columns = grid_hidden_columns | plus: block.settings.column_count
+            else
+              assign grid_shown = grid_shown | plus: 1
+            endif
+          endfor
+
+          assign grid_extra_columns = 0
+
+          if grid_hidden_columns > 0 and grid_shown > 0
+            assign grid_extra_columns = grid_hidden_columns | divided_by: grid_shown
+          endif
+        -%}
+
         <media-grid class="media-grid">
           {%- for block in section.blocks -%}
+            {%- capture grid_area_off -%}{%- render 'corvo-area', url: block.settings.link_url -%}{%- endcapture -%}
+
+            {%- if grid_area_off != blank -%}
+              {%- continue -%}
+            {%- endif -%}
+
+            {%- assign grid_columns = block.settings.column_count | plus: grid_extra_columns | at_most: 12 -%}
+
             {%- capture block_content -%}
               <div class="content-over-media color-scheme color-scheme--{{ block.settings.color_scheme.id }} group" reveal-on-scroll="true" style="--content-over-media-overlay: {{ block.settings.overlay_color.rgb }} / {{ block.settings.overlay_opacity | divided_by: 100.0 }};">
                 {%- if block.type == 'image' -%}
                   {%- if block.settings.image -%}
                     {%- if section.settings.section_width == 'full' -%}
-                      {%- capture sizes_attribute -%}(max-width: 699px) 100vw, {{ 100.0 | divided_by: 12.0 | times: block.settings.column_count | round }}vw{%- endcapture -%}
+                      {%- capture sizes_attribute -%}(max-width: 699px) 100vw, {{ 100.0 | divided_by: 12.0 | times: grid_columns | round }}vw{%- endcapture -%}
                     {%- else -%}
-                      {%- capture sizes_attribute -%}(max-width: 699px) 100vw, {{ 1260.0 | divided_by: 12.0 | times: block.settings.column_count | round }}px{%- endcapture -%}
+                      {%- capture sizes_attribute -%}(max-width: 699px) 100vw, {{ 1260.0 | divided_by: 12.0 | times: grid_columns | round }}px{%- endcapture -%}
                     {%- endif -%}
 
                     {%- liquid
@@ -85,11 +120,11 @@
             {%- endcapture -%}
 
             {%- if block.settings.link_url -%}
-              <a href="{{ block.settings.link_url }}" class="media-grid__item" style="--media-grid-item-column-span: {{ block.settings.column_count }}; --media-grid-item-row-span: {{ block.settings.row_count }}" {{ block.shopify_attributes }}>
+              <a href="{{ block.settings.link_url }}" class="media-grid__item" style="--media-grid-item-column-span: {{ grid_columns }}; --media-grid-item-row-span: {{ block.settings.row_count }}" {{ block.shopify_attributes }}>
                 {{- block_content -}}
               </a>
             {%- else -%}
-              <div class="media-grid__item" style="--media-grid-item-column-span: {{ block.settings.column_count }}; --media-grid-item-row-span: {{ block.settings.row_count }}" {{ block.shopify_attributes }}>
+              <div class="media-grid__item" style="--media-grid-item-column-span: {{ grid_columns }}; --media-grid-item-row-span: {{ block.settings.row_count }}" {{ block.shopify_attributes }}>
                 {{- block_content -}}
               </div>
             {%- endif -%}

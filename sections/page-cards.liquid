@@ -22,15 +22,38 @@
     assign list_tag = 'ol'
   endif
 
+  # A card that leads to an area of the site that is switched off (snippets/corvo-area.liquid) is left out, and the
+  # cards that stay fill the row
+  assign cards_shown = 0
+  assign cards_hidden = 0
+
+  for block in card_blocks
+    capture card_area_off
+      render 'corvo-area', url: block.settings.link_url
+    endcapture
+
+    if card_area_off != blank
+      assign cards_hidden = cards_hidden | plus: 1
+    else
+      assign cards_shown = cards_shown | plus: 1
+    endif
+  endfor
+
+  assign card_columns = section.settings.columns
+
+  if cards_hidden > 0 and cards_shown < card_columns
+    assign card_columns = cards_shown | at_least: 1
+  endif
+
   # On a tablet: two cards in a row, or three when that leaves no card alone
   assign columns_tablet = 2
 
-  if section.settings.columns == 3 or section.settings.columns == 5
+  if card_columns == 3 or card_columns == 5
     assign columns_tablet = 3
   endif
 -%}
 
-{%- if card_blocks.size > 0 -%}
+{%- if cards_shown > 0 -%}
   <div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
     <div class="container">
       <div class="section-stack">
@@ -52,8 +75,14 @@
           </div>
         {%- endif -%}
 
-        <{{ list_tag }} class="page-cards page-cards--{{ section.settings.image_ratio }} unstyled-list" role="list" style="--page-cards-columns: {{ section.settings.columns }}; --page-cards-columns-tablet: {{ columns_tablet }}; --page-cards-columns-mobile: {{ section.settings.columns_mobile }};">
+        <{{ list_tag }} class="page-cards page-cards--{{ section.settings.image_ratio }} unstyled-list" role="list" style="--page-cards-columns: {{ card_columns }}; --page-cards-columns-tablet: {{ columns_tablet }}; --page-cards-columns-mobile: {{ section.settings.columns_mobile }};">
           {%- for block in card_blocks -%}
+            {%- capture card_area_off -%}{%- render 'corvo-area', url: block.settings.link_url -%}{%- endcapture -%}
+
+            {%- if card_area_off != blank -%}
+              {%- continue -%}
+            {%- endif -%}
+
             {%- liquid
               assign card_image = block.settings.image
               assign card_alt = block.settings.image_alt | default: card_image.alt | default: block.settings.title

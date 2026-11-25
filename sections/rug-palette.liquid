@@ -86,7 +86,7 @@
           </ul>
 
           {%- if missing_values > 0 and section.settings.pending_text != blank -%}
-            {%- unless theme.role == 'main' -%}
+            {%- unless theme.role == 'main' or settings.preview_as_live -%}
               <p class="rug-palette-section__pending text-sm">{{ section.settings.pending_text | escape }}</p>
             {%- endunless -%}
           {%- endif -%}

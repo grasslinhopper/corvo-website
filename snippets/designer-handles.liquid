@@ -5,7 +5,8 @@ THE DESIGNERS, IN ORDER (Corvo addition)
 
 Prints the handles of the "Designer" entries in Shopify (Content > Metaobjects), separated by commas, in the order of
 the lists: first the designers with a number in "Order in the lists", lowest first, then the others in alphabetical
-order. A designer ticked "Preview only" is left out on the published theme.
+order. A designer ticked "Preview only" is left out on the published theme. With the Designers area switched off in
+the theme settings ("Corvo: areas of the site"), nothing is printed.
 
 Every list of designers reads its order here: the Designers page, the header panel, the site search and the guide
 for AI assistants. Liquid cannot sort entries by one of their fields, so each entry gets a key that sorts as text.
@@ -23,9 +24,19 @@ Supported variables
 
 {%- liquid
   assign designer_items = ''
+  assign designers_as_published = false
+
+  if theme.role == 'main' or settings.preview_as_live
+    assign designers_as_published = true
+  endif
 
   for designer in shop.metaobjects.designer.values
-    if designer.example.value and theme.role == 'main'
+    # With the Designers area switched off (theme settings), no list of the site shows a designer
+    if settings.area_designers == false
+      break
+    endif
+
+    if designer.example.value and designers_as_published
       continue
     endif
 

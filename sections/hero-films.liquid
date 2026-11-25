@@ -78,14 +78,24 @@
       <p class="hero-films__text">{{ section.settings.text | escape }}</p>
     {%- endif -%}
 
-    {%- if section.settings.button_1_text != blank or section.settings.button_2_text != blank -%}
+    {%- comment -%}
+    Corvo addition: a button that leads to an area of the site that is switched off gives way to the contact button of
+    the theme settings, or is left out (snippets/corvo-buttons.liquid)
+    {%- endcomment -%}
+    {%- capture hero_buttons -%}
+      {%- render 'corvo-buttons', text_1: section.settings.button_1_text, link_1: section.settings.button_1_link, text_2: section.settings.button_2_text, link_2: section.settings.button_2_link -%}
+    {%- endcapture -%}
+
+    {%- assign hero_buttons = hero_buttons | strip | split: '¦' -%}
+
+    {%- if hero_buttons[0] != blank or hero_buttons[2] != blank -%}
       <div class="hero-films__buttons">
-        {%- if section.settings.button_1_text != blank and section.settings.button_1_link != blank -%}
-          <a href="{{ section.settings.button_1_link }}" class="button hero-films__button">{{ section.settings.button_1_text | escape }}</a>
+        {%- if hero_buttons[0] != blank and hero_buttons[1] != blank -%}
+          <a href="{{ hero_buttons[1] }}" class="button hero-films__button">{{ hero_buttons[0] | escape }}</a>
         {%- endif -%}
 
-        {%- if section.settings.button_2_text != blank and section.settings.button_2_link != blank -%}
-          <a href="{{ section.settings.button_2_link }}" class="button button--outline hero-films__button">{{ section.settings.button_2_text | escape }}</a>
+        {%- if hero_buttons[2] != blank and hero_buttons[3] != blank -%}
+          <a href="{{ hero_buttons[3] }}" class="button button--outline hero-films__button">{{ hero_buttons[2] | escape }}</a>
         {%- endif -%}
       </div>
     {%- endif -%}

@@ -101,6 +101,10 @@
 
                       <ul class="v-stack gap-2.5 unstyled-list" role="list">
                         {%- for link in menu.links -%}
+                          {%- comment -%}Corvo addition: a link to an area of the site that is switched off is left out (snippets/corvo-area.liquid){%- endcomment -%}
+                          {%- capture link_area_off -%}{%- render 'corvo-area', url: link.url -%}{%- endcapture -%}
+                          {%- if link_area_off != blank -%}{%- continue -%}{%- endif -%}
+
                           <li>
                             <a href="{{ link.url }}" class="link-faded">{{ link.title }}</a>
                           </li>

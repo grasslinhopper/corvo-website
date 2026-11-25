@@ -1,0 +1,110 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+CORVO BUTTONS (Corvo addition)
+----------------------------------------------------------------------------------------------------------------------
+
+Works out what one or two buttons show while an area of the site is switched off (snippets/corvo-area.liquid).
+
+* A button that leads to "Tailor your rug" becomes the contact button of the theme settings ("Corvo: areas of the
+  site"), by default "Book a meeting" to the Contact page.
+* If the button beside it already leads to that page, it is left out instead, so that no two buttons do the same.
+* A button that leads to Designers or to the Portfolio is left out.
+* When the first button is left out, the second takes its place, and with it the look of the main button.
+
+With every area on, the buttons are returned as they were given.
+
+Prints "text 1¦link 1¦text 2¦link 2". The caller splits it on "¦": a part that is missing or empty means no button.
+
+********************************************
+Supported variables
+********************************************
+
+* text_1, link_1: the first button
+* text_2, link_2: the second button (optional)
+* beside: the links of other buttons shown next to these, separated by "|" (optional)
+{%- endcomment -%}
+
+{%- liquid
+  assign b1_text = text_1 | default: '' | strip
+  assign b1_link = link_1 | default: ''
+  assign b2_text = text_2 | default: '' | strip
+  assign b2_link = link_2 | default: ''
+  assign b1_swapped = false
+  assign b2_swapped = false
+  assign b1_dropped = false
+
+  assign stand_in_text = settings.area_tailor_button | default: '' | strip
+  assign stand_in_link = settings.area_tailor_link | default: '/pages/contact'
+  assign beside_links = beside | default: '' | split: '|'
+
+  capture b1_off
+    render 'corvo-area', url: b1_link
+  endcapture
+
+  capture b2_off
+    render 'corvo-area', url: b2_link
+  endcapture
+
+  assign b1_off = b1_off | strip
+  assign b2_off = b2_off | strip
+
+  if b1_off == 'tailor' and stand_in_text != ''
+    assign b1_text = stand_in_text
+    assign b1_link = stand_in_link
+    assign b1_swapped = true
+  elsif b1_off != ''
+    assign b1_text = ''
+    assign b1_link = ''
+    assign b1_dropped = true
+  endif
+
+  if b2_off == 'tailor' and stand_in_text != ''
+    assign b2_text = stand_in_text
+    assign b2_link = stand_in_link
+    assign b2_swapped = true
+  elsif b2_off != ''
+    assign b2_text = ''
+    assign b2_link = ''
+  endif
+
+  # Two buttons to the same page: the one that stands in for "Tailor your rug" is left out
+
+  if b1_swapped
+    if b2_text != '' and b2_link == b1_link
+      assign b1_dropped = true
+    elsif beside_links contains b1_link
+      assign b1_dropped = true
+    endif
+
+    if b1_dropped
+      assign b1_text = ''
+      assign b1_link = ''
+    endif
+  endif
+
+  if b2_swapped
+    assign b2_drop = false
+
+    if b1_text != '' and b1_link == b2_link
+      assign b2_drop = true
+    elsif beside_links contains b2_link
+      assign b2_drop = true
+    endif
+
+    if b2_drop
+      assign b2_text = ''
+      assign b2_link = ''
+    endif
+  endif
+
+  # The second button takes the place of a first button that was left out
+
+  if b1_dropped and b2_text != ''
+    assign b1_text = b2_text
+    assign b1_link = b2_link
+    assign b2_text = ''
+    assign b2_link = ''
+  endif
+
+  echo b1_text | append: '¦' | append: b1_link | append: '¦' | append: b2_text | append: '¦' | append: b2_link
+-%}

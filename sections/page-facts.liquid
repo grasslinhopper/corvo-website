@@ -33,7 +33,10 @@
           {%- endif -%}
         </div>
 
-        {%- if section.settings.button_text != blank -%}
+        {%- comment -%}Corvo addition: a button that leads to an area of the site that is switched off is left out (snippets/corvo-area.liquid){%- endcomment -%}
+        {%- capture facts_area_off -%}{%- render 'corvo-area', url: section.settings.button_link -%}{%- endcapture -%}
+
+        {%- if section.settings.button_text != blank and facts_area_off == blank -%}
           <div>
             {%- render 'button', content: section.settings.button_text, href: section.settings.button_link, style: 'outline' -%}
           </div>

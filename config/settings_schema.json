@@ -1107,6 +1107,64 @@
     ]
   },
   {
+    "name": "Corvo: areas of the site",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Switch off an area of the site that is not ready. Nothing on the site leads to an area that is off: its links leave the menus, its buttons give way to the button below, its sections are not drawn and its own pages say that they are not available. Switch the area on when it is ready."
+      },
+      {
+        "type": "checkbox",
+        "id": "area_designers",
+        "label": "Designers",
+        "info": "The Designers page and the page of each designer.",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "area_projects",
+        "label": "Portfolio",
+        "info": "The Portfolio page and the page of each project.",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "area_tailor",
+        "label": "Tailor your rug",
+        "info": "The Tailor your rug page, with its price guide and its proposal form, and the TAILOR-MADE rug.",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "While \"Tailor your rug\" is off"
+      },
+      {
+        "type": "text",
+        "id": "area_tailor_button",
+        "label": "Button shown in its place",
+        "info": "Wherever a button led to Tailor your rug. Left empty, those buttons are not shown.",
+        "default": "Book a meeting"
+      },
+      {
+        "type": "url",
+        "id": "area_tailor_link",
+        "label": "Where that button leads",
+        "info": "Left empty, it leads to the Contact page."
+      },
+      {
+        "type": "header",
+        "content": "Previews"
+      },
+      {
+        "type": "checkbox",
+        "id": "preview_as_live",
+        "label": "Preview this theme as it will be once published",
+        "info": "On: the preview leaves out what the published site never shows: placeholders, examples and trial fonts. Use it on a copy that is about to be published.",
+        "default": false
+      }
+    ]
+  },
+  {
     "name": "t:theme_settings.favicon.name",
     "settings": [
       {

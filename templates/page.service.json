@@ -246,7 +246,7 @@
         "color_scheme": "scheme-1",
         "title": "Start with your idea",
         "heading_tag": "h2",
-        "text": "<p>See a price guide for the rug you have in mind, or talk to us first.</p>",
+        "text": "<p>[tailor]See a price guide for the rug you have in mind, or talk to us first.[/tailor][no_tailor]Tell us about the rug you have in mind.[/no_tailor]</p>",
         "image": "shopify://shop_images/CORVO_11.jpg",
         "image_alt": "A hand letting a ball of yarn fall onto a carved brown rug",
         "image_focus": "--focus: center",

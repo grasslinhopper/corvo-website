@@ -52,6 +52,10 @@ therefore using a different structure for the Shadow DOM template
     <div class="header-sidebar__scroller">
       <ul class="header-sidebar__linklist {% if show_dividers %}divide-y{% endif %} unstyled-list" role="list">
         {%- for link in menu.links -%}
+          {%- comment -%}Corvo addition: a link to an area of the site that is switched off is left out (snippets/corvo-area.liquid){%- endcomment -%}
+          {%- capture link_area_off -%}{%- render 'corvo-area', url: link.url -%}{%- endcapture -%}
+          {%- if link_area_off != blank -%}{%- continue -%}{%- endif -%}
+
           <li>
             {%- if link.links.size > 0 -%}
               <button type="button" class="header-sidebar__linklist-button {% if section.settings.sidebar_text_font == 'heading' %}h6{% endif %}" aria-controls="header-panel-{{ forloop.index }}" aria-expanded="false">
@@ -79,9 +83,12 @@ therefore using a different structure for the Shadow DOM template
     -%}
 
     {%- comment -%}Corvo addition: the header button repeated at the foot of the menu{%- endcomment -%}
-    {%- if section.settings.cta_text != blank and section.settings.cta_link != blank -%}
+    {%- capture sidebar_cta -%}{%- render 'corvo-buttons', text_1: section.settings.cta_text, link_1: section.settings.cta_link -%}{%- endcapture -%}
+    {%- assign sidebar_cta_parts = sidebar_cta | split: '¦' -%}
+
+    {%- if sidebar_cta_parts[0] != blank and sidebar_cta_parts[1] != blank -%}
       <div class="header-sidebar__cta">
-        {%- render 'header-cta', text: section.settings.cta_text, link: section.settings.cta_link, context: 'sidebar' -%}
+        {%- render 'header-cta', text: sidebar_cta_parts[0], link: sidebar_cta_parts[1], context: 'sidebar' -%}
       </div>
     {%- endif -%}
 
@@ -123,6 +130,9 @@ therefore using a different structure for the Shadow DOM template
     <header-sidebar-collapsible-panel class="header-sidebar__collapsible-panel" slot="collapsible-panel">
       <div class="header-sidebar__scroller">
         {%- for link in menu.links -%}
+          {%- capture link_area_off -%}{%- render 'corvo-area', url: link.url -%}{%- endcapture -%}
+          {%- if link_area_off != blank -%}{%- continue -%}{%- endif -%}
+
           {%- if link.links.size > 0 -%}
             <div id="header-panel-{{ forloop.index }}" class="header-sidebar__sub-panel" hidden>
               <button type="button" class="header-sidebar__back-button link-faded {% if show_dividers %}is-divided{% endif %} text-with-icon {% if section.settings.sidebar_text_font == 'heading' %}h6{% endif %} md:hidden" data-action="close-panel">
@@ -132,6 +142,9 @@ therefore using a different structure for the Shadow DOM template
 
               <ul class="header-sidebar__linklist {% if show_dividers %}divide-y{% endif %} unstyled-list" role="list">
                 {%- for sub_link in link.links -%}
+                  {%- capture sub_link_area_off -%}{%- render 'corvo-area', url: sub_link.url -%}{%- endcapture -%}
+                  {%- if sub_link_area_off != blank -%}{%- continue -%}{%- endif -%}
+
                   <li>
                     {%- if sub_link.links.size > 0 -%}
                       <accordion-disclosure>
@@ -143,6 +156,9 @@ therefore using a different structure for the Shadow DOM template
 
                           <div class="header-sidebar__nested-linklist">
                             {%- for sub_sub_link in sub_link.links -%}
+                              {%- capture sub_sub_link_area_off -%}{%- render 'corvo-area', url: sub_sub_link.url -%}{%- endcapture -%}
+                              {%- if sub_sub_link_area_off != blank -%}{%- continue -%}{%- endif -%}
+
                               <a href="{{ sub_sub_link.url }}" class="link-faded-reverse">{{ sub_sub_link.title }}</a>
                             {%- endfor -%}
                           </div>

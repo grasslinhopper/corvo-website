@@ -63,7 +63,7 @@
         "rugs_label": "Rugs made with it:",
         "no_rugs_text": "Made on request.",
         "thumbnails": 4,
-        "note": "<p>The price per m² follows the craft level of the design. The <a href=\"/pages/tailor-your-rug#price-guide\">price guide</a> shows it for each level and material.</p>",
+        "note": "<p>The price per m² follows the craft level of the design.[tailor] The <a href=\"/pages/tailor-your-rug#price-guide\">price guide</a> shows it for each level and material.[/tailor]</p>",
         "schema_name": "Materials of Corvo rugs"
       },
       "blocks": {
