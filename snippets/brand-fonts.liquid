@@ -5,13 +5,17 @@ BRAND FONTS: CANELA AND GRAPHIK (Corvo addition)
 
 The type of Corvo, as set by the owner on 20 November (spec sheet, "Fonts"). Two families from one foundry:
 
-  Cover lines, main messages, collection openers   Canela Light          large, sentence case
-  Titles, rug names, quotes                        Canela Deck Regular   sentence case
-  Lead paragraphs                                  Canela Text Regular   italic for emphasis
+  Cover lines, main messages, page openers         Canela Light          48 px and more, sentence case
+  Titles, rug names, quotes                        Canela Deck Regular   20 to 48 px, sentence case
+  Lead paragraphs, titles under 20 px              Canela Text Regular   italic for emphasis
   Body text, captions, footers, specs, prices      Graphik Regular       16 px, line spacing 1.5, figures of one width
   Labels and overlines                             Graphik Semibold      capitals, letterspaced
-  Buttons and totals                               Graphik Medium
+  Buttons, tabs, links in capitals, totals         Graphik Medium
   The wordmark                                     the logo file         never typed
+
+Each cut of Canela is used at the sizes it was drawn for (the owner's table gives them): a line that falls under
+48 px on a small screen is set in Canela Deck, and a title under 20 px in Canela Text. Every label in capitals shares
+one style, whichever section it sits in. The review of 25 November brought the sections' own styles to these rules.
 
 The font files are read from Shopify (Content > Files) by their names, below. The files there today are the foundry's
 trial versions: they are meant for trying the fonts, carry no accents and few signs (no € × : / & %), and are therefore
@@ -104,6 +108,9 @@ Parameters:
         --heading-text-transform: none;
         --heading-letter-spacing: 0em;
         --lead-font-family: "Canela Text", Georgia, "Times New Roman", serif;
+        --lead-font-size: clamp(1.0625rem, 1.017rem + .195vw, 1.1875rem);
+        --small-title-font-family: "Canela Text", Georgia, "Times New Roman", serif;
+        --opener-font-size: clamp(2.5rem, 2.043rem + 1.951vw, 4rem);
         --text-font-family: "Graphik", "Helvetica Neue", Helvetica, Arial, sans-serif;
         --text-font-weight: 400;
         --text-font-style: normal;
@@ -123,9 +130,17 @@ Parameters:
         --text-h1: clamp(2rem, 1.634rem + 1.561vw, 3rem);
         --text-h2: clamp(1.75rem, 1.476rem + 1.171vw, 2.5rem);
         --text-h3: clamp(1.375rem, 1.238rem + .585vw, 1.75rem);
-        --text-h4: clamp(1.125rem, 1.034rem + .39vw, 1.375rem);
+        --text-h4: clamp(1.25rem, 1.204rem + .195vw, 1.375rem);
         --text-h5: 1.125rem;
         --text-h6: .75rem;
+      }
+
+      /* Canela Light is drawn for 48 px and more. Under 1000 px wide the opening lines are smaller: Canela Deck */
+      @media screen and (max-width: 999px) {
+        :root {
+          --display-font-family: "Canela Deck", Georgia, "Times New Roman", serif;
+          --display-font-weight: 400;
+        }
       }
 
       /* Body text: line spacing 1.5 */
@@ -160,17 +175,37 @@ Parameters:
         }
       }
 
-      /* Cover lines, main messages, collection openers: Canela Light, large */
-      html :is(.hero-films__heading, .cshow__title, .pfolio__title, .page-figures__value, .page-timeline__year),
-      html :is(.page-intro, .collection-banner) h1 {
+      /* Cover lines, main messages, page openers: Canela Light, large */
+      html :is(.hero-films__heading, .cshow__title, .pfolio__title, .page-figures__value, .page-timeline__year, .heritage__title, .heritage__value),
+      html .mstory__title:not(.h2),
+      html :is(.page-intro, .shopify-section--collection-banner) h1,
+      html :is(.shopify-section--main-blog, .shopify-section--rug-samples, .shopify-section--main-search, .shopify-section--main-page) h1.h2 {
         font-family: var(--display-font-family);
         font-weight: var(--display-font-weight);
         letter-spacing: -.01em;
         line-height: 1.1;
       }
 
-      html :is(.page-intro, .collection-banner) h1 {
-        font-size: clamp(2.5rem, 2.043rem + 1.951vw, 4rem);
+      /* The title that opens a page has one size, whichever section carries it */
+      html .pfolio__title,
+      html :is(.page-intro, .shopify-section--collection-banner) h1,
+      html :is(.shopify-section--main-blog, .shopify-section--rug-samples, .shopify-section--main-search, .shopify-section--main-page) h1.h2 {
+        font-size: var(--opener-font-size);
+      }
+
+      /* The names of the collections on their tiles, and the figures of the story: 48 px and more beside Canela Light */
+      html .cshow__title {
+        font-size: clamp(1.75rem, 4vw, 3.5rem);
+      }
+
+      @media screen and (min-width: 1000px) {
+        html .cshow__title {
+          font-size: clamp(3rem, 4vw, 3.5rem);
+        }
+
+        html .heritage__value {
+          font-size: 3rem;
+        }
       }
 
       /* The home's opening line, larger on a phone, where it now takes two lines */
@@ -183,20 +218,30 @@ Parameters:
       html .section-header .prose > p:not([class]) {
         font-family: var(--lead-font-family);
         font-weight: 400;
-        font-size: clamp(1.0625rem, 1.017rem + .195vw, 1.1875rem);
+        font-size: var(--lead-font-size);
         line-height: 1.5;
         letter-spacing: 0;
       }
 
-      /* Quotes: Canela Deck */
+      /* The leads of the home's sections: the same size as every other lead */
+      html :is(.mstory__lead, .pflow__intro, .heritage__lead) {
+        font-size: var(--lead-font-size);
+      }
+
+      /* Quotes: Canela Deck, without added spacing */
       html .prose blockquote {
         font-family: var(--heading-font-family);
         font-size: 1.25rem;
         line-height: 1.5;
       }
 
-      /* Labels and overlines: Graphik Semibold, capitals, letterspaced */
-      html :is(.h6, th, .badge, .smallcaps, .page-figures__label, .page-quote__by), html .prose h6, html .heading.text-xxs {
+      html :is(.page-quote__text, .page-feature__quote blockquote) {
+        letter-spacing: 0;
+      }
+
+      /* Labels and overlines: Graphik Semibold, capitals, letterspaced. The second line lists the labels that sections style themselves. */
+      html :is(.h6, th, .badge, .smallcaps, .page-figures__label, .page-quote__by), html .prose h6, html .heading.text-xxs,
+      html :is(.hero-films__eyebrow, .cshow__subheading, .pfolio__subheading, .pfolio__count, .pfolio__meta, .pfolio__flag, .subnav__title, .subnav-pager__label, .wf__meta, .wf__needs span, .designer__flag, .designer-card__flag) {
         font-family: var(--text-font-family);
         font-weight: 600;
         font-style: normal;
@@ -204,8 +249,31 @@ Parameters:
         text-transform: uppercase;
       }
 
+      html :is(.hero-films__eyebrow, .cshow__subheading, .pfolio__subheading, .pfolio__count, .pfolio__meta, .subnav__title, .subnav-pager__label) {
+        font-size: var(--text-h6);
+      }
+
       html .smallcaps {
         font-size: .6875rem;
+      }
+
+      /* The number of a step sits beside its title: the same size */
+      html .rug-step__number {
+        font-size: var(--text-h6);
+      }
+
+      /* Tabs, filters and links written in capitals are pressed like buttons: Graphik Medium, as buttons are */
+      html :is(.subnav__link, .cshow__link, .pfolio__link, .corvo-chip, .rug-samples__filter) {
+        font-family: var(--text-font-family);
+        font-weight: 500;
+        font-size: var(--text-h6);
+        letter-spacing: var(--label-letter-spacing);
+        text-transform: uppercase;
+      }
+
+      /* Bold in running text: Graphik Semibold, the heaviest weight in use */
+      html :is(strong, b) {
+        font-weight: 600;
       }
 
       /* Rug names: Canela Deck */
@@ -217,7 +285,16 @@ Parameters:
         text-transform: none;
       }
 
-      html .product-card .product-title {
+      /* Titles under 20 px: Canela Text, the cut drawn for small sizes */
+      html .h5, html .prose h5 {
+        font-family: var(--small-title-font-family);
+      }
+
+      /* Rug names in the lists: on the cards, and in the lists of samples, of specification sheets and of designs */
+      html .product-card .product-title,
+      html :is(.rug-samples__name, .spec-sheet__name),
+      html .design-card__text h3 {
+        font-family: var(--small-title-font-family);
         font-weight: 400;
         font-size: 1.125rem;
         line-height: 1.3;
@@ -237,15 +314,23 @@ Parameters:
 
       @media screen and (max-width: 699px) {
         html .designer-card__name {
+          font-family: var(--small-title-font-family);
           font-size: 1.0625rem;
         }
       }
 
       @media screen and (max-width: 699px) {
-        html .product-card .product-title {
+        html .product-card .product-title,
+        html .rug-samples__name,
+        html .design-card__text h3 {
           font-size: 1rem;
           letter-spacing: 0;
         }
+      }
+
+      /* The names of the pages at the foot of a page ("Next: Colours"): the size of a section title */
+      html .subnav-pager__title {
+        font-size: var(--text-h3);
       }
 
       /* Specs, tables and prices: figures of one width (a feature of the licensed files; the trial versions lack it) */
@@ -267,9 +352,44 @@ Parameters:
         font-size: var(--text-sm);
       }
 
-      /* Totals: Graphik Medium */
+      /* Totals: Graphik Medium, the amount too (it carried the look of a title); the note under it stays regular */
       html .rug-summary__total {
         font-weight: 500;
+      }
+
+      html :is([data-rug-total], [data-guide-total]) {
+        font-family: var(--text-font-family);
+        font-weight: 500;
+        letter-spacing: 0;
+      }
+
+      html .rug-summary__total .text-sm {
+        font-weight: 400;
+      }
+
+      /* Small text: nothing under 12 px outside labels, and no added spacing between the letters of words in lower case */
+      html .product-card__meta,
+      html .rug-filter__count {
+        font-size: .75rem;
+      }
+
+      html :is(.product-card .price-list, .product-card__meta, .rug-option__reference, .rug-swatch__code, .designer__meta, .page-quote__role) {
+        letter-spacing: 0;
+      }
+
+      /* Body text keeps one line spacing */
+      html :is(.pfolio__text, .wf__description, .wf__needs) {
+        line-height: 1.5;
+      }
+
+      /* Lines break evenly: no title ends on a single word, and paragraphs avoid a last line of one word */
+      html :is(h1, h2, h3, h4, .h1, .h2, .h3, .h4, .h5, .product-title, .subnav-pager__title, .pfolio__name),
+      html :is(.section-header .prose > p, .hero-films__text, .page-quote__text) {
+        text-wrap: balance;
+      }
+
+      html :is(p, li, dd, blockquote, figcaption) {
+        text-wrap: pretty;
       }
 
       /* The line under a tab of the menu is measured on the tab's own words */
