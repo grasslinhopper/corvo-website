@@ -66,7 +66,7 @@
                       {%- if settings.currency_code_enabled -%}
                         {{- line_item.final_line_price | money_with_currency -}}
                       {%- else -%}
-                        {{- line_item.final_line_price | money -}}
+                        {{- line_item.final_line_price | money_without_trailing_zeros -}}
                       {%- endif -%}
                     </td>
                   </tr>
@@ -99,7 +99,7 @@
                       <div class="h-stack justify-start gap-2">
                         <span class="discount-badge text-xs">
                           {%- render 'icon' with 'discount', width: 12 -%}
-                          {{- discount_application.title -}} (-{{ discount_application.total_allocated_amount | money }})
+                          {{- discount_application.title -}} (-{{ discount_application.total_allocated_amount | money_without_trailing_zeros }})
 
                           {%- if section.settings.allow_discount_application and discount_application.type != '' -%}
                             <cart-discount-remove-button discount-code="{{ discount_application.title | escape }}" class="h-stack align-center">
@@ -133,7 +133,7 @@
                       {%- if settings.currency_code_enabled -%}
                         {{- cart.items_subtotal_price | money_with_currency -}}
                       {%- else -%}
-                        {{- cart.items_subtotal_price | money -}}
+                        {{- cart.items_subtotal_price | money_without_trailing_zeros -}}
                       {%- endif -%}
                     </span>
                   </div>
@@ -141,7 +141,8 @@
 
                 <div class="h-stack justify-start gap-2">
                   <span class="text-lg">{{ 'cart.general.total' | t }}:</span>
-                  <span class="text-lg">{{- cart.total_price | money_with_currency -}}</span>
+                  {%- comment -%}Corvo addition: the total without its cents when they are zero, followed by the currency{%- endcomment -%}
+                  <span class="text-lg">{{- cart.total_price | money_without_trailing_zeros }} {{ cart.currency.iso_code -}}</span>
                 </div>
 
                 {%- if section.settings.show_shipping_text -%}

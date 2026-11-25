@@ -228,7 +228,7 @@
                     assign rug_image = rug.featured_media
                     assign rug_alt = rug_image.alt | default: rug.title
                     assign rug_materials = rug.metafields.rug.materials.value | map: 'name' | map: 'value' | join: ', '
-                    assign rug_price = rug.price_min | money
+                    assign rug_price = rug.price_min | money_without_trailing_zeros
                   -%}
 
                   <li class="project-rug">

@@ -14,7 +14,9 @@ Supported variables
 * line_item: if provided, then the price from this line item are rendered (used on cart or order)
 * hide_unit_price: if set to true unit prices are hidden (mostly useful for size constrained elements)
 * context: can be "product", "line_item" or "card". This controls how the prices are displayed (using the correct sizes)
-* compact: if set to true, a price of a product is written without its cents when they are zero (Corvo addition: cards)
+* compact: no longer needed. Corvo addition: every price is written without its cents when they are zero ("€2.583", not
+  "€2.583,00"); a price with cents keeps them ("€24,60"). Shopify's own currency format cannot do this without
+  rounding the prices that do have cents, so it is done here with the money_without_trailing_zeros filter.
 {%- endcomment -%}
 
 {%- liquid
@@ -52,7 +54,7 @@ Supported variables
       {%- if settings.currency_code_enabled -%}
         {{- variant.price | money_with_currency -}}
       {%- else -%}
-        {{- variant.price | money -}}
+        {{- variant.price | money_without_trailing_zeros -}}
       {%- endif -%}
     </sale-price>
 
@@ -63,7 +65,7 @@ Supported variables
         {%- if settings.currency_code_enabled -%}
           {{- variant.compare_at_price | money_with_currency -}}
         {%- else -%}
-          {{- variant.compare_at_price | money -}}
+          {{- variant.compare_at_price | money_without_trailing_zeros -}}
         {%- endif -%}
       </compare-at-price>
     {%- endif -%}
@@ -79,7 +81,7 @@ Supported variables
       {%- if settings.currency_code_enabled -%}
         {{- line_item.final_price | money_with_currency -}}
       {%- else -%}
-        {{- line_item.final_price | money -}}
+        {{- line_item.final_price | money_without_trailing_zeros -}}
       {%- endif -%}
     </sale-price>
 
@@ -90,7 +92,7 @@ Supported variables
         {%- if settings.currency_code_enabled -%}
           {{- line_item.original_price | money_with_currency -}}
         {%- else -%}
-          {{- line_item.original_price | money -}}
+          {{- line_item.original_price | money_without_trailing_zeros -}}
         {%- endif -%}
       </compare-at-price>
     {%- endif -%}
@@ -110,12 +112,9 @@ Supported variables
       if settings.currency_code_enabled
         assign variant_price = variant.price | money_with_currency
         assign variant_compare_at_price = variant.compare_at_price | money_with_currency
-      elsif compact
+      else
         assign variant_price = variant.price | money_without_trailing_zeros
         assign variant_compare_at_price = variant.compare_at_price | money_without_trailing_zeros
-      else
-        assign variant_price = variant.price | money
-        assign variant_compare_at_price = variant.compare_at_price | money
       endif
     -%}
 
@@ -163,7 +162,7 @@ Supported variables
       {%- if settings.currency_code_enabled -%}
         {{- 4999 | money_with_currency -}}
       {%- else -%}
-        {{- 4999 | money -}}
+        {{- 4999 | money_without_trailing_zeros -}}
       {%- endif -%}
     </sale-price>
   {%- endif -%}

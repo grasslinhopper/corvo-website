@@ -48,8 +48,11 @@
     const pattern = /\{\{\s*(\w+)\s*\}\}/,
       match = format.match(pattern);
 
+    // An amount without cents is written without them ("€2.583", not "€2.583,00"); an amount with cents keeps both
+    // digits. The pages do the same with Liquid's money_without_trailing_zeros filter.
     const delimit = (precision, thousands, decimal) => {
-      const [whole, fraction] = (cents / 100).toFixed(precision).split('.'),
+      const digits = Math.round(cents) % 100 === 0 ? 0 : precision,
+        [whole, fraction] = (cents / 100).toFixed(digits).split('.'),
         grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, thousands);
 
       return fraction ? grouped + decimal + fraction : grouped;

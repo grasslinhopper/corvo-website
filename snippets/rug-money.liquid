@@ -3,7 +3,8 @@
 RUG MONEY (Corvo addition)
 ----------------------------------------------------------------------------------------------------------------------
 
-Prints an amount the way the theme prints prices, so the rug page and the price list agree.
+Prints an amount the way the theme prints prices, so the rug page and the price list agree: without its cents when
+they are zero ("€2.583"), with them otherwise ("€24,60").
 
 ********************************************
 Supported variables
@@ -13,6 +14,8 @@ Supported variables
 * fx: for an amount worked out in the shop's currency, the factor printed by the "rug-fx" snippet. The amount is
   converted to the visitor's currency and, being approximate, rounded to a whole unit. Leave it out for a price that
   Shopify already gives in the visitor's currency, such as the price of a variant.
+* exact: true prints the cents even when they are zero. For the guide for AI assistants, where "€1.845,00" cannot be
+  misread and "€1.845" could be.
 {%- endcomment -%}
 
 {%- liquid
@@ -29,6 +32,8 @@ Supported variables
 
 {%- if settings.currency_code_enabled -%}
   {{- printed_amount | money_with_currency -}}
-{%- else -%}
+{%- elsif exact -%}
   {{- printed_amount | money -}}
+{%- else -%}
+  {{- printed_amount | money_without_trailing_zeros -}}
 {%- endif -%}
